@@ -19,11 +19,41 @@ STATE = "docs/coordination/current.json"
 BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
+    "AGENTS.md", "AGENTS.md.commentary.md",
+    "submit/archive-closure-checklist.md",
+    "docs/reproducibility.md",
+    "crates/README.md",
+    "thesis/README.md",
+    "ARCHITECTURE.md",
     STATE, BASELINE,
-    "docs/dashboard/index.html", "docs/dashboard/thesis.html",
+    "docs/dashboard/index.html", "docs/dashboard/thesis.html", "docs/dashboard/source-status.js",
+    "docs/dashboard/codex-performance.md", "docs/dashboard/codex-performance.json",
     "docs/dashboard/README.md", "docs/coordination/README.md",
+    "docs/file-viewer.md", "scripts/serve-files.py", "scripts/test_serve_files.py",
+    "docs/coordination/otel-design.md",
+    "docs/coordination/skill-migration-plan.md",
+    "docs/coordination/knowledge-evaluation-plan.md",
+    "docs/coordination/workflow-proposal.md",
+    "docs/coordination/intake-approach-options.md",
+    "docs/coordination/goal-map.json",
+    "docs/coordination/graphs/goal-map.html",
+    "docs/coordination/problem-knowledge-interventions.md",
+    "docs/coordination/problem-knowledge-probe.md",
+    "docs/coordination/problem-knowledge-source-map.md",
+    "scripts/render-goal-map.py",
+    "docs/history/coordination/20261003-withdrawn-repair-intake.md",
+    "docs/history/coordination/20261003-project-repair-user-report.md",
+    "scripts/coordination-load.py", "scripts/test_coordination_load.py",
+    "scripts/subtree-usage.py", "scripts/subtree-usage.md", "scripts/test_subtree_usage.py",
+    "scripts/usage-awareness.py", "scripts/test_usage_awareness.py",
+    "docs/coordination/graphs/tasks.dot",
+    "docs/coordination/graphs/tasks.svg",
     "docs/coordination/handoff.md", "docs/coordination/thesis-work.md",
     "docs/project-facts.md", "docs/README.md", "docs/knowledge/README.md",
+    "docs/development-environments.md",
+    "docs/codex.md", ".codex/config.toml", "scripts/update-codex-source.sh",
+    "docs/codex-features.md", "docs/codex-features.json",
+    "docs/codex-config-proposals.md", "scripts/codex-feature-inventory.py",
     "docs/knowledge/hko-author-context.md", "docs/knowledge/optimizer-review-route.md",
     "docs/knowledge/optional-working-card.md", "docs/resume/thesis-resume.pdf",
     "docs/history/coordination-surface-migration/resume-20260930.md",
@@ -35,6 +65,7 @@ FILES = {
     "docs/history/session-postmortem-2026-10-04/OUTPUTS.md",
     "docs/history/session-postmortem-2026-10-04/README.md",
     "docs/knowledge/session-failures-2026-10-03.md",
+    "docs/history/process-audit/REPORT.md",
     "thesis/chapters/07-hko.tex",
     "experiments/hko-local-maximum/non-hko/README.md",
     "experiments/hko-local-maximum/non-hko/PROOF.md",
@@ -82,6 +113,12 @@ def read_state():
             raise ValueError(f"Running task has no owner: {task['id']}")
         if task["status"] == "blocked" and not task["blocker"]:
             raise ValueError(f"Blocked task has no reason: {task['id']}")
+        if task["status"] == "done" and task["owner"]:
+            raise ValueError(f"Completed task still has an owner: {task['id']}")
+        if task.get("kind", "task") not in {"task", "milestone", "crux"}:
+            raise ValueError(f"Unknown task kind: {task['id']}")
+        if task.get("selection", "selected") not in {"selected", "unselected", "parked"}:
+            raise ValueError(f"Unknown task selection: {task['id']}")
         for key in ("title", "outcome"):
             if not isinstance(task[key], str) or not task[key]:
                 raise ValueError(f"Missing {key}: {task['id']}")
@@ -89,6 +126,10 @@ def read_state():
         dependencies[task["id"]] = task["depends_on"]
         if any(dep not in ids for dep in task["depends_on"]):
             raise ValueError(f"Unknown dependency: {task['id']}")
+    by_id = {task["id"]: task for task in tasks}
+    for task in tasks:
+        if task["status"] == "done" and any(by_id[dep]["status"] != "done" for dep in task["depends_on"]):
+            raise ValueError(f"Completed task has an unfinished prerequisite: {task['id']}")
     def visit(node, active, visited):
         if node in active:
             raise ValueError(f"Dependency cycle: {node}")
@@ -199,8 +240,8 @@ def main():
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--check", action="store_true", help="validate without starting a listener")
     args = parser.parse_args()
-    read_state()
     if args.check:
+        read_state()
         status = source_status()
         if not status["known"]:
             parser.error("Scientific source baseline is unreadable")

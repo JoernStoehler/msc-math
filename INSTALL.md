@@ -22,11 +22,11 @@ Checked on 2026-09-05:
   verifier and a 50-case pentagon prefix (not the full pentagon certificate).
 
 [Environment details](docs/development-environments.md) records versions,
-configuration locations and diagnostic findings. Project skills live under
-`.agents/skills`; the host estate coordinates deliberate copies between
-repositories. Global memories remain separately maintained VM-local clones.
-See the environment details for locations and update semantics; do not install
-a competing shared skill store from this project.
+configuration locations and diagnostic findings. Project-owned skills live
+under `.agents/skills` and travel with the checkout. Update these packages here;
+installed plugin copies are separate sources, not automatic synchronization
+owners. The VM-local memory setup below is historical. See the environment
+details for current workstation locations and conditional external prerequisites.
 
 ## Ordinary language tools
 

@@ -4,8 +4,9 @@ Jörn Stöhler's MSc thesis combines mathematical proofs, computational symplect
 geometry and empirical investigations. The manuscript is unfinished and has not
 been submitted for final grading.
 
-- **See work and resources:** run `python3 scripts/serve-project-dashboard.py`
-  and open <http://127.0.0.1:8765/> in Chrome.
+- **See work and resources:** open this checkout's `docs/dashboard/index.html`
+  through the [workstation file viewer](docs/file-viewer.md). Its URLs identify
+  the actual checkout; run `python3 scripts/serve-files.py` for a local view.
 - **Coordinate or continue:** [docs/coordination/](docs/coordination/README.md)
   owns selected assignments, the detailed thesis backlog and handoff constraints.
 - **Find reusable knowledge:** [docs/knowledge/](docs/knowledge/README.md)

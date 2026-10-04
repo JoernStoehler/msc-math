@@ -1,0 +1,30 @@
+// Generated from goal-map.json; not an assignment graph.
+digraph goals {
+graph [rankdir=BT, bgcolor="transparent", nodesep=0.35, ranksep=0.6, pad=0.2];
+node [fontname="sans-serif", fontsize=13, style="rounded,filled", margin="0.13,0.1"];
+edge [fontname="sans-serif", fontsize=10, arrowsize=0.65];
+"project" [id="goal-project", label="msc-math\nPROJECT SUCCESS", shape=doubleoctagon, fillcolor="#e8efe7", color="#47624c", tooltip="Existing completion model; attainment not established"];
+"science" [id="goal-science", label="Supported, readable thesis\nmeets the required judgment", shape=box, fillcolor="#edf2f8", color="#52718b", tooltip="Requirement in existing model; not a readiness verdict"];
+"evidence" [id="goal-evidence", label="Code, evidence and\nreproduction match the claims", shape=box, fillcolor="#edf2f8", color="#52718b", tooltip="Requirement in existing model; attainment not checked here"];
+"delivery" [id="goal-delivery", label="Required delivery / archive\nobligations discharged", shape=box, fillcolor="#edf2f8", color="#52718b", tooltip="Conditional on actual obligations; current administrative state unknown"];
+"meta" [id="goal-meta", label="Proposed endpoint for this effort:\nproblem-fixing is workable", shape=doubleoctagon, fillcolor="#e8efe7", color="#47624c", tooltip="Jörn's proposed endpoint; success and session scope unresolved"];
+"criterion" [id="goal-criterion", label="OPEN: what counts as success\nand what justifies stopping?", shape=hexagon, fillcolor="#fff3ce", color="#a27b29", tooltip="Unresolved consequential choice"];
+"acceptable" [id="goal-acceptable", label="Remaining friction\nis acceptable", shape=box, fillcolor="#faf1e7", color="#94704e", tooltip="Candidate success condition; tolerance and evidence unknown"];
+"marginal" [id="goal-marginal", label="Further improvement\nis not worth its cost", shape=box, fillcolor="#faf1e7", color="#94704e", tooltip="Candidate stopping condition; not established"];
+"knowledge" [id="goal-knowledge", label="Problem knowledge\nstays usable and revisable", shape=box, fillcolor="#f1eef6", color="#7d6a91", tooltip="Candidate enabling capability; implementation unsettled"];
+"interventions" [id="goal-interventions", label="Promising changes\nare compared and applied", shape=box, fillcolor="#f1eef6", color="#7d6a91", tooltip="Possible means; no intervention selected"];
+"revision" [id="goal-revision", label="Bad approaches, corrections\nand changed relevance are noticed", shape=box, fillcolor="#f1eef6", color="#7d6a91", tooltip="Desired capability; reliable operation not established"];
+"topology" [id="goal-topology", label="OPEN: how is the work\ncoordinated over its lifecycle?", shape=hexagon, fillcolor="#fff3ce", color="#a27b29", tooltip="Bounded comparison returned; alternatives remain unselected"];
+"science" -> "project" [id="edge-0", style=solid, color="#344f66", label="required under\nthis definition"];
+"evidence" -> "project" [id="edge-1", style=solid, color="#344f66", label="required under\nthis definition"];
+"delivery" -> "project" [id="edge-2", style=solid, color="#344f66", label="actual obligations\nrequired"];
+"meta" -> "project" [id="edge-3", style=dashed, color="#8a7c98", label="may enable progress;\nnecessity unestablished"];
+"acceptable" -> "meta" [id="edge-4", style=dashed, color="#8a7c98", label="might qualify\nas success"];
+"marginal" -> "meta" [id="edge-5", style=dashed, color="#8a7c98", label="might justify\nending the effort"];
+"criterion" -> "meta" [id="edge-6", style=dotted, color="#a27b29", label="sets the meaning\nof this endpoint"];
+"knowledge" -> "interventions" [id="edge-7", style=dashed, color="#8a7c98", label="may improve\nselection"];
+"interventions" -> "meta" [id="edge-8", style=dashed, color="#8a7c98", label="may reduce\nfriction"];
+"revision" -> "knowledge" [id="edge-9", style=dashed, color="#8a7c98", label="can revise\nwhat is retained"];
+"revision" -> "interventions" [id="edge-10", style=dashed, color="#8a7c98", label="can change\nthe approach"];
+"topology" -> "meta" [id="edge-11", style=dashed, color="#8a7c98", label="possible ways to\nsustain the work"];
+}

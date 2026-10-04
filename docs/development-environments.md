@@ -1,18 +1,121 @@
-# Development environments
+# Working environments and access paths
 
-Codex work on this repository currently runs in three execution environments:
+## Current intended setup
 
-| Environment | Role |
+For Codex TUI features, project/host configuration ownership and release-matched
+implementation links, see [the Codex reference](codex.md).
+
+Jörn specified these project support targets on 2026-09-30 in Codex thread
+`01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a`. This is user-confirmed working context,
+not an end-to-end capability check or an implemented migration plan.
+
+| Surface | Execution and intended use |
 | --- | --- |
-| Host | supported direct execution environment and owner of host-only sandbox operations |
-| Docker Sandbox (`sbx`) | intended project environment; migration checks remain incomplete (see below) |
-| Codex Cloud | rarely used remote environment for work on a selected repository revision |
+| Ubuntu workstation + Codex TUI | Persistent local execution for project work |
+| claude.ai cloud microVM | Clone the repository into a separate cloud environment for agent work |
+| ChatGPT Chat, Astra 6 Pro | Tough mathematical proof search, experiment brainstorming and reasoning; possibly writeup |
+
+Jörn wants Pro for reasoning that would consume too much quota with weaker
+models. This is his task-allocation preference, not a measured comparison of
+model quality or cost. The project already has a
+[human-mediated Pro handoff workflow](../.agents/skills/chatgpt-pro/SKILL.md).
+
+Jörn reported that cold builds in the Claude microVM took under five minutes
+when he last measured them. The command, revision, dependencies and machine
+details were not specified here; do not extend this observation to Sage setup,
+thesis builds, dataset downloads or full experiment runs.
+
+### Jörn's terminal and browser access
+
+All three terminal paths reach the Ubuntu workstation. They are clients of one
+execution environment, not three separate agent environments.
+
+| Device | Terminal access path |
+| --- | --- |
+| Ubuntu workstation | GNOME → kitty → Codex TUI |
+| Chromebook | Tailscale → SSH with PTY → Codex TUI |
+| Android phone | Tailscale → Termux → SSH → Codex TUI |
+
+Companion Chrome sessions on these devices access project web surfaces over
+Tailscale. Jörn wants those surfaces to show what is being worked on and what
+is being neglected. [The workstation file viewer](file-viewer.md) maps absolute
+paths to browser URLs for worktrees, scratch files and artifacts. The existing
+[project dashboard](dashboard/README.md) is a starting surface; this statement
+does not establish that it is currently reachable from each device or that it
+provides complete activity/coverage reporting. A workstation-local file path
+or localhost URL alone is not a remote-device review deliverable.
+
+### Design implications and open choices
+
+For telemetry, Jörn favours a generic OpenTelemetry storage solution on the
+workstation, with Claude cloud and other external surfaces not exporting to it.
+His deciding consideration is maintenance/setup cost; rare network outages are
+not the main motivation. Later that day, in OTel thread
+`01a0f1a8-2994-7ac2-abd9-d07386225de3`, he authorized workstation-only setup
+through `~/.dotfiles`, trusting that session's OpenObserve recommendation.
+The owner reports OpenObserve OSS v1.0.4 installed as an enabled user service,
+with seven-day retention and 2 GiB/one-CPU caps. Native logs/traces, 90 metric
+streams, PromQL and restart persistence passed without sending a model prompt.
+The private UI is <https://joern-pc.tailc5e761.ts.net:8443/>; HTTPS/API checks
+passed, while interactive browser/device checks were unavailable. These are
+reported setup checks, not sustained-load or retention-expiry validation.
+[The retained outcome](coordination/otel-design.md) links the setup/operations
+owner at `~/.dotfiles/INSTALL.md`.
+
+Jörn restarted the shared Codex daemon at `2026-09-30T10:32:33Z`. The owner
+reports that the replacement process has all three signal authentication
+variables and post-restart API queries returned 88 logs, 7,451 spans and two
+metric series with two samples. Live workstation export is active; these are
+timestamped observations, not completeness guarantees. Implementation is
+complete: dotfiles commit `c2e8e54` owns the host setup and project commit
+`20dd302d` retains the outcome. Maintenance belongs to `~/.dotfiles/INSTALL.md`;
+credentials remain outside Git. Interactive browser login remains unverified.
+External assignments and returned outcomes can still be represented in project
+coordination without inventing their missing usage data.
+
+The following are agent proposals or consequences of the topology, not selected
+implementations:
+
+- Local terminal sessions can share workstation storage, but separate
+  worktrees still need explicit coordination and SSH reconnect/session
+  persistence needs a documented mechanism.
+- A Claude cloud clone has its own filesystem and runtime state. Whether it
+  needs live messaging or detailed event records returned with its work remains
+  undecided; neither is required by the preferred workstation-only telemetry
+  direction. The workstation telemetry setup does not itself implement a
+  semantic task/message journal.
+- Pro research should receive focused context and return inspectable results;
+  do not assume that Chat can clone the repository, run project commands or
+  publish events to a service.
+- Build setup and instructions should work from a fresh cloud clone without
+  depending on workstation paths, installed plugin caches or host-only tools.
+  The existing Codex Cloud bootstrap has not been validated for Claude.
+- Quota/token/time observations may differ between surfaces. Comparable
+  accounting and budget enforcement have not been established.
+
+This discussion authorizes environment/workflow planning and recording, not an
+autonomous thesis completion run. Recheck this section when Jörn changes his
+devices, access routes or agent surfaces; verify live capabilities when a task
+depends on them.
+
+## Earlier Codex setup inventory
+
+The records below describe the earlier Codex setup. Docker Sandbox and Codex
+Cloud are retained setup/recovery information, not newly selected support
+targets. Historical statements about availability, clients and running services
+need a current check before use.
+
+| Earlier environment | Recorded role |
+| --- | --- |
+| Host | direct execution environment and owner of host-only sandbox operations |
+| Docker Sandbox (`sbx`) | intended project environment at the time; migration checks remained incomplete |
+| Codex Cloud | rarely used remote environment for a selected repository revision |
 
 An execution environment owns the processes, filesystem view, installed
 software, network boundary, and runtime state for a thread. A Codex app-server
 runs in that environment and serves the thread.
 
-Codex TUI and the OpenAI extension for VS Code are the supported local clients.
+Codex TUI and the OpenAI extension for VS Code were the recorded local clients.
 ChatGPT Desktop and Paseo were retired from this host on 2026-09-01. Thread
 execution occurs in the selected execution environment; the client therefore
 does not identify the execution environment.

@@ -11,6 +11,33 @@ A finished thesis needs claims and caveats that match their mathematical and com
 support, resolvable code/data/figure/certificate references, and truthful reproduction
 promises. Compilation and tests cover only parts of that outcome.
 
+## Workstation locations
+
+Work directly on the workstation for now. Use the checkout assigned to the task;
+`git rev-parse --show-toplevel` and `git worktree list` identify its root and sibling
+checkouts. These are workstation locations, not required paths on another machine.
+
+| Location | Use |
+| --- | --- |
+| `/workspaces/msc-math/` | Main checkout. Other worktrees have separate files and changes. |
+| `~/.codex/worktrees/` | Codex-created worktrees; locate this project's checkout through Git. |
+| `/tmp/msc-math/<task>/` | Disposable notes, drafts and exploratory outputs. |
+| `~/.codex/artifacts/` | Files prepared for Jörn to view, review or download; use a project/task subdirectory. |
+| `.agents/skills/` in the checkout | Project-owned skills and their helpers. Installed plugin skills are separate. |
+| `~/.cache/msc-math/artifacts/` | Downloaded research snapshots; [docs/artifacts.md](docs/artifacts.md) owns cache overrides and data links. |
+| `/data/msc-math/` | Candidate future home for a project bundle to copy or mount; no relocation is selected yet. |
+
+Keep lasting project results with their source/evidence owner. Scratch notes and
+review files are not their only retained copy. See [environment docs](docs/development-environments.md)
+for host/sandbox setup and [docs/codex.md](docs/codex.md) for Codex state and recovery.
+
+File links for Jörn: `/absolute/path` → `https://joern-pc.tailc5e761.ts.net/files/absolute/path` (expand `~`; URL-encode each path segment).
+
+For dashboard links, resolve `docs/dashboard/index.html` (coordination) or
+`docs/dashboard/thesis.html` (thesis) against the intended checkout's absolute
+root, then apply that URL rule. The page's data and source
+links must resolve within the same checkout.
+
 ## Find the relevant source
 
 Start from the task, then retrieve only the context it needs:
@@ -27,6 +54,8 @@ Start from the task, then retrieve only the context it needs:
   interpretation. `docs/history/` owns historical evidence, not current assignments.
 - `INSTALL.md` owns tool setup. Topic READMEs own reproduction commands and local caveats;
   `papers/` owns source literature and `submit/` release/admin.
+- `docs/codex.md` routes Codex configuration, daemon restart/thread recovery,
+  subagent persistence and official documentation or release-matched source lookup.
 
 Search claims, symbols, artifact paths and likely synonyms with `rg` before concluding that
 work is absent. Follow summaries to their sources. Legacy and generated trees are poor
@@ -58,6 +87,50 @@ work changes material friction or its disposition, update the record and reconci
 Page without waiting for Jörn to request it. Keep diagnostics and handoffs in the repository.
 If a surface cannot be updated, report its stale or unsaved state in the handoff. This does
 not restart paused thesis work or establish ongoing monitoring.
+## Collaboration and planning
+
+Keep the Codex+user workflow moving: during unfinished authorized work, treat
+brief acknowledgments such as "thx" as acknowledgment, not a stop, pause or scope
+change. Continue the work rather than ending with a courtesy-only reply and
+requiring Jörn to restart it. Finish when the requested work is complete, Jörn
+explicitly stops it, or a required decision/input is clearly presented as pending;
+do not invent additional work after completion.
+
+Within selected work, use bounded subagent assignments and independent sessions
+when they help discovery, planning or execution. Respect the actual tool's
+authorization requirements. A delegation names its owned output, scope,
+resource allowance, stopping/review point and receiving owner. Review ownership
+does not imply implementing fixes; agree who integrates, commits and cleans up.
+
+The coordinator owns workload supervision: check pending messages/reviews,
+ownership and dependencies alongside available usage telemetry. During ongoing
+multi-agent work, delegate a bounded periodic watch when useful; do not leave
+Jörn to discover overload or abandoned work. The coordination README documents
+the local checker. Missing telemetry and quiet threads do not establish idle
+capacity; token counters alone do not measure coordination burden.
+
+Obtain Jörn's explicit approval before large budget expenditure. Fund useful
+preliminary exploration and comparison of approaches within the authorized
+scope; present a concrete plan, alternatives, expected outcomes, uncertainty and
+resource expectations before committing to substantial execution. Thresholds
+are not yet agreed: do not invent a dollar/token allowance or a gate for every
+small task. Splitting work across agents, sessions or stages does not enlarge
+the approved scope or budget.
+
+The async question tool is disabled by project instruction pending verified
+delivery: on 30 September it reported accepted submissions that Jörn says he
+never received. Put questions directly in chat. A submission acknowledgment is
+not evidence of user receipt; do not silently wait behind an undelivered
+question. For a required approval, keep the dependent package waiting through
+ownership changes and record the decision in coordination. Silence, automatic
+action approval and elapsed time are not Jörn's plan approval. An optional
+clarification does not create a new approval gate; preserve its stated fallback.
+
+Read [the collaboration commentary](AGENTS.md.commentary.md) when choosing an
+experiment/research programme, preparing a spending proposal, or designing
+delegation and human review. It owns curated rationale and open choices, not a
+second task list. [The knowledge index](docs/knowledge/README.md) routes further
+process and domain knowledge by the decision being made.
 
 ## Respect evidence boundaries
 

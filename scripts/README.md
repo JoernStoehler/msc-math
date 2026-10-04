@@ -11,8 +11,13 @@ Small repo helper commands.
 | `bootstrap-cloud.sh` | install and verify the normal Codex Cloud development environment |
 | `maintain-cloud.sh` | refresh repository-dependent caches when a cloud environment resumes |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
+| `usage-awareness.py` | on-demand count-up proxy; after-tool candidate withdrawn; [command, scope and historical candidate](subtree-usage.md#ongoing-work-awareness) |
+| `subtree-usage.py` | manual local usage diagnostic; [accounting contract and repaired fork/counter handling](subtree-usage.md) |
+| `coordination-load.py` | manual bounded OpenObserve and local-fallback diagnostic; [command and coverage](../docs/coordination/README.md#workload-supervision) |
 | `test_project_dashboard.py` | HTTP checks for state reload, invalid inputs, source freshness and bounded read-only serving |
 | `serve-project-dashboard.py` | local browser view of shared coordination state, cited sources and scientific freshness |
+| `serve-files.py` | absolute-path browser viewer for checkouts, scratch files and artifacts; Markdown uses Pandoc |
+| `test_serve_files.py` | viewer HTTP contracts and file-based dashboard source checks |
 | `view-graph.sh` | render one live task-graph component in a non-wrapping terminal pager |
 | `repo-status/` | dated command/result records consumed by the status helper |
 
@@ -58,6 +63,14 @@ scripts/repo-status-summary.sh scripts/repo-status/repo-status-smoke-and-core-20
 
 This is a read-only summary. It does not run tests, refresh datasets, or prove
 that tracked generated artifacts are fresh.
+
+## `serve-files.py`
+
+Run `python3 scripts/serve-files.py`. It serves multiple checkout and artifact
+directories at `/files` plus their absolute paths, renders Markdown and displays
+config/code files. [Viewer documentation](../docs/file-viewer.md) owns the URL
+rule, root selection, Tailscale route and service commands. Check with
+`python3 scripts/test_serve_files.py`.
 
 ## `serve-project-dashboard.py`
 

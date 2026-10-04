@@ -1,0 +1,2834 @@
+{
+  "captured_at": "2026-10-03T19:53:18.924635+00:00",
+  "fingerprints": {
+    "cli": "codex-cli 0.160.0",
+    "source_commit": "a956835d020762cb2b570053af06f643a11c0ecc",
+    "daemon_version": "0.160.0",
+    "registry_sha256": "124c76d1fbad7b05fd78a62b89a28282c7ecab1de7426ac18696987024ddeae0",
+    "feature_config_sha256": "c1012952a46f1c228ab087d5721ff7a7fe447da01dac31973abe30b9798682eb",
+    "project_config_sha256": "7b952597b8cbb1da1f01189eea19fc1e930abf66bf9d4de4bf2c01f78640c1f4",
+    "host_config_sha256": "0f388dc6d6c45cec73fbdc7dbbb1dddc0a1dd9a37ed33a4be2c5e8615fa2a806",
+    "effective_flags_sha256": "edbbf41d7646d1ef996f23cea57d65eb74b4e2f66ce0fcf24cf82662050132a5",
+    "generator_sha256": "bc605c7db8727f3efdb73f0dc1b1a11792f052a4b5354de76c22d43d68f09bc6",
+    "project_provenance_sha256": "bc47eb82aee2b14db8ca9411c928ed46cb2890f19e2f7b6205e1e549e46f8681"
+  },
+  "features": {
+    "analytics_plan_history": {
+      "variant": "AnalyticsPlanHistory",
+      "stage": "Experimental",
+      "default": false,
+      "description": "Preview consumer five-hour and weekly allowance history.",
+      "source_line": 937,
+      "consumer_files": [
+        "codex-rs/tui/src/analytics.rs"
+      ],
+      "cli_stage": "experimental",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "daemon_auto_start": {
+      "variant": "DaemonAutoStart",
+      "stage": "Stable",
+      "default": true,
+      "description": "Automatically start the shared local daemon for eligible interactive launches.",
+      "source_line": 947,
+      "consumer_files": [
+        "codex-rs/tui/src/startup_orchestration.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "transcript_v2": {
+      "variant": "TranscriptV2",
+      "stage": "Deprecated",
+      "default": false,
+      "description": "Deprecated no-op; use `tui.fullscreen_transcript` instead.",
+      "source_line": 953,
+      "consumer_files": [],
+      "cli_stage": "deprecated",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "undo": {
+      "variant": "GhostCommit",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag retained as a no-op so old configs can still parse `undo`.",
+      "source_line": 960,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "shell_tool": {
+      "variant": "ShellTool",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable the default shell tool.",
+      "source_line": 966,
+      "consumer_files": [
+        "codex-rs/core/src/agent/role.rs",
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/tools/src/tool_config.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "view_image": {
+      "variant": "ViewImage",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable the built-in local image viewer.",
+      "source_line": 972,
+      "consumer_files": [
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "sleep_tool": {
+      "variant": "SleepTool",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow registration of the built-in sleep tool.",
+      "source_line": 978,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "secret_auth_storage": {
+      "variant": "SecretAuthStorage",
+      "stage": "Stable",
+      "default": "cfg!(windows)",
+      "description": "Store CLI auth in the encrypted local secrets backend when keyring storage is selected.",
+      "source_line": 984,
+      "consumer_files": [
+        "codex-rs/core/src/config/auth_keyring.rs",
+        "codex-rs/core/src/session/mod.rs",
+        "codex-rs/thread-manager-sample/src/main.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "unified_exec": {
+      "variant": "UnifiedExec",
+      "stage": "Stable",
+      "default": true,
+      "description": "Use the single unified PTY-backed exec tool.",
+      "source_line": 990,
+      "consumer_files": [
+        "codex-rs/core/src/config/managed_features.rs",
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/features/src/legacy.rs",
+        "codex-rs/tools/src/tool_config.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "unified_exec_tty": {
+      "variant": "UnifiedExecTty",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow unified exec commands to allocate an interactive terminal.",
+      "source_line": 996,
+      "consumer_files": [
+        "codex-rs/core/src/tools/handlers/unified_exec/exec_command.rs",
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "shell_zsh_fork": {
+      "variant": "ShellZshFork",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Route shell tool execution through the zsh exec bridge.",
+      "source_line": 1002,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/tools/src/tool_config.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "unified_exec_zsh_fork": {
+      "variant": "UnifiedExecZshFork",
+      "stage": "Removed",
+      "default": true,
+      "description": "Allow unified exec to compose with the zsh exec bridge.  This flag is only a composition gate. Enabling it by itself must not turn on either `unified_exec` or `shell_zsh_fork` because those features have separate rollout and enterprise controls.",
+      "source_line": 1008,
+      "consumer_files": [
+        "codex-rs/tools/src/tool_config.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "shell_snapshot": {
+      "variant": "ShellSnapshot",
+      "stage": "Stable",
+      "default": true,
+      "description": "Experimental shell snapshotting.",
+      "source_line": 1014,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/session/turn_context.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": false,
+      "project_override": false,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "powershell_shell_version": {
+      "variant": "PowerShellShellVersion",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Expose the selected PowerShell execution host's bounded major/minor version.",
+      "source_line": 1020,
+      "consumer_files": [
+        "codex-rs/core/src/context/world_state/environment.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "shell_snapshot_v2": {
+      "variant": "ShellSnapshotV2",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Keep policy-filtered shell snapshots entirely in executor memory.",
+      "source_line": 1026,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/unified_exec/shell_snapshot.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "deferred_executor": {
+      "variant": "DeferredExecutor",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Allow turns to start while selected executors are still starting.",
+      "source_line": 1032,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/session/world_state.rs",
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "cwd_relative_turn_diffs": {
+      "variant": "CwdRelativeTurnDiffs",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Use the current working directory for turn diff display paths.",
+      "source_line": 1038,
+      "consumer_files": [
+        "codex-rs/core/src/session/turn.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "js_repl": {
+      "variant": "JsRepl",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the deleted JavaScript REPL feature.",
+      "source_line": 1044,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "content_item_kinds": {
+      "variant": "ContentItemKinds",
+      "stage": "Stable",
+      "default": true,
+      "description": "Send per-content-entry classifications in internal Responses metadata.",
+      "source_line": 1050,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/memories/write/src/runtime.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "executed_tool_call_metadata": {
+      "variant": "ExecutedToolCallMetadata",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Record model-attempted tool calls in internal Responses metadata.",
+      "source_line": 1056,
+      "consumer_files": [
+        "codex-rs/core/src/tools/executed_tool_calls.rs",
+        "codex-rs/core/src/tools/handlers/mcp.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "code_mode": {
+      "variant": "CodeMode",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable JavaScript code mode backed by the standalone host process.",
+      "source_line": 1062,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/session/code_mode_warning.rs",
+        "codex-rs/core/src/tools/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "code_mode_buffered_exec": {
+      "variant": "CodeModeBufferedExec",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the configurable code-mode exec yield timeout.",
+      "source_line": 1068,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "code_mode_host": {
+      "variant": "CodeModeHost",
+      "stage": "Stable",
+      "default": true,
+      "description": "Run JavaScript code mode in the standalone host process.",
+      "source_line": 1074,
+      "consumer_files": [
+        "codex-rs/app-server/src/lib.rs",
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/thread_manager.rs",
+        "codex-rs/tui/src/daemon_startup.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "code_mode_prewarm": {
+      "variant": "CodeModePrewarm",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Establish the code-mode host connection during session startup.",
+      "source_line": 1080,
+      "consumer_files": [
+        "codex-rs/core/src/session/startup_prewarm.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "code_mode_interrupt": {
+      "variant": "CodeModeInterrupt",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Terminate active code mode cells when their turn is interrupted.",
+      "source_line": 1086,
+      "consumer_files": [
+        "codex-rs/core/src/tasks/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "instant_interrupt": {
+      "variant": "InstantInterrupt",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Preempt responses and yield foreground code-mode observations on new user input.",
+      "source_line": 1092,
+      "consumer_files": [
+        "codex-rs/core/src/session/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "code_mode_only": {
+      "variant": "CodeModeOnly",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Restrict model-visible tools to code mode entrypoints (`exec`, `wait`).",
+      "source_line": 1098,
+      "consumer_files": [
+        "codex-rs/core/src/session/code_mode_warning.rs",
+        "codex-rs/core/src/tools/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "js_repl_tools_only": {
+      "variant": "JsReplToolsOnly",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the deleted JavaScript REPL tool-only mode.",
+      "source_line": 1104,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "terminal_resize_reflow": {
+      "variant": "TerminalResizeReflow",
+      "stage": "Removed",
+      "default": true,
+      "description": "Removed compatibility flag. Transcript scrollback reflow on terminal resize is always on.",
+      "source_line": 1110,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "web_search_request": {
+      "variant": "WebSearchRequest",
+      "stage": "Deprecated",
+      "default": false,
+      "description": "Allow the model to request web searches that fetch live content.",
+      "source_line": 1116,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/session/review.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs",
+        "codex-rs/features/src/legacy.rs"
+      ],
+      "cli_stage": "deprecated",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "web_search_cached": {
+      "variant": "WebSearchCached",
+      "stage": "Deprecated",
+      "default": false,
+      "description": "Allow the model to request web searches that fetch cached content. Takes precedence over `WebSearchRequest`.",
+      "source_line": 1122,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/session/review.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs"
+      ],
+      "cli_stage": "deprecated",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "standalone_web_search": {
+      "variant": "StandaloneWebSearch",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Expose the extension-backed standalone web search tool.",
+      "source_line": 1128,
+      "consumer_files": [
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "search_tool": {
+      "variant": "SearchTool",
+      "stage": "Removed",
+      "default": false,
+      "description": "Legacy search-tool feature flag kept for backward compatibility.",
+      "source_line": 1134,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "codex_git_commit": {
+      "variant": "CodexGitCommit",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed legacy git commit attribution guidance flag.",
+      "source_line": 1140,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "runtime_metrics": {
+      "variant": "RuntimeMetrics",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable runtime metrics snapshots via a manual reader.",
+      "source_line": 1146,
+      "consumer_files": [
+        "codex-rs/core/src/otel_init.rs",
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/memories/write/src/runtime.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": false,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "sqlite": {
+      "variant": "Sqlite",
+      "stage": "Removed",
+      "default": true,
+      "description": "Persist rollout metadata to a local SQLite database.",
+      "source_line": 1152,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "memories": {
+      "variant": "MemoryTool",
+      "stage": "Stable",
+      "default": false,
+      "description": "Enable startup memory extraction and file-backed memory consolidation.",
+      "source_line": 1158,
+      "consumer_files": [
+        "codex-rs/core/src/agent/role.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/tasks/mod.rs",
+        "codex-rs/ext/memories/src/extension.rs",
+        "codex-rs/features/src/legacy.rs",
+        "codex-rs/memories/write/src/phase2.rs",
+        "codex-rs/memories/write/src/start.rs",
+        "codex-rs/tui/src/app/config_persistence.rs",
+        "codex-rs/tui/src/app/experimental_features.rs",
+        "codex-rs/tui/src/chatwidget.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": false,
+      "project_override": false,
+      "review_group": "storage/memory",
+      "review_disposition": "Separate retention, compatibility and resource decision; do not activate for prompt inspection alone."
+    },
+    "external_agent_memory_import": {
+      "variant": "ExternalAgentMemoryImport",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable importing project-scoped memory from external agents.",
+      "source_line": 1164,
+      "consumer_files": [
+        "codex-rs/app-server/src/external_agent_migration/processor.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "storage/memory",
+      "review_disposition": "Separate retention, compatibility and resource decision; do not activate for prompt inspection alone."
+    },
+    "local_thread_store_compression": {
+      "variant": "LocalThreadStoreCompression",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Compress cold local thread-store rollout files, including shared histories. Requires every reader of the Codex home to support compressed shared histories.",
+      "source_line": 1170,
+      "consumer_files": [
+        "codex-rs/app-server/src/codex_home_metrics.rs",
+        "codex-rs/core/src/thread_manager.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "storage/memory",
+      "review_disposition": "Separate retention, compatibility and resource decision; do not activate for prompt inspection alone."
+    },
+    "local_thread_store_shared_compression": {
+      "variant": "LocalThreadStoreSharedCompression",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag; local_thread_store_compression controls all rollout files.",
+      "source_line": 1176,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "background_paginated_rollout_migration": {
+      "variant": "BackgroundPaginatedRolloutMigration",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Migrate legacy local rollout files to paginated history in the background.",
+      "source_line": 1182,
+      "consumer_files": [
+        "codex-rs/app-server/src/request_processors/config_processor.rs",
+        "codex-rs/core/src/thread_manager.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "storage/memory",
+      "review_disposition": "Separate retention, compatibility and resource decision; do not activate for prompt inspection alone."
+    },
+    "chronicle": {
+      "variant": "Chronicle",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable the Chronicle sidecar for passive screen-context memories.",
+      "source_line": 1188,
+      "consumer_files": [
+        "codex-rs/features/src/legacy.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "storage/memory",
+      "review_disposition": "Separate retention, compatibility and resource decision; do not activate for prompt inspection alone."
+    },
+    "apply_patch_freeform": {
+      "variant": "ApplyPatchFreeform",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the deleted apply_patch fallback feature.",
+      "source_line": 1194,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "apply_patch_streaming_events": {
+      "variant": "ApplyPatchStreamingEvents",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Stream structured progress while apply_patch input is being generated.",
+      "source_line": 1200,
+      "consumer_files": [
+        "codex-rs/core/src/tools/handlers/apply_patch.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "apply_patch_preserve_line_endings": {
+      "variant": "ApplyPatchPreserveLineEndings",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Preserve existing line endings when apply_patch updates files.",
+      "source_line": 1206,
+      "consumer_files": [
+        "codex-rs/core/src/exec_env.rs",
+        "codex-rs/core/src/tools/handlers/apply_patch.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "execution",
+      "review_disposition": "Preserve current execution; select a bounded trial only for an observed tool or shell problem."
+    },
+    "exec_permission_approvals": {
+      "variant": "ExecPermissionApprovals",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Allow exec tools to request additional permissions while staying sandboxed.",
+      "source_line": 1212,
+      "consumer_files": [
+        "codex-rs/core/src/session/world_state.rs",
+        "codex-rs/core/src/tools/handlers/unified_exec/exec_command.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/features/src/legacy.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "write_stdin_approval": {
+      "variant": "WriteStdinApproval",
+      "stage": "Stable",
+      "default": true,
+      "description": "Require approval before writing input to escalated unified-exec terminals.",
+      "source_line": 1218,
+      "consumer_files": [
+        "codex-rs/core/src/unified_exec/stdin_approval.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "hooks": {
+      "variant": "CodexHooks",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable Claude-style lifecycle hooks loaded from hooks.json files.",
+      "source_line": 1224,
+      "consumer_files": [
+        "codex-rs/app-server/src/request_processors/catalog_processor.rs",
+        "codex-rs/core/src/session/mod.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs",
+        "codex-rs/features/src/legacy.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": true,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "request_permissions_tool": {
+      "variant": "RequestPermissionsTool",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Expose the built-in request_permissions tool.",
+      "source_line": 1230,
+      "consumer_files": [
+        "codex-rs/core/src/agent/role.rs",
+        "codex-rs/core/src/session/world_state.rs",
+        "codex-rs/core/src/tools/handlers/unified_exec/exec_command.rs",
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "use_linux_sandbox_bwrap": {
+      "variant": "UseLinuxSandboxBwrap",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed legacy Linux bubblewrap opt-in flag retained as a no-op so old wrappers and config can still parse it.",
+      "source_line": 1236,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "use_legacy_landlock": {
+      "variant": "UseLegacyLandlock",
+      "stage": "Deprecated",
+      "default": false,
+      "description": "Use the legacy Landlock Linux sandbox fallback instead of the default bubblewrap pipeline.",
+      "source_line": 1242,
+      "consumer_files": [],
+      "cli_stage": "deprecated",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "request_rule": {
+      "variant": "RequestRule",
+      "stage": "Removed",
+      "default": false,
+      "description": "Allow the model to request approval and propose exec rules.",
+      "source_line": 1248,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "experimental_windows_sandbox": {
+      "variant": "WindowsSandbox",
+      "stage": "Removed",
+      "default": false,
+      "description": "Enable Windows sandbox (restricted token) on Windows.",
+      "source_line": 1254,
+      "consumer_files": [
+        "codex-rs/core/src/windows_sandbox.rs",
+        "codex-rs/features/src/legacy.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "elevated_windows_sandbox": {
+      "variant": "WindowsSandboxElevated",
+      "stage": "Removed",
+      "default": false,
+      "description": "Use the elevated Windows sandbox pipeline (setup + runner).",
+      "source_line": 1260,
+      "consumer_files": [
+        "codex-rs/core/src/windows_sandbox.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "windows_sandbox_service": {
+      "variant": "WindowsSandboxService",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Attempt elevated Windows sandbox provisioning through the installed service.",
+      "source_line": 1266,
+      "consumer_files": [
+        "codex-rs/app-server/src/request_processors/windows_sandbox_processor.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "prefer_mxc": {
+      "variant": "PreferMxc",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Prefer the local native Windows sandbox when available, retaining legacy fallback.",
+      "source_line": 1272,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "remote_models": {
+      "variant": "RemoteModels",
+      "stage": "Removed",
+      "default": false,
+      "description": "Legacy remote models flag kept for backward compatibility.",
+      "source_line": 1278,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "api_key_model_discovery": {
+      "variant": "ApiKeyModelDiscovery",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Discover model catalogs for OpenAI API-key authentication.",
+      "source_line": 1284,
+      "consumer_files": [
+        "codex-rs/app-server/src/request_processors/config_processor.rs",
+        "codex-rs/core/src/thread_manager.rs",
+        "codex-rs/tui/src/daemon_startup.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "enable_request_compression": {
+      "variant": "EnableRequestCompression",
+      "stage": "Stable",
+      "default": true,
+      "description": "Compress request bodies (zstd) when sending streaming requests to codex-backend.",
+      "source_line": 1290,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/memories/write/src/runtime.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "unbounded_connection_retries": {
+      "variant": "UnboundedConnectionRetries",
+      "stage": "Stable",
+      "default": true,
+      "description": "Keep active sampling turns alive until a failed network connection recovers.",
+      "source_line": 1296,
+      "consumer_files": [
+        "codex-rs/core/src/responses_retry.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "network_proxy": {
+      "variant": "NetworkProxy",
+      "stage": "Experimental",
+      "default": false,
+      "description": "Start the managed network proxy for sandboxed sessions.",
+      "source_line": 1302,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/session/session.rs"
+      ],
+      "cli_stage": "experimental",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "worktrees": {
+      "variant": "Worktrees",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable managed worktree creation and repository-aware sessions.",
+      "source_line": 1312,
+      "consumer_files": [
+        "codex-rs/exec/src/lib.rs",
+        "codex-rs/tui/src/app/agents_overview.rs",
+        "codex-rs/tui/src/app/agents_overview_new.rs",
+        "codex-rs/tui/src/app/managed_worktree_creation.rs",
+        "codex-rs/tui/src/chatwidget/settings.rs",
+        "codex-rs/tui/src/chatwidget/slash_dispatch.rs",
+        "codex-rs/tui/src/chatwidget/worktree_picker.rs",
+        "codex-rs/tui/src/lib.rs",
+        "codex-rs/tui/src/resume_picker.rs",
+        "codex-rs/tui/src/worktree_startup.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": true,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "respect_system_proxy": {
+      "variant": "RespectSystemProxy",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Respect host system proxy settings for Codex-owned network clients.",
+      "source_line": 1318,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "system_proxy_fallback": {
+      "variant": "SystemProxyFallback",
+      "stage": "Stable",
+      "default": true,
+      "description": "Retry eligible bootstrap requests through the system proxy after normal routing fails.",
+      "source_line": 1324,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "multi_agent": {
+      "variant": "Collab",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable collab tools.",
+      "source_line": 1330,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/feedback_config.rs",
+        "codex-rs/core/src/tasks/review.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs",
+        "codex-rs/features/src/legacy.rs",
+        "codex-rs/memories/write/src/phase2.rs",
+        "codex-rs/tui/src/app/experimental_features.rs",
+        "codex-rs/tui/src/app/session_lifecycle.rs",
+        "codex-rs/tui/src/chatwidget.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": true,
+      "review_group": "orchestration",
+      "review_disposition": "Keep selected controls; evaluate mailbox/board changes against a concrete coordination problem."
+    },
+    "multi_agent_v2": {
+      "variant": "MultiAgentV2",
+      "stage": "Stable",
+      "default": false,
+      "description": "Enable task-path-based multi-agent routing.",
+      "source_line": 1336,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/agent_message_board.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/tasks/review.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": false,
+      "project_override": false,
+      "review_group": "orchestration",
+      "review_disposition": "Keep selected controls; evaluate mailbox/board changes against a concrete coordination problem."
+    },
+    "defer_mailbox_preemption": {
+      "variant": "DeferMailboxPreemption",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Keep sampling through reasoning and commentary boundaries when agent mail arrives. Pending mail is delivered at the next normal input boundary instead.",
+      "source_line": 1342,
+      "consumer_files": [
+        "codex-rs/core/src/session/turn.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "orchestration",
+      "review_disposition": "Keep selected controls; evaluate mailbox/board changes against a concrete coordination problem."
+    },
+    "agent_message_board": {
+      "variant": "AgentMessageBoard",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable shared discussion tools for an agent tree.",
+      "source_line": 1348,
+      "consumer_files": [
+        "codex-rs/core/src/agent_message_board.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": false,
+      "review_group": "orchestration",
+      "review_disposition": "Keep selected controls; evaluate mailbox/board changes against a concrete coordination problem."
+    },
+    "multi_agent_mode": {
+      "variant": "MultiAgentMode",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag retained as a no-op.",
+      "source_line": 1354,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "enable_fanout": {
+      "variant": "SpawnCsv",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the deleted agent-job tools.",
+      "source_line": 1360,
+      "consumer_files": [
+        "codex-rs/core/src/feedback_config.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "apps": {
+      "variant": "Apps",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable apps.",
+      "source_line": 1366,
+      "consumer_files": [
+        "codex-rs/app-server/src/request_processors/apps_processor.rs",
+        "codex-rs/core/src/agent/role.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/connectors.rs",
+        "codex-rs/core/src/guardian/reviewer_config.rs",
+        "codex-rs/core/src/mcp_tool_call/conversation_history.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs",
+        "codex-rs/ext/mcp/src/lib.rs",
+        "codex-rs/features/src/legacy.rs",
+        "codex-rs/memories/write/src/phase2.rs",
+        "codex-rs/tui/src/chatwidget/connectors.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": true,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "psp": {
+      "variant": "Psp",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Route first-party ChatGPT requests through PSP.",
+      "source_line": 1372,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "enable_mcp_apps": {
+      "variant": "EnableMcpApps",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable MCP apps.",
+      "source_line": 1378,
+      "consumer_files": [],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "mcp_2026_07_28": {
+      "variant": "Mcp20260728",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable MCP protocol version 2026-07-28 support.",
+      "source_line": 1384,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/session/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "codex_apps_mcp_2026_07_28": {
+      "variant": "CodexAppsMcp20260728",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable MCP protocol version 2026-07-28 for the host-owned Codex Apps server.",
+      "source_line": 1390,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/session/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "mcp_oauth_refresh_coordination": {
+      "variant": "McpOAuthRefreshCoordination",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Let RMCP coordinate OAuth refresh through the configured credential store.",
+      "source_line": 1396,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/session/mod.rs",
+        "codex-rs/tui/src/daemon_startup.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "use_xaa": {
+      "variant": "UseXaa",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable enterprise refresh-token authorization for configured MCP resources.",
+      "source_line": 1402,
+      "consumer_files": [
+        "codex-rs/config/src/mcp_ema.rs",
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "apps_mcp_path_override": {
+      "variant": "AppsMcpPathOverride",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the legacy Apps MCP path override.",
+      "source_line": 1408,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "tool_search": {
+      "variant": "ToolSearch",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag retained as a no-op now that tool_search is always enabled.",
+      "source_line": 1414,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "tool_search_always_defer_mcp_tools": {
+      "variant": "ToolSearchAlwaysDeferMcpTools",
+      "stage": "Removed",
+      "default": true,
+      "description": "Removed compatibility flag. MCP tools are always deferred when tool_search is available.",
+      "source_line": 1420,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "deferred_tool_world_state": {
+      "variant": "DeferredToolWorldState",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Describe deferred tool namespaces in the model-visible world state.",
+      "source_line": 1426,
+      "consumer_files": [
+        "codex-rs/core/src/session/world_state.rs",
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "non_prefixed_mcp_tool_names": {
+      "variant": "NonPrefixedMcpToolNames",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Expose MCP model-visible namespaces without the legacy `mcp__` prefix.",
+      "source_line": 1432,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "unavailable_dummy_tools": {
+      "variant": "UnavailableDummyTools",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the deleted unavailable-tool placeholder backfill.",
+      "source_line": 1438,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "tool_suggest": {
+      "variant": "ToolSuggest",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable discoverable tool suggestions for apps.",
+      "source_line": 1444,
+      "consumer_files": [
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "recommended_plugins": {
+      "variant": "RecommendedPlugins",
+      "stage": "Stable",
+      "default": false,
+      "description": "Include recommended plugins in model-visible context.",
+      "source_line": 1450,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "plugins": {
+      "variant": "Plugins",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable plugins.",
+      "source_line": 1456,
+      "consumer_files": [
+        "codex-rs/app-server/src/request_processors/catalog_processor.rs",
+        "codex-rs/app-server/src/request_processors/plugins/search.rs",
+        "codex-rs/app-server/src/request_processors/plugins.rs",
+        "codex-rs/core/src/agent/role.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/mcp.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs",
+        "codex-rs/ext/mcp/src/cloud_plugin.rs",
+        "codex-rs/ext/mcp/src/plugin.rs",
+        "codex-rs/memories/write/src/phase2.rs",
+        "codex-rs/tui/src/app/background_requests.rs",
+        "codex-rs/tui/src/app/event_dispatch.rs",
+        "codex-rs/tui/src/chatwidget/plugins.rs",
+        "codex-rs/tui/src/chatwidget/settings.rs",
+        "codex-rs/tui/src/chatwidget/slash_dispatch.rs",
+        "codex-rs/tui/src/chatwidget.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": true,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "executor_capability_discovery": {
+      "variant": "ExecutorCapabilityDiscovery",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Discover selected-root plugin and skill manifests through one high-level exec-server RPC.",
+      "source_line": 1462,
+      "consumer_files": [
+        "codex-rs/core/src/session/mcp.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "skip_host_skill_discovery": {
+      "variant": "SkipHostSkillDiscovery",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Skip host skill snapshots when no registered contributor requires them.",
+      "source_line": 1468,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/session/turn_context.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "plugin_hooks": {
+      "variant": "PluginHooks",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for plugin-bundled lifecycle hooks.",
+      "source_line": 1474,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "in_app_browser": {
+      "variant": "InAppBrowser",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow the in-app browser pane in desktop apps.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1480,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "in_app_chat": {
+      "variant": "InAppChat",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow the in-app chat pane in desktop apps.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1486,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "in_app_dictation": {
+      "variant": "InAppDictation",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow in-app dictation in desktop apps.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1492,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "in_app_local_automation": {
+      "variant": "InAppLocalAutomation",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow desktop apps to run local automations.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1498,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "in_app_updates": {
+      "variant": "InAppUpdates",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow desktop apps to perform in-app updates.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1504,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "browser_use": {
+      "variant": "BrowserUse",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow Browser Use agent integration in desktop apps.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1510,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "browser_use_full_cdp_access": {
+      "variant": "BrowserUseFullCdpAccess",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow Browser Use integration to access the full Chrome DevTools Protocol surface.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1516,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "browser_use_external": {
+      "variant": "BrowserUseExternal",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow Browser Use integration with external browsers.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1522,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "computer_use": {
+      "variant": "ComputerUse",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow Codex Computer Use.  Requirements-only gate: this should be set from requirements, not user config.",
+      "source_line": 1528,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "requirements",
+      "review_disposition": "Requirements-only capability gates; do not set these as project user preferences."
+    },
+    "remote_plugin": {
+      "variant": "RemotePlugin",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable the PS-backed remote plugin catalog.",
+      "source_line": 1534,
+      "consumer_files": [
+        "codex-rs/app-server/src/request_processors/plugins/search.rs",
+        "codex-rs/app-server/src/request_processors/plugins.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/tui/src/app/background_requests.rs",
+        "codex-rs/tui/src/chatwidget/plugins.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "plugin_sharing": {
+      "variant": "PluginSharing",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable remote plugin sharing flows.",
+      "source_line": 1540,
+      "consumer_files": [
+        "codex-rs/app-server/src/request_processors/plugins/search.rs",
+        "codex-rs/app-server/src/request_processors/plugins.rs",
+        "codex-rs/tui/src/app/background_requests.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "external_migration": {
+      "variant": "ExternalMigration",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag retained as a no-op.",
+      "source_line": 1546,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "image_generation": {
+      "variant": "ImageGeneration",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable extension-backed image generation.",
+      "source_line": 1552,
+      "consumer_files": [
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/features/src/legacy.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "omit_app_server_notification_media": {
+      "variant": "OmitAppServerNotificationMedia",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Omit inline image and audio content from app-server item notifications.",
+      "source_line": 1558,
+      "consumer_files": [
+        "codex-rs/app-server/src/bespoke_event_handling.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "image_resize_notice": {
+      "variant": "ImageResizeNotice",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Tell the model when a prompt image was resized and include its dimensions.",
+      "source_line": 1564,
+      "consumer_files": [
+        "codex-rs/core/src/session/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "unified_image_budget": {
+      "variant": "UnifiedImageBudget",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Apply one shared pixel and token budget to every image, regardless of legacy detail hints.",
+      "source_line": 1570,
+      "consumer_files": [
+        "codex-rs/core/src/image_preparation.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "resize_all_images": {
+      "variant": "ResizeAllImages",
+      "stage": "Removed",
+      "default": true,
+      "description": "Removed compatibility flag for always-on centralized image preparation.",
+      "source_line": 1576,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "item_ids": {
+      "variant": "ItemIds",
+      "stage": "Removed",
+      "default": true,
+      "description": "Removed compatibility flag for always-on response item IDs.",
+      "source_line": 1582,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "concurrent_reasoning_summaries": {
+      "variant": "ConcurrentReasoningSummaries",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Request sequential cutoff reasoning summary delivery.",
+      "source_line": 1588,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/session/turn.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "skill_mcp_dependency_install": {
+      "variant": "SkillMcpDependencyInstall",
+      "stage": "Stable",
+      "default": true,
+      "description": "Allow prompting and installing missing MCP dependencies.",
+      "source_line": 1594,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/mcp_skill_dependencies.rs",
+        "codex-rs/memories/write/src/phase2.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "skill_search": {
+      "variant": "SkillSearch",
+      "stage": "Stable",
+      "default": true,
+      "description": "Run cheap skill-search methods in shadow mode and emit experiment metrics.",
+      "source_line": 1600,
+      "consumer_files": [
+        "codex-rs/app-server/src/extensions.rs",
+        "codex-rs/cli/src/main.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "skill_env_var_dependency_prompt": {
+      "variant": "SkillEnvVarDependencyPrompt",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for deleted skill env var dependency prompting.",
+      "source_line": 1606,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "mentions_v2": {
+      "variant": "MentionsV2",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable the unified mention popup used by default in the TUI.",
+      "source_line": 1612,
+      "consumer_files": [
+        "codex-rs/tui/src/app/event_dispatch.rs",
+        "codex-rs/tui/src/bottom_pane/chat_composer.rs",
+        "codex-rs/tui/src/chatwidget/settings.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "steer": {
+      "variant": "Steer",
+      "stage": "Removed",
+      "default": true,
+      "description": "Steer feature flag - when enabled, Enter submits immediately instead of queuing. Kept for config backward compatibility; behavior is always steer-enabled.",
+      "source_line": 1618,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "default_mode_request_user_input": {
+      "variant": "DefaultModeRequestUserInput",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Allow request_user_input in Default collaboration mode.",
+      "source_line": 1624,
+      "consumer_files": [
+        "codex-rs/tools/src/tool_config.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "send_async_message": {
+      "variant": "SendAsyncMessage",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for model-enabled async user messaging.",
+      "source_line": 1630,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "send_message_to_user_async": {
+      "variant": "SendMessageToUserAsync",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Allow root agents to send async user messages without model catalog support.",
+      "source_line": 1636,
+      "consumer_files": [
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "terminal_visualization_instructions": {
+      "variant": "TerminalVisualizationInstructions",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Add terminal-specific visualization guidance to TUI developer instructions.",
+      "source_line": 1642,
+      "consumer_files": [
+        "codex-rs/tui/src/app_server_session.rs",
+        "codex-rs/tui/src/terminal_visualization_instructions.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "guardian_approval": {
+      "variant": "GuardianApproval",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable automatic review for approval prompts.",
+      "source_line": 1648,
+      "consumer_files": [
+        "codex-rs/core/src/config/managed_features.rs",
+        "codex-rs/core/src/session/mcp.rs",
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/session/step_activation.rs",
+        "codex-rs/core/src/tools/handlers/request_user_input.rs",
+        "codex-rs/ext/guardian-v2/src/async_scorer/extension.rs",
+        "codex-rs/tui/src/app/config_persistence.rs",
+        "codex-rs/tui/src/bottom_pane/experimental_features_view.rs",
+        "codex-rs/tui/src/chatwidget/permission_popups.rs",
+        "codex-rs/tui/src/chatwidget/permission_shortcuts.rs",
+        "codex-rs/tui/src/chatwidget/permissions_menu.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "guardianv2.thread_context": {
+      "variant": "GuardianThreadContext",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for always-on thread-owned Guardian context.",
+      "source_line": 1654,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/config/managed_features.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "guardian_reuse_parent_compaction": {
+      "variant": "GuardianReuseParentCompaction",
+      "stage": "Stable",
+      "default": true,
+      "description": "Reuse encrypted parent compaction when restarting Guardian review sessions. When disabled, retain an independent review transcript across parent compaction.",
+      "source_line": 1660,
+      "consumer_files": [
+        "codex-rs/core/src/context_manager/history.rs",
+        "codex-rs/core/src/guardian/review_session_context.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "guardian_root_handoff_context": {
+      "variant": "GuardianRootHandoffContext",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Limit worker Guardian root evidence to preceding root communication windows.",
+      "source_line": 1666,
+      "consumer_files": [
+        "codex-rs/core/src/agent/control/user_authorization.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "guardian_enhanced_node_repl_transcripts": {
+      "variant": "GuardianEnhancedNodeReplTranscripts",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Include completed node_repl or cua_repl Code Mode responses in Guardian reviews.",
+      "source_line": 1672,
+      "consumer_files": [
+        "codex-rs/core/src/context/node_repl_review_evidence.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "guardian_node_repl_transcript_images": {
+      "variant": "GuardianNodeReplTranscriptImages",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Include completed node_repl or cua_repl Code Mode response images in Guardian reviews.",
+      "source_line": 1678,
+      "consumer_files": [
+        "codex-rs/core/src/context/node_repl_review_evidence.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "guardian_conversation_history_tools": {
+      "variant": "GuardianConversationHistoryTools",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Give Guardian access to the root conversation's message history tools.",
+      "source_line": 1684,
+      "consumer_files": [
+        "codex-rs/core/src/guardian/reviewer_config.rs",
+        "codex-rs/core/src/mcp_tool_call/conversation_history.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/mod.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "guardianv2": {
+      "variant": "GuardianV2",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable Guardian V2 automatic approval reviews.",
+      "source_line": 1690,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/guardian/decision.rs",
+        "codex-rs/core/src/session/step_activation.rs",
+        "codex-rs/ext/guardian-v2/src/async_scorer/config.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "guardian_ext": {
+      "variant": "GuardianExt",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the unused Guardian extension prototype.",
+      "source_line": 1696,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "goals": {
+      "variant": "Goals",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable persisted thread goals and automatic goal continuation.",
+      "source_line": 1702,
+      "consumer_files": [
+        "codex-rs/app-server/src/extensions.rs",
+        "codex-rs/app-server/src/request_processors/thread_goal_processor.rs",
+        "codex-rs/app-server/src/request_processors/thread_processor.rs",
+        "codex-rs/core/src/session/review.rs",
+        "codex-rs/tui/src/chatwidget/settings.rs",
+        "codex-rs/tui/src/chatwidget/slash_dispatch.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": true,
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "token_budget": {
+      "variant": "TokenBudget",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Add current context-window metadata to model-visible context.",
+      "source_line": 1708,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/config/token_budget_startup.rs",
+        "codex-rs/core/src/guardian/review_session.rs",
+        "codex-rs/core/src/session/mod.rs",
+        "codex-rs/core/src/session/review.rs",
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/core/src/session/token_budget.rs",
+        "codex-rs/core/src/session/turn.rs",
+        "codex-rs/core/src/session/turn_context.rs",
+        "codex-rs/core/src/session/world_state.rs",
+        "codex-rs/core/src/tasks/compact.rs",
+        "codex-rs/core/src/tools/spec_plan.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": true,
+      "project_override": {
+        "enabled": true,
+        "reminder_threshold_tokens": 20000,
+        "use_history_notes_extension": false
+      },
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "context_management": {
+      "variant": "ContextManagement",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enables experimental context management.",
+      "source_line": 1714,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/session/token_budget.rs",
+        "codex-rs/ext/guardian-v2/src/sync_reviewer/reviewer_config.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": false,
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "rollout_budget": {
+      "variant": "RolloutBudget",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Track and report a shared token budget across a session's agent threads.",
+      "source_line": 1720,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/config/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": false,
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "reasoning_effort_override": {
+      "variant": "ReasoningEffortOverride",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Append trusted response configuration items when the selected reasoning effort changes.",
+      "source_line": 1726,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/memories/write/src/runtime.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "current_time_reminder": {
+      "variant": "CurrentTimeReminder",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Add current-time reminders to model-visible context.",
+      "source_line": 1732,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/guardian/input_budget.rs",
+        "codex-rs/core/src/session/time_reminder.rs",
+        "codex-rs/core/src/tools/spec_plan.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": true,
+      "project_override": {
+        "enabled": true,
+        "reminder_interval_seconds": 60,
+        "clock_source": "system",
+        "delivery_mode": "after_user_or_tool_output",
+        "sleep_tool": true
+      },
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "nonfatal_clock_read_errors": {
+      "variant": "NonfatalClockReadErrors",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Report failed clock reads to the model without failing the turn.",
+      "source_line": 1738,
+      "consumer_files": [
+        "codex-rs/core/src/session/time_reminder.rs",
+        "codex-rs/core/src/tools/handlers/current_time.rs",
+        "codex-rs/core/src/tools/handlers/sleep.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "collaboration_modes": {
+      "variant": "CollaborationModes",
+      "stage": "Removed",
+      "default": true,
+      "description": "Enable collaboration modes (Plan, Default). Kept for config backward compatibility; behavior is always collaboration-modes-enabled.",
+      "source_line": 1744,
+      "consumer_files": [
+        "codex-rs/tui/src/app/config_persistence.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "tool_call_mcp_elicitation": {
+      "variant": "ToolCallMcpElicitation",
+      "stage": "Stable",
+      "default": true,
+      "description": "Route MCP tool approval prompts through the MCP elicitation request path.",
+      "source_line": 1750,
+      "consumer_files": [
+        "codex-rs/core/src/mcp_tool_call.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "permissions/review",
+      "review_disposition": "No selected permission-policy change; runtime tool approval does not implement project-config edit approval."
+    },
+    "auth_elicitation": {
+      "variant": "AuthElicitation",
+      "stage": "Stable",
+      "default": true,
+      "description": "Prompt Codex Apps connector auth failures through MCP URL elicitations.",
+      "source_line": 1756,
+      "consumer_files": [
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/mcp_tool_call.rs",
+        "codex-rs/tui/src/daemon_startup.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "bedrock_setup_wizard": {
+      "variant": "BedrockSetupWizard",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Offer Amazon Bedrock setup during TUI sign-in onboarding.",
+      "source_line": 1762,
+      "consumer_files": [
+        "codex-rs/tui/src/lib.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "personality": {
+      "variant": "Personality",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag retained as a no-op.",
+      "source_line": 1768,
+      "consumer_files": [
+        "codex-rs/core/src/config/managed_features.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "artifact": {
+      "variant": "Artifact",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable native artifact tools.",
+      "source_line": 1774,
+      "consumer_files": [
+        "codex-rs/config/src/schema.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    },
+    "fast_mode": {
+      "variant": "FastMode",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable Fast mode selection in the TUI and request layer.",
+      "source_line": 1780,
+      "consumer_files": [
+        "codex-rs/core/src/agent/role.rs",
+        "codex-rs/core/src/config/mod.rs",
+        "codex-rs/core/src/session/mod.rs",
+        "codex-rs/core/src/session/review.rs",
+        "codex-rs/core/src/session/startup_prewarm.rs",
+        "codex-rs/core/src/session/step_activation.rs",
+        "codex-rs/core/src/session/turn_context.rs",
+        "codex-rs/tui/src/app/agents_overview.rs",
+        "codex-rs/tui/src/app_server_session.rs",
+        "codex-rs/tui/src/chatwidget/service_tiers.rs",
+        "codex-rs/tui/src/chatwidget/settings.rs",
+        "codex-rs/tui/src/keymap_setup/actions.rs",
+        "codex-rs/tui/src/service_tier_resolution.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "step_model_switching": {
+      "variant": "StepModelSwitching",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Enable explicitly requested model changes for later step captures.",
+      "source_line": 1786,
+      "consumer_files": [
+        "codex-rs/core/src/session/step_activation.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "realtime_conversation": {
+      "variant": "RealtimeConversation",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable voice conversations in the TUI.",
+      "source_line": 1792,
+      "consumer_files": [
+        "codex-rs/tui/src/bottom_pane/experimental_features_view.rs",
+        "codex-rs/tui/src/chatwidget/realtime.rs",
+        "codex-rs/tui/src/chatwidget/realtime_tests/lifecycle.rs",
+        "codex-rs/tui/src/chatwidget/session_flow.rs",
+        "codex-rs/tui/src/chatwidget/settings.rs",
+        "codex-rs/tui/src/tooltips.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "remote_control": {
+      "variant": "RemoteControl",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag for the deleted remote control feature.",
+      "source_line": 1798,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "image_detail_original": {
+      "variant": "ImageDetailOriginal",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag retained as a no-op so old wrappers can still pass `--enable image_detail_original`.",
+      "source_line": 1804,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "tui_app_server": {
+      "variant": "TuiAppServer",
+      "stage": "Removed",
+      "default": true,
+      "description": "Removed compatibility flag. The TUI now always uses the app-server implementation.",
+      "source_line": 1810,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "prevent_idle_sleep": {
+      "variant": "PreventIdleSleep",
+      "stage": "Conditional; use CLI stage",
+      "default": false,
+      "description": "Prevent idle system sleep while a turn is actively running.",
+      "source_line": 1816,
+      "consumer_files": [
+        "codex-rs/tui/src/bottom_pane/experimental_features_view.rs",
+        "codex-rs/tui/src/chatwidget/constructor.rs",
+        "codex-rs/tui/src/chatwidget/settings.rs"
+      ],
+      "cli_stage": "experimental",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "ui/observability",
+      "review_disposition": "UI/telemetry or presentation choice; no evidence that it repairs the reported communication failure."
+    },
+    "workspace_owner_usage_nudge": {
+      "variant": "WorkspaceOwnerUsageNudge",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility flag retained as a no-op now that workspace owner usage nudges are always enabled.",
+      "source_line": 1834,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "responses_websockets": {
+      "variant": "ResponsesWebsockets",
+      "stage": "Removed",
+      "default": false,
+      "description": "Legacy rollout flag for Responses API WebSocket transport experiments.",
+      "source_line": 1840,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "responses_websockets_v2": {
+      "variant": "ResponsesWebsocketsV2",
+      "stage": "Removed",
+      "default": false,
+      "description": "Legacy rollout flag for Responses API WebSocket transport v2 experiments.",
+      "source_line": 1846,
+      "consumer_files": [],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "remote_compaction_v2": {
+      "variant": "RemoteCompactionV2",
+      "stage": "Removed",
+      "default": false,
+      "description": "Removed compatibility key, still advertised to the Responses API.",
+      "source_line": 1852,
+      "consumer_files": [
+        "codex-rs/core/src/session/mod.rs"
+      ],
+      "cli_stage": "removed",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "legacy",
+      "review_disposition": "Inspect replacement/compatibility behavior; a removed flag can still be advertised or compose with other flags. Do not add it as a new control."
+    },
+    "compaction_image_budget": {
+      "variant": "CompactionImageBudget",
+      "stage": "Stable",
+      "default": true,
+      "description": "Include retained images in the remote compaction context budget.",
+      "source_line": 1858,
+      "consumer_files": [
+        "codex-rs/core/src/compact_remote_v2.rs"
+      ],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "retain_client_developer_messages": {
+      "variant": "RetainClientDeveloperMessages",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Retain client-authored developer messages across compacted context windows.",
+      "source_line": 1864,
+      "consumer_files": [
+        "codex-rs/core/src/compact_remote_v2.rs",
+        "codex-rs/core/src/guardian/review.rs",
+        "codex-rs/core/src/session/inject.rs",
+        "codex-rs/core/src/session/mod.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "time/context",
+      "review_disposition": "Consider separately; reminders, context tools and hard stopping have different consequences."
+    },
+    "use_agent_identity": {
+      "variant": "UseAgentIdentity",
+      "stage": "UnderDevelopment",
+      "default": false,
+      "description": "Use Agent Identity for ChatGPT-authenticated sessions.",
+      "source_line": 1870,
+      "consumer_files": [
+        "codex-rs/core/src/session/session.rs",
+        "codex-rs/ext/guardian-v2/src/async_scorer/startup.rs"
+      ],
+      "cli_stage": "under development",
+      "enabled": false,
+      "project_override": null,
+      "review_group": "host/platform",
+      "review_disposition": "Host owner; select transport/auth/platform changes only for a demonstrated need."
+    },
+    "workspace_dependencies": {
+      "variant": "WorkspaceDependencies",
+      "stage": "Stable",
+      "default": true,
+      "description": "Enable workspace dependency support.",
+      "source_line": 1876,
+      "consumer_files": [],
+      "cli_stage": "stable",
+      "enabled": true,
+      "project_override": null,
+      "review_group": "tools/discovery",
+      "review_disposition": "Preserve selected integrations; namespace/deferred inventory is relevant to the handed-off prompt view."
+    }
+  },
+  "project_line_provenance": [
+    {
+      "line": 19,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "enabled = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 21,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "max_depth = 99",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 22,
+      "commit": "3929a8c7f0f766640ea78372848a5752a0ae7e08",
+      "changed_at": "2026-09-19T08:04:13+00:00",
+      "summary": "Finalize main branch resumption guidance",
+      "text": "max_concurrent_threads_per_session = 99",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 27,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "multi_agent = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 28,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "goals = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 29,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "hooks = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 30,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "apps = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 31,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "plugins = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 32,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "worktrees = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 34,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "multi_agent_v2 = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 37,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "memories = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 38,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "agent_message_board = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 39,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "runtime_metrics = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 40,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "rollout_budget = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 41,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "context_management = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 44,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "shell_snapshot = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 56,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "enabled = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 57,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "reminder_interval_seconds = 60",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 58,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "clock_source = \"system\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 59,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "delivery_mode = \"after_user_or_tool_output\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 62,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "sleep_tool = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 71,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "enabled = true",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 72,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "reminder_threshold_tokens = 20000",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 74,
+      "commit": "0000000000000000000000000000000000000000",
+      "changed_at": "2026-10-03T19:53:18+00:00",
+      "summary": "Version of .codex/config.toml from .codex/config.toml",
+      "text": "use_history_notes_extension = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 79,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/codex-session-log-parsing/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 80,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 83,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/delegate-chatgpt-pro/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 84,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 87,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/gpt-prompting/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 88,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 91,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/herdr/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 92,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 95,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/herdr-messaging/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 96,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 99,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/host-estate/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 100,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 103,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/memory/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 104,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 107,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/post-mortem/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 108,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 111,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/process-correction/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 112,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 115,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/session-resume-packet/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 116,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 119,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/skill-design/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 120,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 123,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "path = \"/home/agent/.agents/skills/subagent-prompting/SKILL.md\"",
+      "runtime_version_at_change": null
+    },
+    {
+      "line": 124,
+      "commit": "2d6d9bb61c95ac2b94b3a9634c64668dfdb1ce4a",
+      "changed_at": "2026-09-14T09:00:59+00:00",
+      "summary": "Prefer repository-owned sandbox skills",
+      "text": "enabled = false",
+      "runtime_version_at_change": null
+    }
+  ],
+  "markdown_sha256": "9fbfea33899e9e9236a81aac7ea748af11a0811fbfc44fadefe0b0dd9a576632"
+}

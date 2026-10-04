@@ -3,6 +3,8 @@
 import importlib.util
 import json
 import shutil
+import subprocess
+import sys
 import tempfile
 import threading
 import unittest
@@ -63,6 +65,36 @@ class DashboardHTTPTests(unittest.TestCase):
         (dashboard.REPO / dashboard.STATE).write_text(json.dumps(state))
         self.assertEqual(self.state()["summary"], "Second reported outcome")
 
+    def test_listener_starts_to_explain_an_invalid_initial_state(self):
+        (dashboard.REPO / dashboard.STATE).write_text("{")
+        code = """import importlib.util, sys
+from pathlib import Path
+spec = importlib.util.spec_from_file_location('dashboard', sys.argv[1])
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.REPO = Path(sys.argv[2])
+sys.argv = ['dashboard', '--host', '127.0.0.1', '--port', '0']
+module.main()
+"""
+        process = subprocess.Popen(
+            [sys.executable, "-u", "-c", code, str(Path(dashboard.__file__)), str(dashboard.REPO)],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        try:
+            import select
+            self.assertTrue(select.select([process.stdout], [], [], 3)[0], "No listener startup report")
+            line = process.stdout.readline().strip()
+            self.assertTrue(line.startswith("Dashboard: http://127.0.0.1:"), line)
+            base = line.removeprefix("Dashboard: ")
+            with urlopen(base + "/docs/dashboard/index.html", timeout=3) as response:
+                self.assertEqual(response.status, 200)
+            with self.assertRaises(HTTPError) as error:
+                urlopen(base + "/" + dashboard.STATE, timeout=3)
+            self.assertEqual(error.exception.code, 503)
+        finally:
+            process.terminate()
+            process.communicate(timeout=3)
+
     def test_invalid_state_fails_instead_of_serving_success(self):
         (dashboard.REPO / dashboard.STATE).write_text("{")
         with self.request("/" + dashboard.STATE) as response:
@@ -90,7 +122,10 @@ class DashboardHTTPTests(unittest.TestCase):
             self.assertEqual(response.status, 200)
             self.assertGreater(int(response.headers["Content-Length"]), 0)
             self.assertEqual(response.read(), b"")
-        for path in ("/AGENTS.md", "/../AGENTS.md", "/%2e%2e/AGENTS.md", "/docs/", "/.git/config"):
+        for path in ("/AGENTS.md", "/AGENTS.md.commentary.md", "/docs/coordination/otel-design.md", "/docs/coordination/graphs/tasks.svg", "/docs/coordination/skill-migration-plan.md"):
+            with self.request(path) as response:
+                self.assertEqual(response.status, 200)
+        for path in ("/INSTALL.md", "/../AGENTS.md", "/%2e%2e/AGENTS.md", "/docs/", "/.git/config"):
             with self.request(path) as response:
                 self.assertEqual(response.status, 404)
         with self.request("/" + dashboard.STATE, "POST") as response:
@@ -101,6 +136,23 @@ class DashboardHTTPTests(unittest.TestCase):
         path.symlink_to(self.original_root / "README.md")
         with self.request("/docs/README.md") as response:
             self.assertEqual(response.status, 404)
+
+    def test_completion_cannot_hide_an_unfinished_prerequisite(self):
+        state = self.state()
+        goal = next(task for task in state["tasks"] if task["id"] == "workflow-done")
+        goal["status"] = "done"
+        goal["owner"] = None
+        (dashboard.REPO / dashboard.STATE).write_text(json.dumps(state))
+        with self.request("/" + dashboard.STATE) as response:
+            self.assertEqual(response.status, 503)
+
+    def test_completed_assignment_releases_owner(self):
+        state = self.state()
+        task = next(task for task in state["tasks"] if task["status"] == "done")
+        task["owner"] = "leftover-owner"
+        (dashboard.REPO / dashboard.STATE).write_text(json.dumps(state))
+        with self.request("/" + dashboard.STATE) as response:
+            self.assertEqual(response.status, 503)
 
     def test_dependency_cycle_is_rejected(self):
         state = self.state()

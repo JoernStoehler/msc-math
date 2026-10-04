@@ -5,40 +5,85 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Project work · Probing Viterbo's conjecture</title>
 <style>
-:root { font: 17px/1.5 system-ui,sans-serif; color:#21343c; background:#f4f7f6; }
-* { box-sizing:border-box; } body { margin:0; } a { color:#065a76; text-underline-offset:3px; }
-header { background:#17343e; color:#fff; padding:24px max(22px,calc((100vw - 1120px)/2)); }
-header p { color:#cbdcde; margin:6px 0; } h1 { margin:0; font-size:1.65rem; } h2 { font-size:1.2rem; margin:0 0 12px; } h3 { margin:0 0 8px; font-size:1.05rem; }
-main { max-width:1164px; margin:auto; padding:22px; } .grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:22px; }
-section { margin:0 0 24px; } .card { background:white; border:1px solid #cfdbd8; border-radius:9px; padding:17px; margin-bottom:12px; overflow-wrap:anywhere; }
-.card p { margin:7px 0; } .muted { color:#536b73; font-size:.88rem; } .warning { padding:12px 16px; background:#fff3d6; border-left:4px solid #b97a21; margin-bottom:20px; }
-.state { display:inline-block; font-size:.78rem; background:#e6efec; color:#305347; border-radius:14px; padding:2px 9px; margin-bottom:9px; }
-.running { background:#dcedf9; color:#17506c; } .blocked { background:#ffdfd3; color:#792f1f; } .parked { background:#fff0cb; color:#745514; }
-ul { padding-left:22px; } li { margin:7px 0; } code { font-size:.85em; overflow-wrap:anywhere; }
-button { font:inherit; padding:6px 12px; background:#fff; color:#17343e; border:1px solid #a9c4c9; border-radius:6px; cursor:pointer; }
-a:focus-visible,button:focus-visible { outline:3px solid #b77920; outline-offset:3px; }
-@media(max-width:760px) { .grid { grid-template-columns:1fr; gap:0; } main { padding:16px; } header { padding:20px 16px; } }
+:root { font:16px/1.5 system-ui,sans-serif; color:#21343c; background:#f4f7f6; }
+* { box-sizing:border-box; } body { margin:0; } a { color:#065a76; text-underline-offset:3px; overflow-wrap:anywhere; }
+header { background:#17343e; color:#fff; padding:16px max(18px,calc((100vw - 1080px)/2)); display:flex; align-items:center; justify-content:space-between; gap:16px; }
+h1 { margin:0; font-size:1.2rem; } header a { color:#d6edf1; white-space:nowrap; }
+h2 { font-size:1.15rem; margin:0; } h3 { margin:0; font-size:1rem; } p { margin:6px 0; }
+main { max-width:1116px; margin:auto; padding:20px 18px; } section { margin-bottom:24px; }
+.toolbar,.section-heading,.task-heading { display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.toolbar { margin-bottom:8px; } .summary { margin:8px 0; } .muted,.owner { color:#536b73; font-size:.875rem; }
+.warning { padding:10px 14px; background:#fff3d6; border-left:4px solid #b97a21; margin-bottom:12px; }
+.portfolio { margin-top:16px; } .project-node { border-top:4px solid #315c64 !important; }
+.task-card { background:#fff; border:1px solid #cfdbd8; border-radius:9px; margin:10px 0; overflow-wrap:anywhere; scroll-margin-top:16px; }
+.task-card > summary { list-style:none; padding:14px 16px; color:inherit; font-size:1rem; } .task-card > summary::-webkit-details-marker { display:none; }
+.task-heading { justify-content:flex-start; } .task-heading h3 { flex:1; min-width:0; font-size:1.075rem; }
+.toggle { margin-left:auto; color:#536b73; font-size:1.3rem; line-height:1; } .task-card[open] > summary .toggle { transform:rotate(90deg); }
+.card-meta { display:flex; gap:8px 14px; flex-wrap:wrap; margin:6px 0; } .kind { font-size:.8rem; color:#536b73; }
+.state { display:inline-block; font-size:.8rem; font-weight:600; background:#e6efec; color:#305347; border-radius:12px; padding:2px 9px; white-space:nowrap; }
+.running { background:#dcedf9; color:#17506c; } .blocked,.open { background:#ffdfd3; color:#792f1f; } .parked { background:#fff0cb; color:#745514; }
+.blocker,.gap { padding-left:10px; border-left:3px solid #b97a21; }
+.card-body { padding:0 16px 14px; border-top:1px solid #e1e9e7; } .card-body > p:first-child { margin-top:12px; }
+.prerequisites { list-style:none; margin:10px 0 0; padding-left:14px; border-left:2px solid #b8ceca; }
+.prerequisites > li { margin:0; } .reference { padding:10px 12px; border:1px solid #d5dfdd; background:#fff; border-radius:6px; margin:8px 0; }
+.card-hint { color:#536b73; font-size:.875rem; margin-top:8px; } .task-card:hover > summary { background:#f8fbfa; border-radius:9px; }
+.task-card:target { outline:3px solid #b77920; outline-offset:2px; }
+.grid { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:28px; margin-top:28px; }
+.decision,.resource { padding:12px 0; border-bottom:1px solid #d5dfdd; overflow-wrap:anywhere; }
+details { margin-top:6px; } summary { cursor:pointer; color:#315662; } details > summary { font-size:.95rem; }
+.archive { border:1px solid #cfdbd8; border-radius:8px; padding:12px 14px; margin:12px 0; }
+.archive > summary { font-weight:600; } ul { padding-left:20px; margin:8px 0; } li { margin:6px 0; }
+.links { display:flex; gap:8px 16px; flex-wrap:wrap; list-style:none; padding:0; }
+button { font:inherit; padding:7px 12px; background:#fff; color:#17343e; border:1px solid #a9c4c9; border-radius:6px; cursor:pointer; }
+a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #b77920; outline-offset:3px; }
+[hidden] { display:none !important; }
+@media(max-width:700px) {
+  .grid { grid-template-columns:1fr; gap:0; } header { align-items:flex-start; flex-wrap:wrap; } h1 { font-size:1.1rem; } main { padding:16px 12px; }
+  .task-card > summary { padding:12px; } .card-body { padding:0 12px 12px; } .prerequisites { padding-left:8px; } .card-meta { gap:5px 10px; }
+  /* Cap nesting indentation so deeply expanded routes retain readable width. */
+  .prerequisites .card-body { padding-left:0; padding-right:0; }
+  .prerequisites .card-body > p,.prerequisites .card-body > details { padding-left:12px; padding-right:12px; }
+  .prerequisites .prerequisites { padding-left:0; border-left:0; }
+}
 </style>
 </head>
 <body>
-<header><h1>Probing Viterbo's conjecture</h1><p>Work, decisions and resources</p></header>
+<header><h1>Probing Viterbo's conjecture · Project work</h1><a href="thesis.html">Thesis brief</a></header>
 <main>
 <div id="connection" class="warning" role="status" aria-live="polite">Loading reported state…</div>
-<section><h2 id="summary">Current work</h2><p id="scope" class="muted"></p><p class="muted" id="observation"></p><button id="refresh" type="button">Refresh now</button></section>
+<section aria-labelledby="goal-title">
+<div class="toolbar"><h2 id="goal-title">Goal and dependencies</h2><button id="refresh" type="button">Refresh now</button></div>
+<p id="summary" class="summary"></p>
+<p id="observation" class="muted"></p>
+<p class="muted">Expand a node for its prerequisites and evidence. Shared prerequisites link to the same node. Status and ownership come from reported state.</p>
+<div id="portfolio" class="portfolio"></div>
+<p class="muted"><a href="../coordination/graphs/tasks.svg">Exported dependency graph</a> · <a href="../coordination/current.json">Canonical state</a></p>
+</section>
+<details id="other-work" class="archive"><summary id="other-title">Other reported work</summary><div id="other-tasks"></div></details>
+<details id="parallel-section" class="archive"><summary id="parallel-title">Independent work opportunities</summary><p class="muted">These are candidate packages for separate worktrees if selected. Independence does not authorize execution.</p><ul id="parallel-routes"></ul></details>
 <div class="grid">
-<div><section aria-labelledby="work-title"><h2 id="work-title">Selected work</h2><div id="tasks"></div></section>
-<section aria-labelledby="decisions-title"><h2 id="decisions-title">Decisions and waiting work</h2><div id="decisions"></div></section></div>
-<div><section aria-labelledby="resources-title"><h2 id="resources-title">Resources</h2><div id="resources"></div></section>
-<section aria-labelledby="links-title"><h2 id="links-title">Where to look</h2><ul id="links"></ul></section>
-<section aria-labelledby="changes-title"><h2 id="changes-title">Recent changes</h2><ul id="changes"></ul><p class="muted">A shared recent-change list; this page does not track individual viewing history.</p></section>
-<section><h2>Scientific brief</h2><p><a href="thesis.html">Read the thesis overview</a></p><p id="scientific-status" class="muted">The scientific snapshot dates from 25 Sep. Source/PDF reconciliation is still open.</p></section></div>
+
+<div>
+<section aria-labelledby="decisions-title"><h2 id="decisions-title">Unresolved decisions</h2><div id="decisions"></div></section>
 </div>
-<noscript><p>This view needs JavaScript to read the shared state. Open <a href="../coordination/current.json">the state file</a> or <a href="../coordination/README.md">coordination guide</a>.</p></noscript>
+<div>
+<section aria-labelledby="resources-title"><h2 id="resources-title">Resources</h2><div id="resources"></div></section>
+<section aria-labelledby="links-title"><h2 id="links-title">Sources</h2><ul id="links" class="links"></ul><details><summary>Scope and scientific freshness</summary><p id="scope" class="muted"></p><p id="scientific-status" class="muted">Scientific freshness is unknown.</p></details></section>
+</div>
+</div>
+<details id="resolved-section" class="archive"><summary id="resolved-title">Resolved decisions</summary><div id="resolved"></div></details>
+<details class="archive"><summary>Recent history</summary><ul id="changes"></ul></details>
+<noscript><p>Open <a href="../coordination/graphs/tasks.svg">the goal graph</a>, <a href="../coordination/current.json">the state file</a> or <a href="../coordination/README.md">coordination guide</a>.</p></noscript>
 </main>
+<script src="source-status.js"></script>
 <script>
 (() => {
   const get = id => document.getElementById(id);
+  const finished = status => ['done', 'dropped', 'completed', 'resolved', 'cancelled', 'canceled'].includes(status);
   let pending = false;
+  let renderedVersion = null;
+  const openNodes = new Set();
+  const closedNodes = new Set();
   function node(tag, text, cls) {
     const element = document.createElement(tag);
     if (text !== undefined) element.textContent = text;
@@ -48,74 +93,194 @@ a:focus-visible,button:focus-visible { outline:3px solid #b77920; outline-offset
   function link(path, label) {
     const anchor = node('a', label || path);
     // Only repository-relative source paths from the checked state are links.
-    if (!path.startsWith('/') && !path.includes('..') && !path.includes(':')) anchor.href = '/' + path;
+    if (typeof path === 'string' && path && !path.startsWith('/') && !path.includes('..') && !path.includes(':') && !path.includes('\\')) anchor.href = '../../' + path;
     return anchor;
   }
   function sources(paths) {
     const p = node('p', undefined, 'muted');
-    paths.forEach((path, index) => { if (index) p.append(' · '); p.append(link(path)); });
+    (paths || []).forEach((path, index) => { if (index) p.append(' · '); p.append(link(path)); });
     return p;
   }
-  function card(title, status) {
-    const element = node('article', undefined, 'card');
-    if (status) element.append(node('span', status, 'state ' + status));
-    element.append(node('h3', title));
+  function detail(label, ...children) {
+    const element = node('details');
+    element.append(node('summary', label), ...children);
     return element;
   }
+  function brief(text) {
+    return typeof text === 'string' ? text.split(/(?<=[.!?])\s+/)[0] : '';
+  }
+  function taskAnchor(id) { return 'task-' + encodeURIComponent(id); }
+  function taskCard(task, byId, seen, root = false, expanded = false) {
+    if (seen.has(task.id)) {
+      const row = node('p', undefined, 'reference');
+      const anchor = node('a', task.title);
+      anchor.href = '#' + taskAnchor(task.id);
+      row.append(anchor, ' · ' + task.status + ' · shared prerequisite');
+      return row;
+    }
+    seen.add(task.id);
+    const card = node('details', undefined, 'task-card' + (root ? ' project-node' : ''));
+    card.id = taskAnchor(task.id);
+    card.dataset.taskId = task.id;
+    card.open = openNodes.has(task.id) || ((root || expanded) && !closedNodes.has(task.id));
+    const summary = node('summary');
+    const heading = node('div', undefined, 'task-heading');
+    const status = node('span', task.status, 'state');
+    if (['running', 'blocked', 'parked', 'open'].includes(task.status)) status.classList.add(task.status);
+    const toggle = node('span', '›', 'toggle');
+    toggle.setAttribute('aria-hidden', 'true');
+    heading.append(node('h3', task.title), status, toggle);
+    summary.append(heading);
+    const metadata = node('div', undefined, 'card-meta');
+    const ownerLabel = task.owner && /^[a-f0-9-]{36}$/i.test(task.owner) ? task.owner.slice(0, 8) + '…' : task.owner;
+    const owner = node('span', 'Owner: ' + (ownerLabel || 'unassigned'), 'owner');
+    if (task.owner) owner.title = task.owner;
+    metadata.append(owner);
+    if (task.kind && task.kind !== 'task') metadata.append(node('span', task.kind, 'kind'));
+    if (task.selection && task.selection !== 'selected') metadata.append(node('span', task.selection, 'kind'));
+    if (task.parallel_ready) metadata.append(node('span', 'Independent if selected', 'kind'));
+    summary.append(metadata);
+    if (task.authorization && (root || task.selection === 'unselected' || task.selection === 'parked')) summary.append(node('p', 'Scope: ' + task.authorization, 'muted'));
+    const dependencies = (task.depends_on || []).map(id => byId.get(id)).filter(Boolean);
+    const remaining = dependencies.filter(dep => dep.status !== 'done');
+    if (task.blocker && !expanded) summary.append(node('p', 'Blocked: ' + (root && remaining.length ? remaining.length + ' unfinished completion prerequisite' + (remaining.length === 1 ? '.' : 's.') : brief(task.blocker)), 'blocker'));
+    const route = task.next_step || task.plan_gap;
+    if (route && !expanded) summary.append(node('p', (task.next_step ? 'Next step: ' : 'Route gap: ') + brief(route), 'gap'));
+    else if (!finished(task.status)) summary.append(node('p', remaining.length ? 'Next: ' + remaining.length + ' unfinished prerequisite' + (remaining.length === 1 ? '' : 's') + '.' : 'Next step is not recorded.', 'muted'));
+    summary.append(node('div', dependencies.length ? dependencies.length + ' prerequisite' + (dependencies.length === 1 ? '' : 's') + ' · ' + remaining.length + ' unfinished · expand for route and evidence' : 'Expand for full outcome and evidence', 'card-hint'));
+    const body = node('div', undefined, 'card-body');
+    const evidence = [node('p', 'Outcome: ' + task.outcome)];
+    if (task.authorization) evidence.push(node('p', 'Scope: ' + task.authorization, 'muted'));
+    if (task.blocker) evidence.push(node('p', 'Blocker: ' + task.blocker, 'blocker'));
+    if (task.next_step) evidence.push(node('p', 'Next step: ' + task.next_step));
+    if (task.plan_gap) evidence.push(node('p', 'Route gap: ' + task.plan_gap, 'gap'));
+    if (task.owner && ownerLabel !== task.owner) evidence.push(node('p', 'Owner: ' + task.owner, 'muted'));
+    evidence.push(node('p', 'Observed: ' + task.updated_at, 'muted'), sources(task.sources));
+    if (root || expanded) {
+      const evidenceDetail = detail('Full outcome, blockers and evidence', ...evidence);
+      evidenceDetail.dataset.detailKey = task.id + ':evidence';
+      body.append(evidenceDetail);
+    } else body.append(...evidence);
+    if (dependencies.length) {
+      body.append(node('p', 'Prerequisites', 'muted'));
+      const list = node('ul', undefined, 'prerequisites');
+      // Unfinished paths stay ahead of completed evidence within each branch.
+      dependencies.sort((a, b) => Number(finished(a.status)) - Number(finished(b.status)));
+      dependencies.forEach(dep => { const li = node('li'); li.append(taskCard(dep, byId, seen, false, (root || expanded) && dependencies.length === 1)); list.append(li); });
+      body.append(list);
+    }
+    card.append(summary, body);
+    return card;
+  }
+  function renderPortfolio(tasks) {
+    const byId = new Map(tasks.map(task => [task.id, task]));
+    const seen = new Set();
+    const goal = byId.get('msc-math-done');
+    get('goal-title').textContent = 'msc-math · Project completion';
+    if (goal) get('portfolio').replaceChildren(taskCard(goal, byId, seen, true));
+    else {
+      const milestones = tasks.filter(task => task.kind === 'milestone');
+      get('portfolio').replaceChildren(node('p', 'The whole-project completion root has not yet been recorded. Reported subprojects follow.', 'warning'), ...milestones.map(task => taskCard(task, byId, seen)));
+    }
+    const other = tasks.filter(task => !seen.has(task.id));
+    get('other-title').textContent = 'Other reported work and candidate routes (' + other.length + ')';
+    get('other-work').hidden = !other.length;
+    get('other-tasks').replaceChildren(...other.map(task => taskCard(task, byId, seen)));
+    const opportunities = tasks.filter(task => task.parallel_ready && !finished(task.status));
+    get('parallel-section').hidden = !opportunities.length;
+    get('parallel-title').textContent = 'Independent work opportunities (' + opportunities.length + ')';
+    get('parallel-routes').replaceChildren(...opportunities.map(task => {
+      const li = node('li');
+      const anchor = node('a', task.title);
+      anchor.href = '#' + taskAnchor(task.id);
+      li.append(anchor, ' · ' + (task.selection || 'selected'));
+      if (task.next_step || task.plan_gap) li.append(node('p', brief(task.next_step || task.plan_gap), 'muted'));
+      return li;
+    }));
+  }
+  function decisionRow(decision) {
+    const row = node('article', undefined, 'decision');
+    const heading = node('div', undefined, 'task-heading');
+    const status = node('span', decision.status, 'state');
+    if (['open', 'blocked', 'parked'].includes(decision.status)) status.classList.add(decision.status);
+    heading.append(status, node('h3', decision.question));
+    row.append(heading);
+    if (!finished(decision.status)) row.append(node('p', decision.consequence, 'muted'));
+    row.append(detail('Recommendation and sources', node('p', decision.recommendation), ...(finished(decision.status) ? [node('p', decision.consequence, 'muted')] : []), sources(decision.sources)));
+    return row;
+  }
   function render(state) {
+    const tasks = state.tasks || [];
+    // Preserve the DOM, keyboard focus and disclosure state when nothing changed.
+    const version = JSON.stringify(state);
+    const changed = version !== renderedVersion;
+    if (changed) {
+      const focusedTask = document.activeElement.closest('.task-card')?.dataset.taskId;
+      const expandedEvidence = new Set(Array.from(document.querySelectorAll('[data-detail-key][open]')).map(element => element.dataset.detailKey));
+      document.querySelectorAll('.task-card').forEach(card => {
+        if (card.open) { openNodes.add(card.dataset.taskId); closedNodes.delete(card.dataset.taskId); }
+        else { closedNodes.add(card.dataset.taskId); openNodes.delete(card.dataset.taskId); }
+      });
+      renderPortfolio(tasks);
+      document.querySelectorAll('[data-detail-key]').forEach(element => { element.open = expandedEvidence.has(element.dataset.detailKey); });
+      renderedVersion = version;
+      if (focusedTask) get(taskAnchor(focusedTask))?.querySelector('summary')?.focus({preventScroll:true});
+    }
     get('summary').textContent = state.summary;
     get('scope').textContent = state.scope;
-    const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(state.updated_at)) / 60000));
-    get('observation').textContent = 'Reported ' + state.updated_at + ' · ' + minutes + ' min ago. Page checks every 15 seconds; reports are written by agents.';
-    get('connection').hidden = minutes < 30;
-    get('connection').textContent = 'Reports are older than 30 minutes. Owners and resources may have changed; this view does not monitor process liveness.';
-    const tasks = state.tasks.map(task => {
-      const c = card(task.title, task.status);
-      c.append(node('p', task.outcome));
-      c.append(node('p', 'Owner: ' + (task.owner || 'unassigned'), 'muted'));
-      if (task.blocker) c.append(node('p', 'Waiting for: ' + task.blocker));
-      if (task.depends_on.length) c.append(node('p', 'Depends on: ' + task.depends_on.join(', '), 'muted'));
-      c.append(node('p', 'Observed: ' + task.updated_at, 'muted'), sources(task.sources));
-      return c;
-    });
-    get('tasks').replaceChildren(...(tasks.length ? tasks : [node('p', 'No selected assignments are reported. The detailed thesis backlog remains available.')]));
-    get('decisions').replaceChildren(...state.decisions.map(d => {
-      const c = card(d.question, d.status);
-      c.append(node('p', d.recommendation), node('p', d.consequence, 'muted'), sources(d.sources));
-      return c;
+    const timestamp = Date.parse(state.updated_at);
+    const minutes = Math.max(0, Math.floor((Date.now() - timestamp) / 60000));
+    get('observation').textContent = 'Reported ' + state.updated_at + (Number.isFinite(minutes) ? ' · ' + minutes + ' min ago' : '') + ' · refresh 15s · owner reports, not process liveness';
+    get('connection').hidden = Number.isFinite(minutes) && minutes < 30;
+    get('connection').textContent = Number.isFinite(minutes) ? 'Reports are older than 30 minutes. Owners and resources may have changed.' : 'Report timestamp is invalid; freshness is unknown.';
+    if (!changed) return;
+    const decisions = state.decisions || [];
+    const unresolved = decisions.filter(decision => !finished(decision.status));
+    const resolved = decisions.filter(decision => finished(decision.status));
+    get('decisions').replaceChildren(...(unresolved.length ? unresolved.map(decisionRow) : [node('p', 'No unresolved decisions reported.', 'muted')]));
+    get('resolved').replaceChildren(...resolved.map(decisionRow));
+    get('resolved-title').textContent = 'Resolved decisions (' + resolved.length + ')';
+    get('resolved-section').hidden = !resolved.length;
+    get('resources').replaceChildren(...(state.resources || []).map(resource => {
+      const row = node('article', undefined, 'resource');
+      row.append(node('h3', resource.label), node('p', resource.value === null ? 'Unknown' : resource.value, 'muted'));
+      row.append(detail('Basis and observation', node('p', resource.basis, 'muted'), node('p', resource.observed_at ? 'Observed: ' + resource.observed_at : 'Observation time unknown.', 'muted')));
+      return row;
     }));
-    get('resources').replaceChildren(...state.resources.map(r => {
-      const c = card(r.label);
-      c.append(node('p', r.value === null ? 'Unknown' : r.value), node('p', r.basis, 'muted'));
-      if (r.observed_at) c.append(node('p', 'Observed: ' + r.observed_at, 'muted'));
-      return c;
-    }));
-    get('links').replaceChildren(...state.links.map(l => { const li = node('li'); li.append(link(l.path,l.label)); return li; }));
-    get('changes').replaceChildren(...state.changes.map(c => node('li', c.text + ' (' + c.at + ')')));
+    get('links').replaceChildren(...(state.links || []).map(item => { const li = node('li'); li.append(link(item.path, item.label)); return li; }));
+    get('changes').replaceChildren(...(state.changes || []).map(change => node('li', change.text + ' (' + change.at + ')')));
   }
   async function refresh() {
     if (pending) return;
     pending = true;
     try {
-      if (location.protocol === 'file:') throw new Error('Serve this page with python3 scripts/serve-project-dashboard.py, then open http://127.0.0.1:8765/.');
+      if (location.protocol === 'file:') throw new Error('Open this dashboard through the project file viewer; see docs/dashboard/README.md.');
       const response = await fetch('../coordination/current.json', {cache:'no-store'});
       if (!response.ok) throw new Error('Shared state is unavailable or invalid.');
       render(await response.json());
     } catch (error) {
       get('connection').hidden = false;
-      get('connection').textContent = 'State refresh failed. Any displayed values are the last successful report. ' + error.message;
+      get('connection').textContent = 'Refresh failed; displayed values are the last successful report. ' + error.message;
     }
     try {
-      const response = await fetch('/_dashboard/source-status', {cache:'no-store'});
-      if (!response.ok) throw new Error();
-      const status = await response.json();
-      get('scientific-status').textContent = !status.known ? 'Scientific source freshness is unknown.' :
-        status.note + (status.changed.length ? ' Changed cited sources: ' + status.changed.join(', ') + '.' : ' No cited source hash changed; this does not establish scientific adequacy.');
+      const status = await dashboardSourceStatus();
+      get('scientific-status').textContent = !status.known ? 'Scientific source freshness is unknown.' : status.note + (status.changed.length ? ' Changed cited sources: ' + status.changed.join(', ') + '.' : ' No cited source hash changed; this does not establish scientific adequacy.');
     } catch {
-      get('scientific-status').textContent = 'Scientific source freshness is unknown; the retained brief remains a dated snapshot.';
+      get('scientific-status').textContent = 'Scientific source freshness is unknown; the brief remains a dated snapshot.';
     }
     pending = false;
   }
+  document.addEventListener('click', event => {
+    const anchor = event.target.closest('a');
+    if (!anchor || !anchor.hash.startsWith('#task-')) return;
+    const target = get(anchor.hash.slice(1));
+    if (!target) return;
+    event.preventDefault();
+    for (let parent = target; parent; parent = parent.parentElement) if (parent.tagName === 'DETAILS') parent.open = true;
+    target.scrollIntoView({block:'start'});
+    target.querySelector('summary')?.focus({preventScroll:true});
+    history.replaceState(null, '', anchor.hash);
+  });
   get('refresh').addEventListener('click', refresh);
   refresh();
   setInterval(refresh, 15000);

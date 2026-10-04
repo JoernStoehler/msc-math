@@ -1,0 +1,249 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>msc-math goal map</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#faf9f6;color:#25312d;font:16px/1.5 system-ui,sans-serif}
+header{padding:24px 28px 12px;max-width:1200px}h1{font-size:25px;margin:0 0 8px}p{margin:8px 0}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;padding:12px 24px 24px}
+.map{min-width:0;overflow:auto;background:white;border:1px solid #d9ded8;border-radius:10px;max-height:80vh;padding:12px}
+.map svg{width:auto;height:auto;min-width:1497px;max-width:none}.node{cursor:pointer}.node:focus polygon,.node:focus path{stroke:#131e19;stroke-width:3}
+aside{background:#fff;border:1px solid #d9ded8;border-radius:10px;padding:18px;align-self:start;overflow-wrap:anywhere}
+h2{font-size:18px;margin:0 0 8px}.badge{font-weight:600;color:#805e24;font-size:14px}.legend{font-size:14px}
+button{font:inherit;padding:5px 10px;border:1px solid #aab4ac;border-radius:6px;background:white;cursor:pointer}
+li{margin-bottom:5px}.subdued{opacity:.12}@media(max-width:850px){.layout{grid-template-columns:1fr;padding:10px}header{padding:18px}.map{max-height:65vh}aside{width:100%}}
+</style><header><h1>msc-math: goals, necessity claims and candidate paths</h1><p>Provisional model for discussion. No repair approach or stopping threshold selected.</p>
+<p class="legend"><b>Solid:</b> X is necessary for Y under the stated definition (Y implies X).<br>
+<b>Dashed:</b> X might help reach Y; necessity and efficacy are unestablished.<br>
+<b>Dotted:</b> an unresolved choice changes the endpoint's meaning.</p>
+<p>Actual overhead, its baseline and acceptable residual cost are unknown. The numerical examples in discussion are not measurements or agreed targets.</p><button id="filter" aria-pressed="false">Emphasize necessity claims</button>
+<p>Click a node for its status, interpretation and source pointers. This is a goal model, not a launch plan.</p></header>
+<main class="layout"><section class="map" aria-label="Provisional goal graph"><svg width="1497pt" height="590pt"
+ viewBox="0.00 0.00 1497.15 589.97" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(14.4 575.57)">
+<title>goals</title>
+<!-- project -->
+<g id="goal&#45;project" class="node">
+<title>project</title>
+<g id="a_goal&#45;project"><a xlink:title="Existing completion model; attainment not established">
+<path fill="#e8efe7" stroke="#47624c" d="M538.56,-520.57C538.56,-520.57 538.56,-529.48 538.56,-529.48 538.56,-533.93 534.31,-539.75 530.07,-541.1 530.07,-541.1 487.85,-554.59 487.85,-554.59 483.6,-555.94 474.9,-557.3 470.45,-557.3 470.45,-557.3 404.55,-557.3 404.55,-557.3 400.1,-557.3 391.4,-555.94 387.15,-554.59 387.15,-554.59 344.93,-541.1 344.93,-541.1 340.69,-539.75 336.44,-533.93 336.44,-529.48 336.44,-529.48 336.44,-520.57 336.44,-520.57 336.44,-516.11 340.69,-510.3 344.93,-508.94 344.93,-508.94 387.15,-495.46 387.15,-495.46 391.4,-494.1 400.1,-492.75 404.55,-492.75 404.55,-492.75 470.45,-492.75 470.45,-492.75 474.9,-492.75 483.6,-494.1 487.85,-495.46 487.85,-495.46 530.07,-508.94 530.07,-508.94 534.31,-510.3 538.56,-516.11 538.56,-520.57"/>
+<path fill="none" stroke="#47624c" d="M542.56,-519.59C542.56,-519.59 542.56,-530.46 542.56,-530.46 542.56,-535.89 537.38,-542.98 532.2,-544.63 532.2,-544.63 490.33,-558.01 490.33,-558.01 485.16,-559.66 474.54,-561.31 469.11,-561.31 469.11,-561.31 405.89,-561.31 405.89,-561.31 400.46,-561.31 389.84,-559.66 384.67,-558.01 384.67,-558.01 342.8,-544.63 342.8,-544.63 337.62,-542.98 332.44,-535.89 332.44,-530.46 332.44,-530.46 332.44,-519.59 332.44,-519.59 332.44,-514.15 337.62,-507.06 342.8,-505.41 342.8,-505.41 384.67,-492.04 384.67,-492.04 389.84,-490.38 400.46,-488.73 405.89,-488.73 405.89,-488.73 469.11,-488.73 469.11,-488.73 474.54,-488.73 485.16,-490.38 490.33,-492.04 490.33,-492.04 532.2,-505.41 532.2,-505.41 537.38,-507.06 542.56,-514.15 542.56,-519.59"/>
+<text text-anchor="middle" x="437.5" y="-528.62" font-family="sans-serif" font-size="13.00">msc&#45;math</text>
+<text text-anchor="middle" x="437.5" y="-514.62" font-family="sans-serif" font-size="13.00">PROJECT SUCCESS</text>
+</a>
+</g>
+</g>
+<!-- science -->
+<g id="goal&#45;science" class="node">
+<title>science</title>
+<g id="a_goal&#45;science"><a xlink:title="Requirement in existing model; not a readiness verdict">
+<path fill="#edf2f8" stroke="#52718b" d="M189,-407.73C189,-407.73 12,-407.73 12,-407.73 6,-407.73 0,-401.73 0,-395.73 0,-395.73 0,-377.73 0,-377.73 0,-371.73 6,-365.73 12,-365.73 12,-365.73 189,-365.73 189,-365.73 195,-365.73 201,-371.73 201,-377.73 201,-377.73 201,-395.73 201,-395.73 201,-401.73 195,-407.73 189,-407.73"/>
+<text text-anchor="middle" x="100.5" y="-390.33" font-family="sans-serif" font-size="13.00">Supported, readable thesis</text>
+<text text-anchor="middle" x="100.5" y="-376.33" font-family="sans-serif" font-size="13.00">meets the required judgment</text>
+</a>
+</g>
+</g>
+<!-- science&#45;&gt;project -->
+<g id="edge&#45;0" class="edge">
+<title>science&#45;&gt;project</title>
+<path fill="none" stroke="#344f66" d="M150.23,-407.84C206.54,-430.62 298.87,-467.96 363.62,-494.14"/>
+<polygon fill="#344f66" stroke="#344f66" points="362.91,-496.31 369.79,-496.64 364.62,-492.09 362.91,-496.31"/>
+<text text-anchor="middle" x="325" y="-458.88" font-family="sans-serif" font-size="10.00">required under</text>
+<text text-anchor="middle" x="325" y="-447.88" font-family="sans-serif" font-size="10.00">this definition</text>
+</g>
+<!-- evidence -->
+<g id="goal&#45;evidence" class="node">
+<title>evidence</title>
+<g id="a_goal&#45;evidence"><a xlink:title="Requirement in existing model; attainment not checked here">
+<path fill="#edf2f8" stroke="#52718b" d="M419,-407.73C419,-407.73 238,-407.73 238,-407.73 232,-407.73 226,-401.73 226,-395.73 226,-395.73 226,-377.73 226,-377.73 226,-371.73 232,-365.73 238,-365.73 238,-365.73 419,-365.73 419,-365.73 425,-365.73 431,-371.73 431,-377.73 431,-377.73 431,-395.73 431,-395.73 431,-401.73 425,-407.73 419,-407.73"/>
+<text text-anchor="middle" x="328.5" y="-390.33" font-family="sans-serif" font-size="13.00">Code, evidence and</text>
+<text text-anchor="middle" x="328.5" y="-376.33" font-family="sans-serif" font-size="13.00">reproduction match the claims</text>
+</a>
+</g>
+</g>
+<!-- evidence&#45;&gt;project -->
+<g id="edge&#45;1" class="edge">
+<title>evidence&#45;&gt;project</title>
+<path fill="none" stroke="#344f66" d="M344.58,-407.84C360.45,-427.68 385.16,-458.57 405.11,-483.52"/>
+<polygon fill="#344f66" stroke="#344f66" points="403.45,-485.09 409.29,-488.74 407,-482.25 403.45,-485.09"/>
+<text text-anchor="middle" x="426" y="-458.88" font-family="sans-serif" font-size="10.00">required under</text>
+<text text-anchor="middle" x="426" y="-447.88" font-family="sans-serif" font-size="10.00">this definition</text>
+</g>
+<!-- delivery -->
+<g id="goal&#45;delivery" class="node">
+<title>delivery</title>
+<g id="a_goal&#45;delivery"><a xlink:title="Conditional on actual obligations; current administrative state unknown">
+<path fill="#edf2f8" stroke="#52718b" d="M627,-407.73C627,-407.73 468,-407.73 468,-407.73 462,-407.73 456,-401.73 456,-395.73 456,-395.73 456,-377.73 456,-377.73 456,-371.73 462,-365.73 468,-365.73 468,-365.73 627,-365.73 627,-365.73 633,-365.73 639,-371.73 639,-377.73 639,-377.73 639,-395.73 639,-395.73 639,-401.73 633,-407.73 627,-407.73"/>
+<text text-anchor="middle" x="547.5" y="-390.33" font-family="sans-serif" font-size="13.00">Required delivery / archive</text>
+<text text-anchor="middle" x="547.5" y="-376.33" font-family="sans-serif" font-size="13.00">obligations discharged</text>
+</a>
+</g>
+</g>
+<!-- delivery&#45;&gt;project -->
+<g id="edge&#45;2" class="edge">
+<title>delivery&#45;&gt;project</title>
+<path fill="none" stroke="#344f66" d="M531.27,-407.84C515.26,-427.68 490.32,-458.57 470.19,-483.52"/>
+<polygon fill="#344f66" stroke="#344f66" points="468.29,-482.26 465.97,-488.74 471.83,-485.11 468.29,-482.26"/>
+<text text-anchor="middle" x="539.5" y="-458.88" font-family="sans-serif" font-size="10.00">actual obligations</text>
+<text text-anchor="middle" x="539.5" y="-447.88" font-family="sans-serif" font-size="10.00">required</text>
+</g>
+<!-- meta -->
+<g id="goal&#45;meta" class="node">
+<title>meta</title>
+<g id="a_goal&#45;meta"><a xlink:title="Jörn&#39;s proposed endpoint; success and session scope unresolved">
+<path fill="#e8efe7" stroke="#47624c" d="M1009.35,-382.27C1009.35,-382.27 1009.35,-391.19 1009.35,-391.19 1009.35,-395.64 1004.97,-400.93 1000.59,-401.75 1000.59,-401.75 918.03,-417.35 918.03,-417.35 913.65,-418.18 904.81,-419.01 900.36,-419.01 900.36,-419.01 776.64,-419.01 776.64,-419.01 772.19,-419.01 763.35,-418.18 758.97,-417.35 758.97,-417.35 676.41,-401.75 676.41,-401.75 672.03,-400.93 667.65,-395.64 667.65,-391.19 667.65,-391.19 667.65,-382.27 667.65,-382.27 667.65,-377.82 672.03,-372.54 676.41,-371.71 676.41,-371.71 758.97,-356.11 758.97,-356.11 763.35,-355.28 772.19,-354.46 776.64,-354.46 776.64,-354.46 900.36,-354.46 900.36,-354.46 904.81,-354.46 913.65,-355.28 918.03,-356.11 918.03,-356.11 1000.59,-371.71 1000.59,-371.71 1004.97,-372.54 1009.35,-377.82 1009.35,-382.27"/>
+<path fill="none" stroke="#47624c" d="M1013.35,-381.16C1013.35,-381.16 1013.35,-392.3 1013.35,-392.3 1013.35,-397.86 1007.88,-404.46 1002.41,-405.5 1002.41,-405.5 920.58,-420.96 920.58,-420.96 915.11,-421.99 904.08,-423.02 898.51,-423.02 898.51,-423.02 778.49,-423.02 778.49,-423.02 772.92,-423.02 761.89,-421.99 756.42,-420.96 756.42,-420.96 674.59,-405.5 674.59,-405.5 669.12,-404.46 663.65,-397.86 663.65,-392.3 663.65,-392.3 663.65,-381.16 663.65,-381.16 663.65,-375.6 669.12,-369 674.59,-367.97 674.59,-367.97 756.42,-352.51 756.42,-352.51 761.89,-351.47 772.92,-350.44 778.49,-350.44 778.49,-350.44 898.51,-350.44 898.51,-350.44 904.08,-350.44 915.11,-351.47 920.58,-352.51 920.58,-352.51 1002.41,-367.97 1002.41,-367.97 1007.88,-369 1013.35,-375.6 1013.35,-381.16"/>
+<text text-anchor="middle" x="838.5" y="-390.33" font-family="sans-serif" font-size="13.00">Proposed endpoint for this effort:</text>
+<text text-anchor="middle" x="838.5" y="-376.33" font-family="sans-serif" font-size="13.00">problem&#45;fixing is workable</text>
+</a>
+</g>
+</g>
+<!-- meta&#45;&gt;project -->
+<g id="edge&#45;3" class="edge">
+<title>meta&#45;&gt;project</title>
+<path fill="none" stroke="#8a7c98" stroke-dasharray="5,2" d="M746.25,-419.08C677.36,-442.5 584.12,-474.19 518.18,-496.6"/>
+<polygon fill="#8a7c98" stroke="#8a7c98" points="517.31,-494.49 511.89,-498.74 518.77,-498.8 517.31,-494.49"/>
+<text text-anchor="middle" x="717.5" y="-458.88" font-family="sans-serif" font-size="10.00">may enable progress;</text>
+<text text-anchor="middle" x="717.5" y="-447.88" font-family="sans-serif" font-size="10.00">necessity unestablished</text>
+</g>
+<!-- criterion -->
+<g id="goal&#45;criterion" class="node">
+<title>criterion</title>
+<g id="a_goal&#45;criterion"><a xlink:title="Unresolved consequential choice">
+<path fill="#fff3ce" stroke="#a27b29" d="M571.4,-254.85C571.4,-254.85 510.6,-279.82 510.6,-279.82 505.05,-282.1 493.5,-284.38 487.5,-284.38 487.5,-284.38 345.5,-284.38 345.5,-284.38 339.5,-284.38 327.95,-282.1 322.4,-279.82 322.4,-279.82 261.6,-254.85 261.6,-254.85 256.05,-252.57 256.05,-248.01 261.6,-245.73 261.6,-245.73 322.4,-220.76 322.4,-220.76 327.95,-218.49 339.5,-216.21 345.5,-216.21 345.5,-216.21 487.5,-216.21 487.5,-216.21 493.5,-216.21 505.05,-218.49 510.6,-220.76 510.6,-220.76 571.4,-245.73 571.4,-245.73 576.95,-248.01 576.95,-252.57 571.4,-254.85"/>
+<text text-anchor="middle" x="416.5" y="-253.89" font-family="sans-serif" font-size="13.00">OPEN: what counts as success</text>
+<text text-anchor="middle" x="416.5" y="-239.89" font-family="sans-serif" font-size="13.00">and what justifies stopping?</text>
+</a>
+</g>
+</g>
+<!-- criterion&#45;&gt;meta -->
+<g id="edge&#45;6" class="edge">
+<title>criterion&#45;&gt;meta</title>
+<path fill="none" stroke="#a27b29" stroke-dasharray="1,5" d="M508.85,-280.71C575.96,-302.09 666.79,-331.03 736.11,-353.11"/>
+<polygon fill="#a27b29" stroke="#a27b29" points="735.45,-355.29 742.33,-355.09 736.83,-350.95 735.45,-355.29"/>
+<text text-anchor="middle" x="693.5" y="-320.59" font-family="sans-serif" font-size="10.00">sets the meaning</text>
+<text text-anchor="middle" x="693.5" y="-309.59" font-family="sans-serif" font-size="10.00">of this endpoint</text>
+</g>
+<!-- acceptable -->
+<g id="goal&#45;acceptable" class="node">
+<title>acceptable</title>
+<g id="a_goal&#45;acceptable"><a xlink:title="Candidate success condition; tolerance and evidence unknown">
+<path fill="#faf1e7" stroke="#94704e" d="M725.5,-271.29C725.5,-271.29 619.5,-271.29 619.5,-271.29 613.5,-271.29 607.5,-265.29 607.5,-259.29 607.5,-259.29 607.5,-241.29 607.5,-241.29 607.5,-235.29 613.5,-229.29 619.5,-229.29 619.5,-229.29 725.5,-229.29 725.5,-229.29 731.5,-229.29 737.5,-235.29 737.5,-241.29 737.5,-241.29 737.5,-259.29 737.5,-259.29 737.5,-265.29 731.5,-271.29 725.5,-271.29"/>
+<text text-anchor="middle" x="672.5" y="-253.89" font-family="sans-serif" font-size="13.00">Remaining friction</text>
+<text text-anchor="middle" x="672.5" y="-239.89" font-family="sans-serif" font-size="13.00">is acceptable</text>
+</a>
+</g>
+</g>
+<!-- acceptable&#45;&gt;meta -->
+<g id="edge&#45;4" class="edge">
+<title>acceptable&#45;&gt;meta</title>
+<path fill="none" stroke="#8a7c98" stroke-dasharray="5,2" d="M697.35,-271.42C721.72,-291.15 759.52,-321.77 789.88,-346.35"/>
+<polygon fill="#8a7c98" stroke="#8a7c98" points="788.58,-348.23 795.07,-350.56 791.45,-344.7 788.58,-348.23"/>
+<text text-anchor="middle" x="796" y="-320.59" font-family="sans-serif" font-size="10.00">might qualify</text>
+<text text-anchor="middle" x="796" y="-309.59" font-family="sans-serif" font-size="10.00">as success</text>
+</g>
+<!-- marginal -->
+<g id="goal&#45;marginal" class="node">
+<title>marginal</title>
+<g id="a_goal&#45;marginal"><a xlink:title="Candidate stopping condition; not established">
+<path fill="#faf1e7" stroke="#94704e" d="M902,-271.29C902,-271.29 775,-271.29 775,-271.29 769,-271.29 763,-265.29 763,-259.29 763,-259.29 763,-241.29 763,-241.29 763,-235.29 769,-229.29 775,-229.29 775,-229.29 902,-229.29 902,-229.29 908,-229.29 914,-235.29 914,-241.29 914,-241.29 914,-259.29 914,-259.29 914,-265.29 908,-271.29 902,-271.29"/>
+<text text-anchor="middle" x="838.5" y="-253.89" font-family="sans-serif" font-size="13.00">Further improvement</text>
+<text text-anchor="middle" x="838.5" y="-239.89" font-family="sans-serif" font-size="13.00">is not worth its cost</text>
+</a>
+</g>
+</g>
+<!-- marginal&#45;&gt;meta -->
+<g id="edge&#45;5" class="edge">
+<title>marginal&#45;&gt;meta</title>
+<path fill="none" stroke="#8a7c98" stroke-dasharray="5,2" d="M838.5,-271.42C838.5,-290.5 838.5,-319.76 838.5,-343.9"/>
+<polygon fill="#8a7c98" stroke="#8a7c98" points="836.23,-344.06 838.5,-350.56 840.78,-344.06 836.23,-344.06"/>
+<text text-anchor="middle" x="878.5" y="-320.59" font-family="sans-serif" font-size="10.00">might justify</text>
+<text text-anchor="middle" x="878.5" y="-309.59" font-family="sans-serif" font-size="10.00">ending the effort</text>
+</g>
+<!-- knowledge -->
+<g id="goal&#45;knowledge" class="node">
+<title>knowledge</title>
+<g id="a_goal&#45;knowledge"><a xlink:title="Candidate enabling capability; implementation unsettled">
+<path fill="#f1eef6" stroke="#7d6a91" d="M1022,-150C1022,-150 867,-150 867,-150 861,-150 855,-144 855,-138 855,-138 855,-120 855,-120 855,-114 861,-108 867,-108 867,-108 1022,-108 1022,-108 1028,-108 1034,-114 1034,-120 1034,-120 1034,-138 1034,-138 1034,-144 1028,-150 1022,-150"/>
+<text text-anchor="middle" x="944.5" y="-132.6" font-family="sans-serif" font-size="13.00">Problem knowledge</text>
+<text text-anchor="middle" x="944.5" y="-118.6" font-family="sans-serif" font-size="13.00">stays usable and revisable</text>
+</a>
+</g>
+</g>
+<!-- interventions -->
+<g id="goal&#45;interventions" class="node">
+<title>interventions</title>
+<g id="a_goal&#45;interventions"><a xlink:title="Possible means; no intervention selected">
+<path fill="#f1eef6" stroke="#7d6a91" d="M1109.5,-271.29C1109.5,-271.29 951.5,-271.29 951.5,-271.29 945.5,-271.29 939.5,-265.29 939.5,-259.29 939.5,-259.29 939.5,-241.29 939.5,-241.29 939.5,-235.29 945.5,-229.29 951.5,-229.29 951.5,-229.29 1109.5,-229.29 1109.5,-229.29 1115.5,-229.29 1121.5,-235.29 1121.5,-241.29 1121.5,-241.29 1121.5,-259.29 1121.5,-259.29 1121.5,-265.29 1115.5,-271.29 1109.5,-271.29"/>
+<text text-anchor="middle" x="1030.5" y="-253.89" font-family="sans-serif" font-size="13.00">Promising changes</text>
+<text text-anchor="middle" x="1030.5" y="-239.89" font-family="sans-serif" font-size="13.00">are compared and applied</text>
+</a>
+</g>
+</g>
+<!-- knowledge&#45;&gt;interventions -->
+<g id="edge&#45;7" class="edge">
+<title>knowledge&#45;&gt;interventions</title>
+<path fill="none" stroke="#8a7c98" stroke-dasharray="5,2" d="M959.09,-150.24C973.67,-170.46 996.13,-201.62 1011.97,-223.58"/>
+<polygon fill="#8a7c98" stroke="#8a7c98" points="1010.19,-225.01 1015.84,-228.96 1013.88,-222.35 1010.19,-225.01"/>
+<text text-anchor="middle" x="1020" y="-186" font-family="sans-serif" font-size="10.00">may improve</text>
+<text text-anchor="middle" x="1020" y="-175" font-family="sans-serif" font-size="10.00">selection</text>
+</g>
+<!-- interventions&#45;&gt;meta -->
+<g id="edge&#45;8" class="edge">
+<title>interventions&#45;&gt;meta</title>
+<path fill="none" stroke="#8a7c98" stroke-dasharray="5,2" d="M1003.72,-271.32C982.43,-287.12 951.79,-309.58 924.5,-328.59 915.97,-334.52 906.9,-340.7 897.96,-346.71"/>
+<polygon fill="#8a7c98" stroke="#8a7c98" points="896.55,-344.91 892.42,-350.42 899.08,-348.69 896.55,-344.91"/>
+<text text-anchor="middle" x="981" y="-320.59" font-family="sans-serif" font-size="10.00">may reduce</text>
+<text text-anchor="middle" x="981" y="-309.59" font-family="sans-serif" font-size="10.00">friction</text>
+</g>
+<!-- revision -->
+<g id="goal&#45;revision" class="node">
+<title>revision</title>
+<g id="a_goal&#45;revision"><a xlink:title="Desired capability; reliable operation not established">
+<path fill="#f1eef6" stroke="#7d6a91" d="M1120,-42C1120,-42 909,-42 909,-42 903,-42 897,-36 897,-30 897,-30 897,-12 897,-12 897,-6 903,0 909,0 909,0 1120,0 1120,0 1126,0 1132,-6 1132,-12 1132,-12 1132,-30 1132,-30 1132,-36 1126,-42 1120,-42"/>
+<text text-anchor="middle" x="1014.5" y="-24.6" font-family="sans-serif" font-size="13.00">Bad approaches, corrections</text>
+<text text-anchor="middle" x="1014.5" y="-10.6" font-family="sans-serif" font-size="13.00">and changed relevance are noticed</text>
+</a>
+</g>
+</g>
+<!-- revision&#45;&gt;knowledge -->
+<g id="edge&#45;9" class="edge">
+<title>revision&#45;&gt;knowledge</title>
+<path fill="none" stroke="#8a7c98" stroke-dasharray="5,2" d="M1001,-42.44C989.7,-59.56 973.51,-84.08 961.35,-102.48"/>
+<polygon fill="#8a7c98" stroke="#8a7c98" points="959.4,-101.31 957.72,-107.98 963.2,-103.81 959.4,-101.31"/>
+<text text-anchor="middle" x="1022" y="-78" font-family="sans-serif" font-size="10.00">can revise</text>
+<text text-anchor="middle" x="1022" y="-67" font-family="sans-serif" font-size="10.00">what is retained</text>
+</g>
+<!-- revision&#45;&gt;interventions -->
+<g id="edge&#45;10" class="edge">
+<title>revision&#45;&gt;interventions</title>
+<path fill="none" stroke="#8a7c98" stroke-dasharray="5,2" d="M1046.95,-42.15C1054.03,-48.24 1060.57,-55.57 1064.5,-64 1089.12,-116.83 1062.99,-185.89 1044.84,-222.99"/>
+<polygon fill="#8a7c98" stroke="#8a7c98" points="1042.65,-222.26 1041.78,-229.09 1046.72,-224.3 1042.65,-222.26"/>
+<text text-anchor="middle" x="1105" y="-132" font-family="sans-serif" font-size="10.00">can change</text>
+<text text-anchor="middle" x="1105" y="-121" font-family="sans-serif" font-size="10.00">the approach</text>
+</g>
+<!-- topology -->
+<g id="goal&#45;topology" class="node">
+<title>topology</title>
+<g id="a_goal&#45;topology"><a xlink:title="Bounded comparison returned; alternatives remain unselected">
+<path fill="#fff3ce" stroke="#a27b29" d="M1457.15,-254.98C1457.15,-254.98 1398.9,-279.69 1398.9,-279.69 1393.37,-282.04 1381.85,-284.38 1375.85,-284.38 1375.85,-284.38 1239.15,-284.38 1239.15,-284.38 1233.15,-284.38 1221.63,-282.04 1216.1,-279.69 1216.1,-279.69 1157.85,-254.98 1157.85,-254.98 1152.32,-252.64 1152.32,-247.95 1157.85,-245.61 1157.85,-245.61 1216.1,-220.89 1216.1,-220.89 1221.63,-218.55 1233.15,-216.21 1239.15,-216.21 1239.15,-216.21 1375.85,-216.21 1375.85,-216.21 1381.85,-216.21 1393.37,-218.55 1398.9,-220.89 1398.9,-220.89 1457.15,-245.61 1457.15,-245.61 1462.68,-247.95 1462.68,-252.64 1457.15,-254.98"/>
+<text text-anchor="middle" x="1307.5" y="-253.89" font-family="sans-serif" font-size="13.00">OPEN: how is the work</text>
+<text text-anchor="middle" x="1307.5" y="-239.89" font-family="sans-serif" font-size="13.00">coordinated over its lifecycle?</text>
+</a>
+</g>
+</g>
+<!-- topology&#45;&gt;meta -->
+<g id="edge&#45;11" class="edge">
+<title>topology&#45;&gt;meta</title>
+<path fill="none" stroke="#8a7c98" stroke-dasharray="5,2" d="M1212.87,-278.42C1136.23,-300.39 1028.16,-331.36 947.83,-354.39"/>
+<polygon fill="#8a7c98" stroke="#8a7c98" points="946.74,-352.34 941.12,-356.32 947.99,-356.71 946.74,-352.34"/>
+<text text-anchor="middle" x="1138.5" y="-320.59" font-family="sans-serif" font-size="10.00">possible ways to</text>
+<text text-anchor="middle" x="1138.5" y="-309.59" font-family="sans-serif" font-size="10.00">sustain the work</text>
+</g>
+</g>
+</svg>
+</section>
+<aside aria-live="polite"><h2 id="name"></h2><p class="badge" id="status"></p><p id="detail"></p><b>Source pointers</b><ul id="sources"></ul></aside></main>
+<script>const model={"title": "msc-math: goals, necessity claims and candidate paths", "status": "Provisional model for discussion. No repair approach or stopping threshold selected.", "author": "Root coordinator, 3 October 2026; incorporates Jörn's proposed endpoint and edge distinction.", "scope": "Goals and possible means, not assignments or demonstrated causal effects. current.json retains assignment authority.", "friction": "Actual overhead, its baseline and acceptable residual cost are unknown. The numerical examples in discussion are not measurements or agreed targets.", "nodes": [{"id": "project", "label": "msc-math\nPROJECT SUCCESS", "kind": "target", "status": "Existing completion model; attainment not established", "detail": "The existing coordination model requires a supported/readable selected thesis, truthful evidence and reproduction promises, the recorded human PASS threshold, required delivery/archive dispositions and released assignments. Reconcile that definition with Jörn's current goal. The broader meta-problem being solved is not automatically a logical prerequisite: a project could progress despite expensive workarounds.", "sources": ["docs/coordination/README.md", "docs/coordination/current.json: msc-math-done", "docs/project-facts.md"]}, {"id": "science", "label": "Supported, readable thesis\nmeets the required judgment", "kind": "requirement", "status": "Requirement in existing model; not a readiness verdict", "detail": "A necessary condition under the existing completion definition. Scientific validity, reader understanding and the exact accepted candidate need their own evidence; compilation cannot establish them.", "sources": ["docs/coordination/thesis-work.md", "docs/coordination/handoff.md"]}, {"id": "evidence", "label": "Code, evidence and\nreproduction match the claims", "kind": "requirement", "status": "Requirement in existing model; attainment not checked here", "detail": "Necessary under the stated definition of project success. The actual promises determine what must work; not every historical producer or optional experiment is therefore mandatory.", "sources": ["README.md", "ARCHITECTURE.md", "docs/coordination/current.json: code-evidence-ready, reproduction-ready"]}, {"id": "delivery", "label": "Required delivery / archive\nobligations discharged", "kind": "requirement", "status": "Conditional on actual obligations; current administrative state unknown", "detail": "Required obligations are necessary by definition; their present content and status remain to be checked. Historical deadlines, an old unsubmitted status or a graph do not establish a current obligation or authorize delivery.", "sources": ["docs/coordination/handoff.md", "docs/coordination/current.json: project-delivery-disposition, project-close"]}, {"id": "meta", "label": "Proposed endpoint for this effort:\nproblem-fixing is workable", "kind": "target", "status": "Jörn's proposed endpoint; success and session scope unresolved", "detail": "The meta-problem concerns finding, understanding, fixing and reconsidering problems economically. The initial session division was intake/triage here, resolution later; the latest endpoint proposal may concern a larger repair effort. Do not silently settle whether this thread must execute the whole effort. Do not equate no identified promising idea with no worthwhile improvement available.", "sources": ["docs/history/coordination/20261003-project-repair-user-report.md", "Jörn's current conversation: proposed session endpoint"]}, {"id": "criterion", "label": "OPEN: what counts as success\nand what justifies stopping?", "kind": "question", "status": "Unresolved consequential choice", "detail": "Do acceptable residual friction and no worthwhile further investment each qualify as success, or can the latter justify stopping with the goal unmet? No numeric threshold is agreed. Assess friction through effects on actual project outcomes, human attention, useful work, context, latency and maintenance. Raw tokens and issue counts are incomplete proxies.", "sources": ["Jörn's current conversation: overhead examples and stopping uncertainty", "AGENTS.md.commentary.md"]}, {"id": "acceptable", "label": "Remaining friction\nis acceptable", "kind": "criterion", "status": "Candidate success condition; tolerance and evidence unknown", "detail": "Would need a grounded judgment about the remaining costs and their consequences for project work. Neither 0.1x nor 10x overhead is selected here. Improvements to one symptom cannot establish the total remaining friction.", "sources": ["Jörn's current conversation: live-with-friction proposal"]}, {"id": "marginal", "label": "Further improvement\nis not worth its cost", "kind": "criterion", "status": "Candidate stopping condition; not established", "detail": "Compare credible remaining improvement opportunities with investigation, implementation, maintenance and foregone domain work. A failed brainstorm or unavailable measurement is not evidence that worthwhile routes are exhausted. Stopping and successful repair need not mean the same thing.", "sources": ["Jörn's current conversation: marginal resource investment proposal"]}, {"id": "knowledge", "label": "Problem knowledge\nstays usable and revisable", "kind": "candidate", "status": "Candidate enabling capability; implementation unsettled", "detail": "Candidate recovery paths: maintained records/Git with targeted log recovery; trajectory/index with source-linked projections; artifact/change evidence followed to decisions. Candidate delivery mechanisms: retrieve at the decision, supply context at task entry, or recheck affected consumers when evidence changes. The fresh-consumer probe recovered cases but found no general communication remedy; one directly relevant failed skill trial lacked its exact transcript anchor. This supports distinguishing discovery failure from application failure, not assuming either explains the whole project. A chosen incident surface must support retrieval, correction and reconsideration; file format alone cannot establish those behaviors.", "sources": ["docs/knowledge/README.md", "docs/coordination/problem-knowledge-interventions.md", "docs/coordination/problem-knowledge-probe.md", "docs/coordination/problem-knowledge-source-map.md"]}, {"id": "interventions", "label": "Promising changes\nare compared and applied", "kind": "candidate", "status": "Possible means; no intervention selected", "detail": "Candidate interventions may concern allocation, communication, retained knowledge, tooling or coordination. Evaluate their intended effect and costs. Historical shadow asks what they recommend at a recorded decision; branched replay observes a new continuation; prospective use observes deployed behavior; an abstract model predicts behavior under assumptions. These support different conclusions and none guarantees efficacy.", "sources": ["docs/coordination/intake-approach-options.md", "docs/coordination/problem-knowledge-interventions.md", "docs/coordination/problem-knowledge-probe.md", "docs/coordination/problem-knowledge-source-map.md"]}, {"id": "revision", "label": "Bad approaches, corrections\nand changed relevance are noticed", "kind": "candidate", "status": "Desired capability; reliable operation not established", "detail": "Test whether the selected approach preserves disputed evidence, withdraws false findings, responds to changed inputs and revises failed methods. A confident summary or a structural check cannot alone establish these capabilities. Evaluation results must be able to revise both the method and this map.", "sources": ["docs/history/coordination/20261003-project-repair-user-report.md", "docs/history/coordination/20261003-withdrawn-repair-intake.md", "docs/coordination/problem-knowledge-source-map.md"]}, {"id": "topology", "label": "OPEN: how is the work\ncoordinated over its lifecycle?", "kind": "question", "status": "Bounded comparison returned; alternatives remain unselected", "detail": "Compare a central end-goal/lifecycle owner, peer-coordinated sessions with shared state, and a hybrid with bounded integration ownership. A central thread can accumulate context and become a bottleneck; distributed peers can lose decisions or ownership; a hybrid can obscure who integrates. Prior sessions may supply evidence, but their outcome alone does not identify the topology's causal effect.", "sources": ["docs/coordination/README.md", "docs/history/process-audit/REPORT.md", "docs/history/coordination/stopped-run-handoff.md", "docs/coordination/problem-knowledge-source-map.md"]}], "edges": [{"from": "science", "to": "project", "kind": "necessary", "label": "required under\nthis definition"}, {"from": "evidence", "to": "project", "kind": "necessary", "label": "required under\nthis definition"}, {"from": "delivery", "to": "project", "kind": "necessary", "label": "actual obligations\nrequired"}, {"from": "meta", "to": "project", "kind": "candidate", "label": "may enable progress;\nnecessity unestablished"}, {"from": "acceptable", "to": "meta", "kind": "candidate", "label": "might qualify\nas success"}, {"from": "marginal", "to": "meta", "kind": "candidate", "label": "might justify\nending the effort"}, {"from": "criterion", "to": "meta", "kind": "definition", "label": "sets the meaning\nof this endpoint"}, {"from": "knowledge", "to": "interventions", "kind": "candidate", "label": "may improve\nselection"}, {"from": "interventions", "to": "meta", "kind": "candidate", "label": "may reduce\nfriction"}, {"from": "revision", "to": "knowledge", "kind": "candidate", "label": "can revise\nwhat is retained"}, {"from": "revision", "to": "interventions", "kind": "candidate", "label": "can change\nthe approach"}, {"from": "topology", "to": "meta", "kind": "candidate", "label": "possible ways to\nsustain the work"}]};const byId=Object.fromEntries(model.nodes.map(n=>[n.id,n]));
+function select(id){const n=byId[id];document.getElementById('name').textContent=n.label.replaceAll('\n',' ');document.getElementById('status').textContent=n.status;document.getElementById('detail').textContent=n.detail;const list=document.getElementById('sources');list.replaceChildren(...n.sources.map(s=>{const li=document.createElement('li');li.textContent=s;return li;}));}
+for(const n of model.nodes){const el=document.getElementById('goal-'+n.id);el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',n.label.replaceAll('\n',' '));el.addEventListener('click',()=>select(n.id));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(n.id);}});}
+let filtered=false;document.getElementById('filter').addEventListener('click',e=>{filtered=!filtered;e.target.setAttribute('aria-pressed',String(filtered));e.target.textContent=filtered?'Show all candidate paths':'Emphasize necessity claims';model.edges.forEach((edge,i)=>document.getElementById('edge-'+i).classList.toggle('subdued',filtered&&edge.kind!=='necessary'));});select('criterion');</script></html>

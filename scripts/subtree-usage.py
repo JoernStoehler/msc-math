@@ -10,6 +10,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 import json
 import os
+import re
 from pathlib import Path
 import sys
 
@@ -38,7 +39,7 @@ def parent(meta):
     source = meta.get("source")
     spawn = source.get("subagent", {}) if isinstance(source, dict) else {}
     spawn = spawn.get("thread_spawn", {}) if isinstance(spawn, dict) else {}
-    return meta.get("parent_thread_id") or spawn.get("parent_thread_id") or meta.get("forked_from_id")
+    return meta.get("parent_thread_id") or spawn.get("parent_thread_id")
 
 
 def inventory(home):
@@ -69,58 +70,131 @@ def descendants(sessions, root):
         chosen.update(more)
 
 
-def collect(path, meta, now, warnings):
-    model = "unknown"
-    previous = None
-    events = []
+def counters(value):
+    """Required fields must exist; absent optional cache writes remain unknown."""
+    if not isinstance(value, dict):
+        raise ValueError("missing usage counters")
+    result = []
+    for key in KEYS:
+        raw = value.get(key) if key == KEYS[3] else value[key]
+        if raw is None and key == KEYS[3]:
+            result.append(None)
+            continue
+        if isinstance(raw, bool) or not (isinstance(raw, int) or
+                isinstance(raw, str) and re.fullmatch(r"[0-9]+", raw)):
+            raise ValueError("invalid token count")
+        result.append(int(raw))
+    inp, cached, out, writes = result
+    if min(inp, cached, out) < 0 or cached > inp or (
+            writes is not None and (writes < 0 or cached + writes > inp)):
+        raise ValueError("invalid token counts")
+    return tuple(result)
+
+
+def usage_events(path, meta, now, warnings):
+    """Read accounting envelopes only. Prefer owned response records over mirrors.
+
+    Legacy copied prefixes end at a settings snapshot owned by this thread, or
+    an explicit subagent history ordinal. Unknown fork boundaries fail visibly.
+    """
+    model, previous = "unknown", None
+    events, seen_responses = [], {}
+    ident = meta.get("id")
     start = date(meta["timestamp"])
-    with path.open() as f:
-        for number, line in enumerate(f, 1):
-            # Only parse metadata/context/counters; never load conversation bodies.
-            if not any(x in line for x in ('"turn_context"', '"token_count"')):
-                continue
-            try:
-                record = json.loads(line)
-            except ValueError:
-                warnings.add(f"{meta['id']}: malformed/incomplete log line {number}")
-                continue
-            payload = record.get("payload", {})
-            if record.get("type") == "turn_context":
-                settings = (payload.get("collaboration_mode") or {}).get("settings") or {}
-                model = payload.get("model") or settings.get("model") or model
-                continue
-            if record.get("type") != "event_msg" or payload.get("type") != "token_count":
-                continue
-            info = payload.get("info")
-            if not info:  # rate-limit-only notifications carry no usage
-                continue
-            total, last = info.get("total_token_usage"), info.get("last_token_usage")
-            if not isinstance(total, dict) or not isinstance(last, dict):
-                warnings.add(f"{meta['id']}: missing usage counters")
-                continue
-            current = tuple(int(total.get(k, 0)) for k in KEYS)
-            if current == previous:
-                continue
-            usage = tuple(int(last.get(k, 0)) for k in KEYS)
-            when = date(record["timestamp"])
-            if previous is not None:
-                delta = tuple(a - b for a, b in zip(current, previous))
-                if delta != usage:
-                    warnings.add(f"{meta['id']}: cumulative/last counter mismatch; using last usage")
-            previous = current
-            if when < start or when > now:
-                continue
-            inp, cached, out, writes = usage
-            if min(usage) < 0 or cached + writes > inp:
-                warnings.add(f"{meta['id']}: invalid token counts; record omitted")
-                continue
-            # Reasoning tokens are already included in output_tokens.
-            cost = price(model, usage)
-            if cost is None:
-                warnings.add(f"Unpriced model: {model}")
-            events.append((when, model, inp - cached - writes, cached, out, writes, cost))
+    fork = bool(meta.get("forked_from_id"))
+    owned = not fork or bool(meta.get("history_base"))
+    boundary = meta.get("subagent_history_start_ordinal")
+    native_mode = False
+    unresolved_fork = False
+    legacy_fork_baseline = False
+    try:
+        with path.open() as f:
+            for number, line in enumerate(f, 1):
+                if not any(x in line for x in ('"turn_context"', '"token_count"',
+                        '"token_usage_record"', '"thread_settings_applied"')):
+                    continue
+                try:
+                    record = json.loads(line)
+                    kind, payload = record.get("type"), record.get("payload", {})
+                    if not isinstance(payload, dict):
+                        raise ValueError("invalid envelope")
+                    if kind == "turn_context":
+                        settings = (payload.get("collaboration_mode") or {}).get("settings") or {}
+                        model = payload.get("model") or settings.get("model") or model
+                        continue
+                    if kind == "event_msg" and payload.get("type") == "thread_settings_applied":
+                        if ident and payload.get("thread_id") == ident:
+                            owned = True
+                            model = (payload.get("thread_settings") or {}).get("model") or model
+                        continue
+                    if boundary is not None and isinstance(record.get("ordinal"), int):
+                        owned = record["ordinal"] >= boundary
+                    if kind == "token_usage_record":
+                        # Copied records preserve their original owner's ID.
+                        if not ident or payload.get("thread_id") != ident:
+                            continue
+                        native_mode = True  # invalid owned records must not charge their mirror
+                        response = payload.get("response_id")
+                        if not isinstance(response, str) or not response:
+                            raise ValueError("missing response ID")
+                        usage = counters(payload.get("usage"))
+                        if response in seen_responses:
+                            if seen_responses[response] != usage:
+                                raise ValueError("conflicting duplicate response usage")
+                            continue
+                        seen_responses[response] = usage
+                    elif kind == "event_msg" and payload.get("type") == "token_count":
+                        info = payload.get("info")
+                        if info is None:  # quota-only notification
+                            continue
+                        current = counters(info.get("total_token_usage"))
+                        usage = counters(info.get("last_token_usage"))
+                        if current == previous:
+                            continue
+                        prior, previous = previous, current
+                        if native_mode:
+                            continue  # cumulative mirror of native response records
+                        if not owned:
+                            unresolved_fork = True
+                            continue  # maintain inherited baseline, never charge it
+                        if fork and prior is None:
+                            legacy_fork_baseline = True
+                            continue  # first cumulative snapshot can be an inherited seed
+                        if prior is not None:
+                            delta = tuple(a-b if a is not None and b is not None else None
+                                          for a, b in zip(current, prior))
+                            if any(a != b for a, b in zip(delta, usage)
+                                   if a is not None and b is not None):
+                                warnings.add(f"{ident}: cumulative/last counter mismatch; using last usage")
+                    else:
+                        continue
+                    when = date(record["timestamp"])
+                    if start <= when <= now:
+                        events.append((when, model, usage))
+                except (ValueError, KeyError, TypeError, AttributeError):
+                    warnings.add(f"{ident}: malformed/missing accounting field at line {number}; record omitted")
+    except OSError:
+        warnings.add(f"{ident}: usage log unreadable")
+    if unresolved_fork and not owned and not native_mode:
+        warnings.add(f"{ident}: fork ownership boundary unavailable; legacy usage excluded")
+    if legacy_fork_baseline and not native_mode:
+        warnings.add(f"{ident}: initial fork counter ownership ambiguous; treated as baseline")
+    return events
+
+
+def collect(path, meta, now, warnings):
+    events = []
+    for when, model, usage in usage_events(path, meta, now, warnings):
+        inp, cached, out, writes = usage
+        if writes is None:
+            warnings.add(f"{meta.get('id')}: cache-write count absent; split input/cost unknown")
+        cost = price(model, usage) if writes is not None else None
+        if model not in RATES:
+            warnings.add(f"Unpriced model: {model}")
+        events.append((when, model, inp-cached-writes if writes is not None else None,
+                       cached, out, writes, cost))
     if not events:
-        warnings.add(f"{meta['id']}: no usage records (new/unused thread or missing telemetry)")
+        warnings.add(f"{meta.get('id')}: no usage records (new/unused thread or missing telemetry)")
     return events
 
 
@@ -152,7 +226,7 @@ def report(sessions, root, now):
             for group in groups:
                 row = rows[group]
                 for k, value in enumerate((uncached, cached, out, writes)):
-                    row[k] += value
+                    row[k] = row[k] + value if row[k] is not None and value is not None else None
                 row[4] += cost or 0
                 row[5] += cost is None
     start = date(sessions[root][1]["timestamp"])
@@ -161,17 +235,20 @@ def report(sessions, root, now):
     print(f"Now:     {now.isoformat(timespec='seconds')}   elapsed: {now - start}")
     print(f"Latest usage: {latest.isoformat(timespec='seconds') if latest else 'none'}")
     print("Shadow: Standard API-equivalent rates, fixed 2026-09-16; not subscription quota/billing.")
+    if any(not message.startswith("Unpriced model:") for message in warnings):
+        print("Accounting errors below: numeric rows are observed subtotals, not complete totals.")
     print(f"{'Scope':22} {'Uncached input':>15} {'Cached input':>15} {'Output':>12} {'Cache write':>12} {'Shadow USD':>13}")
     order = ["TOTAL", "last 30m", "last 5m", "root", "workers"]
     order += sorted(k for k in rows if k not in order)
     for key in order:
         a, b, c, d, dollars, unknown = rows[key]
         amount = f"{dollars:,.2f}" + ("+?" if unknown else "")
-        print(f"{key:22} {a:15,d} {b:15,d} {c:12,d} {d:12,d} {amount:>13}")
-    print("Scope: local metadata-linked descendants only; separate roots/host-only logs excluded.")
+        values = [f"{v:,}" if v is not None else "unknown" for v in (a, b, c, d)]
+        print(f"{key:22} {values[0]:>15} {values[1]:>15} {values[2]:>12} {values[3]:>12} {amount:>13}")
+    print("Scope: spawned descendants only; ordinary forks and independent roots excluded.")
     print("Windows use usage-event timestamps; in-flight calls appear after telemetry is written.")
     if warnings:
-        print("ACCOUNTING WARNINGS — totals may be incomplete:")
+        print("ACCOUNTING DIAGNOSTICS:")
         for message in sorted(warnings):
             print(f"  {message}")
     return 2 if warnings else 0
