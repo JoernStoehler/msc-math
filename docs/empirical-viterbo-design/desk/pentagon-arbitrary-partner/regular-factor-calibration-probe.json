@@ -1,0 +1,101 @@
+{
+  "evidence_strength": "floating-point exploratory LP, not a proof",
+  "cases": [
+    {
+      "sides": 3,
+      "positive_closure_triples": 1,
+      "worst_template": {
+        "normal_indices": [
+          0,
+          1,
+          2
+        ],
+        "minimum_cover_dilation": 1.3333333333333335,
+        "translation": [
+          -0.3333333333333334,
+          -0.1924500897298753
+        ],
+        "triangle": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.6666666666666666,
+            0.0
+          ],
+          [
+            0.3333333333333336,
+            0.5773502691896256
+          ]
+        ],
+        "maximum_constraint_residual": 0.0
+      },
+      "all_templates_fit_numerically": false
+    },
+    {
+      "sides": 5,
+      "positive_closure_triples": 5,
+      "worst_template": {
+        "normal_indices": [
+          0,
+          2,
+          4
+        ],
+        "minimum_cover_dilation": 1.0000000000000002,
+        "translation": [
+          -0.1180339887498948,
+          -0.16245984811645306
+        ],
+        "triangle": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.3416407864998738,
+            0.0
+          ],
+          [
+            -0.10557280900008403,
+            0.3249196962329064
+          ]
+        ],
+        "maximum_constraint_residual": 0.0
+      },
+      "all_templates_fit_numerically": true
+    },
+    {
+      "sides": 7,
+      "positive_closure_triples": 14,
+      "worst_template": {
+        "normal_indices": [
+          0,
+          1,
+          4
+        ],
+        "minimum_cover_dilation": 1.0,
+        "translation": [
+          -0.2369762290995783,
+          -0.1141217371950749
+        ],
+        "triangle": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.29193436118694954,
+            0.0
+          ],
+          [
+            0.47395245819915655,
+            0.2282434743901499
+          ]
+        ],
+        "maximum_constraint_residual": 0.0
+      },
+      "all_templates_fit_numerically": true
+    }
+  ]
+}

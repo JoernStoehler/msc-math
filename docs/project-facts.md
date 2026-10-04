@@ -35,6 +35,12 @@ maintenance low. The numbers are stable and can be out of order.
    submission as an open task or infer that it was missed without a current
    status from Jörn or the official MNTF process.
 
+1.1. On 2026-10-03, when asked for the current delivery target and deadline,
+     Jörn answered “none”. No current deadline is selected for this planning
+     window. This does not establish whether administrative submission or
+     registration already occurred. Source: thread
+     `01a1035b-61da-7d52-9102-0edba2e34e66`.
+
 2. Official submission facts need to be refreshed from current MNTF sources
    before relying on 2026-04-24 downloaded forms or old deadline text.
 
@@ -174,6 +180,26 @@ and does not settle the other data-science gaps.
     as interesting side routes, broad cleanup programs, publication-grade
     extensions, or post-thesis dissemination ideas, unless retained thesis
     claims or promises depend on them.
+
+13.1. On 2026-10-03, Jörn selected the **writeup as the highest priority**
+      for the current reported capacity window. He emphasized that more rounded
+      research can make the writeup easier, citing the major rotated-pentagon
+      proof simplification that removed its computational proof dependency.
+      Source: direct steering in thread
+      `01a1035b-61da-7d52-9102-0edba2e34e66`. The current Chapter 9 indeed
+      contains the endpoint-interpolation proof; Chapter 10 has an independent
+      analytic affine extension. This priority does not establish acceptance of
+      the prose or imply that every optional research route belongs in the thesis.
+
+13.2. On 2026-10-03, Jörn explicitly selected inclusion of the fixed regular
+      pentagon / arbitrary centrally symmetric partner result, responding
+      “obv inclusion?” in thread `01a1035b-61da-7d52-9102-0edba2e34e66`.
+      Presentation remains open: length, conceptual load, writing quality,
+      figures, relevance and possible subsumption require a concrete comparison.
+      He also challenged an insufficient account of the scientific value of
+      the proof, method and consequences. Selection is not proof acceptance,
+      prose acceptance or approval of a substantial autonomous programme.
+      Source: `docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md`.
 
 ## HKO Proof Support
 
@@ -337,6 +363,15 @@ and does not settle the other data-science gaps.
 40. All models Jörn tried write very badly by default for thesis prose:
     overconfident or nonsensical claims, unhelpful analogies, ultra-dense
     sentences, and about two style violations per sentence on average.
+
+40.1. On 2026-10-03, asked whether newer agents had produced a complete
+      usable thesis passage without working through it with him, Jörn answered
+      no, with the qualification “maybe for very easy things”, such as an
+      already repeatedly polished proof. This is his reported experience,
+      not a measured model comparison or proof that every future attempt fails.
+      Today's feasible-set passage became clear after his object/notation
+      corrections. Source: thread
+      `01a1035b-61da-7d52-9102-0edba2e34e66`.
 
 41. Fixing LaTeX build errors and converting markdown to LaTeX are trivial
     compared with phrasing and figuring out what to say where. The build should
