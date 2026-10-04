@@ -1,0 +1,39 @@
+   Compiling serde_core v1.0.228
+   Compiling approx v0.5.1
+   Compiling zerocopy v0.8.48
+   Compiling memchr v2.8.0
+   Compiling thiserror v1.0.69
+   Compiling enum_dispatch v0.3.13
+   Compiling tracing v0.1.44
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.149
+   Compiling num-complex v0.4.6
+   Compiling num-bigint v0.4.6
+   Compiling serde-big-array v0.5.1
+   Compiling simba v0.9.1
+   Compiling simba v0.10.0
+   Compiling clarabel v0.11.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.3.1
+   Compiling num-rational v0.4.2
+   Compiling rand v0.8.5
+   Compiling rand_distr v0.4.3
+   Compiling good_lp v1.15.1
+   Compiling nalgebra v0.35.0
+   Compiling nalgebra v0.33.3
+   Compiling algebraic-numbers v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/algebraic-numbers)
+   Compiling euclidean-polytopes v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/euclidean-polytopes)
+   Compiling symplectic v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/symplectic)
+   Compiling exp-sys-landscape v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/experiments/sys-landscape)
+   Compiling exp-dev-quadratic-program v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/experiments/dev-quadratic-program)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.39s
+     Running tests/selected_route_correspondence.rs (target/debug/deps/selected_route_correspondence-3628c0e6089255dd)
+
+running 4 tests
+test production_general_action_window_matches_complete_exact_control ... ok
+test readable_and_production_product_certificates_match ... ok
+test exact_window_derivatives_match_the_retained_f64_route_on_f10 ... ok
+test readable_and_production_general_bounds_match ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.25s
+

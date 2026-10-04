@@ -103,6 +103,16 @@ module.main()
             self.assertEqual(response.status, 200)  # UI can explain the failure.
 
     def test_source_change_and_missing_source_are_distinct(self):
+        baseline_path = dashboard.REPO / dashboard.BASELINE
+        baseline = json.loads(baseline_path.read_text())
+        baseline["reconciled"] = True
+        baseline["sha256"] = {
+            path: dashboard.hashlib.sha256(dashboard.read_file(path)).hexdigest()
+            for path in baseline["sha256"]
+        }
+        baseline_path.write_text(json.dumps(baseline))
+        with self.request("/_dashboard/source-status") as response:
+            self.assertTrue(json.load(response)["reconciled"])
         path = "thesis/chapters/07-hko.tex"
         with (dashboard.REPO / path).open("a") as output:
             output.write("\n% changed fixture\n")
@@ -122,10 +132,10 @@ module.main()
             self.assertEqual(response.status, 200)
             self.assertGreater(int(response.headers["Content-Length"]), 0)
             self.assertEqual(response.read(), b"")
-        for path in ("/AGENTS.md", "/AGENTS.md.commentary.md", "/docs/coordination/otel-design.md", "/docs/coordination/graphs/tasks.svg", "/docs/coordination/skill-migration-plan.md"):
+        for path in ("/INSTALL.md", "/AGENTS.md", "/AGENTS.md.commentary.md", "/docs/coordination/otel-design.md", "/docs/coordination/graphs/tasks.svg", "/docs/coordination/skill-migration-plan.md"):
             with self.request(path) as response:
                 self.assertEqual(response.status, 200)
-        for path in ("/INSTALL.md", "/../AGENTS.md", "/%2e%2e/AGENTS.md", "/docs/", "/.git/config"):
+        for path in ("/README.md", "/../AGENTS.md", "/%2e%2e/AGENTS.md", "/docs/", "/.git/config"):
             with self.request(path) as response:
                 self.assertEqual(response.status, 404)
         with self.request("/" + dashboard.STATE, "POST") as response:

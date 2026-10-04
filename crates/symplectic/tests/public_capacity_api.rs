@@ -375,6 +375,76 @@ fn general_window_matches_complete_exact_enumeration() {
 }
 
 #[test]
+fn general_hypercube_window_keeps_positive_nonmaximizing_kkt_words() {
+    let fixture = known_polytopes::hypercube();
+    let geometry = checked_geometry(&fixture.dual_vertices_f64);
+    let transition = symplectic::capacity_4d::capacity_transition_graph(&geometry);
+    let mut exact_candidates =
+        symplectic::algorithms::hk2017::SimpleDirectedCyclesCanonical::new(&transition)
+            .filter_map(|sigma| {
+                symplectic::kkt::rational_solver::solve_kkt_exact(&fixture.dual_vertices, &sigma)
+                    .filter(|result| result.q_exact.is_positive())
+                    .map(|result| {
+                        let action = BigRational::from_integer(1.into())
+                            / (result.q_exact.clone() + result.q_exact);
+                        (sigma, action)
+                    })
+            })
+            .collect::<Vec<_>>();
+    exact_candidates.sort_by(|left, right| left.1.cmp(&right.1).then_with(|| left.0.cmp(&right.0)));
+    let capacity_exact = exact_candidates[0].1.clone();
+    assert_eq!(capacity_exact, BigRational::from_integer(4.into()));
+    assert_eq!(exact_candidates.len(), 142);
+    assert_eq!(
+        exact_candidates
+            .iter()
+            .filter(|(_, action)| action == &BigRational::from_integer(8.into()))
+            .count(),
+        140
+    );
+
+    // A four-facet minimum uses one symplectic plane. Its unused closure
+    // constraints give the full KKT system zero rows, so this comparison also
+    // exercises positive witnesses with singular KKT systems.
+    let (matrix, _) = symplectic::kkt::qp_assembly::build_augmented_system_from_dual_vertices(
+        &fixture.dual_vertices_f64,
+        &exact_candidates[0].0,
+    );
+    assert!((0..matrix.nrows()).any(|row| matrix.row(row).iter().all(|value| *value == 0.0)));
+
+    // Multiples 1 and 1.99 contain just the two action-4 minima. At the exact
+    // inclusive endpoint 2, all 140 action-8 stationary words must reappear;
+    // curvature pruning previously discarded every one of them.
+    for (multiple, expected_count) in [
+        (BigRational::from_integer(1.into()), 2),
+        (BigRational::new(199.into(), 100.into()), 2),
+        (BigRational::from_integer(2.into()), 142),
+    ] {
+        let cutoff = &capacity_exact * &multiple;
+        let window =
+            general_qp_action_window(&geometry, multiple.clone()).expect("exact hypercube window");
+        assert_eq!(window.capacity_exact(), &capacity_exact);
+        assert_eq!(window.maximum_action_multiple(), &multiple);
+        assert!(window.witnesses().iter().all(|witness| {
+            witness.q.is_positive() && witness.beta.iter().all(BigRational::is_positive)
+        }));
+        let observed = window
+            .witnesses()
+            .iter()
+            .map(|witness| (witness.sigma.clone(), witness.action()))
+            .collect::<Vec<_>>();
+        let expected = exact_candidates
+            .iter()
+            .filter(|(_, action)| action <= &cutoff)
+            .cloned()
+            .collect::<Vec<_>>();
+        assert_eq!(expected.len(), expected_count);
+        assert_eq!(observed.len(), expected_count, "multiple {multiple}");
+        assert_eq!(observed, expected, "multiple {multiple}");
+    }
+}
+
+#[test]
 fn exact_sigma_validation_is_soft() {
     let fixture = known_polytopes::simplex();
     let geometry = checked_geometry(&fixture.dual_vertices_f64);

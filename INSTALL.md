@@ -5,8 +5,8 @@ repository root. As of 2026-09-19, ordinary work resumes from this host
 checkout. The retained `codex-msc-math` sandbox is stopped while its private
 state is wound down; its Codex rollouts have been imported into the host
 session store. Do not start or recreate it merely to resume project work.
-The sandbox-specific material below is retained as a historical recovery
-reference, not as the current setup path. Host-side sandbox lifecycle and
+The sandbox references below are retained for historical recovery, not as the
+current setup path. Host-side sandbox lifecycle and
 credentials belong to the host's `~/.dotfiles/memories/host-estate.md`
 (`/home/joern/.dotfiles/memories/host-estate.md`).
 
@@ -88,7 +88,8 @@ for building the thesis or running the Rust crates. Install a separate Sage
 Python environment using the [Sage installation instructions](https://doc.sagemath.org/html/en/installation/).
 The project previously verified Sage 10.9; record the version actually used.
 Do not replace ordinary Python or put Sage's libraries into the ordinary uv
-environment.
+environment. The historical Conda solve was not pinned; a fresh solve may
+select different versions and still needs the packet's compatibility checks.
 
 For a Conda environment named `sage`, a basic arithmetic check is:
 
@@ -130,7 +131,9 @@ RCLONE_CONFIG_MSCMATH_SECRET_ACCESS_KEY=<R2 secret access key>
 RCLONE_CONFIG_MSCMATH_ENDPOINT=https://ef19d5c4c89e0b61a5a1560041679e2d.r2.cloudflarestorage.com
 ```
 
-Keep credentials out of Git. The helper supplies R2's empty ACL and skips
+Keep credentials out of Git. If storing them in
+`~/.config/rclone/rclone.conf`, restrict that file to mode `0600`.
+The helper supplies R2's empty ACL and skips
 account-level bucket checks. Discover and download only the artifact needed:
 
 ```bash

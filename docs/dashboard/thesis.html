@@ -54,6 +54,9 @@
     code { font: .84em/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
     .source-list { padding-left: 1.2em; font-size: .91rem; }
     .source-list li { margin-bottom: 8px; }
+    .coverage { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    .coverage th, .coverage td { padding: 8px 10px; border-bottom: 1px solid #cbd9d8; text-align: left; vertical-align: top; }
+    .coverage th:first-child, .coverage td:first-child { width: 30%; }
     .closing { color: #526a72; font-size: .88rem; margin-top: 28px; }
     @media (max-width: 850px) {
       .shell { display: block; }
@@ -88,115 +91,98 @@
       <a class="nav-link" data-nav href="#roadmap"><span>Roadmap</span><small>sequence · planning unknowns</small></a>
       <a class="nav-link" data-nav href="#changes"><span>Changes &amp; sources</span><small>what moved · where to check</small></a>
     </nav>
-    <p class="sidebar-note">Manually reconciled 25 Sep 2026 against source commit <code>93ca3247</code> and the local Chapter 7 work-list check. Later relevant changes can make this view stale.</p>
+    <p class="sidebar-note">Source reconciliation · 4 Oct 2026. The retained candidate and manifest identify the manuscript. Human PASS remains unknown; live owners are in the work view.</p>
   </aside>
 
   <main class="content">
-    <div class="freshness" role="status">Scientific snapshot · 25 Sep 2026. Paths migrated 30 Sep; scientific coverage and rendered-PDF reconciliation remain open. <a href="index.html">Current work and resources</a>.</div>
+    <div class="freshness" role="status">Reconciled 4 Oct 2026 against the retained 100-page candidate and independent bounded source/PDF acceptance. Human PASS remains unknown. <a href="index.html">Current work and resources</a>.</div>
     <div class="freshness" id="source-freshness" role="status" aria-live="polite" hidden></div>
     <section class="view" id="overview" data-view aria-labelledby="overview-title">
-      <div class="eyebrow">Overview · 25 Sep 2026</div>
-      <h1 id="overview-title">A thesis candidate exists; readiness is unknown</h1>
-      <p class="lead">The 25 Sep snapshot described a 96-page candidate with substantial results. No review establishes the working PASS threshold: Kai returning only minor issues Jörn could fix in about two hours. The completion run was stopped; this cleanup does not restart it.</p>
-      <h2>Latest change</h2>
-      <p>The work list now records the 24 Sep theorem and adds the PDF/packet claim check. F=11 and global claims remain open or restricted. <a href="#changes">See the precise change.</a></p>
-      <div class="note">
-        <div class="label">Coverage check</div>
-        <p>Independent audits caught a false writing-trial dependency and an omitted 24 Sep claim check, now added to the work list. All seven Jörn-required content areas are selected; an abstract/conclusion inventory found no scope mismatch. That checks inclusion, not adequacy. The coverage method compares PASS and scope requirements, current work, selected claims and evidence, then challenges the result for omissions. Next: check the rendered Chapter 7 claims against the disposition and exact packet.</p>
-      </div>
-      <h2>Proposed route</h2>
-      <p>Check the new theorem's rendered claim and data-science scope; verify and repair supported manuscript/evidence issues. A page-level writing trial can run in parallel if useful. Then freeze one PDF for Jörn and Kai review.</p>
-      <h2>Decision to check now</h2>
-      <p>Does the <a href="#success">success contract</a> describe what must hold? The source coverage check and human PASS remain open.</p>
+      <div class="eyebrow">Overview · 4 Oct 2026</div>
+<h1 id="overview-title">A supported candidate, with bounded acceptance</h1>
+<p class="lead">The restart preserves the earlier thesis work, repairs concrete proof-navigation, evidence and layout defects, and assembles one source-pinned PDF. Human PASS remains unknown: no review establishes that Kai would leave only minor issues Jörn could fix in about two hours.</p>
+<p><a href="../history/thesis-restart-2026-10-04/thesis-candidate.pdf">Read the retained candidate</a> · <a href="../history/thesis-restart-2026-10-04/acceptance-pdf.md">Independent PDF review</a> · <a href="../history/thesis-restart-2026-10-04/candidate-manifest.json">Exact PDF and source identity</a> · <a href="index.html">Current assignments and resources</a></p>
+<div class="note"><div class="label">Coverage and limits</div><p>All eleven required content areas from project-facts item 8 are present. Inclusion, named exact checks and source/PDF review support a candidate; they do not establish human writing acceptance, complete implementation verification or clean-environment reproduction of every experiment. The data-science method ledger is bounded; satisfaction of Jörn's historical broader scope expectation remains uncertain.</p></div>
+<h2>Promoted claims</h2>
+<p>HKO is locally maximal modulo its stated symmetries among ten-facet polytopes. A second rational ten-facet body has a two-parameter local equality family. Rotated and independently affine regular pentagon products have exact capacity/inequality results. The flow algorithm has an idealized conditional theorem and a chamber-generic result. Search and data science retain their finite-population and numerical limits.</p>
+<h2>What remains open</h2><p>Final human review, full long-horizon reproduction, production flow-code correspondence and the unresolved data-science scope classification remain distinct gaps. New F=11 or global HKO results and broad further method execution are not prerequisites of this candidate.</p>
     </section>
 
     <section class="view" id="cruxes" data-view aria-labelledby="cruxes-title">
-      <div class="eyebrow">Cruxes · current evidence</div>
-      <h1 id="cruxes-title">What could change the readiness judgment?</h1>
-      <p class="lead">These are the current high-leverage questions, with the evidence and next check for each. Coverage is still being tested.</p>
-      <article class="item"><div class="item-head"><h3>Claim, proof and experiment support</h3><span class="state partial">Chapter 7 check open</span></div><p><strong>Risk:</strong> a claim exceeds its proof or packet. The 24 Sep disposition promotes L10-N and L10-N+ with an upper-section curvature caveat. <strong>Next:</strong> compare the rendered <a href="../../thesis/chapters/07-hko.tex">Chapter 7</a> theorem, equality family and caveat with the <a href="../../experiments/hko-local-maximum/non-hko/README.md">rational packet</a> and its <a href="../../experiments/hko-local-maximum/non-hko/PROOF.md">analytic trust boundary</a>; then audit the other selected claims.</p></article>
-      <article class="item"><div class="item-head"><h3>Reader quality and data-science scope</h3><span class="state unknown">Human judgment unknown</span></div><p>The selected chapter has no human acceptance verdict; older negative verdicts apply to other drafts. The named method table is closed, but its fit to Jörn's roughly-100-method expectation is unresolved. <strong>Next:</strong> disposition retained reader concerns against the selected chapter, clarify scope with Jörn, then review one frozen PDF with Jörn and Kai.</p></article>
-      <article class="item"><div class="item-head"><h3>Reproduction completeness</h3><span class="state unknown">Completeness unverified</span></div><p>The two-year-later target covers producer → output → figure → PDF, environment and tool versions, original LICCA route, timings and machine, and byte-identical versus accepted comparisons. No defect is confirmed yet. <strong>Next:</strong> compare the playbook and thesis promises with that full target, tracing each claimed output to its producer and PDF use.</p></article>
-      <article class="item"><div class="item-head"><h3>Official status and delivery</h3><span class="state unknown">Current check absent</span></div><p>The older <code>RESUME.md</code> said the thesis was unsubmitted then; current submission status and rules are unknown. <strong>Next:</strong> verify status and submission/AI-disclosure requirements from current MNTF sources before planning delivery.</p></article>
+      <div class="eyebrow">Claims, caveats and evidence</div>
+<h1 id="cruxes-title">What does the candidate establish?</h1>
+<article class="item"><div class="item-head"><h3>HKO and the second ten-facet local maximum</h3><span class="state partial">Source and packet checked</span></div><p>Chapter 7 (pp. 42–53; second local maximum on pp. 51–53) states fixed-ten-facet local results. The HKO certificate supplies 26 feasible sections transverse to 15 symmetry directions. The non-HKO theorem includes the two equality parameters and identifies −13/432 as curvature of selected upper sections, not a Hessian of capacity. <a href="../../thesis/chapters/07-hko.tex">The source</a> connects exact predicates to the analytic neighborhood proof; <a href="../../experiments/hko-local-maximum/non-hko/README.md">the rational packet</a> routes current verification and the nested historical archive. No explicit radius, added-facet theorem or global optimum is claimed.</p></article>
+<article class="item"><div class="item-head"><h3>Pentagons and changing product position</h3><span class="state partial">Bounded mathematical review</span></div><p>Chapters 9–11 (pp. 64–73) expand the ordered-pairing, closure-vertex, affine-equality and Hausdorff-limit arguments. Their exact scopes remain the selected polygon/affine classes and the stated initial product-position regime. Broader arbitrary-partner and F=11 questions stay open. <a href="../../thesis/chapters/10-affine-pentagons.tex">Affine source</a> · <a href="../../thesis/chapters/11-product-position.tex">Product-position source</a>.</p></article>
+<article class="item"><div class="item-head"><h3>Finite flow search and production implementation</h3><span class="state unknown">Correspondence gap remains</span></div><p>Chapter 5's exhaustive exact theorem (pp. 29–36) assumes explicit regularity; the thesis also proves those hypotheses chamber-generically. Bounded rational fixtures test correspondence. They do not establish a verified capacity contract for the optimized production implementation, and no such promotion is made.</p></article>
+<article class="item"><div class="item-head"><h3>Data science and numerical contracts</h3><span class="state partial">Scoped evidence</span></div><p>Chapter 8 reports coarse association, opposite exact rotation laws and finite-budget search improvements. Current capacity intervals cover 14,335 of 14,336 historical bodies, but do not certify floating-point volume or systolic ratios. Chapter 13 distinguishes scalar-minimum pruning from broader numerical evidence. The general action-window API's wider-window omission received a targeted correction; its regression does not invalidate or fully revalidate every historical search consumer.</p></article>
+<article class="item"><div class="item-head"><h3>Reproduction completeness</h3><span class="state unknown">Not fully demonstrated</span></div><p>The PDF builds from tracked inputs. Exact packets have specific commands and trust boundaries. Bulk empirical data require authenticated materialization; some original per-system transcripts or optimizer traces are not retained. A complete independent source → producer → figure → PDF rerun with original-machine/timing metadata has not been established. <a href="../reproducibility.md">Current reproduction inventory</a>.</p></article>
     </section>
 
     <section class="view" id="success" data-view aria-labelledby="success-title">
-      <div class="eyebrow">Success contract</div>
-      <h1 id="success-title">What must all be true?</h1>
-      <p class="lead">All four conditions are proposed requirements for a submittable thesis. Jörn can correct this planning model; it is not an accepted grading rubric.</p>
-      <article class="item"><div class="item-head"><h3>1. Claims match their support</h3><span class="state partial">Partly checked</span></div><p>Every printed theorem and empirical claim has its actual scope, proof or experiment, and caveat. The 24 Sep packet selects a new theorem; the retained tube/CH2021 candidate still needs final line-by-line and human review. A candidate-wide claim audit is unrecorded.</p></article>
-      <article class="item"><div class="item-head"><h3>2. Reader quality reaches the PASS threshold</h3><span class="state unknown">Unknown</span></div><p>Jörn can defend the fixed PDF's content and presentation; Kai could leave only about two hours of minor fixes. No current whole-PDF review or trusted proxy establishes this. PASS is a readiness threshold, not final grading.</p></article>
-      <article class="item"><div class="item-head"><h3>3. Evidence and references resolve</h3><span class="state partial">Open repairs</span></div><p>Code, data, figure and certificate references lead to the right owners; reproduction promises describe what can actually be repeated. The work list names specific example and artifact-mapping repairs.</p></article>
-      <article class="item"><div class="item-head"><h3>4. Authorship and submission requirements hold</h3><span class="state unknown">Unverified</span></div><p>Jörn can take responsibility for the final text, and the final form meets current institutional rules. Current submission status is unknown; historical forms and a prior PDF assessment are not a current official check.</p></article>
-      <p class="closing">This breakdown is a proposal drawn from the <a href="#changes">project sources</a>. The authorship and rules item is a safeguard, not a newly found defect.</p>
+      <div class="eyebrow">Scope and PASS</div>
+<h1 id="success-title">Required content and remaining judgments</h1>
+<p class="lead">Project-facts item 8 names eleven content areas. The source and PDF coverage map below checks their presence and evidence owner; the independent acceptance record gives the bounded checks and exact page locations.</p>
+<div style="overflow-x:auto"><table class="coverage"><thead><tr><th>Required area</th><th>Thesis location</th><th>Support / limit</th></tr></thead><tbody>
+<tr><td>8.1 HKO local result</td><td>§7, pp. 42–53; App. B, pp. 96–98</td><td>Exact sections + analytic implication; fixed ten facets</td></tr>
+<tr><td>8.2 Pentagon side result</td><td>§§9–10, pp. 64–71</td><td>Rotation/affine proofs; named family scopes</td></tr>
+<tr><td>8.3 Search and data science</td><td>§8, pp. 53–64; App. A, pp. 84–95</td><td>Retained method/population contracts; overall human scope judgment unknown</td></tr>
+<tr><td>8.4 Reeb/HK2019 foundation</td><td>§§3–4, pp. 15–29</td><td>Realization and finite QP proof; normalization explicit</td></tr>
+<tr><td>8.5 First-order method</td><td>§6, pp. 37–41</td><td>Feasible sections/KKT derivatives; nearby branch completeness conditional</td></tr>
+<tr><td>8.6 Numerics/exactness</td><td>§13, pp. 75–78</td><td>Exact cube, interval policy, finite audits; indeterminate outcomes retained</td></tr>
+<tr><td>8.7 Code/data/reproduction</td><td>§14, pp. 78–79</td><td>Current versus public files and authenticated external data distinguished</td></tr>
+<tr><td>8.8 AI-use artifacts</td><td>Disclosure, p. 2; §15, pp. 80–82</td><td>Factual disclosure + numbered reflection; human acceptance unknown</td></tr>
+<tr><td>8.9 Visualization</td><td>§12, pp. 73–74</td><td>Exploratory figures and producer route; no geometric proof from projection</td></tr>
+<tr><td>8.10 Flow graph/CH2021</td><td>§5, pp. 29–36</td><td>Conditional/generic theorem; optimized-code correspondence unproved</td></tr>
+<tr><td>8.11 Preliminaries</td><td>§2, pp. 8–15</td><td>Capacity, symmetries, normalized rows and continuity</td></tr>
+</tbody></table></div>
+<h2>Human PASS remains separate</h2><p>The recorded working threshold is a fixed PDF for which Kai would return only about two hours of minor fixes. The restart had no human-question budget and creates no human acceptance verdict. Jörn's planned sequence remains Jörn review → Kai feedback → revision. Current institutional/submission status is unknown; this candidate is neither submitted nor publicly released by this run.</p>
+<h2>Source dispositions</h2><p><a href="../coordination/thesis-work.md">The detailed backlog</a> closes the named source repairs, preserves unresolved acceptance questions and points to the <a href="../history/thesis-restart-2026-10-04/ds-comment-disposition.md">DS human-comment disposition</a>. Earlier negative judgments apply to their exact drafts; the accepted correlation and absolute-area passages remain preserved.</p>
     </section>
 
     <section class="view" id="capabilities" data-view aria-labelledby="capabilities-title">
-      <div class="eyebrow">Process knowledge</div>
-      <h1 id="capabilities-title">Which kinds of labor can the team reliably turn into results?</h1>
-      <p class="lead">A completed local task is evidence about a method; it does not show that the method scales to a whole thesis. The first row dominates the current cost and success uncertainty.</p>
-      <article class="item">
-        <div class="item-head"><h3>Write one reader-acceptable page</h3><span class="state unknown">Unproven · critical</span></div>
-        <p><strong>Question:</strong> can a repeatable authoring and review loop catch content, proof-navigation, narrative and layout failures before Jörn reads the whole PDF?</p>
-        <p><strong>Next informative test:</strong> use a passage in the selected data-science chapter tied to retained human reader concerns. Check whether revision and source-aware review catch those concerns without transferring verdicts from older drafts. Only a discriminating trial should consume Jörn's attention.</p>
-        <p class="mini">Prior agent reviews missed reader problems, and a full-PDF review costs Jörn substantial time. Passing one page would justify a broader trial, not certify the thesis.</p>
-      </article>
-      <article class="item"><div class="item-head"><h3>Repair a named source defect</h3><span class="state partial">Locally demonstrated</span></div><p>Previous specific repairs were completed. The repeatable step is to check each proposed defect against the current source, patch only surviving issues, then inspect the affected PDF pages. Reader acceptance remains a separate test.</p></article>
-      <article class="item"><div class="item-head"><h3>Build and verify named exact packets</h3><span class="state ready">Known local procedures</span></div><p>The selected PDF and specific exact checks have recorded producers and outcomes. This supports those named results; it does not validate every thesis sentence or optimized implementation.</p></article>
-      <article class="item"><div class="item-head"><h3>Integrate a whole manuscript</h3><span class="state unknown">Unproven</span></div><p>Cross-chapter selection, explanation and evidence have produced past failures despite correct local work. A fixed candidate needs an end-to-end reader and claim check before human PASS is plausible.</p></article>
+      <div class="eyebrow">Observed process results</div>
+<h1 id="capabilities-title">What has this execution demonstrated?</h1>
+<p class="lead">The restart separates operational integration, independent acceptance and supervision. Its value must be assessed from returned work reaching one checked candidate, not from the arrangement's description.</p>
+<article class="item"><div class="item-head"><h3>Named repairs reach an assembled PDF</h3><span class="state partial">Observed locally</span></div><p>Bounded layout/evidence packets were accepted by the integration owner and assembled without returning routine decisions to root. Independent review found a nearly empty contents page and a wider-window API omission, leading to concrete repairs. Final checks refer to one retained PDF and source manifest.</p></article>
+<article class="item"><div class="item-head"><h3>Scientific review remains bounded</h3><span class="state partial">Useful, limited evidence</span></div><p>Direct changed-source review, fresh named exact checks and selected PDF inspection supplement earlier HKO/product reviews. They do not form a proof-assistant verification, full production-code audit or trusted predictor of Jörn's writing verdict.</p></article>
+<article class="item"><div class="item-head"><h3>Supervision and sustained effectiveness</h3><span class="state unknown">Not established generally</span></div><p>The watch observes actual ready/unresolved packets and hard-stop delivery; numeric quota and spending remain unknown. One restart can show local receipts and decisions, not sustained effectiveness, an optimal worker count or a quantified reduction in root workload. The <a href="../history/thesis-restart-2026-10-04/integration.md">integration record</a> retains concrete observations.</p></article>
     </section>
 
     <section class="view" id="work" data-view aria-labelledby="work-title">
-      <div class="eyebrow">Work map</div>
-      <h1 id="work-title">What is ready, idle, or waiting?</h1>
-      <p class="lead">“Ready” means no known technical prerequisite, not assigned or authorized work. No active thesis author or research producer is recorded. This is a near-term sample, not a complete task inventory.</p>
-      <h2>Ready, currently idle</h2>
-      <article class="item"><div class="item-head"><h3>Check the Chapter 7 claim in the selected PDF</h3><span class="state ready">Work-list item added 25 Sep</span></div><p><strong>Output:</strong> compare the rendered L10-N/L10-N+ wording, equality family and curvature caveat with the 24 Sep disposition and rational packet trust boundary; record PDF page/section and any mismatch. <strong>Owner:</strong> none assigned. <strong>Why idle:</strong> thesis completion work is paused. The theorem and exact packet are already registered on the work list.</p></article>
-      <article class="item"><div class="item-head"><h3>Check reported source issues in Chapters 2–14</h3></div><p><strong>Output:</strong> verify the agent-suggested reader, certificate, proof-bridge and artifact-mapping issues against the selected source; mark each as surviving, solved or withdrawn before editing. <strong>Owner:</strong> none assigned. <strong>Why idle:</strong> completion run paused. This source work does not depend on a writing-method trial.</p></article>
-      <article class="item"><div class="item-head"><h3>Dispose of data-science reader concerns</h3></div><p><strong>Output:</strong> check retained human comments against the selected chapter and record a disposition for each; older draft verdicts do not establish current acceptance. <strong>Owner:</strong> none assigned. <strong>Why idle:</strong> completion run paused.</p></article>
-      <h2>Held for human judgment</h2>
-      <article class="item"><div class="item-head"><h3>Final human PASS judgment</h3><span class="state held">Needs frozen candidate</span></div><p><strong>Waits for:</strong> one inspected PDF and Jörn's willingness to read it; the recorded flow then seeks Kai's feedback. No fast-review arrangement with Kai is recorded.</p></article>
-      <h2>Parked outside the submission route</h2>
-      <p>F=11 and global HKO questions remain open. The fixed-pentagon/symmetric-partner result and other research leads are optional; their existence creates no thesis-integration obligation.</p>
+      <div class="eyebrow">Work and ownership</div>
+<h1 id="work-title">One candidate, explicit remaining gaps</h1>
+<p class="lead">The <a href="index.html">live work view</a> reads the current assignment registry. This scientific page does not maintain a second list of owners or infer liveness from an old snapshot.</p>
+<article class="item"><div class="item-head"><h3>Integrated repair surface</h3><span class="state partial">Candidate assembled</span></div><p>Foundations, HKO navigation, exact product bridges, empirical numerical qualifications, artifact routing and known path overflows have source dispositions. The retained PDF and independent acceptance report identify what was actually checked.</p></article>
+<article class="item"><div class="item-head"><h3>Acceptance questions</h3><span class="state unknown">Remain unknown</span></div><p>Human PASS and whole-chapter acceptance; Jörn's broader DS method-scope interpretation; full long-horizon reproduction; optimized flow implementation correspondence; current official delivery status. These gaps are not silently converted into completed work.</p></article>
+<article class="item"><div class="item-head"><h3>Optional research</h3><span class="state held">Unselected</span></div><p>F=11 and global HKO results, broader arbitrary-partner claims, further profile catalogues and new method experiments remain separate choices. The branch-aware optimizer comparison remains outside the submission route under Jörn's recorded scope decision.</p></article>
     </section>
 
     <section class="view" id="roadmap" data-view aria-labelledby="roadmap-title">
-      <div class="eyebrow">Roadmap</div>
-      <h1 id="roadmap-title">A near-term route with explicit forks</h1>
-      <p class="lead">The first two lanes can move together. The writing trial is optional; the final human judgment waits for one inspected PDF.</p>
-      <article class="item"><div class="item-head"><h3>Now: settle scope questions</h3><span class="state unknown">Decision needed</span></div><p>Test the proposed success conditions and clarify whether the closed data-science method table meets Jörn's intended scope. Dispose of current reader concerns separately. The branch-aware optimizer comparison is outside the submission route.</p></article>
-      <article class="item"><div class="item-head"><h3>Now: verify and repair sources</h3><span class="state partial">Can proceed now</span></div><p>Check Chapter 7's rendered theorem against its packet and disposition. Verify remaining agent-suggested issues against current sources, repair supported ones, then build and inspect one exact PDF.</p></article>
-      <article class="item"><div class="item-head"><h3>Optional: test a writing method</h3><span class="state unknown">Method unknown</span></div><p>Use a current passage and specified reader-failure test to learn whether broader rewriting is worthwhile.</p></article>
-      <article class="item"><div class="item-head"><h3>Later: human review and delivery</h3><span class="state held">Needs frozen PDF</span></div><p>The recorded plan is Jörn review → Kai feedback → revision. Check current submission status and official rules before treating hand-in as remaining work.</p></article>
-      <h2>Still unplanned</h2>
-      <ul class="list">
-        <li><strong>Writing-method value:</strong> would a one-page trial change the plan enough to justify its cost?</li>
-        <li><strong>Repair scope:</strong> which 18 Sep agent-suggested issues still apply after the 24 Sep integration?</li>
-        <li><strong>Data-science scope:</strong> does the closed named method table satisfy Jörn's intended scope, and how should remaining reader concerns be resolved or qualified?</li>
-        <li><strong>External review:</strong> when and in what form can Kai review a frozen candidate? No quick arrangement is recorded.</li>
-        <li><strong>Formal delivery:</strong> current official submission and AI-disclosure requirements need a source check before reliance.</li>
-        <li><strong>Long-horizon reproduction:</strong> check whether the playbook completely maps source code and experiment outputs through figures to the PDF, and distinguishes byte-identical outputs from accepted comparisons. This is an open completeness question from the project facts, not a confirmed defect.</li>
-      </ul>
+      <div class="eyebrow">Continuation</div>
+<h1 id="roadmap-title">Continue from the retained candidate</h1>
+<p class="lead">A later session should preserve the accepted local changes, use the exact PDF/source manifest, and select its next work from the remaining consequential uncertainty.</p>
+<article class="item"><h3>Before changing the manuscript</h3><p>Read the current handoff and independent acceptance record. A substantive source edit creates a new PDF candidate; inspect affected pages and update the claim/evidence map rather than transferring the old verdict automatically.</p></article>
+<article class="item"><h3>For deeper reproducibility</h3><p>Select a named result or figure path and execute its documented chain in a fresh environment. Record inputs, tool versions, timings and comparison contract. Do not replace retained evidence or claim all-result reproduction from one smoke test.</p></article>
+<article class="item"><h3>For eventual human review</h3><p>Use one frozen PDF for Jörn's judgment and the recorded Kai flow. No immediate review availability or current institutional deadline is assumed. Publication and submission require their separately selected closure actions.</p></article>
     </section>
 
     <section class="view" id="changes" data-view aria-labelledby="changes-title">
-      <div class="eyebrow">Changes and sources</div>
-      <h1 id="changes-title">What changed, and what supports this view?</h1>
-      <p class="lead">The original work list was reconciled on 18 Sep; its 25 Sep update registers the selected theorem and adds the rendered-PDF claim check.</p>
-      <article class="item"><div class="item-head"><h3>24 Sep · theorem selection changed</h3><span class="state done">Recorded</span></div><p>A rational hexagon–quadrilateral product was promoted as a non-HKO ten-facet local maximum. Arbitrary-partner and F=11 claims stayed restricted or open.</p></article>
-      <article class="item"><div class="item-head"><h3>18 Sep · source repairs reconciled</h3><span class="state done">Earlier repair inventory</span></div><p><code>docs/coordination/thesis-work.md</code> retains those scoped repairs and optional-result dispositions; it is not a current PASS judgment.</p></article>
-      <article class="item"><div class="item-head"><h3>25 Sep · Chapter 7 claim check added</h3><span class="state partial">PDF/packet comparison open</span></div><p>The L10-N/L10-N+ theorem and exact packet are registered. Remaining work is to record whether the selected PDF's rendered theorem, proof and caveat match their stated support.</p></article>
-      <h2>Source entry points</h2>
-      <p class="mini" id="source-access-note">Source links open files from this checkout when served by the dashboard command.</p>
-      <ul class="source-list">
-        <li><a href="../coordination/handoff.md"><code>docs/coordination/handoff.md</code></a> — PASS definition, stopped run and review limits. Current directions are in the coordination handoff; the original stopped-run record is archived.</li>
-        <li><a href="../project-facts.md"><code>docs/project-facts.md</code></a> — Jörn-confirmed scope and planned final review flow; current submission status is unknown.</li>
-        <li><a href="../coordination/thesis-work.md"><code>docs/coordination/thesis-work.md</code></a> — scoped source repairs and the 25 Sep Chapter 7 PDF/packet check.</li>
-        <li><a href="../consolidation/2026-09-24/claim-disposition.md"><code>docs/consolidation/2026-09-24/claim-disposition.md</code></a> — precise new theorem and research-note boundaries.</li>
-        <li><a href="../history/memories/planning-context.md"><code>docs/history/memories/planning-context.md</code></a> — authoring/review process uncertainty.</li>
-        <li><a href="../../thesis/main.tex"><code>thesis/main.tex</code></a> — the selected reader-facing source.</li>
-      </ul>
-      <p class="closing">Source state checked 25 Sep 2026 through <code>93ca3247</code>, plus the local Chapter 7 check added to the work list that day. This page needs an editorial refresh after a material source change; its date alone does not make it current.</p>
+      <div class="eyebrow">Evidence behind this view</div>
+<h1 id="changes-title">Source and artifact identity</h1>
+<p class="lead">The 4 October restart preserves checkpoint <code>fe3475b3</code>, whose earlier local work was not yet integrated. This view reconciles required scope, promoted claims, caveats, evidence owners and the new retained candidate.</p>
+<ul class="source-list">
+<li><a href="../history/thesis-restart-2026-10-04/candidate-manifest.json">Candidate manifest</a> — all tracked thesis-source hashes, PDF hash, build identity and review scope.</li>
+<li><a href="../history/thesis-restart-2026-10-04/acceptance-source-review.md">Independent source review</a> · <a href="../history/thesis-restart-2026-10-04/acceptance-numerical.md">Numerical/flow acceptance</a> · <a href="../history/thesis-restart-2026-10-04/acceptance-pdf.md">Exact-PDF review</a> — findings, fixes and inspection limits.</li>
+<li><a href="../history/thesis-restart-2026-10-04/integration.md">Integration record</a> — accepted packets, checks and unresolved limitations.</li>
+<li><a href="../history/thesis-restart-2026-10-04/evidence-docs.md">Evidence/reproduction check</a> — archive routing, setup semantics and fresh exact verification.</li>
+<li><a href="../project-facts.md">Jörn-confirmed project facts</a> — all eleven content areas, theorem/support boundaries and review flow.</li>
+<li><a href="../coordination/thesis-work.md">Detailed thesis obligations</a> — source repair dispositions and remaining acceptance questions.</li>
+<li><a href="../consolidation/2026-09-24/claim-disposition.md">Promoted and restricted claims</a> — non-HKO equality family, upper-section caveat and unpromoted research.</li>
+<li><a href="../coordination/handoff.md">Current handoff</a> — current continuation authority and stopping constraints.</li>
+<li><a href="../../thesis/main.tex">Selected manuscript</a> · <a href="../reproducibility.md">Reproduction inventory</a> · <a href="../../INSTALL.md">Environment setup</a>.</li>
+</ul>
+<p class="mini" id="source-access-note">Source links open explicit files from this checkout when served by the dashboard command.</p>
+<p class="closing">The source-status indicator compares recorded hashes. Matching hashes show an unchanged reviewed source set; they do not establish scientific correctness or human acceptance.</p>
     </section>
   </main>
 </div>

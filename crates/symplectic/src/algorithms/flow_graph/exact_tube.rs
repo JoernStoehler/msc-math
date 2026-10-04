@@ -1308,15 +1308,21 @@ fn solve_singular_fixed_tube(
     // Collapsing these cases into one rejection would make the slow exact path
     // less useful and would hide unsupported positive-action singular cases.
     let rows = [(&lhs[0], &rhs[0]), (&lhs[1], &rhs[1])];
+    // A zero coefficient row still imposes 0 = b. Check it before selecting
+    // a nonzero row; otherwise a rank-one inconsistent system looks like a
+    // fixed line after its contradictory row has been discarded.
+    if rows
+        .iter()
+        .any(|(row, b)| row[0].is_zero() && row[1].is_zero() && !b.is_zero())
+    {
+        return ClosedClassification::EmptyTube;
+    }
     let nonzero: Vec<(&Vec2, &R)> = rows
         .into_iter()
         .filter(|(row, _)| !row[0].is_zero() || !row[1].is_zero())
         .collect();
 
     if nonzero.is_empty() {
-        if !rhs[0].is_zero() || !rhs[1].is_zero() {
-            return ClosedClassification::EmptyTube;
-        }
         return singular_fixed_polygon_result(
             tube,
             tube.start_polygon.clone(),
@@ -2135,6 +2141,55 @@ mod tests {
             solve_closed_tube(&duals, &tube, &mut metrics),
             ClosedClassification::NonStrictNoOrbit { .. }
         ));
+    }
+
+    #[test]
+    fn exact_singular_fixed_line_checks_zero_row_consistency() {
+        let frame = FaceFrame {
+            first: 0,
+            second: 1,
+            base: [r(0), r(0), r(0), r(0)],
+            u: [r(1), r(0), r(0), r(0)],
+            v: [r(0), r(1), r(0), r(0)],
+            free: [0, 1],
+        };
+        // Both affine shear maps have determinant one. Their fixed-point
+        // equations have one nonzero row and one contradiction 0 = 1, in
+        // opposite row positions. These are algebraic classifier fixtures;
+        // no realization as polytope return maps is asserted.
+        for (matrix, offset) in [
+            ([[r(1), r(0)], [r(1), r(1)]], [r(-1), r(0)]),
+            ([[r(1), r(1)], [r(0), r(1)]], [r(0), r(-1)]),
+        ] {
+            let mut metrics = ExactClosedTubeMetrics::default();
+            let mut tube = ExactTube {
+                sequence: vec![0, 1, 0],
+                start_frame: frame.clone(),
+                end_frame: frame.clone(),
+                start_polygon: unit_square(&mut metrics),
+                start_to_end: Affine2 { matrix, offset },
+                action_on_start: AffineScalar {
+                    coeff: [r(0), r(0)],
+                    constant: r(1),
+                },
+            };
+            assert!(matches!(
+                solve_closed_tube(&[], &tube, &mut metrics),
+                ClosedClassification::EmptyTube
+            ));
+
+            // With zero translation the same rank-one system is consistent;
+            // its fixed line meets the square and has constant positive action.
+            tube.start_to_end.offset = [r(0), r(0)];
+            assert!(matches!(
+                solve_closed_tube(&[], &tube, &mut metrics),
+                ClosedClassification::UnsupportedPositiveSingular {
+                    singular_status: "singular_fixed_line",
+                    min_action,
+                    max_action,
+                } if min_action == Some(r(1)) && max_action == Some(r(1))
+            ));
+        }
     }
 
     #[test]

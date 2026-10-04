@@ -564,6 +564,10 @@ fn general_qp_minimizers_assuming_checked(
 /// The multiple is exact, inclusive, and must be at least one. This forces the
 /// complete transition-pruned general candidate family even when the input is
 /// a structural product.
+/// Admissibility here means strictly positive beta and q in the exact KKT
+/// system, with one witness per word, including singular solution families.
+/// For multiples above one, curvature cannot exclude nonmaximizing stationary
+/// words, so this route can cost more than scalar capacity or minimizers.
 pub fn general_qp_action_window(
     geometry: &PolytopeGeometry4d,
     maximum_action_multiple: BigRational,

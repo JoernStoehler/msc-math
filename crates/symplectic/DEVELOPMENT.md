@@ -42,6 +42,15 @@ proved conservative replacement.
 | General minimizers, action windows, and `solve_sigma_exact` | Exact resolution of requested witnesses/actions | These APIs explicitly return exact binary64-rational answers. The scalar bounds API is the cheaper surface when the caller does not need them. |
 | Structural-product route | Exact support resolution only for indeterminate interval predicates, then exact comparison of possible winners | `ProductCapacity4d` currently returns an exact capacity and sparse exact winners. The proof/code bridge, intermediate interval audit, exact-all oracle, and fallback counts are in `formal/product-qp-six-facet-reduction.tex` and `experiments/dev-quadratic-program/tools/product_closure_route/{README.md,RESULTS.md}`. |
 
+Curvature and cyclic-obstruction pruning preserve scalar capacity and tied
+minimizers, but do not decide positive KKT feasibility. A general action
+window with multiple greater than one therefore disables both pruning paths;
+the certified beta/q predicates and exact fallback still apply. The hypercube
+regression in `tests/public_capacity_api.rs` compares the complete positive
+KKT spectrum, including nonmaximizing stationary words, against this window.
+See `lem:kkt-cyclic-obstruction-inheritance` in
+`formal/hk2017-qp-precision.tex` for the narrower curvature conclusion.
+
 When changing one of these sites, measure the caller-shaped stages documented
 in `experiments/dev-quadratic-program/performance/CURRENT_COSTS.md`. Do not use
 the existence of an exact reference implementation as a reason to put it in

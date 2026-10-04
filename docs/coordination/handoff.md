@@ -1,45 +1,19 @@
 # Current handoff
 
-**4 October 2026: thesis execution is stopped by Jörn.** A preservation
-checkpoint and concrete continuation packet are in
-[restart-2026-10-04.md](restart-2026-10-04.md). Read that first. It records the
-actual worktree/branch, original deadline and scope, unintegrated edits,
-reported checks, known defects and an explicitly untested orchestration proposal.
-The packet is not itself restart authorization or evidence of thesis acceptance.
+**4 October 2026: bounded restart completed before the 04:00 Europe/Berlin hard stop.** The commit containing this handoff retains the checked candidate and repository improvements on `thesis/2026-10-04-candidate`, preserving checkpoint `fe3475b3` and its pre-run base `52b1526c8ff5613a400f2f4028b4290f35841b21`. Worktree: `/home/joern/.codex/worktrees/f171/msc-math`.
 
-The earlier September cleanup-only authorization and sole-worktree description
-are superseded. Current selected manuscript: `thesis/main.tex`. Historical
-human PASS and university submission status remain unknown; the current user
-asked for PDF/repository quality, then stopped execution for this handoff.
+The [delivery record](../history/thesis-restart-2026-10-04/README.md) identifies the final **100-page PDF**, source manifest, independent acceptance, numerical repairs and exact evidence. PDF SHA-256: `27dbf152964bf3eeb6a15bf5f319ab4326de14d48a40e2e296f6008eff3e2f70`. The selected source remains `thesis/main.tex`; ordinary build: `sh thesis/build.sh`. Recheck retained source/PDF/evidence identity with:
 
-## Evidence and recovery
+```sh
+python3 docs/history/thesis-restart-2026-10-04/verify-candidate.py
+```
 
-The selected manuscript is `thesis/main.tex`; see `thesis/README.md` and build
-with `sh thesis/build.sh`. The frozen diagnostic PDF is
-`docs/resume/thesis-resume.pdf`; `docs/resume/build-verification.json` records
-its inputs and hash. `python3 docs/resume/verify.py` checks frozen-build and
-preservation evidence. A build or preservation check does not establish PASS.
-On 30 September, the frozen input record mismatches seven files already in
-committed `HEAD` (HKO appendix/program, abstract, introduction, Chapter 7,
-availability and conclusion). This cleanup did not change those sources or
-refresh the frozen record. Treat that PDF as an older diagnostic snapshot.
+All seven selected-source obligations are dispositioned, and the scientific dashboard is reconciled against this candidate and 96 explicit source hashes. Independent acceptance covers all eleven required areas, all 100 pages at sequential-text/overview level and 64 individually rendered pages. Six scoped findings were closed. Tests/builds and finite exact checks do not supply human PASS or unrestricted correctness.
 
-Session identities are retained in `docs/resume/sessions.json`. Ordinary
-resumption must not inspect raw rollouts or restart old panes or agents.
-`docs/resume/layout-migration.json` maps old manuscript paths; earlier selected
-trees are recoverable at `35f29db4:thesis/`. Superseded plans are indexed in
-`docs/history/retired-paths.json`, not active edit targets.
+Human/Kai PASS, overall DS scope, full fresh-environment/data reproduction and actual submission/archive status remain unknown or outside this delivery. The named DS table retains one unresolved body and uncertified volume ratios; production-flow correspondence remains bounded. No university submission or public release was performed. `docs/resume/` remains unchanged historical evidence; its old mismatches do not describe the new candidate.
 
-The full original branch history and retained generated/untracked files were
-archived at `/workspaces/archived/workspaces-root/msc-math-session-20260918/`.
-The cleanup record reports recovery of all 43 original heads and shutdown of
-eleven old review servers. Do not reuse old review URLs. See
-`docs/resume/cleanup-result.json` and `docs/resume/external-dependencies.md` for
-recovery hashes and dataset/cache dependencies. Preservation still has the
-recorded limitation: 3,606 excluded `target/` and `__pycache__` files lack
-individual pre-deletion inventories; later checks do not resolve that gap.
+Operational integration `/root/integration` and independent acceptance `/root/acceptance` completed. Supervision `/root/supervision` ended at 00:52:07 UTC; its [assessment](../history/thesis-restart-2026-10-04/supervision.md) records successful direct correction cycles, a duplicated short verifier run, context growth and untested surge/forced-stop behavior. Sustained orchestration effectiveness is not established. All assignments are released; one mathematical child retains ambiguous native `pending_init` metadata despite explicit interrupt/stop. No further work is assigned there.
 
-The exact pre-migration handoff, including contradictory opening directions,
-is retained at
-[../history/coordination-surface-migration/resume-20260930.md](../history/coordination-surface-migration/resume-20260930.md).
-It supplies historical context without competing with this continuation entry.
+Root thread `01a10453-ff7a-7f91-8f86-a53f73cd3d35` integrated this local delivery; the commit containing this handoff is its retained revision. Remaining-weekly-quota authorization had no known numeric balance; actual spend is unknown. The hard stop was a ceiling, not a reason to invent new work after scoped acceptance. Further execution requires a new selected task; no unattended producer or review is planned.
+
+The earlier [restart handoff](restart-2026-10-04.md) is retained as historical input. It does not supersede this completed state.

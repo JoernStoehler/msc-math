@@ -1,13 +1,15 @@
 # Current thesis work remaining
 
-Existing issue statuses reconciled 18 September 2026 after the
-manuscript/layout consolidation; the Chapter 7 claim check was added on 25
-September 2026 after the claim disposition. This is the current work list for
-the selected manuscript in `thesis/main.tex`. It
-supersedes task lists in `docs/history/`; those files remain evidence, not active
-assignments. There is no active author or research producer. A clean build or an
-agent review is not a submission-readiness verdict, and no PASS or completion
-forecast is recorded here.
+Reconciled against the selected source and the 4 October 2026 restart
+candidate. This remains the detailed obligation owner for `thesis/main.tex`;
+[current.json](current.json) owns live assignments. The preserved checkpoint
+`fe3475b3` supplied most of the source repairs below, now assembled with the
+restart corrections. Exact source/PDF identity and bounded review outcomes are
+in [the integration record](../history/thesis-restart-2026-10-04/integration.md)
+and [candidate manifest](../history/thesis-restart-2026-10-04/candidate-manifest.json).
+A clean build or agent review does not establish human PASS. No submission or
+public release is implied. Human acceptance, the overall data-science scope
+classification and long-horizon reproduction completeness remain unknown.
 
 Status terms used below:
 
@@ -18,19 +20,23 @@ Status terms used below:
 - **Unknown** means acceptance or adequacy has not been established. Unknown is
   not itself a manuscript defect.
 
-## Remaining source decisions and repairs
+## Source obligations and their current disposition
 
 ### 1. Foundations and the quadratic-program reduction
 
-**Status:** agent-suggested exposition repairs; the relevant mathematics was not
-reported false. Source: `docs/history/coordination/whole-exposition-assessment.md`.
+**Status: source repairs completed.** The four named clarifications are now
+present: normalized rows, the usable nonsmooth billiard theorem, explicit word
+surgery, and the positivity/vertex-replacement argument. Independent restart
+review found no high/medium defect in this scope. The original suggestions are
+from `docs/history/coordination/whole-exposition-assessment.md`; they were
+exposition findings, not reports that the mathematics was false.
 
 **Selected sources:**
 
 - `thesis/chapters/02-preliminaries-lagrangian-products.tex`
 - `thesis/chapters/04-quadratic-program.tex`
 
-**Exact remaining work:**
+**Checked source obligations:**
 
 1. In Chapter 2, replace or clarify the premature phrase “the Reeb direction
    associated later with a support row” by naming the normalized facet row, or
@@ -51,9 +57,11 @@ the imported billiard theorem.
 
 ### 2. Variation, HKO certificate, and local-maximality navigation
 
-**Status:** agent-suggested reader orientation. Direct source checking found the
-finite certificate and slope-to-neighborhood argument present; this is not a
-missing-proof item.
+**Status: source navigation repairs completed.** The KKT block matrix,
+symmetry slice, seven-facet derivative, 26-versus-25 explanation, four predicate
+groups and appendix trust boundary are explicit. The assignment table has a
+caption and the executable listing has line numbers. These changes explain
+an existing proof; they do not treat program output as its analytic implication.
 
 **Selected sources:**
 
@@ -62,7 +70,7 @@ missing-proof item.
 - `thesis/appendices/hko-certificate.tex`
 - `thesis/appendices/hko_core.py`
 
-**Exact remaining work:**
+**Checked source obligations:**
 
 1. Identify the KKT block matrix used for the implicit-function argument,
    connect the slice `S` to the later symmetry complement, and show the
@@ -84,8 +92,11 @@ of this repair.
 
 ### 3. Exact product-family proofs
 
-**Status:** agent-suggested proof expansions. The latest assessment found dense
-bridges, not a need for structural rewriting.
+**Status: source proof expansions completed.** Ordered pairings, endpoint
+interpolation, product closure reduction, convex combinations, cyclic cuts,
+polar-decagon/equality steps, the mass bound and Hausdorff passage are now
+locally traceable. Independent bounded product/foundation review found no
+high/medium defect; this is not an unrestricted theorem or implementation audit.
 
 **Selected sources:**
 
@@ -93,7 +104,7 @@ bridges, not a need for structural rewriting.
 - `thesis/chapters/10-affine-pentagons.tex`
 - `thesis/chapters/11-product-position.tex`
 
-**Exact remaining work:**
+**Checked source obligations:**
 
 1. For rotated regular polygons, display the four ordered symplectic pairings
    behind the `2u\mathbin\cdot v` sum, replace “determines the value” by the
@@ -123,9 +134,11 @@ remain unchanged.
 
 ### 4. Visualization, numerical example, and artifact mapping
 
-**Status:** agent-suggested exposition and provenance repairs. The earlier
-claim that the visualization and availability sources were absent is obsolete:
-the selected sources are now canonical files.
+**Status: source and layout repairs completed.** Panel interpretations,
+exact cube example, separate audit-packet owners, external-data status and
+appendix/public-version distinction are present. The integrated 100-page build
+has no overfull/underfull or undefined-reference warnings. Final PDF inspection
+is recorded against the retained candidate, rather than the earlier snapshots.
 
 **Selected sources:**
 
@@ -134,7 +147,7 @@ the selected sources are now canonical files.
 - `thesis/chapters/14-code-data.tex`
 - `thesis/appendices/hko-certificate.tex`
 
-**Exact remaining work:**
+**Checked source obligations:**
 
 1. State what each visualization panel illustrates and what inference the
    reader must not draw from it.
@@ -153,8 +166,14 @@ availability is stated literally.
 
 ### 5. Data-science prose and evidence disposition
 
-**Status:** mixed. The selected chapter and appendix are scientifically scoped
-and contain the completed 14,335-of-14,336 retrospective capacity coverage.
+**Status: source concerns dispositioned; human acceptance unknown.** The selected
+chapter and appendix are scientifically scoped and contain the completed
+14,335-of-14,336 retrospective capacity coverage. The [current-source comment
+disposition](../history/thesis-restart-2026-10-04/ds-comment-disposition.md)
+records all twelve original annotations and later qualified/withdrawn comments.
+The restart removed a surviving trivial scaling explanation, made specific
+quantity references explicit, and preserved the accepted correlation and
+absolute-area passages.
 Human acceptance of the selected chapter is **unknown**. Jörn's explicit
 “Needs revision before acceptable” verdict applied to the different ridge-only
 sample retained at
@@ -177,8 +196,8 @@ not to the complete selected chapter. Jörn also rejected pages 7–9 of an
 - `docs/ds-retrospective-revalidation/README.md`
 - `docs/history/whole-review/thesis-v3-writing-changes.md`
 
-**Exact remaining work:** source-aware disposition, not wholesale import, of
-the still-applicable human concerns: result-oriented title/topic sentences;
+**Completed source-disposition scope:** source-aware comparison, not wholesale
+import, of the retained human concerns: result-oriented title/topic sentences;
 phenomenon before population mechanics; explicit “systolic ratio” rather than
 indirect labels; clear separation of empirical observation, mathematical
 explanation, and selection experiments; and a mathematically useful closing.
@@ -188,11 +207,13 @@ objections recorded in the microbatches. Reproduction details moved out of
 reader prose must remain available in the appendix or a canonical methods
 packet.
 
-**Done means:** every human comment has an explicit current-source disposition
-(applied, already absent, retained because the full context was accepted, or
-inapplicable because it referred to another draft), and the selected chapter's
-claims remain bounded by the historical/current evaluator distinction. Human
-acceptance is still a separate judgment; this list does not invent it.
+The linked disposition records applied, already-absent, contextually accepted
+and alternate-draft concerns. The selected chapter preserves the
+historical/current evaluator distinction. Human acceptance remains a separate
+judgment; a source-level disposition does not invent it. The broader
+roughly-100-method expectation remains uncertain in Jörn's intended sense,
+without treating that historical approximate count as a numeric gate or
+scheduling more methods.
 
 The single body `random_F8_s3_45` may remain explicitly unresolved. Solving it,
 relaxing numerical policy, or certifying volume is additional scientific work,
@@ -202,7 +223,7 @@ not a prerequisite while the thesis states the limitation accurately.
 
 **Status:** no confirmed source defect remains from the ten human annotations.
 The v3 source implemented them and an independent comparison found no required
-correction. Human acceptance of the additions and of the selected chapter as a
+correction. Chapter 15 is unchanged by the checkpoint and restart patches. Human acceptance of the additions and of the selected chapter as a
 whole is unknown.
 
 **Selected source:** `thesis/chapters/15-ai-reflection.tex`.
@@ -229,16 +250,23 @@ L10-N+, preserve the explicit caveat that `-13/432` is curvature of the
 selected feasible upper sections, not a Hessian assertion about the actual
 capacity.
 
-**Remaining check:** compare the selected PDF's rendered theorem and proof
-wording against `docs/consolidation/2026-09-24/claim-disposition.md` and the
-packet's stated trust boundary.
+**Completed PDF/evidence check (4 October):** pages 51–53, subsection 7.7
+and Theorem 7.8 of the retained 100-page candidate, match
+`docs/consolidation/2026-09-24/claim-disposition.md` and the packet's trust
+boundary. The theorem includes the non-strict fixed-ten-facet local maximum
+and two-parameter equality family modulo the stated symmetries. The proof
+identifies `-13/432` as upper-section curvature, continues the constant-rank
+family, and supplies the mixed-direction and chart argument. Exact predicates
+remain attributed to the rational packet; no explicit radius, added-facet or
+global claim is introduced. Fresh exact and independent checks passed, and
+historical evidence now resolves through the nested-archive route.
 
-**Done means:** record the PDF page/section and, claim by claim, whether its
-rendered wording matches the disposition and whether each exact statement
-points to the rational packet while the analytic implication remains attributed
-to the proof. Confirm that the two-parameter equality family and upper-section
-curvature caveat are present; record any mismatch for correction. Rerunning
-the computation is not part of this check.
+[Independent PDF acceptance](../history/thesis-restart-2026-10-04/acceptance-pdf.md)
+records the exact artifact identity, all-eleven-area coverage and review depth;
+[source acceptance](../history/thesis-restart-2026-10-04/acceptance-source-review.md)
+records the analytic/predicate comparison. No mismatch remains in this bounded
+claim check. This does not establish human acceptance or exhaustive proof
+verification.
 
 ## Scientific scope disposition
 
@@ -321,9 +349,30 @@ rewriting unflagged AI v1 prose are not required repairs.
    because a historical report still names an old path.
 3. Inspect changed pages and adjacent floats, references, tables, and appendix
    continuations. Record the exact source revision and PDF hash.
-4. Run `python3 docs/resume/verify.py` after refreshing the retained resume
-   build record if the selected source/PDF intentionally changes.
+4. Keep `docs/resume/` frozen as historical evidence. The new
+   `docs/history/thesis-restart-2026-10-04/candidate-manifest.json` identifies
+   the retained candidate and all tracked thesis-source hashes. Recheck those
+   hashes after integration; a later source edit requires a new candidate and
+   explicit review disposition.
 5. Freeze one exact candidate for any eventual final human judgment. The
    judgment remains unknown until it occurs; diagnostic agent reviews and a
    warning-free build do not establish PASS. No university submission or public
    release is authorized by this work list.
+
+## Remaining acceptance and reproduction limits
+
+- Historical human PASS remains unknown: the working threshold is Kai finding
+  only minor issues Jörn could fix in about two hours. Neither agent review nor
+  an inspected build supplies that judgment.
+- The retained tube theorem is conditional on explicit regularity hypotheses;
+  chamber-generic validity and bounded rational implementation checks do not
+  certify the optimized production flow search on every input.
+- The wide general-QP action-window contract received a separate targeted
+  repair and regression review in the restart. This does not imply a wrong
+  scalar capacity result or a complete audit of every consumer.
+- The reproduction inventory now distinguishes current analytic and exact
+  routes, historical evidence and authenticated bulk-data materialization.
+  A fresh independent environment has not reproduced every empirical producer,
+  figure and final PDF, and original timing/machine metadata is incomplete.
+- Submission status/current institutional rules and Jörn/Kai review remain
+  externally unestablished; no administrative action is selected by this file.

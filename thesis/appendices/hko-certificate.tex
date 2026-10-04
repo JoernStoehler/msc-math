@@ -77,8 +77,13 @@ neighborhood and equality statements follow from the geometric lemmas;
 they are not additional predicates checked by this program.
 
 The listed file is \path{thesis/appendices/hko_core.py}.
-Run it with \texttt{conda run --name sage python}, with Python optimization disabled so that
-its assertions are executed. The recorded run returned
+From the repository root, run it with Python optimization disabled so that
+its assertions are executed:
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,columns=fullflexible]
+PYTHONOPTIMIZE=0 conda run --name sage python thesis/appendices/hko_core.py
+\end{lstlisting}
+The recorded run returned\par\smallskip
+\noindent
 \texttt{HKO appendix core passed: rows=26 rank=25 symmetry-rank=15}.
 These checks establish the finite hypotheses used in the main proof. The
 geometric chart and volume formula are supplied by

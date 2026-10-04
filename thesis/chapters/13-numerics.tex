@@ -184,7 +184,7 @@ The product API's outward conversion consequently returns
 An action cutoff below four therefore excludes these winners, whereas
 a closed cutoff at four includes both. In this case input, optimizer
 weights and capacity are all exactly representable; the zero-width output
-does not describe the usual general-polytope interval.\footnote{The input is
+does not describe the usual general-polytope interval.\footnote{\raggedright The input is
 \texttt{square\_product\_case} in
 \path{experiments/dev-quadratic-program/tools/product_closure_route/main.rs};
 the tracked \path{sample5.jsonl} in that directory contains the row
@@ -195,10 +195,10 @@ The outward rational conversion is implemented in
 \subsection{Empirical verification and limitations}
 
 The audits below concern separate development implementations of the general
-and product algorithms. Their retained reports and producers are tracked in
-\path{experiments/dev-quadratic-program/tools/}, in the
-\texttt{general\_algorithm\_ablation} and \texttt{product\_closure\_route}
-packets. A four-test comparison, described below, checks their outputs
+and product algorithms. Their reports and producers are under
+\path{experiments/dev-quadratic-program/tools/}.
+The two packets are \path{general_algorithm_ablation/} and
+\path{product_closure_route/}. A four-test comparison, described below, checks their outputs
 against the production implementation on fixed fixtures.
 
 An audit of the general development implementation compared the floating-point

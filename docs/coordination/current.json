@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-04T00:29:44Z",
-  "scope": "Interrupted 4 October thesis run preserved for a possible fresh-session restart. Thesis execution stopped by Jörn; this checkpoint/handoff is authorized, not automatic resumption.",
-  "summary": "Original ten workers completed or interrupted; no thesis work running. Independent orchestration/custody reviews finished. Preservation checkpoint contains unintegrated edits and known defects; read restart-2026-10-04.md before any authorized continuation.",
+  "updated_at": "2026-10-04T00:55:24Z",
+  "scope": "Completed 4 October bounded thesis/repository restart from fe3475b3, before the 02:00 UTC hard stop. Final 100-page candidate retained with independent scoped acceptance; no current restart assignment.",
+  "summary": "Preserved and integrated checkpoint; six findings repaired, final source/PDF/evidence identities checked, scientific view reconciled. Human PASS, overall DS scope, full fresh-environment/data reproduction and generalized orchestration effectiveness remain unestablished.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -19,15 +19,15 @@
       ],
       "blocker": "Workflow implementation/acceptance, thesis source/support/human PASS, code/evidence and reproduction checks, actual delivery/archive dispositions and final session release remain unfinished.",
       "plan_gap": "The 4 October bounded run is selected. Human acceptance, university submission status and optional workflow activation remain unknown or outside this run.",
-      "next_step": "Thesis execution stopped. Preserve the checkpoint and use the restart handoff only when Jörn instructs continuation.",
-      "authorization": "Current authorization is preservation and handoff; original thesis run was stopped by Jörn.",
+      "next_step": "Checked restart candidate available; no restart work remains assigned. Future human/scope/reproduction/archive dispositions are separate from this completed bounded delivery.",
+      "authorization": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
       "sources": [
         "docs/coordination/thesis-work.md",
         "docs/coordination/handoff.md",
         "docs/project-facts.md",
         "ARCHITECTURE.md"
       ],
-      "updated_at": "2026-10-04T00:15:11Z"
+      "updated_at": "2026-10-04T00:53:23Z"
     },
     {
       "id": "workflow-done",
@@ -37,7 +37,7 @@
       "graph_label": "Workflows ready",
       "status": "blocked",
       "owner": null,
-      "outcome": "Selected project-local skills and workflow deliverables integrated and working against the agreed support contract, with evidence and caveats retained; all assignments closed and their sessions released. Plans alone do not establish readiness. Thesis execution remains STOPPED.",
+      "outcome": "Selected project-local skills and workflow deliverables integrated and working against the agreed support contract, with evidence and caveats retained; all assignments closed and their sessions released. Plans alone do not establish readiness. The bounded thesis restart is complete; workflow migration remains unselected.",
       "depends_on": [
         "workflow-acceptance",
         "workflow-session-release"
@@ -413,7 +413,7 @@
       "title": "Previous thesis stop superseded by 4 October authorization",
       "kind": "task",
       "selection": "parked",
-      "graph_label": "Thesis execution\nSTOPPED",
+      "graph_label": "Historical stop\nrespected",
       "status": "done",
       "owner": null,
       "outcome": "The previous stop was respected until Jörn authorized this new bounded thesis/repository run. This historical task is closed; oct04-candidate owns current execution.",
@@ -424,7 +424,7 @@
       ],
       "updated_at": "2026-10-04T00:15:11Z",
       "project": "thesis",
-      "authorization": "STOPPED; no autonomous thesis execution window."
+      "authorization": "Historical stop respected until explicit restart; oct04-candidate owns current scope."
     },
     {
       "id": "workflow-completion-map",
@@ -498,13 +498,13 @@
       "depends_on": [
         "thesis-human-pass"
       ],
-      "blocker": "Thesis execution stopped; selected-source repairs, claim/evidence checks, frozen candidate and whole-PDF human judgment remain unfinished.",
+      "blocker": "Agent-checked exact candidate is available. Human/Kai PASS and overall DS scope judgment remain unknown; neither is inferred from this delivery.",
       "sources": [
         "docs/coordination/handoff.md",
         "docs/coordination/thesis-work.md"
       ],
-      "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission."
     },
     {
       "id": "code-evidence-ready",
@@ -513,21 +513,20 @@
       "selection": "selected",
       "project": "evidence",
       "graph_label": "Code and evidence",
-      "status": "blocked",
+      "status": "done",
       "owner": null,
-      "outcome": "Thesis algorithm/numerical promises match public API contracts and bounded correspondence evidence; every displayed example/count/figure/certificate resolves to its actual producer and public or working-repository availability. Tests are evidence layers, not unrestricted theorem proofs.",
+      "outcome": "Current candidate code/artifact claims received bounded source, count, path and API-contract review; two numerical defects repaired, all 52 literal local path occurrences resolve, retained exact evidence verified. Flow production correspondence remains explicitly bounded; this is not a whole-implementation proof.",
       "depends_on": [
-        "opportunity-code-contract",
-        "opportunity-artifact-map"
+        "oct04-restart-integration",
+        "oct04-restart-acceptance"
       ],
-      "blocker": "Current claim-to-implementation and artifact-availability completeness has not been established; scoped checks remain unselected.",
+      "blocker": null,
       "sources": [
-        "crates/README.md",
-        "docs/coordination/thesis-work.md",
-        "docs/project-facts.md"
+        "docs/history/thesis-restart-2026-10-04/acceptance-numerical.md",
+        "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md"
       ],
-      "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied.",
       "plan_gap": "No need for blanket code cleanup or a universal solver formalization; inspect exactly what retained claims require."
     },
     {
@@ -544,14 +543,14 @@
         "opportunity-reproduction-map",
         "reproduction-acceptance"
       ],
-      "blocker": "Playbook completeness versus thesis promises is unverified; no scoped clean-environment verification package is selected.",
+      "blocker": "Source-only rebuild and exact checks passed on installed host; full fresh-environment, bulk-data/figure regeneration and long-horizon comparison package remain unverified.",
       "sources": [
         "docs/reproducibility.md",
         "docs/project-facts.md",
         "submit/archive-closure-checklist.md"
       ],
-      "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied.",
       "plan_gap": "Missing completeness evidence is an open question, not a confirmed broken producer or automatic permission for costly reruns."
     },
     {
@@ -565,13 +564,13 @@
       "owner": null,
       "outcome": "Clarify whether the closed named DS method table meets Jörn’s intended scope; explicitly select, omit or defer remaining optional results. Preserve required result areas and support-strength caveats; do not count ledger rows against the historical approximate repertoire size.",
       "depends_on": [],
-      "blocker": "Overall DS scope classification remains uncertain pending Jörn; stopped execution supplies no new selection.",
+      "blocker": "Overall DS scope classification remains uncertain; restart preserves its named closed-table claims without inferring human scope acceptance.",
       "sources": [
         "docs/coordination/thesis-work.md",
         "docs/project-facts.md"
       ],
       "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied.",
       "plan_gap": "Fixed-pentagon/symmetric-partner selection is unresolved; optional research validity does not create a thesis obligation.",
       "next_step": "Present exact current-source scope choices separately from reader concerns and optional research."
     },
@@ -582,24 +581,21 @@
       "selection": "selected",
       "project": "thesis",
       "graph_label": "Source repairs",
-      "status": "blocked",
+      "status": "done",
       "owner": null,
-      "outcome": "Verify suggested issues against the current selected source before patching; apply supported bridge/orientation/provenance repairs and disposition DS/AI annotations without transferring verdicts from older drafts. No broad rewrite or missing-proof claim follows from the backlog.",
+      "outcome": "All seven selected-source obligations dispositioned against the final candidate, including DS comment mapping and rendered L10-N/N+ scope/caveats. Whole-chapter human acceptance and overall DS scope remain separate unknowns.",
       "depends_on": [
-        "opportunity-foundations-review",
-        "opportunity-certificate-review",
-        "opportunity-product-proofs",
-        "opportunity-ds-disposition",
-        "opportunity-visual-numerics",
-        "opportunity-ai-reflection",
-        "thesis-scope-disposition"
+        "oct04-restart-integration",
+        "oct04-restart-acceptance"
       ],
-      "blocker": "No thesis execution window selected; source-aware repair packets and DS scope disposition remain unselected.",
+      "blocker": null,
       "sources": [
-        "docs/coordination/thesis-work.md"
+        "docs/coordination/thesis-work.md",
+        "docs/history/thesis-restart-2026-10-04/ds-comment-disposition.md",
+        "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md"
       ],
-      "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied."
     },
     {
       "id": "thesis-claims-supported",
@@ -608,22 +604,22 @@
       "selection": "selected",
       "project": "thesis",
       "graph_label": "Claims supported",
-      "status": "blocked",
+      "status": "done",
       "owner": null,
-      "outcome": "Check relevant paper → formal proof → implementation/experiment → thesis arrows. In particular preserve L10-N/L10-N+ equality-family and upper-section-curvature caveats, and the conditional/generic flow theorem versus bounded production correspondence.",
+      "outcome": "All 11 required areas mapped against selected sources, final PDF and evidence. Independent bounded reviews found no remaining blocking scoped finding; fixed-facet/equality/upper-section, empirical and conditional-flow limitations preserved. No unrestricted verification or human PASS implied.",
       "depends_on": [
-        "opportunity-chapter7-claims",
         "thesis-source-repairs",
-        "code-evidence-ready"
+        "code-evidence-ready",
+        "oct04-restart-acceptance"
       ],
-      "blocker": "Current rendered claim audit and post-repair candidate-wide support check are unperformed; the 25 September scientific view is dated.",
+      "blocker": null,
       "sources": [
-        "docs/coordination/thesis-work.md",
-        "docs/project-facts.md",
-        "docs/consolidation/2026-09-24/claim-disposition.md"
+        "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md",
+        "docs/history/thesis-restart-2026-10-04/acceptance-pdf.md",
+        "docs/project-facts.md"
       ],
-      "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied."
     },
     {
       "id": "thesis-frozen-candidate",
@@ -632,22 +628,20 @@
       "selection": "selected",
       "project": "thesis",
       "graph_label": "Frozen candidate",
-      "status": "blocked",
+      "status": "done",
       "owner": null,
-      "outcome": "Build only thesis/main.tex after selected edits; inspect changed pages plus adjacent floats/references/appendix continuations; record source revision and PDF hash and intentionally reconcile retained build verification. The existing frozen PDF has seven known input mismatches.",
+      "outcome": "One retained100-page candidate, PDF 27dbf152… and source ac7f7765…, built and independently reviewed with exact manifests. Historical docs/resume remains unchanged; new candidate identity checker passes.",
       "depends_on": [
-        "thesis-source-repairs",
-        "thesis-claims-supported",
-        "reproduction-ready"
+        "oct04-candidate"
       ],
-      "blocker": "Stopped thesis run; source/support/reproduction work unfinished and no current accepted frozen candidate.",
+      "blocker": null,
       "sources": [
-        "thesis/README.md",
-        "docs/coordination/thesis-work.md",
-        "docs/coordination/handoff.md"
+        "docs/history/thesis-restart-2026-10-04/candidate-manifest.json",
+        "docs/history/thesis-restart-2026-10-04/acceptance-manifest.json",
+        "thesis/README.md"
       ],
-      "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied."
     },
     {
       "id": "thesis-human-pass",
@@ -668,7 +662,7 @@
         "docs/project-facts.md"
       ],
       "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied.",
       "plan_gap": "Local annotation repairs and agent reviews do not establish whole-chapter or whole-PDF human acceptance."
     },
     {
@@ -684,13 +678,13 @@
       "depends_on": [
         "opportunity-reproduction-map"
       ],
-      "blocker": "Concrete claimed-artifact comparison scope, environment, cost and execution selection are absent.",
+      "blocker": "Bounded source-only and exact comparisons are recorded; a full fresh-environment/data producer comparison and accepted long-horizon dispositions remain unselected.",
       "sources": [
         "docs/reproducibility.md",
         "docs/project-facts.md"
       ],
-      "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied."
     },
     {
       "id": "project-delivery-disposition",
@@ -715,7 +709,7 @@
         "docs/reproducibility.md"
       ],
       "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized.",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied.",
       "plan_gap": "Accepted Zenodo direction is not a created/published record or DOI. Current closure can record an already-completed administrative action once verified."
     },
     {
@@ -736,14 +730,14 @@
         "project-delivery-disposition",
         "workflow-dashboard-map"
       ],
-      "blocker": "Required branch outcomes and human/delivery dispositions unfinished; selected worker integration and final release remain pending.",
+      "blocker": "Restart candidate integrated and its assignments released; broader workflow activation, human PASS, full reproduction and actual delivery/archive dispositions remain unfinished.",
       "sources": [
         "docs/coordination/README.md",
         "docs/coordination/handoff.md",
         "docs/project-facts.md"
       ],
-      "updated_at": "2026-09-30T17:03:16Z",
-      "authorization": "Completion criterion mapped; no autonomous thesis run or external delivery is authorized."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Completion criterion mapped. The oct04-candidate restart authorizes bounded thesis/repository improvement until 02:00 UTC; human PASS, public release and university submission are not implied."
     },
     {
       "id": "opportunity-foundations-review",
@@ -762,7 +756,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select a bounded read-only Chapter 2/4 packet in its own worktree.",
       "parallel_ready": true
     },
@@ -783,7 +777,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select a bounded source-navigation review; coordinate Chapter 7 edits with the claim packet.",
       "parallel_ready": true
     },
@@ -804,7 +798,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select an independent product-proof source packet; report exact surviving bridges before edits.",
       "parallel_ready": true
     },
@@ -825,7 +819,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select a source-aware DS disposition packet; do not import old rejection as a current verdict.",
       "parallel_ready": true
     },
@@ -846,7 +840,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select a read-only example/provenance design packet before implementing or running it.",
       "parallel_ready": true
     },
@@ -867,7 +861,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select a bounded source-map check; do not rewrite unflagged AI prose.",
       "parallel_ready": true
     },
@@ -891,7 +885,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select the bounded rendered-PDF claim audit; no expensive verifier rerun.",
       "parallel_ready": true
     },
@@ -914,7 +908,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select read-only claim/API/evidence mapping in a separate worktree; test execution requires its chosen packet.",
       "parallel_ready": true
     },
@@ -936,7 +930,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select a bounded current-claim-to-artifact inventory; preserve producer-owned outputs.",
       "parallel_ready": true
     },
@@ -958,7 +952,7 @@
       ],
       "updated_at": "2026-09-30T17:03:16Z",
       "authorization": "Unselected candidate; Jörn must select a bounded packet before execution.",
-      "plan_gap": "Technically independent bounded candidate, currently unassigned and unselected; stopped thesis scope still applies.",
+      "plan_gap": "Independent candidate route; no separate assignment under this ID. Selected restart coverage is recorded under oct04-candidate and its owned packets.",
       "next_step": "Select a read-only playbook/output inventory; stage specific verification proposals afterward.",
       "parallel_ready": true
     },
@@ -1099,43 +1093,43 @@
       "kind": "task",
       "selection": "selected",
       "project": "oct04-candidate",
-      "outcome": "Completed bounded worker output; final integration pending. Bounded source review and supported repairs; return substantive findings, exact validation and residual risk to root.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "thesis/chapters/04-quadratic-program.tex"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original run authorized until 02:00 UTC, then explicitly stopped by Jörn. Handoff/checkpoint only is currently authorized.",
-      "next_step": "Read docs/coordination/restart-2026-10-04.md; preserve returned edits. Restart only on Jörn’s instruction."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Historical initial-run assignment stopped and preserved in fe3475b3. Current integration/acceptance is owned by the separately authorized restart tasks.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-hko",
       "title": "Local-maximality proofs and certificate navigation",
-      "status": "parked",
+      "status": "done",
       "owner": null,
       "kind": "task",
       "selection": "parked",
       "project": "oct04-candidate",
-      "outcome": "Interrupted/parked at Jörn’s stop; partial work preserved, not accepted. Bounded source review and supported repairs; return substantive findings, exact validation and residual risk to root.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "thesis/chapters/07-hko.tex"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original run authorized until 02:00 UTC, then explicitly stopped by Jörn. Handoff/checkpoint only is currently authorized.",
-      "next_step": "Read docs/coordination/restart-2026-10-04.md; preserve returned edits. Restart only on Jörn’s instruction."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Historical initial-run assignment stopped and preserved in fe3475b3. Current integration/acceptance is owned by the separately authorized restart tasks.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-products",
       "title": "Exact product-family proofs",
-      "status": "parked",
+      "status": "done",
       "owner": null,
       "kind": "task",
       "selection": "parked",
       "project": "oct04-candidate",
-      "outcome": "Interrupted/parked at Jörn’s stop; partial work preserved, not accepted. Bounded source review and supported repairs; return substantive findings, exact validation and residual risk to root.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
@@ -1143,47 +1137,47 @@
         "thesis/chapters/10-affine-pentagons.tex",
         "thesis/chapters/11-product-position.tex"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original run authorized until 02:00 UTC, then explicitly stopped by Jörn. Handoff/checkpoint only is currently authorized.",
-      "next_step": "Read docs/coordination/restart-2026-10-04.md; preserve returned edits. Restart only on Jörn’s instruction."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Historical initial-run assignment stopped and preserved in fe3475b3. Current integration/acceptance is owned by the separately authorized restart tasks.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-empirical",
       "title": "Empirical interpretation and numerical example",
-      "status": "parked",
+      "status": "done",
       "owner": null,
       "kind": "task",
       "selection": "parked",
       "project": "oct04-candidate",
-      "outcome": "Interrupted/parked at Jörn’s stop; partial work preserved, not accepted. Bounded source review and supported repairs; return substantive findings, exact validation and residual risk to root.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "thesis/chapters/08-data-science.tex",
         "thesis/chapters/13-numerics.tex"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original run authorized until 02:00 UTC, then explicitly stopped by Jörn. Handoff/checkpoint only is currently authorized.",
-      "next_step": "Read docs/coordination/restart-2026-10-04.md; preserve returned edits. Restart only on Jörn’s instruction."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Historical initial-run assignment stopped and preserved in fe3475b3. Current integration/acceptance is owned by the separately authorized restart tasks.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-artifacts",
       "title": "Reproduction and evidence availability",
-      "status": "parked",
+      "status": "done",
       "owner": null,
       "kind": "task",
       "selection": "parked",
       "project": "oct04-candidate",
-      "outcome": "Interrupted/parked at Jörn’s stop; partial work preserved, not accepted. Bounded source review and supported repairs; return substantive findings, exact validation and residual risk to root.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "thesis/chapters/14-code-data.tex",
         "INSTALL.md"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original run authorized until 02:00 UTC, then explicitly stopped by Jörn. Handoff/checkpoint only is currently authorized.",
-      "next_step": "Read docs/coordination/restart-2026-10-04.md; preserve returned edits. Restart only on Jörn’s instruction."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Historical initial-run assignment stopped and preserved in fe3475b3. Current integration/acceptance is owned by the separately authorized restart tasks.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-repo_health",
@@ -1193,16 +1187,16 @@
       "kind": "task",
       "selection": "selected",
       "project": "oct04-candidate",
-      "outcome": "Completed bounded worker output; final integration pending. Bounded source review and supported repairs; return substantive findings, exact validation and residual risk to root.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "formal/FINDINGS.md",
         "docs/knowledge/README.md"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original run authorized until 02:00 UTC, then explicitly stopped by Jörn. Handoff/checkpoint only is currently authorized.",
-      "next_step": "Read docs/coordination/restart-2026-10-04.md; preserve returned edits. Restart only on Jörn’s instruction."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Historical initial-run assignment stopped and preserved in fe3475b3. Current integration/acceptance is owned by the separately authorized restart tasks.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-independent_review",
@@ -1212,60 +1206,58 @@
       "kind": "task",
       "selection": "selected",
       "project": "oct04-candidate",
-      "outcome": "Completed bounded worker output; final integration pending. Bounded source review and supported repairs; return substantive findings, exact validation and residual risk to root.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "thesis/chapters/01-introduction.tex",
         "thesis/chapters/16-conclusion.tex"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original run authorized until 02:00 UTC, then explicitly stopped by Jörn. Handoff/checkpoint only is currently authorized.",
-      "next_step": "Read docs/coordination/restart-2026-10-04.md; preserve returned edits. Restart only on Jörn’s instruction."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Historical initial-run assignment stopped and preserved in fe3475b3. Current integration/acceptance is owned by the separately authorized restart tasks.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-candidate",
       "title": "Deliver revised thesis PDF and repository before 04:00 Berlin",
-      "status": "parked",
+      "status": "done",
       "owner": null,
       "kind": "milestone",
-      "selection": "parked",
+      "selection": "selected",
       "project": "oct04-candidate",
-      "outcome": "Interrupted/parked at Jörn’s stop; partial work preserved, not accepted. A buildable, reviewed candidate with source-backed claims, improved exposition, truthful artifact availability, recorded checks and residual limitations.",
+      "outcome": "Delivered retained100-page candidate and repository improvements, preserving fe3475b3. Independent scoped acceptance, six repaired findings, passing numerical/build/source checks, same-environment source-only rebuild and truthful caveats retained.",
       "depends_on": [
-        "oct04-foundations",
-        "oct04-hko",
-        "oct04-products",
-        "oct04-empirical",
-        "oct04-artifacts",
-        "oct04-repo_health",
-        "oct04-independent_review"
+        "oct04-restart-integration",
+        "oct04-restart-acceptance",
+        "oct04-restart-supervision"
       ],
       "blocker": null,
       "sources": [
-        "thesis/README.md",
-        "docs/coordination/thesis-work.md"
+        "docs/history/thesis-restart-2026-10-04/README.md",
+        "docs/history/thesis-restart-2026-10-04/candidate-manifest.json",
+        "docs/history/thesis-restart-2026-10-04/acceptance-manifest.json"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original run authorized until 02:00 UTC, then explicitly stopped by Jörn. Handoff/checkpoint only is currently authorized.",
-      "next_step": "Read docs/coordination/restart-2026-10-04.md; preserve returned edits. Restart only on Jörn’s instruction."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
+      "next_step": "No restart work remains assigned. Human PASS, broader DS scope and full fresh-environment/data reproduction remain separate unknowns."
     },
     {
       "id": "oct04-local_theorem_review",
       "title": "Independent local-theorem review",
-      "status": "parked",
+      "status": "done",
       "owner": null,
       "kind": "task",
       "selection": "parked",
       "project": "oct04-candidate",
-      "outcome": "Previously omitted from staffing registry; reported findings and interrupted/completed disposition retained in restart handoff.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "docs/coordination/restart-2026-10-04.md"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original task stopped; no running assignment."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Original task stopped; no running assignment.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-product_theorem_review",
@@ -1275,31 +1267,33 @@
       "kind": "task",
       "selection": "selected",
       "project": "oct04-candidate",
-      "outcome": "Previously omitted from staffing registry; reported findings and interrupted/completed disposition retained in restart handoff.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "docs/coordination/restart-2026-10-04.md"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original task stopped; no running assignment."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Original task stopped; no running assignment.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-numerical_contract_review",
       "title": "Numerical API-contract review",
-      "status": "parked",
+      "status": "done",
       "owner": null,
       "kind": "task",
       "selection": "parked",
       "project": "oct04-candidate",
-      "outcome": "Previously omitted from staffing registry; reported findings and interrupted/completed disposition retained in restart handoff.",
+      "outcome": "Original interrupted/returned packet preserved in fe3475b3; its current source/evidence disposition is integrated into the independently reviewed restart candidate. The new reports identify fresh versus inherited checks.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "docs/coordination/restart-2026-10-04.md"
       ],
-      "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Original task stopped; no running assignment."
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Original task stopped; no running assignment.",
+      "next_step": "Historical assignment closed; consult the restart integration and acceptance records."
     },
     {
       "id": "oct04-restart-handoff",
@@ -1316,7 +1310,140 @@
         "docs/coordination/restart-2026-10-04.md"
       ],
       "updated_at": "2026-10-04T00:29:44Z",
-      "authorization": "Jörn requested handoff within four minutes; thesis work remains stopped."
+      "authorization": "Historical four-minute handoff completed; checkpoint preserved. Subsequent direct instruction authorized the restart."
+    },
+    {
+      "id": "oct04-restart-integration",
+      "title": "Assemble and integrate one checked candidate",
+      "status": "done",
+      "owner": null,
+      "kind": "task",
+      "selection": "selected",
+      "project": "oct04-candidate",
+      "outcome": "Integrated preserved checkpoint and corrections into final 100-page PDF; all 11 required areas, source backlog and96-source scientific baseline reconciled. No further consequential in-scope defect; own workers released.",
+      "depends_on": [
+        "oct04-restart-evidence-docs",
+        "oct04-restart-layout"
+      ],
+      "blocker": null,
+      "sources": [
+        "docs/history/thesis-restart-2026-10-04/integration.md"
+      ],
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
+      "next_step": "Assignment closed; retained report states exact checked scope and limitations."
+    },
+    {
+      "id": "oct04-restart-acceptance",
+      "title": "Independently review science, code contract and exact PDF",
+      "status": "done",
+      "owner": null,
+      "kind": "task",
+      "selection": "selected",
+      "project": "oct04-candidate",
+      "outcome": "Final27dbf152… PDF independently accepted for bounded review-candidate delivery: all 100 pages read/overview-rendered,64 individually inspected, all 11 areas mapped, six findings closed. Human PASS remains unknown.",
+      "depends_on": [
+        "oct04-restart-integration",
+        "oct04-restart-numerical-contract",
+        "oct04-restart-mathematics"
+      ],
+      "blocker": null,
+      "sources": [
+        "docs/history/thesis-restart-2026-10-04/acceptance-manifest.json"
+      ],
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
+      "next_step": "Assignment closed; retained report states exact checked scope and limitations."
+    },
+    {
+      "id": "oct04-restart-supervision",
+      "title": "Observe actual integration queue and orchestration outcomes",
+      "status": "done",
+      "owner": null,
+      "kind": "task",
+      "selection": "selected",
+      "project": "oct04-candidate",
+      "outcome": "Watch ended 00:52:07 UTC. Direct integration and independent correction cycles observed; no abandoned ready packet observed. One short verifier rerun duplicated; root context grew. Sustained effectiveness/efficiency and forced-stop behavior unestablished; pending_init child metadata remains ambiguous after explicit release/interrupt.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/thesis-restart-2026-10-04/supervision.md"
+      ],
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
+      "next_step": "Assignment closed; retained report states exact checked scope and limitations."
+    },
+    {
+      "id": "oct04-restart-evidence-docs",
+      "title": "Repair evidence routing and reproduction documentation",
+      "owner": null,
+      "status": "done",
+      "kind": "task",
+      "selection": "selected",
+      "project": "oct04-candidate",
+      "outcome": "Accepted documentation packet: INSTALL semantic review, non-HKO nested-archive routing with hashes and fresh bounded exact/independent checks, reproduction semantics, DS and visualization navigation. Eight dashboard HTTP tests passed before later root source-status change.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/thesis-restart-2026-10-04/evidence-docs.md"
+      ],
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Bounded child assignment within authorized restart, no human questions; absolute stop 02:00 UTC.",
+      "next_step": "Assignment closed; retained report states exact checked scope and limitations."
+    },
+    {
+      "id": "oct04-restart-layout",
+      "title": "Repair and inspect selected PDF layout",
+      "owner": null,
+      "status": "done",
+      "kind": "task",
+      "selection": "selected",
+      "project": "oct04-candidate",
+      "outcome": "Accepted source packet: three artifact-path overflow repairs and small summary clarifications; isolated101-page build warning-free and selected pages inspected. Independent assembled review later found orphaned ToC entry, now handled by integration.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/thesis-restart-2026-10-04/thesis-layout.md"
+      ],
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Bounded child assignment within authorized restart, no human questions; absolute stop 02:00 UTC.",
+      "next_step": "Assignment closed; retained report states exact checked scope and limitations."
+    },
+    {
+      "id": "oct04-restart-numerical-contract",
+      "title": "Correct wider action-window enumeration contract",
+      "owner": null,
+      "status": "done",
+      "kind": "task",
+      "selection": "selected",
+      "project": "oct04-candidate",
+      "outcome": "Wider action-window pruning and singular exact-tube consistency repaired and independently reviewed. Public API 15/15, correspondence 4/4, full library 376 passed, 23 ignored. Scalar-capacity error and synthetic singular-case polytope reachability not established.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/thesis-restart-2026-10-04/acceptance-numerical.md"
+      ],
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Bounded child assignment within authorized restart, no human questions; absolute stop 02:00 UTC.",
+      "next_step": "Assignment closed; retained report states exact checked scope and limitations."
+    },
+    {
+      "id": "oct04-restart-mathematics",
+      "title": "Independently inspect changed mathematical interfaces",
+      "owner": null,
+      "status": "done",
+      "kind": "task",
+      "selection": "selected",
+      "project": "oct04-candidate",
+      "outcome": "Bounded source/paper/proof interface and final pages8–41 review completed, plus independent numerical-patch check. No remaining scoped blocker. Child explicitly released/interrupted; native pending_init metadata does not establish a completed process state.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md"
+      ],
+      "updated_at": "2026-10-04T00:53:23Z",
+      "authorization": "Bounded child assignment within authorized restart, no human questions; absolute stop 02:00 UTC.",
+      "next_step": "Assignment closed; retained report states exact checked scope and limitations."
     }
   ],
   "decisions": [
@@ -1333,9 +1460,9 @@
     {
       "id": "thesis-restart",
       "question": "Select a thesis execution window before assigning backlog work.",
-      "status": "parked",
-      "recommendation": "Jörn stopped the run and requested this handoff. A future direct instruction to continue can authorize restart; the handoff itself does not.",
-      "consequence": "Preserve checkpoint. Original absolute 02:00 UTC deadline is not extended by handoff preparation.",
+      "status": "resolved",
+      "recommendation": "Jörn directly authorized restart from fe3475b3 with remaining weekly quota, original absolute deadline and no questions.",
+      "consequence": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
       "sources": [
         "docs/coordination/handoff.md"
       ]
@@ -1345,7 +1472,7 @@
       "question": "Which environments and access routes should the project workflow support?",
       "status": "resolved",
       "recommendation": "Jörn selected Ubuntu workstation + Codex TUI (local kitty and Tailscale SSH from Chromebook/Android), claude.ai cloud microVM clones, and ChatGPT Chat Astra 6 Pro research. Companion Chrome web views use Tailscale.",
-      "consequence": "These are support targets, not verified live capabilities. Cloud communication, logging, setup adaptation and budget accounting remain design work; no autonomous thesis run is authorized.",
+      "consequence": "These are support targets, not verified live capabilities. Cloud communication, logging, setup adaptation and budget accounting remain design work; this environment decision itself grants no thesis execution authority; the current restart has separate explicit authorization.",
       "sources": [
         "docs/development-environments.md"
       ]
@@ -1397,9 +1524,9 @@
     {
       "id": "project-work-selection",
       "question": "Which bounded thesis/evidence/reproduction/release-preparation packets should run next or in parallel, and what execution window is selected?",
-      "status": "parked",
-      "recommendation": "Jörn stopped the run and requested this handoff. A future direct instruction to continue can authorize restart; the handoff itself does not.",
-      "consequence": "Preserve checkpoint. Original absolute 02:00 UTC deadline is not extended by handoff preparation.",
+      "status": "resolved",
+      "recommendation": "Jörn directly authorized restart from fe3475b3 with remaining weekly quota, original absolute deadline and no questions.",
+      "consequence": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
       "sources": [
         "docs/coordination/thesis-work.md",
         "docs/coordination/handoff.md",
@@ -1432,26 +1559,34 @@
   "resources": [
     {
       "label": "Execution",
-      "value": "Stopped. Ten original workers completed/interrupted; three bounded handoff reviewers finished. No thesis producer/build/test left running was observed at stop.",
-      "observed_at": "2026-10-04T00:29:44Z",
-      "basis": "Native agent states and process inspection; later bounded reviews returned completed."
+      "value": "Integration and acceptance completed; supervision watch ended 00:52:07 UTC. All assignments released. Math child retains ambiguous pending_init metadata after explicit interrupt/stop; no work assigned. The commit containing this state retains the completed local delivery.",
+      "observed_at": "2026-10-04T00:55:24Z",
+      "basis": "Native completed owner states, direct release receipts and root interrupt; do not equate metadata ambiguity with completed process state."
     },
     {
       "label": "Budget/deadline",
-      "value": "Original remaining weekly quota; numeric balance unknown. Original hard stop 2026-10-04 02:00 UTC (04:00 Berlin). Later user required handoff within four minutes.",
-      "observed_at": "2026-10-04T00:29:44Z",
-      "basis": "Current user instructions; no new execution allowance inferred."
+      "value": "Authorized remaining weekly quota; numeric remaining quota and billed spend unknown. Work closes before absolute 2026-10-04 02:00 UTC / 04:00 Berlin ceiling.",
+      "observed_at": "2026-10-04T00:53:23Z",
+      "basis": "User authority, clock and bounded supervision; no billing/quota inference from token counters."
     },
     {
       "label": "Readiness",
-      "value": "Checkpoint only. Integrated PDF, complete patch acceptance and improved orchestration behavior unestablished.",
-      "observed_at": "2026-10-04T00:29:44Z",
-      "basis": "Independent custody and design reports; no final integrated build or forward trial."
+      "value": "Final 100pp PDF 27dbf152… accepted within recorded source/numerical/PDF scope. No human PASS or full-reproduction verdict.",
+      "observed_at": "2026-10-04T00:53:23Z",
+      "basis": "Frozen acceptance-manifest.json and candidate/source identity checks."
     }
   ],
   "links": [
     {
-      "label": "4 October restart handoff — execution stopped",
+      "label": "4 October checked candidate and evidence",
+      "path": "docs/history/thesis-restart-2026-10-04/README.md"
+    },
+    {
+      "label": "Retained 100-page thesis PDF",
+      "path": "docs/history/thesis-restart-2026-10-04/thesis-candidate.pdf"
+    },
+    {
+      "label": "Preservation handoff · historical restart input",
       "path": "docs/coordination/restart-2026-10-04.md"
     },
     {
@@ -1475,7 +1610,7 @@
       "path": "docs/README.md"
     },
     {
-      "label": "Scientific brief · 25 Sep snapshot",
+      "label": "Scientific brief · reconciled 4 October candidate",
       "path": "docs/dashboard/thesis.html"
     },
     {
@@ -1484,6 +1619,22 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-04T00:53:23Z",
+      "text": "Final 100-page candidate independently accepted with six findings closed; all 11 required areas and96-source scientific view reconciled.376 library tests passed (23 ignored), source-only rebuild text/all 100rasters matched, exact identities retained. Operational owners released; short-run orchestration assessment preserves duplicate-work and stop-metadata limits."
+    },
+    {
+      "at": "2026-10-04T00:39:53Z",
+      "text": "Integration accepted both documentation/layout packets and froze101pp candidate00:37:37 directly for acceptance. Independent review found an orphaned ToC entry; integration rebuilding. Wider action-window fix accepted; follow-up exact-tube classifier issue under narrow repair."
+    },
+    {
+      "at": "2026-10-04T00:36:15Z",
+      "text": "Four bounded child owners registered. Fresh numerical check reproduced wider-window API undercoverage (142 exact hypercube words versus2 API results); targeted fix and independent acceptance are active. Scalar capacity error not established."
+    },
+    {
+      "at": "2026-10-04T00:34:36Z",
+      "text": "Jörn restarted from fe3475b3. Established separate operational integration, independent acceptance and supervision owners; selected concrete repair and candidate assembly, with effectiveness to be judged from actual outcomes."
+    },
     {
       "at": "2026-10-04T00:29:44Z",
       "text": "User stopped thesis work and requested a four-minute handoff. Preserved edits, corrected current staffing/stop state, retained three independent bounded reviews; orchestration proposal remains untested."

@@ -6,6 +6,9 @@
 //! `tools/general_algorithm_ablation`; production fixes the chosen
 //! LBLT/hybrid route. The correspondence suite must compare capacity bounds
 //! after a semantic change to either file.
+//! Production also materializes exact action windows: above the minimum it
+//! must retain positive stationary words that the scalar route can discard
+//! using curvature.
 
 use crate::exact::ExactOrbitKktData;
 use crate::geom::rational_arithmetic::f64_to_rational;
@@ -180,7 +183,7 @@ impl Interval {
         self.lo.is_finite() && self.hi.is_finite() && self.lo <= self.hi
     }
 }
-fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
+fn run_selected_route(cases: &[GeneralRouteCase], prune_nonmaximizers: bool) -> RouteStats {
     debug_assert_eq!(
         cases.len(),
         1,
@@ -234,7 +237,7 @@ fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
                 continue;
             }
             let phase_started = Instant::now();
-            let inherited = contains_certified_subword(word, &cache);
+            let inherited = prune_nonmaximizers && contains_certified_subword(word, &cache);
             stats.lookup_time += phase_started.elapsed();
             if inherited {
                 stats.inherited_rejections += 1;
@@ -244,7 +247,7 @@ fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
                 continue;
             }
 
-            let discover = word.len() >= 6;
+            let discover = prune_nonmaximizers && word.len() >= 6;
             stats.lblt_factorizations += 1;
             let (matrix, rhs) = build_augmented_system_from_dual_vertices(duals, word);
             let factor = if discover {
@@ -1360,7 +1363,15 @@ fn solve_selected_general_requested(
     request: GeneralOutputRequest,
 ) -> Result<Option<GeneralSolveOutput>, Vec<usize>> {
     let cases = vec![(String::new(), duals.to_vec(), words)];
-    let result = run_selected_route(&cases);
+    // Curvature excludes an interior maximum of Q, not a positive stationary
+    // KKT point. It preserves capacity and all tied minimizers, but a wider
+    // action window must test every word for positive KKT feasibility. See
+    // lem:kkt-cyclic-obstruction-inheritance in formal/hk2017-qp-precision.tex.
+    let prune_nonmaximizers = match &request {
+        GeneralOutputRequest::CapacityOnly => true,
+        GeneralOutputRequest::ExactWithinCapacityMultiple(value) => value.is_one(),
+    };
+    let result = run_selected_route(&cases, prune_nonmaximizers);
     let Some(bounds) = result.best_action_lower.zip(result.best_action_upper) else {
         return Ok(None);
     };

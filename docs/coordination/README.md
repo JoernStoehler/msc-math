@@ -63,7 +63,8 @@ The `workflow-done` subgoal means the selected project-local skills and
 workflow deliverables are integrated, relevant acceptance is complete, and
 their assignments and sessions are released. Returned plans alone cannot
 close it. Explicitly deferring a capability preserves that gap without making
-every proposed pilot mandatory. Thesis execution remains separately stopped.
+every proposed pilot mandatory. Thesis execution has a separate authorization
+state recorded in `current.json`; workflow status does not determine it.
 Unavailable historical transport-cause evidence is separate from acceptance
 of the selected communication route; successful reads alone do not verify send
 delivery. Unknown usage and numeric spending thresholds do not create a gate

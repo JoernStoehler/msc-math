@@ -47,13 +47,12 @@ normalize the sum over all ridges by
 \]
 The absolute value is taken separately on each face: $R$ records symplectic
 area without cancellation between faces, rather than their Euclidean areas.
-The square root makes $R$ unchanged by common dilation: both numerator
-and denominator scale as length squared. It is also unchanged by
-translation and linear symplectic maps, as is the systolic ratio.
+$R$ is unchanged by translation, common dilation and linear symplectic
+maps, as is the systolic ratio.
 Translation invariance follows because the terms involving the
 translation vector cancel around the closed polygon. A linear symplectic
 map preserves each $A_\omega(F)$ and the four-dimensional volume.
-Thus any relation between $R$ and the ratio respects these symmetries.
+Thus any relation between $R$ and the systolic ratio respects these symmetries.
 
 \subsection{A strong inverse association weakens under selection}
 
@@ -219,7 +218,7 @@ products without maximizing the systolic ratio. These exact statements
 constrain a proposed explanation of the statistical association; the
 counterexamples alone do not explain it.
 
-For products the descriptor has an elementary edge formula. Let $u_i$ and $v_j$ be
+For products the normalized ridge sum has an elementary edge formula. Let $u_i$ and $v_j$ be
 the counterclockwise boundary edge vectors of $P$ and $Q$. A ridge lying entirely in a $q$-
 or $p$-plane has zero symplectic area. A mixed ridge is the rectangle formed
 from one edge in each factor, and its symplectic area is $|u_i\cdot v_j|$.
@@ -236,7 +235,7 @@ so
  \sum_j|u_i\cdot v_j|
  =2\|u_i\|\,\operatorname{width}_Q(u_i/\|u_i\|).
 \]
-The descriptor therefore combines the edge lengths of one factor with the
+The normalized ridge sum therefore combines the edge lengths of one factor with the
 widths of the other in the edge directions.
 
 
@@ -278,7 +277,7 @@ $d_3=\operatorname{dist}(\theta,(\pi/3)\mathbb Z)\in[0,\pi/6]$. Then
  \operatorname{sys}(T_\theta)=\tfrac12\sec^2(\pi/6-d_3).
 \end{equation}
 Both quantities strictly decrease with $d_3$, from $(8\sqrt3,2/3)$ to
-$(12,1/2)$. Thus the ridge sum and ratio have the same strict ordering
+$(12,1/2)$. Thus the ridge sum and systolic ratio have the same strict ordering
 throughout this rotation family. Appendix~\ref{app:ds-triangle-profile}
 proves the capacity formula by classifying the six-facet words in the
 quadratic program, and derives the ridge sum directly. Thus even the direction of a strict relation depends on the family.
