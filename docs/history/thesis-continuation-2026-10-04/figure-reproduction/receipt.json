@@ -1,0 +1,593 @@
+{
+  "started_utc": "2026-10-04T01:31:02.029287+00:00",
+  "source_commit": "2704f0541db8160f77dec73e767705bc06401d97",
+  "source_note": "Working tree includes output-routing fixes in two plotting scripts; source hashes below bind the executed versions.",
+  "selected_before": {
+    "conditional-ridge-correlation.pdf": "912e9bef768cff74c26a09d453e6ab4c56a56af2fca4152919aa5f72e6b4bdff",
+    "association-generic.pdf": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4",
+    "association-products.pdf": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572",
+    "hko-recovery-by-source-distance.pdf": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+    "derivative-and-kkt-scale.pdf": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+    "rotation-profile.png": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99"
+  },
+  "runs": [
+    {
+      "name": "association",
+      "producer": "thesis/figures/plot_association.py",
+      "producer_sha256": "7d19e62e1784f21e1a2728f43c2e8b1b51726842bf22dacab2fbd6b6566cefbc",
+      "inputs": {
+        "/home/joern/.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a/files/polytope-table.jsonl": {
+          "sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+          "bytes": 24250539
+        },
+        "experiments/polytope-invariant-table/polytope-provenance-table.jsonl": {
+          "sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+          "bytes": 7732016
+        }
+      },
+      "command": [
+        "uv",
+        "run",
+        "--script",
+        "thesis/figures/plot_association.py",
+        "--table",
+        "/home/joern/.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a/files/polytope-table.jsonl",
+        "--provenance",
+        "/home/joern/.codex/worktrees/f171/msc-math/experiments/polytope-invariant-table/polytope-provenance-table.jsonl",
+        "--out",
+        "/home/joern/.codex/worktrees/f171/msc-math/docs/history/thesis-continuation-2026-10-04/figure-reproduction/association"
+      ],
+      "started_utc": "2026-10-04T01:31:02.095174+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 12.208588538996992,
+      "finished_utc": "2026-10-04T01:31:14.303798+00:00",
+      "inputs_unchanged_after_run": true
+    },
+    {
+      "name": "conditional",
+      "producer": "experiments/sys-datascience/methods/selection-mechanism/analyze.py",
+      "producer_sha256": "e7cbd5cbb09c03277dfbd447752e2d9de15b28392d62f88e49f1f8b1e48e2c21",
+      "inputs": {
+        "/home/joern/.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a/files/polytope-table.jsonl": {
+          "sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+          "bytes": 24250539
+        },
+        "experiments/polytope-invariant-table/polytope-provenance-table.jsonl": {
+          "sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+          "bytes": 7732016
+        }
+      },
+      "command": [
+        "uv",
+        "run",
+        "--script",
+        "experiments/sys-datascience/methods/selection-mechanism/analyze.py",
+        "--table",
+        "/home/joern/.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a/files/polytope-table.jsonl",
+        "--provenance",
+        "/home/joern/.codex/worktrees/f171/msc-math/experiments/polytope-invariant-table/polytope-provenance-table.jsonl",
+        "--out",
+        "/home/joern/.codex/worktrees/f171/msc-math/docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional"
+      ],
+      "started_utc": "2026-10-04T01:31:14.336050+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 3.621466138996766,
+      "finished_utc": "2026-10-04T01:31:17.957537+00:00",
+      "inputs_unchanged_after_run": true
+    },
+    {
+      "name": "hko-calibration",
+      "producer": "experiments/dev-gradient-ascent/ascent-continuation/analyze_hko_calibration.py",
+      "producer_sha256": "4fdd3f8d29f38f40527f8e18e52c744cda876e17744e73284cd04fba44a25b14",
+      "inputs": {
+        "experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/raw/summary.json": {
+          "sha256": "631d3a44823293d2ed8db92e9a76feff9155fd7f126c3ce5e6d05be113b31ffe",
+          "bytes": 19224
+        },
+        "experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/raw/steps.jsonl": {
+          "sha256": "03eca96c57a0822b520bf817b8ba9c6a482e83167bb6f654c6bf065e550fc6f5",
+          "bytes": 13713
+        },
+        "experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/raw/candidates.jsonl": {
+          "sha256": "46f62be8ee65f7d7e1deebf4e36c1ed79b55e08d18c7b6e9610d2b81dc61cf15",
+          "bytes": 306470
+        }
+      },
+      "command": [
+        "uv",
+        "run",
+        "--script",
+        "experiments/dev-gradient-ascent/ascent-continuation/analyze_hko_calibration.py",
+        "/home/joern/.codex/worktrees/f171/msc-math/experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/raw",
+        "/home/joern/.codex/worktrees/f171/msc-math/docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration"
+      ],
+      "started_utc": "2026-10-04T01:31:17.965331+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 4.285527189997083,
+      "finished_utc": "2026-10-04T01:31:22.250874+00:00",
+      "inputs_unchanged_after_run": true
+    },
+    {
+      "name": "derivative",
+      "producer": "experiments/dev-gradient-ascent/endpoint-model-audit/analyze.py",
+      "producer_sha256": "370895485623de2d749438be4ab0605f08e3518be67faa9f4874f9ebe001d280",
+      "inputs": {
+        "experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/raw/audit.json": {
+          "sha256": "8a505a3acf6d146d3b6e336abfed4a3c035571fbd989a40f4860f4448507a73f",
+          "bytes": 105558
+        }
+      },
+      "command": [
+        "uv",
+        "run",
+        "--script",
+        "experiments/dev-gradient-ascent/endpoint-model-audit/analyze.py",
+        "/home/joern/.codex/worktrees/f171/msc-math/experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/raw/audit.json",
+        "/home/joern/.codex/worktrees/f171/msc-math/docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative"
+      ],
+      "started_utc": "2026-10-04T01:31:22.252145+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 2.8407733220010414,
+      "finished_utc": "2026-10-04T01:31:25.092934+00:00",
+      "inputs_unchanged_after_run": true
+    },
+    {
+      "name": "rotation",
+      "producer": "experiments/regular-products/rotated-regular-products/analyze.py",
+      "producer_sha256": "01b76b673c72df97b472e6b0f182919abe19be37042d1949d9aa3489aa8784e6",
+      "inputs": {
+        "experiments/regular-products/rotated-regular-products/lagrangian-products-5x5.jsonl": {
+          "sha256": "b3e672706e417418ea045bc1f8bc62d95309fc721c4854ce2fd1446fbe13d4ca",
+          "bytes": 9936
+        }
+      },
+      "command": [
+        "uv",
+        "run",
+        "--script",
+        "experiments/regular-products/rotated-regular-products/analyze.py",
+        "--only-pentagon",
+        "--out-dir",
+        "/home/joern/.codex/worktrees/f171/msc-math/docs/history/thesis-continuation-2026-10-04/figure-reproduction/rotation"
+      ],
+      "started_utc": "2026-10-04T01:31:25.094230+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 1.9396060859944555,
+      "finished_utc": "2026-10-04T01:31:27.033850+00:00",
+      "inputs_unchanged_after_run": true
+    }
+  ],
+  "finished_utc": "2026-10-04T01:31:27.034491+00:00",
+  "selected_after": {
+    "conditional-ridge-correlation.pdf": "912e9bef768cff74c26a09d453e6ab4c56a56af2fca4152919aa5f72e6b4bdff",
+    "association-generic.pdf": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4",
+    "association-products.pdf": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572",
+    "hko-recovery-by-source-distance.pdf": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+    "derivative-and-kkt-scale.pdf": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+    "rotation-profile.png": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99"
+  },
+  "selected_assets_unchanged": true,
+  "outputs": {
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative.log": {
+      "sha256": "fcd9cf4da84c28a436acbd6ad6e6b1ee7b5766bcfaaee2228fbad2718ebbf274",
+      "bytes": 30
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rotation.log": {
+      "sha256": "5e6aa08110ee263e1a1737aaf4e04a868e7147c9d2abc8fe0f80619d8ee170a4",
+      "bytes": 274
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional.log": {
+      "sha256": "ae49a2800c5a803d14b47c6df47cf84a935313a03d0aa29e010408e4143c77bc",
+      "bytes": 4982
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration.log": {
+      "sha256": "a3b035c711bf70f63021c7064568555172480026a98dbc7a1b379a1f958f3740",
+      "bytes": 30
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association.log": {
+      "sha256": "e56fff117402e7913006003df780df9381596ade6453afd0acf15a1653d7fe9f",
+      "bytes": 30
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rotation/lagrangian_products_5x5.png": {
+      "sha256": "7172cd6f7d0ed252273bb0591866492b5b85783a13cdbaf1cc50e652672d3c90",
+      "bytes": 53137
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/conditional-ranks-fresh.png": {
+      "sha256": "f47a6f3c639c0f51496dc538df69db9891ecf79531dff101505c4e3aee442d25",
+      "bytes": 21079
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/association-products-fresh.png": {
+      "sha256": "e70855083ec500ca6c1a5daeffb3ee88328fdcd9b313cb15c60982d3b907f553",
+      "bytes": 64004
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/association-products-selected.png": {
+      "sha256": "e70855083ec500ca6c1a5daeffb3ee88328fdcd9b313cb15c60982d3b907f553",
+      "bytes": 64004
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/conditional-ridge-correlation-selected.png": {
+      "sha256": "f47a6f3c639c0f51496dc538df69db9891ecf79531dff101505c4e3aee442d25",
+      "bytes": 21079
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/derivative-and-kkt-scale-selected.png": {
+      "sha256": "bfa6ef3b53bd1b5ced8fdbd6b9384dbf5c879b92cae97847bacbf82369412baa",
+      "bytes": 48572
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/hko-recovery-by-source-distance-selected.png": {
+      "sha256": "51544e8bcecd139cb39f0503ea5ccf428424dff4c70594324b52c8a4e76a2f26",
+      "bytes": 55043
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/association-generic-selected.png": {
+      "sha256": "08189ed1e67eef881d8338dc464f60f858b8164743936fc1f1847f4bf93f3573",
+      "bytes": 58215
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/comparison-contact-sheet.png": {
+      "sha256": "6c83c60d7d651e42f5745b1916ff6ad7c9c9867a29b699e361c997ded2d1862f",
+      "bytes": 309184
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/association-generic-fresh.png": {
+      "sha256": "08189ed1e67eef881d8338dc464f60f858b8164743936fc1f1847f4bf93f3573",
+      "bytes": 58215
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/recovery-by-source-distance-fresh.png": {
+      "sha256": "51544e8bcecd139cb39f0503ea5ccf428424dff4c70594324b52c8a4e76a2f26",
+      "bytes": 55043
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/derivative-and-kkt-scale-fresh.png": {
+      "sha256": "bfa6ef3b53bd1b5ced8fdbd6b9384dbf5c879b92cae97847bacbf82369412baa",
+      "bytes": 48572
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/reference-distance-by-compute.png": {
+      "sha256": "7a41d18ad72e9080dfec2509c4a32243b80697d5dc93e083989ecd171e7cc0e2",
+      "bytes": 233760
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/state-recovery.csv": {
+      "sha256": "a8ef7e6aa9da7db16ace5cc7e28a57338a8e3c40da3b174e072afd0f2305ead4",
+      "bytes": 7443
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/compute-by-method.png": {
+      "sha256": "cf18c9bba2fa64c7ba203c754dfd5930f612cb01c2697d0eff314c1001196cae",
+      "bytes": 53568
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/REPORT.md": {
+      "sha256": "b8b73409cdbf7627a7e86ecf1b6f0e89cf4579be72cb8722f260ac9b53dbbc63",
+      "bytes": 4835
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/recovery-by-source-distance.pdf": {
+      "sha256": "8833cef6f3446cbd57afc9e283ea267246ebc34317f7a2ef9f6c017c36d62d33",
+      "bytes": 23260
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/prediction-error-by-distance.png": {
+      "sha256": "7ee392400ac6f4e4e73c456bc5426a0e22ca42d02136000dcc185138c449dffd",
+      "bytes": 83440
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/recovery-by-source-distance.png": {
+      "sha256": "ba90b39540791b2ae6461145654ccc446f9f6f1f0cf10c2babfa4589aeff7d09",
+      "bytes": 172998
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/method-recovery-by-distance.png": {
+      "sha256": "093b383f6899d55f036c775aed5bbd939e2cdd6c56c44b3ba3c73feb8a849b58",
+      "bytes": 65042
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/analysis.json": {
+      "sha256": "503bcdbfb24f45fa1d5f6b34b35cb2f4a51d0a3f18afc685888535e93d629f2f",
+      "bytes": 595
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/compute-by-method.csv": {
+      "sha256": "f51749cc22894b4eafac0b6641f33ce92b47e8f4da9e61a11a3905a4860bdb10",
+      "bytes": 408
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/method-comparison.csv": {
+      "sha256": "302a36a4a53af8b314d20ca6ff909c182b7154b46e74c05b81d8ba8b824bf5b7",
+      "bytes": 11170
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/association-products.pdf": {
+      "sha256": "6092df1a23e9011bd6b90b49085443a9e9f6896ea7cdf0e35fa88f5ecb17ac11",
+      "bytes": 82057
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/association-generic.pdf": {
+      "sha256": "0d87b08eb4f7a86149e40e9c36dcbe4a0c500b56d91b133db75b726174a4b35b",
+      "bytes": 74233
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/plot-receipt.json": {
+      "sha256": "d107c9ff564e9e0e5493b165f816634a56e98f8686d3d27047fb28c5080f2a6d",
+      "bytes": 825
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative/derivative-and-kkt-scale.png": {
+      "sha256": "121d8745d61ec3f9a6632bc36f9d72f2ec28670ce952708f796b313496a1aaa2",
+      "bytes": 152030
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative/REPORT.md": {
+      "sha256": "722619d4307cb834047bf80ad74ac9cbfda5efcc517b9a618af89c504863b596",
+      "bytes": 3506
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative/derivative-and-kkt-scale.pdf": {
+      "sha256": "1e63f7c8e394b2b879146d691d56bd189b8128126c7c0cc30d6d5b18305dd9ec",
+      "bytes": 21375
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/selection-checksums.tsv": {
+      "sha256": "f5316db4e82d7489b393ac4b56d4ecb42499f210f0b5678b75393e7003f05bce",
+      "bytes": 20579
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks.png": {
+      "sha256": "c0df63677ae322527f5953c70c2becacecc60e12b38b0c952ad1d977e5f7e754",
+      "bytes": 72418
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks-by-group.tsv": {
+      "sha256": "31a9ae12fdedd8fafe7847ee7162f8792cdbf54ff15918a92bb2f03e7c32558b",
+      "bytes": 29284
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/metadata.json": {
+      "sha256": "4618edf89e8c705ddbcaf33ca399bae5b3829f1862e1df33c047340452e5cc0e",
+      "bytes": 1246
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks.pdf": {
+      "sha256": "d878a72b5aa72eb56abda6d609d8b91f72dd87cef694d61e68b4666a170b046f",
+      "bytes": 18622
+    },
+    "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks.tsv": {
+      "sha256": "86c0629667782b72c85b0efc0ab2fcc26d2ca928943e80fe2dcac9cd9ba7db61",
+      "bytes": 1869
+    }
+  },
+  "comparisons": {
+    "checked_utc": "2026-10-04T01:32:20.988553+00:00",
+    "render_command": "pdftoppm -singlefile -r 100 -png INPUT PREFIX",
+    "figures": [
+      {
+        "selected": "thesis/figures/conditional-ridge-correlation.pdf",
+        "fresh": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks.pdf",
+        "selected_sha256": "912e9bef768cff74c26a09d453e6ab4c56a56af2fca4152919aa5f72e6b4bdff",
+        "fresh_sha256": "d878a72b5aa72eb56abda6d609d8b91f72dd87cef694d61e68b4666a170b046f",
+        "byte_equal": false,
+        "render_sizes": [
+          [
+            640,
+            350
+          ],
+          [
+            640,
+            350
+          ]
+        ],
+        "render_pixels_equal": true,
+        "render_mean_absolute_channel_difference": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "selected": "thesis/figures/association-generic.pdf",
+        "fresh": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/association-generic.pdf",
+        "selected_sha256": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4",
+        "fresh_sha256": "0d87b08eb4f7a86149e40e9c36dcbe4a0c500b56d91b133db75b726174a4b35b",
+        "byte_equal": false,
+        "render_sizes": [
+          [
+            620,
+            761
+          ],
+          [
+            620,
+            761
+          ]
+        ],
+        "render_pixels_equal": true,
+        "render_mean_absolute_channel_difference": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "selected": "thesis/figures/association-products.pdf",
+        "fresh": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/association-products.pdf",
+        "selected_sha256": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572",
+        "fresh_sha256": "6092df1a23e9011bd6b90b49085443a9e9f6896ea7cdf0e35fa88f5ecb17ac11",
+        "byte_equal": false,
+        "render_sizes": [
+          [
+            620,
+            850
+          ],
+          [
+            620,
+            850
+          ]
+        ],
+        "render_pixels_equal": true,
+        "render_mean_absolute_channel_difference": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "selected": "thesis/figures/hko-recovery-by-source-distance.pdf",
+        "fresh": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/recovery-by-source-distance.pdf",
+        "selected_sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+        "fresh_sha256": "8833cef6f3446cbd57afc9e283ea267246ebc34317f7a2ef9f6c017c36d62d33",
+        "byte_equal": false,
+        "render_sizes": [
+          [
+            680,
+            840
+          ],
+          [
+            680,
+            840
+          ]
+        ],
+        "render_pixels_equal": true,
+        "render_mean_absolute_channel_difference": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "selected": "thesis/figures/derivative-and-kkt-scale.pdf",
+        "fresh": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative/derivative-and-kkt-scale.pdf",
+        "selected_sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+        "fresh_sha256": "1e63f7c8e394b2b879146d691d56bd189b8128126c7c0cc30d6d5b18305dd9ec",
+        "byte_equal": false,
+        "render_sizes": [
+          [
+            680,
+            780
+          ],
+          [
+            680,
+            780
+          ]
+        ],
+        "render_pixels_equal": true,
+        "render_mean_absolute_channel_difference": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "selected": "thesis/figures/rotation-profile.png",
+        "fresh": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rotation/lagrangian_products_5x5.png",
+        "selected_sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+        "fresh_sha256": "7172cd6f7d0ed252273bb0591866492b5b85783a13cdbaf1cc50e652672d3c90",
+        "byte_equal": false,
+        "render_sizes": [
+          [
+            795,
+            510
+          ],
+          [
+            795,
+            510
+          ]
+        ],
+        "render_pixels_equal": true,
+        "render_mean_absolute_channel_difference": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "retained_summaries": [
+      {
+        "fresh": "conditional/conditional-ranks.tsv",
+        "retained": "experiments/sys-datascience/methods/selection-mechanism/artifacts/conditional-ranks.tsv",
+        "retained_exists": true,
+        "byte_equal": true
+      },
+      {
+        "fresh": "conditional/conditional-ranks-by-group.tsv",
+        "retained": "experiments/sys-datascience/methods/selection-mechanism/artifacts/conditional-ranks-by-group.tsv",
+        "retained_exists": true,
+        "byte_equal": true
+      },
+      {
+        "fresh": "conditional/selection-checksums.tsv",
+        "retained": "experiments/sys-datascience/methods/selection-mechanism/artifacts/selection-checksums.tsv",
+        "retained_exists": true,
+        "byte_equal": true
+      },
+      {
+        "fresh": "hko-calibration/state-recovery.csv",
+        "retained": "experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/state-recovery.csv",
+        "retained_exists": true,
+        "byte_equal": true
+      },
+      {
+        "fresh": "hko-calibration/method-comparison.csv",
+        "retained": "experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/method-comparison.csv",
+        "retained_exists": true,
+        "byte_equal": true
+      },
+      {
+        "fresh": "hko-calibration/compute-by-method.csv",
+        "retained": "experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/compute-by-method.csv",
+        "retained_exists": true,
+        "byte_equal": true
+      },
+      {
+        "fresh": "hko-calibration/analysis.json",
+        "retained": "experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/analysis/analysis.json",
+        "retained_exists": true,
+        "byte_equal": true
+      },
+      {
+        "fresh": "derivative/REPORT.md",
+        "retained": "experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/analysis/REPORT.md",
+        "retained_exists": true,
+        "byte_equal": true
+      }
+    ]
+  },
+  "environment": {
+    "python_driver": "Python 3.12.3",
+    "uv": "uv 0.12.11 (x86_64-unknown-linux-gnu)",
+    "pdf_renderer": "pdftoppm version 24.02.0",
+    "pillow_image_comparison": "10.2.0"
+  },
+  "pdf_info": {
+    "association": [
+      "Creator:         Matplotlib v3.10.8, https://matplotlib.org",
+      "Producer:        Matplotlib pdf backend v3.10.8",
+      "Pages:           1",
+      "Page size:       446.4 x 547.2 pts"
+    ],
+    "conditional": [
+      "Creator:         Matplotlib v3.11.2, https://matplotlib.org",
+      "Producer:        Matplotlib pdf backend v3.11.2",
+      "Pages:           1",
+      "Page size:       460.8 x 252 pts"
+    ],
+    "hko-calibration": [
+      "Creator:         Matplotlib v3.11.2, https://matplotlib.org",
+      "Producer:        Matplotlib pdf backend v3.11.2",
+      "Pages:           1",
+      "Page size:       489.6 x 604.8 pts"
+    ],
+    "derivative": [
+      "Creator:         Matplotlib v3.11.2, https://matplotlib.org",
+      "Producer:        Matplotlib pdf backend v3.11.2",
+      "Pages:           1",
+      "Page size:       489.6 x 561.6 pts"
+    ]
+  },
+  "rotation_png_info": {
+    "selected": {
+      "Software": "Matplotlib version3.11.0, https://matplotlib.org/",
+      "dpi": [
+        150.01239999999999,
+        150.01239999999999
+      ]
+    },
+    "fresh": {
+      "Software": "Matplotlib version3.11.2, https://matplotlib.org/",
+      "dpi": [
+        150.01239999999999,
+        150.01239999999999
+      ]
+    }
+  },
+  "comparison_finished_utc": "2026-10-04T01:33:41.572307+00:00",
+  "additional_producer_dependencies": {
+    "experiments/figure_config.py": "0c3d65a23e1ad3413969a1f5f561953c0725221db97a2a32d4a3e5946299bbfc"
+  },
+  "visual_inspection": {
+    "method": "Viewed full selected/fresh comparison contact sheet at original resolution",
+    "finding": "Six matching plot pairs; no new clipping, overlap, missing panel or label defect observed.",
+    "scope": "Individual figure comparison; thesis composition is checked separately by integration."
+  },
+  "plot_scope": {
+    "association_rows": 14336,
+    "association_generic_groups": 8,
+    "association_product_groups": 10,
+    "conditional_uses_historical_targets": true,
+    "calibration_states_including_control": 17,
+    "derivative_selected_cases": 3,
+    "rotation_samples": 37,
+    "capacity_or_geometry_producers_rerun": false
+  }
+}

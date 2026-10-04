@@ -75,7 +75,12 @@ const FIGURES = [
 async function main() {
   mkdirSync(FIGURES_DIR, { recursive: true });
 
-  const browser = await chromium.launch();
+  // Use the same software renderer on hosts with and without a working GPU.
+  // An automatic GPU choice can lose its context while drawing the ridge mesh
+  // and still let Playwright save a successful but blank screenshot.
+  const browser = await chromium.launch({
+    args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+  });
   const context = await browser.newContext({ viewport: VIEWPORT });
   const page = await context.newPage();
 
@@ -182,9 +187,26 @@ async function main() {
 
     await page.waitForTimeout(100);
 
+    // Check an actual rendered frame before accepting an output file. A ready
+    // scene graph alone does not establish that WebGL has drawn the figure.
+    const coloredPixels = await page.evaluate(() => {
+      const gl = renderer.getContext();
+      if (gl.isContextLost()) throw new Error('WebGL context lost before screenshot');
+      renderer.render(scene, camera);
+      const pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+      gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight,
+        gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      let colored = 0;
+      for (let i = 0; i < pixels.length; i += 4) {
+        if (pixels[i] < 250 || pixels[i + 1] < 250 || pixels[i + 2] < 250) colored++;
+      }
+      if (colored === 0) throw new Error('WebGL produced a blank figure');
+      return colored;
+    });
+
     const path = resolve(FIGURES_DIR, `${fig.name}.png`);
     await page.screenshot({ path, clip: fig.clip });
-    console.log(`  → ${path}`);
+    console.log(`  → ${path} (${coloredPixels} nonwhite canvas pixels)`);
 
     // Restore panels
     await page.evaluate(() => {

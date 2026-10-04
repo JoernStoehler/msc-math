@@ -59,7 +59,8 @@ A_* =
 P_*:=\{x\in\mathbb R^4:A_*x\leq\mathbf1\}.
 \]
 The first six rows define a hexagon and the last four a quadrilateral in
-complementary Lagrangian planes. The exact certificate proves the following.
+complementary Lagrangian planes. An exact finite certificate, together with
+the neighborhood argument below, proves the following.
 
 \begin{theorem}[A non-HKO ten-facet local maximum]
 \label{thm:non-hko-ten-facet-local-maximum}
@@ -74,9 +75,10 @@ four-dimensional polytopes with exactly ten genuine facets such that
 \[
  \operatorname{sys}(P)\leq1\qquad(P\in\mathcal V).
 \]
-The maximum is non-strict. Locally, after quotienting by translations,
-positive dilations and linear symplectic maps, equality is the saturation of
-the two-parameter product family described below.
+The maximum is non-strict. Locally, equality holds precisely on the images
+of the two-parameter product family described below under translations,
+positive dilations and linear symplectic maps. The two parameters remain
+independent after quotienting by these symmetries.
 \end{theorem}
 
 For completeness, write
@@ -96,7 +98,7 @@ $1/2$, and exact continuation of all product closure cases gives
 \(c_{\rm EHZ}(E(v,s))=1\) and $\operatorname{sys}(E(v,s))=1$ for parameters
 sufficiently close to the base point.
 
-\begin{proof}[Proof sketch and trust boundary]
+\begin{proof}
 For a word with positive feasible HK weights and objective $Q>0$, the
 Haim--Kislev formula gives the upper bound
 \[
@@ -110,14 +112,26 @@ calculation to the vertices of two planar closure polytopes. Enumerating all
 624 cyclic orders gives $Q_{\max}=1/2$, 12 tight cases, and a strict gap
 of $1/14$ for every other case. Exact rational-function continuation of the
 closure supports and the tight cases proves the capacity and equality claims
-on $E(v,s)$.
+on $E(v,s)$. In this continuation every zero weight in a consistent base
+closure system is identically zero, while positive and negative weights
+retain their signs. The relevant support-system ranks persist, and
+inconsistent systems remain inconsistent. Thus no new closure vertex appears arbitrarily near
+the base; the twelve tight values remain $1/2$ identically, and the other
+values retain a strict gap on a common parameter neighborhood.
 
 For arbitrary ten-facet perturbations, 24 positive feasible sections are
 continued through the full normal chart. Their gradient bank has rank 22 and
 has a positive normalized relation whose smallest coefficient is
 $3/36617$. The symmetry tangent space has rank 15; the two parameters of
 $E(v,s)$ add two directions, and one remaining transverse direction $W$
-is checked by an exact rational-function identity. Along it,
+is checked by an exact rational-function identity. At the base its only
+nonzero rows, in the same one-based labelling as $A_*$, are
+\[
+ W_7=(1/2,1/3,0,0),\qquad
+ W_8=(3/2,-1,0,0),\qquad W_9=(1,0,0,0).
+\]
+Along this direction, with the feasible weights continued as in the
+certificate,
 \[
  \operatorname{vol}_4(P(A_*+zW))=\frac12+\frac{13}{1728}z^2,
  \qquad Q_j(z)=\frac12,
@@ -127,16 +141,76 @@ for every selected section. The last displayed number is the curvature of
 the feasible upper sections, not an asserted second derivative of the actual
 capacity.
 
-The positive relation forces a uniform linear decrease in the 22 sharp
-coordinates. The negative quadratic term controls $W$, and a uniform Taylor
-estimate absorbs the mixed terms. The inverse function theorem, using the
-full rank-40 symmetry-and-slice chart, then gives a genuine neighborhood in
-the Hausdorff space of ten-facet polytopes. This proves the theorem. The exact
-verifier and an independent direct differentiation check are retained at
-\path{experiments/hko-local-maximum/non-hko/}; exact arithmetic checks the
-finite predicates, while the displayed analytic argument supplies their
-geometric implication.
+To pass from these base-point calculations to a neighborhood, write
+$A(v,s)$ for the normalized facet rows of $E(v,s)$. The certificate
+continues the twenty-four contacts and $W$ rationally along this family.
+Their ambient derivative matrix $G(v,s)$ annihilates the fifteen symmetry
+directions, the two family directions and $W(v,s)$ identically. Those
+eighteen directions remain independent near the base, while a rank-22
+minor of $G$ remains nonzero. Consequently $G$ has constant rank 22 there.
+This constant-rank conclusion uses identities along the family; base-point
+rank alone would not suffice.
+
+Choose a fixed $40\times22$ matrix $Y$ whose columns complete these
+eighteen directions to a basis at the base. The exact chart-rank check
+verifies that this is possible. The matrix $H=GY$ has full column rank.
+If $\lambda_*$ is the positive base relation, then
+\[
+ \widetilde\lambda(v,s)
+ =\bigl[I_{24}-H(H^TH)^{-1}H^T\bigr]\lambda_*,
+ \qquad
+ \lambda=\frac{\widetilde\lambda}{\mathbf1^T\widetilde\lambda}
+\]
+is a positive normalized relation after shrinking the parameter
+neighborhood. Indeed it equals $\lambda_*$ at the base, and $H$ and $G$
+have the same column space. Use local transverse coordinates
+\[
+ A(v,s,z,y)=A(v,s)+zW(v,s)+Yy,\qquad y\in\mathbb R^{22}.
+\]
+The feasible sections give smooth upper bounds $U_j(v,s,z,y)$ with
+$U_j(v,s,0,0)=1$. Their free-weight derivatives in $z$ are chosen by the
+exact certificate to give the displayed curvature at the base.
+
+Here is the uniform estimate that controls mixed perturbations. On a small
+compact parameter patch the positive relation and rank, by the same
+unit-sphere argument as in Lemma~\ref{lem:hko-negative-slopes}, give
+$\min_j(G_jY)y\leq-\alpha\|y\|$ for some $\alpha>0$.
+Since $G_jW=0$, Taylor's theorem gives a common $C>0$ such that
+\[
+ \min_j(U_j-1)\leq-\alpha\|y\|+C(\|y\|^2+z^2).
+\]
+The weighted upper bound $F=\sum_j\lambda_j(v,s)U_j$ satisfies
+$F(v,s,0,0)=1$ and $D_{(z,y)}F(v,s,0,0)=0$. Its negative $zz$ derivative
+persists near the base. Hence, for some $b,C'>0$,
+\[
+ F-1\leq-bz^2+
+ C'\bigl(\|y\|^2+|z|\|y\|+(|z|+\|y\|)^3\bigr).
+\]
+All constants may be chosen uniformly because these functions are rational
+and regular on a neighborhood of the compact patch. Choose
+$M>2C/\alpha$. If $\|y\|\geq Mz^2$ and $(z,y)\ne0$, the first estimate
+is strictly negative for sufficiently small $\|y\|$. If $\|y\|<Mz^2$,
+then $z\ne0$ and the positive terms in the second estimate are
+$O(|z|^3)$, so it too is strictly negative for sufficiently small $|z|$.
+Each estimate bounds the actual ratio from above. At $z=y=0$ that ratio
+equals one by the complete product calculation.
+
+Finally include the fifteen symmetry parameters. The differential of their
+action on this chart has rank forty at the base, so the inverse function
+theorem gives coordinates for every nearby row matrix. The simple-polytope
+and polarity argument of Lemma~\ref{lem:hko-row-neighborhood} applies to
+$P_*$ as well and turns this into a fixed-ten-facet Hausdorff neighborhood.
+The strict decrease for $(z,y)\ne0$ gives precisely the asserted equality
+family and its symmetry images.
 \end{proof}
+
+The finite witness, exact verifier and independent direct differentiation
+check are retained at \path{experiments/hko-local-maximum/non-hko/}.
+The packet's \path{PROOF.md}, Sections~4--7, gives the support continuation,
+contact formulas and chart choices used above; its Section~8 records the
+uniform estimate. Exact arithmetic checks the finite predicates and
+rational-function identities, while the analytic argument supplies their
+geometric implication. No numerical neighborhood radius is claimed.
 
 This result is deliberately narrower than a global theorem. It does not
 prove local maximality when facets are added, uniqueness among all ten-facet

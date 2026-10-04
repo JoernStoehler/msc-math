@@ -1,0 +1,90 @@
+{
+  "scope": "Fresh execution in existing Sage environment; no new environment setup. Exact finite predicate plus independently reviewed analytic implication are distinct. Canonical files are preserved.",
+  "source_files_sha256": {
+    "thesis/appendices/hko_core.py": "4b82246259a04e5d4c3cc89134bf4a94de6c1899c2abca3fae8efc63119ac403",
+    "experiments/hko-local-maximum/theorem/verify.sage.py": "004ea0d83fd3706f93f934e8eea3897fed2d495c46ec46ce089c65479fb2b2b8",
+    "experiments/hko-local-maximum/theorem/witness.json": "98362e00408d1bc6b3085b2ed6cc23174c3270c6b0ad6219a00e3a7732f5472c",
+    "experiments/hko-local-maximum/theorem/verification-summary.json": "8b407b20033d7acc774795a2326cf4c14e021d7e7793de7a560b8b5223cd15c0"
+  },
+  "scratch_directory": "/tmp/msc-hko-execution-0yvp4f3t",
+  "commands": [
+    {
+      "name": "appendix-core",
+      "argv": [
+        "conda",
+        "run",
+        "--name",
+        "sage",
+        "python",
+        "thesis/appendices/hko_core.py"
+      ],
+      "cwd": "/home/joern/.codex/worktrees/f171/msc-math",
+      "environment_overrides": {
+        "PYTHONOPTIMIZE": "0",
+        "PATH_prefix": "/workspaces/msc-math/.local-environments/miniforge/bin"
+      },
+      "started_at": "2026-10-04T01:39:15.030706+00:00",
+      "finished_at": "2026-10-04T01:39:22.142582+00:00",
+      "elapsed_seconds": 7.111877424998966,
+      "exit_code": 0,
+      "log": "docs/history/thesis-continuation-2026-10-04/hko-execution/appendix-core.log",
+      "log_sha256": "719d4d2ef88ef6e8f5c635d60a976bb1b7c9e89a81d04082a02a171bc27dfa05"
+    },
+    {
+      "name": "full-verifier",
+      "argv": [
+        "conda",
+        "run",
+        "--name",
+        "sage",
+        "python",
+        "/tmp/msc-hko-execution-0yvp4f3t/verify.sage.py"
+      ],
+      "cwd": "/home/joern/.codex/worktrees/f171/msc-math",
+      "environment_overrides": {
+        "PYTHONOPTIMIZE": "0",
+        "PATH_prefix": "/workspaces/msc-math/.local-environments/miniforge/bin"
+      },
+      "started_at": "2026-10-04T01:39:22.142775+00:00",
+      "finished_at": "2026-10-04T01:39:28.910454+00:00",
+      "elapsed_seconds": 6.767689987995254,
+      "exit_code": 0,
+      "log": "docs/history/thesis-continuation-2026-10-04/hko-execution/full-verifier.log",
+      "log_sha256": "c731a765702858a0d91065c1c4afd77c6da5196dcc2d6725fd2fb3c2fa96727f"
+    }
+  ],
+  "fresh_summary_sha256": "8b407b20033d7acc774795a2326cf4c14e021d7e7793de7a560b8b5223cd15c0",
+  "summary_identical_to_canonical": true,
+  "summary": {
+    "ambient_dimension": 40,
+    "checks": [
+      "ordered number field pinned to the root t in (0,1) of t^4 - 10 t^2 + 5",
+      "hko geometry reconstructed from definition",
+      "action_min matched HKO2024 Proposition counterexample_prop in the exact field",
+      "volume and volume derivative matched source formulas",
+      "symmetry tangent generators reconstructed and rank checked",
+      "witness entries are partial permutations with complementary minor and fixed beta indices",
+      "each beta is positive and satisfies closure plus normalization",
+      "each selected minor is invertible",
+      "each action equals the HKO action",
+      "each D beta satisfies the feasible-section derivative equation",
+      "each D action and D sys row matches the formula",
+      "each D sys row annihilates the symmetry tangent space",
+      "selected rows have exact rank 25",
+      "positive lambdas sum to 1 and combine rows to 0"
+    ],
+    "lambda_count": 26,
+    "max_abs_d_sys_delta_vs_f64_hint": 2.146394173507815e-12,
+    "max_lambda_f64": 0.08029271605361593,
+    "min_lambda_f64": 0.002186171685808612,
+    "packet": "hko-feasible-section-certificate",
+    "row_count": 26,
+    "row_rank": 25,
+    "source_witness_path": "witness.json",
+    "symmetry_label_count": 15,
+    "symmetry_rank": 15,
+    "verified": true
+  },
+  "canonical_files_unchanged": true,
+  "sage_version": "10.9\n3.13.15 | packaged by conda-forge | (main, Sep  2 2026, 22:01:58) [GCC 15.3.0]"
+}

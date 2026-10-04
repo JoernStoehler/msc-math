@@ -1,0 +1,271 @@
+{
+  "observed_at_utc": "2026-10-04T01:35:17.019095+00:00",
+  "git_head": "2704f0541db8160f77dec73e767705bc06401d97",
+  "owner": "/root/integration/thesis_layout",
+  "scope": "seven structural selected figures; fresh producers and isolated outputs",
+  "versions": {
+    "python": "3.13.3",
+    "matplotlib": "3.11.2",
+    "numpy": "2.5.3",
+    "uv": "0.12.11",
+    "rustc": "1.94.0",
+    "cargo": "1.94.0",
+    "node": "22.23.2",
+    "playwright": "1.61.1",
+    "three": "0.128.0",
+    "chromium_headless_shell": "149.0.7827.55, revision 1228"
+  },
+  "source_sha256": {
+    "Cargo.lock": "81c058aa9399b8bc3d8ba6274c42fe3a4fd7ea5626d9e02c92e04ef64922ed08",
+    "thesis/figures/foundations/generate.py": "7f78cad2b403edca7da04ba2e2cb64374af8558db0fd693aff93ffd115f46a37",
+    "thesis/figures/make_hko_figures.py": "3ddad1c1ca4e1a9c1db88fbd927ec0417d9bf30288dfe957d0408b6dfa34b99f",
+    "experiments/figure_config.py": "0c3d65a23e1ad3413969a1f5f561953c0725221db97a2a32d4a3e5946299bbfc",
+    "experiments/dev-flow-graph/visualize-tube/main.rs": "12bd9f1c067e45b595924af22ded2a0fab0f48996bf7cf66d91df1fbf168bb85",
+    "experiments/dev-flow-graph/visualize-tube/render.py": "832bdbfb34e73e98cf12ebbf4bc3c33be8261849ccdc43ae106e3b33ad37ba66",
+    "experiments/visualization/src/main.rs": "4cecf5b949f7ba2a97f4d31acb6f32cc47a608cef5fc58638d1376874269df75",
+    "experiments/visualization/src/trajectories.rs": "9eaffe8bc590107d93415b82257916e0280b1c351bb5d70f7c803514a4b43a87",
+    "experiments/visualization/src/orbit_collection.rs": "a6df713d5bb167bbb440d3c86ec174603366869ff10b6e9e29c154ec7cb80d1b",
+    "experiments/visualization/src/models.rs": "dd7789e55062c61eb07955ddf4d875320f6e8b31d9ba31315bb996657238de28",
+    "experiments/visualization/viewer/screenshot-figures.mjs": "ed9fc47b5823a8d053738ed7a0ba368cf545320af782da6cff00983e981b6c7e",
+    "experiments/visualization/viewer/index.html": "7f36d8078cd4c28246804c80ba201a8cf9375dbd2025eb07a8a44fdeacdb7017",
+    "experiments/visualization/viewer/viz.js": "fad14f7ec18a274b09c458f34c2e7877a35352afaec48b33360fad2364140293",
+    "experiments/visualization/viewer/projection.js": "ce30fc335cebcdc451ba4fc5987e3fd17583e7ce83219946587393ff17017414",
+    "experiments/visualization/viewer/embed-data.sh": "4cff3d5e5a54cea8398bdb5ea99235fd085b3b9fb9fdac94e90f8e8cd4c1792f"
+  },
+  "figures": [
+    {
+      "selected_thesis_asset": "thesis/figures/foundations/characteristic-normalization.pdf",
+      "fresh_output": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/foundations/characteristic-normalization.pdf",
+      "retained_sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee",
+      "fresh_sha256": "d6ce2c05f8b8fc1626977981ae91c934b657841cc0e6d02b3c93f0c9f0f9f4b2",
+      "byte_identical": false,
+      "comparison_dpi": 144,
+      "retained_render_dimensions": [
+        612,
+        260
+      ],
+      "fresh_render_dimensions": [
+        612,
+        260
+      ],
+      "pixel_identical_at_comparison_dpi": true,
+      "extracted_text_identical": true
+    },
+    {
+      "selected_thesis_asset": "thesis/figures/foundations/facet-polarity.pdf",
+      "fresh_output": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/foundations/facet-polarity.pdf",
+      "retained_sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6",
+      "fresh_sha256": "490d3202861ed4cc827843d01f32eca3146eec39224d5f9949be5cc084bad124",
+      "byte_identical": false,
+      "comparison_dpi": 144,
+      "retained_render_dimensions": [
+        612,
+        307
+      ],
+      "fresh_render_dimensions": [
+        612,
+        307
+      ],
+      "pixel_identical_at_comparison_dpi": true,
+      "extracted_text_identical": true
+    },
+    {
+      "selected_thesis_asset": "thesis/figures/upper-bound-mechanisms.pdf",
+      "fresh_output": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/upper-bound-mechanisms.pdf",
+      "retained_sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66",
+      "fresh_sha256": "30f7a2a20e39300ee20fee0b54c43e9d055d3f3b210991317e0e6d32b9fbb0d4",
+      "byte_identical": false,
+      "comparison_dpi": 144,
+      "retained_render_dimensions": [
+        1548,
+        617
+      ],
+      "fresh_render_dimensions": [
+        1548,
+        617
+      ],
+      "pixel_identical_at_comparison_dpi": true,
+      "extracted_text_identical": true
+    },
+    {
+      "selected_thesis_asset": "thesis/figures/symmetry-extension.pdf",
+      "fresh_output": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/symmetry-extension.pdf",
+      "retained_sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6",
+      "fresh_sha256": "21eea64e06b62074f6e08618ba5c4a4133b3c7b5956674d6c57e960ccf6d5742",
+      "byte_identical": false,
+      "comparison_dpi": 144,
+      "retained_render_dimensions": [
+        832,
+        772
+      ],
+      "fresh_render_dimensions": [
+        832,
+        772
+      ],
+      "pixel_identical_at_comparison_dpi": true,
+      "extracted_text_identical": true
+    },
+    {
+      "selected_thesis_asset": "thesis/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "fresh_output": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "retained_sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+      "fresh_sha256": "6f37b3d7a42e7d1d3e750ae7d2862cedcd8990ab0931b90f07b7abd054caf9ad",
+      "byte_identical": false,
+      "comparison_dpi": 144,
+      "retained_render_dimensions": [
+        792,
+        650
+      ],
+      "fresh_render_dimensions": [
+        792,
+        650
+      ],
+      "pixel_identical_at_comparison_dpi": true,
+      "extracted_text_identical": true
+    },
+    {
+      "selected_thesis_asset": "thesis/figures/visualization/viz-hypercube-ridges.png",
+      "fresh_output": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/visualization/viz-hypercube-ridges.png",
+      "retained_sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "fresh_sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "byte_identical": true,
+      "retained_dimensions": [
+        660,
+        560
+      ],
+      "fresh_dimensions": [
+        660,
+        560
+      ],
+      "pixel_identical": true
+    },
+    {
+      "selected_thesis_asset": "thesis/figures/visualization/viz-hko-pentagon-min-orbit.png",
+      "fresh_output": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/visualization/viz-hko-pentagon-min-orbit.png",
+      "retained_sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "fresh_sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "byte_identical": true,
+      "retained_dimensions": [
+        450,
+        510
+      ],
+      "fresh_dimensions": [
+        450,
+        510
+      ],
+      "pixel_identical": true
+    }
+  ],
+  "data_exports": [
+    {
+      "retained_input": "experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json",
+      "fresh_gzip": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/fresh-data/flow-graph-f6-tube.json.gz",
+      "retained_sha256": "4d69c9800adc7d889f0687c9376248af346f7b95449c911d135850f43b24df18",
+      "fresh_uncompressed_sha256": "4d69c9800adc7d889f0687c9376248af346f7b95449c911d135850f43b24df18",
+      "byte_identical": true
+    },
+    {
+      "retained_input": "experiments/visualization/viewer/data/hypercube.json",
+      "fresh_gzip": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/fresh-data/hypercube.json.gz",
+      "retained_sha256": "b789061897658685c148264e7d5f0708d77b0ff7c489a1921bd7692663d2c273",
+      "fresh_uncompressed_sha256": "b789061897658685c148264e7d5f0708d77b0ff7c489a1921bd7692663d2c273",
+      "byte_identical": true
+    },
+    {
+      "retained_input": "experiments/visualization/viewer/data/hko_pentagon.json",
+      "fresh_gzip": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/fresh-data/hko_pentagon.json.gz",
+      "retained_sha256": "b75c778a0c36449a3238b09ea9001f11b99607bf65d3fdc6b6228547206d5817",
+      "fresh_uncompressed_sha256": "b75c778a0c36449a3238b09ea9001f11b99607bf65d3fdc6b6228547206d5817",
+      "byte_identical": true
+    }
+  ],
+  "failure_before_fix": {
+    "observed": "hypercube screenshot exited 0 but was blank; browser diagnostic reported context lost and zero colored pixels",
+    "diagnostic_log": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/logs/viewer-diagnostic-render.log"
+  },
+  "fixed_producer_checks": {
+    "fresh_runs_passed": 2,
+    "context_loss_injection_exit": 1,
+    "context_loss_injection_pngs_written": 0,
+    "context_loss_log": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/logs/viewer-context-loss-test.log"
+  },
+  "visual_inspection": "All seven regenerated figures inspected; five PDF rasters at 144 dpi and both native PNGs. No content or layout differences found.",
+  "limits": [
+    "PDF pixel identity at 144 dpi and matching extracted text do not prove identical vector internals.",
+    "The selected viewer exports were rerun; six unused viewer inputs were copied from retained files.",
+    "Historical execution, clean-machine setup, and mathematical theorem validity are not established by these figure reproductions."
+  ],
+  "command_results": [
+    {
+      "command": "uv run --script /tmp/msc-structural-figures-20261004/foundations/generate.py",
+      "exit": 0,
+      "log": "logs/foundations.log"
+    },
+    {
+      "command": "uv run --with matplotlib --with numpy /tmp/msc-structural-figures-20261004/hko/make_hko_figures.py",
+      "exit": 0,
+      "log": "logs/hko.log"
+    },
+    {
+      "command": "cargo run -p exp-dev-flow-graph --release --bin flow-graph-visualize-tube-data -- --facet-count 6 --master-seed 20260605 --attempt 3 --sigma 1,2,4,5,3 --output /tmp/msc-structural-figures-20261004/flow/flow-graph-f6-tube.json",
+      "exit": 0,
+      "log": "logs/flow-export.log"
+    },
+    {
+      "command": "uv run --script experiments/dev-flow-graph/visualize-tube/render.py --layout sequence --input /tmp/msc-structural-figures-20261004/flow/flow-graph-f6-tube.json --output /tmp/msc-structural-figures-20261004/flow/flow-graph-f6-tube-sequence.pdf",
+      "exit": 0,
+      "log": "logs/flow-render.log"
+    },
+    {
+      "command": "cargo run --release --manifest-path experiments/visualization/Cargo.toml --bin visualization -- hypercube /tmp/msc-structural-figures-20261004/viewer-packet/viewer/data/hypercube.json",
+      "exit": 0,
+      "log": "logs/viz-hypercube-export.log"
+    },
+    {
+      "command": "cargo run --release --manifest-path experiments/visualization/Cargo.toml --bin visualization -- hko_pentagon /tmp/msc-structural-figures-20261004/viewer-packet/viewer/data/hko_pentagon.json",
+      "exit": 0,
+      "log": "logs/viz-hko-export.log"
+    },
+    {
+      "command": "npm install --no-save --no-package-lock playwright@1.61.1 three@0.128.0",
+      "cwd": "/tmp/msc-structural-figures-20261004/viewer-packet/viewer",
+      "exit": 0,
+      "log": "logs/npm-install.log"
+    },
+    {
+      "command": "npx playwright@1.61.1 install chromium-headless-shell",
+      "cwd": "/tmp/msc-structural-figures-20261004/viewer-packet/viewer",
+      "exit": 0,
+      "log": "logs/playwright-browser-install.log"
+    },
+    {
+      "command": "bash /tmp/msc-structural-figures-20261004/viewer-packet/viewer/embed-data.sh > /tmp/msc-structural-figures-20261004/viewer-packet/viewer/data.js",
+      "exit": 0
+    },
+    {
+      "command": "python3 -m http.server 18764 --bind 127.0.0.1",
+      "cwd": "/tmp/msc-structural-figures-20261004/viewer-packet/viewer",
+      "scope": "temporary server for copied viewer",
+      "log": "logs/viewer-server.log"
+    },
+    {
+      "command": "VIZ_BASE_URL=http://127.0.0.1:18764 node /tmp/msc-structural-figures-20261004/viewer-packet/viewer/screenshot-figures.mjs",
+      "exit": 0,
+      "runs": 2,
+      "logs": [
+        "logs/viewer-fixed-render.log",
+        "logs/viewer-fixed-repeat.log"
+      ]
+    },
+    {
+      "command": "VIZ_BASE_URL=http://127.0.0.1:18764 node /tmp/msc-structural-figures-20261004/viewer-packet/viewer/screenshot-context-loss-test.mjs",
+      "exit": 1,
+      "expected_failure": true,
+      "log": "logs/viewer-context-loss-test.log"
+    }
+  ],
+  "server_cleanup": {
+    "observed_at_utc": "2026-10-04T01:36:45.184980+00:00",
+    "outcome": "owned copied-viewer server stopped after checking its process cwd and command line"
+  }
+}

@@ -1,7 +1,13 @@
 # Search and data-science account beyond the ridge identity
 
-Source audit, 2026-09-18. This document proposes a scientific organization, not
-historical chronology. It reports existing evidence; no producer was rerun.
+Historical source audit, 2026-09-18. This document proposed a scientific
+organization, not historical chronology. Its proposed organization and open
+choices describe that snapshot, not current assignments. The selected account
+now lives in [Chapter 8](../../thesis/chapters/08-data-science.tex) and
+[the data-science appendix](../../thesis/appendices/data-science.tex).
+[Current retrospective revalidation](../ds-retrospective-revalidation/README.md)
+owns the later input recovery and interval-coverage results.
+This audit reports existing evidence; no producer was rerun for it.
 Paths below are repository-relative. Packet READMEs determine interpretation,
 and their generated artifacts determine numbers. Overall DS completion remains
 an unresolved thesis-scope decision; this audit does not settle it.
@@ -48,12 +54,14 @@ without pretending the complete mechanism has been identified.
 All `methods/` paths in this document abbreviate
 `experiments/sys-datascience/methods/`.
 
-The optimizer account already exists in
+At the audit date, the optimizer account was in the historical path
 `thesis/08-black-box-datascience-finite-budget-optimization.tex`, including the
 branch-envelope motivation, performance table, compute plot and endpoint
-controls. Its central explanatory example is ascending the ridge of
+controls. That draft's central explanatory example was ascending the ridge of
 `f(x,y)=y-|x|`: following either selected branch gradient differs from balancing
-both branches. The account explicitly denotes the historical objective by
+both branches. The selected Chapter 8 now presents the comparison in
+“Competing branches in local search”; the appendix owns its detailed budget,
+calibration and endpoint evidence. The earlier draft explicitly denoted the historical objective by
 `hat(sys)` because candidate-family completeness is untested. A shared evaluator
 can make different errors at the points each optimizer visits; its ranking is
 not established for certified mathematical capacity. The runner permits an
@@ -90,7 +98,7 @@ This explains one component without predicting whether A3 beats A2.
 Sources: `methods/product-bounce-width-shortcut/README.md`,
 `artifacts/summary.json`, `artifacts/retained-association.json`.
 
-## Remaining scientific choices and concrete gaps
+## Scientific choices and gaps recorded at the audit date
 
 1. **Choose the thesis's evaluator claim.** Historical random/search results
    can truthfully remain evidence about the recorded numerical objective.

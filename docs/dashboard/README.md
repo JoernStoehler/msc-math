@@ -1,14 +1,13 @@
 # Jörn's browser views
 
-Use the [file viewer](../file-viewer.md): prefix a dashboard's absolute path with
-`https://joern-pc.tailc5e761.ts.net/files`. The URL identifies the checkout;
-relative state, evidence and asset links stay in that checkout. For this worktree:
-
-<https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/60b9/msc-math/docs/dashboard/index.html>
-
-The earlier port-8766 worktree service was unavailable when checked on 3 October.
-Port 8765 serves `/workspaces/msc-math`, a separate checkout. The shared file
-viewer does not replace or restart that existing service.
+The 30 September observation recorded a private Tailscale view at
+<http://joern-pc.tailc5e761.ts.net:8766/>, serving worktree
+`/home/joern/.codex/worktrees/60b9/msc-math` through the transient user service
+`msc-math-workflow-dashboard.service`. Port 8765 then served the separate
+`/workspaces/msc-math` checkout. Those are dated observations, not verified
+current listeners or routes to this `f171` worktree. A worktree update is not
+a browser publication until the served state has been checked against the
+edited checkout.
 
 
 Run `python3 scripts/serve-files.py` for a local file view, then use
@@ -19,10 +18,13 @@ Run `python3 scripts/serve-files.py` for a local file view, then use
 - [index.html](index.html) shows selected work, owners, dependencies, decisions,
   resource observations and recent changes from `docs/coordination/current.json`.
   It refreshes every 15 seconds and clearly labels older observations.
-- [thesis.html](thesis.html) is the retained scientific brief. Its current
-  scientific baseline is 25 September, with reconciliation still open. The
-  file view compares cited sources in the browser against [thesis-sources.json](thesis-sources.json);
-  hashes do not establish that the brief is complete or correct.
+- [thesis.html](thesis.html) is the scientific brief reconciled during the
+  4 October restart against required scope, promoted claims, evidence owners
+  and the retained candidate. It preserves bounded review and remaining
+  acceptance gaps. The server compares selected sources against
+  [thesis-sources.json](thesis-sources.json); changed hashes invalidate the
+  recorded reconciliation, while matching hashes do not establish scientific
+  correctness or human PASS.
 
 Keep browser presentation here and assignment truth in
 [../coordination/](../coordination/README.md). Neither page is a task authority

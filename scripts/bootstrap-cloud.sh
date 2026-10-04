@@ -34,7 +34,7 @@ verify_universal_runtimes() {
 install_system_packages() {
   sudo apt-get update
   sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    biber latexmk rclone texlive-bibtex-extra texlive-latex-extra
+    biber latexmk lmodern rclone texlive-bibtex-extra texlive-latex-extra
 }
 
 configure_r2() {

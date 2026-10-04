@@ -2,7 +2,7 @@
 # dependencies = ["matplotlib==3.10.8", "numpy==2.4.2", "scipy==1.17.0"]
 # ///
 """Plot verified historical observations, with no capacity evaluations.
-Run from repo root: uv run <this script>. Optional --table and --provenance paths.
+Run from repo root: uv run <this script>. Optional --table, --provenance and --out paths.
 """
 import argparse, hashlib, json
 from pathlib import Path
@@ -18,6 +18,8 @@ HERE = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser()
 parser.add_argument('--table', type=Path, default=Path.home()/'.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a/files/polytope-table.jsonl')
 parser.add_argument('--provenance', type=Path, default=Path('experiments/polytope-invariant-table/polytope-provenance-table.jsonl'))
+parser.add_argument('--out', type=Path, default=HERE,
+                    help='Output directory for both figures and their receipt (default: beside this script).')
 a = parser.parse_args()
 expected = ['607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59', '6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2']
 hashes=[]
@@ -42,6 +44,7 @@ for r in rows:
 groups={k:np.asarray(v) for k,v in groups.items()}
 keys=[f'Generic: {f} facets' for f in range(5,13)]+[f'Product: {k} × {m}' for k in range(3,7) for m in range(k,7)]
 assert sum(map(len,groups.values()))==14336
+a.out.mkdir(parents=True, exist_ok=True)
 plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False,'svg.fonttype':'none'})
 colors=['#226b9b','#ba572b']
 def draw(ax,z,color,title):
@@ -59,6 +62,6 @@ for name, subset, color in [('generic', keys[:8], colors[0]), ('products',keys[8
     fig.supxlabel('Normalized unsigned symplectic ridge area R (logarithmic axis)',fontsize=9)
     fig.supylabel('Numerical systolic ratio',fontsize=9)
     fig.tight_layout(rect=(.035,.025,1,1))
-    fig.savefig(HERE/f'association-{name}.pdf',dpi=200)
+    fig.savefig(a.out/f'association-{name}.pdf',dpi=200)
     plt.close(fig)
-(HERE/'plot-receipt.json').write_text(json.dumps(dict(input_hashes=hashes,rows=len(rows),plotted_rows=sum(map(len,groups.values())),groups={k:len(groups[k]) for k in keys},omitted_rows=0),indent=2)+'\n')
+(a.out/'plot-receipt.json').write_text(json.dumps(dict(input_hashes=hashes,rows=len(rows),plotted_rows=sum(map(len,groups.values())),groups={k:len(groups[k]) for k in keys},omitted_rows=0),indent=2)+'\n')

@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-04T01:49:34.352496+00:00",
+  "owner": "/root/acceptance",
+  "candidate_pdf_sha256": "d27e2f5330c61b25df23939a3da8118da98dd95aa6f336ac9d09d52302724a81",
+  "reproduction_pdf_sha256": "f09acee885c27f07375ff7d11ee0acc3241aa570c90e940e303d1120446fcfff",
+  "source_tree_sha256": "00d03cebeefa4d83774983d6744fc7be85745dc1265bba958521487a50cf6e6e",
+  "all_61_canonical_source_hashes_rechecked": true,
+  "canonical_PDF_hash_rechecked": true,
+  "independent_layout_text_different_pages": [
+    9,
+    10,
+    14,
+    27,
+    31,
+    43,
+    48,
+    51
+  ],
+  "whitespace_token_change_spans": 6,
+  "changed_token_scope": "math glyph ordering/spacing: 1/4, 1/2, not-equal slash and matrix bracket space; no changed prose observed",
+  "individually_viewed_reproduction_pages_at_1600px": [
+    9,
+    10,
+    14,
+    27,
+    31,
+    43,
+    48,
+    51
+  ],
+  "visual_finding": "Fractions, inequalities and matrices render correctly; no new clipping or changed mathematical content observed on these pages.",
+  "integration_raster_comparison_reviewed": {
+    "dpi": 96,
+    "identical_pages": 10,
+    "different_pages": 91
+  },
+  "scope": "Source/PDF hashes, package/build logs and targeted comparison accepted; no new build or blanket alternate-PDF visual acceptance."
+}

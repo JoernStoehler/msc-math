@@ -34,7 +34,7 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 - The co-located `tube-algorithm*.md` files are legacy/imported source
   material, not the live control surface.
 - The current experiment package is `experiments/dev-flow-graph/`.
-- The thesis section is `thesis/05-flow-graph-algorithm-ch2021.tex`.
+- The thesis section is `thesis/chapters/05-flow-graph.tex`.
 
 ## Scope and Caveats
 
@@ -62,6 +62,8 @@ Exact implementation scope currently documented here:
 - bounded irredundant halfspace data supplied by the existing trusted
   fixture/data-generation path;
 - nonzero exact `omega_0` on every nonempty directed facet-pair candidate;
+- linear independence of every subset of at most four listed dual facet
+  normals, checked at the exhaustive-search boundary;
 - nonnegative exact action threshold;
 - no singular fixed set with a positive-action closed candidate encountered by
   exact closed-word resolution;
@@ -74,11 +76,17 @@ Exact implementation scope currently documented here:
 Formal-theorem alignment is a separate layer from this runtime contract. The
 active idealized theorem in `formal/flow-graph-real-algorithm.tex` uses global
 linear-independence and finite-orbit-regularity hypotheses. The theorem target
-is the generic/open-dense version of that idealized route. The Rust exact path
-does not validate those as named input predicates. It validates or rejects the
-downstream conditions it needs during exact tube construction and closed-word
-resolution: unsupported zero `omega_0`, singular primitive transition
-construction, and singular fixed sets with positive-action closed candidates.
+is the generic/open-dense version of that idealized route. Before enumeration,
+`exact_search.rs::search_closed_orbits_exact` checks exact linear independence
+of every subset of one through four listed dual facet normals and rejects any
+dependent subset. The direct closed-word resolver has no corresponding global
+independence check: its shared `validate_exact_input` checks matrix dimensions,
+while local construction checks the transitions it uses. Neither entry point
+fully validates bounded irredundancy or consistency of the supplied incidence
+and sign matrices with the normals. Finite-orbit regularity is not certified
+as a global input predicate; singular fixed sets are classified during
+closed-word resolution and subjected to the search-boundary rejection rules
+below.
 The formal file now also states a chamber-relative genericity proposition for
 fixed ordered normalized irredundant `H`-presentation chambers that are open in
 the listed dual-row coordinates. That proposition deliberately uses all-pair
@@ -110,6 +118,8 @@ Target input:
 - facet-intersection data matching the facet count;
 - exact `omega_0` signs for facet pairs;
 - nonzero exact `omega_0` on every nonempty directed facet-pair candidate;
+- for exhaustive search, linear independence of every subset of at most four
+  listed dual facet normals;
 - nonnegative exact action threshold;
 - no singular fixed set with a positive-action closed candidate during exact
   closed-word resolution;
@@ -416,7 +426,7 @@ Project sources:
 - `AGENTS.md`
 - `tube-algorithm-legacy-source-note.md`
 - `tube-algorithm-raw-jorn-2026-05-04.md`
-- `thesis/05-flow-graph-algorithm-ch2021.tex`
+- `thesis/chapters/05-flow-graph.tex`
 - `papers/ch2021/`
 
 ## Maintenance Rule

@@ -41,6 +41,7 @@ search cues, not a finding index or a claim that each row is one experiment.
 | `sys-landscape/` | hostile-`sys` search implementations, caches, legacy producers, and selected retained searches |
 | `verification/` | capacity properties, minimum-orbit production, orbit recovery, and flow-graph falsifiers |
 | `visualization/` | 4D-polytope viewer, data exporters, and thesis-support screenshots |
+| `writing-quality/` | retained thesis reading inputs, human feedback, and bounded writing-method evaluations |
 
 Keep this table auditable against the repo-tracked immediate directory tree.
 Add a row when adding an immediate research directory. Do not use omission from

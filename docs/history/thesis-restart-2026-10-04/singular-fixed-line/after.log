@@ -1,0 +1,10 @@
+   Compiling symplectic v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/symplectic)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.23s
+     Running unittests src/lib.rs (target/debug/deps/symplectic-0dfb305ed84c0d44)
+
+running 2 tests
+test algorithms::flow_graph::exact_tube::tests::exact_singular_positive_fixed_set_is_unsupported ... ok
+test algorithms::flow_graph::exact_tube::tests::exact_singular_fixed_line_checks_zero_row_consistency ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 397 filtered out; finished in 0.00s
+

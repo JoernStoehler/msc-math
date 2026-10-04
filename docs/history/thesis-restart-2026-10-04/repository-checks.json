@@ -1,0 +1,76 @@
+{
+  "observed_at": "2026-10-04T00:53:47+00:00",
+  "owner": "/root",
+  "scope": "Direct final repository checks after numerical owner declared source frozen; identity and compile checks do not establish theorem correctness.",
+  "checks": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo check --workspace",
+      "exit_code": 0,
+      "reported_seconds": 3.55
+    },
+    {
+      "command": "bash -n scripts/bootstrap-cloud.sh scripts/repo-status-summary.sh",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    },
+    {
+      "command": "git merge-base --is-ancestor fe3475b3 HEAD",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 docs/history/thesis-restart-2026-10-04/verify-candidate.py",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test -p symplectic --release --lib",
+      "exit_code": 0,
+      "passed": 376,
+      "failed": 0,
+      "ignored": 23,
+      "test_seconds": 28.47,
+      "log": "docs/history/thesis-restart-2026-10-04/library-tests.log"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p test_project_dashboard.py",
+      "exit_code": 0,
+      "passed": 8
+    },
+    {
+      "command": "python3 scripts/serve-project-dashboard.py --check",
+      "exit_code": 0,
+      "reconciled": true,
+      "changed_scientific_sources": []
+    },
+    {
+      "command": "python3 scripts/render-workflow-graph.py --check",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --quiet fe3475b3 -- docs/resume",
+      "exit_code": 0,
+      "scope": "Historical resume files unchanged"
+    },
+    {
+      "command": "git diff --cached --check",
+      "exit_code": 0,
+      "note": "Dated local .gitattributes preserves hash-bound raw .log and .patch bytes; ordinary source/prose whitespace remains checked."
+    }
+  ],
+  "numerical_source_sha256": {
+    "crates/symplectic/DEVELOPMENT.md": "df7dac23d1d01dffd5b88e8344b1b23de08fea02af017820925516f37fb3bcfd",
+    "crates/symplectic/README.md": "11b702fbd4cadb83f58ae397026ad927c8be435621b089588c5455c7edec4650",
+    "crates/symplectic/src/algorithms/capacity_4d/general.rs": "ee641b966aa2e03f392eef8178c8351b1840585319e6c040d3221f4b1f6e0f1e",
+    "crates/symplectic/src/algorithms/capacity_4d/mod.rs": "f46e54de9a02b5f37f7aed978b75c9145e61de428dffb635dba87e891629e40c",
+    "crates/symplectic/src/algorithms/flow_graph/README.md": "b6664421ae3b435450af096111c97c0168b064d79f7ec5a0526af9890ddb131d",
+    "crates/symplectic/src/algorithms/flow_graph/exact_tube.rs": "1e796704d345dd4b29df9b47771eb443982ba1b626c2fbdd4a849b3cf6fc6c4a",
+    "crates/symplectic/tests/public_capacity_api.rs": "5bdaa18a01beb4862b93d854dc959ab8b8ceae9590c5e5f9892cd2ee966cdc70"
+  },
+  "delivery": "The commit containing this record is the local retained delivery revision; no publication is implied."
+}

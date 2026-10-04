@@ -1,0 +1,8 @@
+Generating viz-hypercube-ridges...
+page.evaluate: Error: WebGL context lost before screenshot
+    at eval (eval at evaluate (:303:30), <anonymous>:3:37)
+    at UtilityScript.evaluate (<anonymous>:305:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+    at main (/tmp/msc-structural-figures-20261004/viewer-packet/viewer/screenshot-context-loss-test.mjs:194:38) {
+  log: []
+}

@@ -66,7 +66,7 @@ def projection(state, digest):
         "digraph project {",
         '  graph [rankdir=BT, newrank=true, bgcolor="white", fontname="sans-serif",',
         '    fontsize=11, nodesep=0.18, ranksep=0.34, pad=0.15,',
-        '    label="msc-math · prerequisites → dependent\\nREADY candidates need selection · thesis STOPPED · semantic dashboard owns the detailed view", labelloc=b];',
+        '    label="msc-math · prerequisites → dependent\\nSelected work and authorization: see current.json · semantic dashboard owns the detailed view", labelloc=b];',
         '  node [shape=box, style="rounded,filled", fontname="sans-serif",',
         '    fontsize=12, margin="0.08,0.06", width=1.4];',
         '  edge [color="#78818a", arrowsize=0.6, penwidth=1.0];',

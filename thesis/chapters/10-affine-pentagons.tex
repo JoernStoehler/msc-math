@@ -1,5 +1,4 @@
-% Provisional exposition; derived from the returned Pro proof and independently audited.
-% Review/provenance status and exact integration instructions are in README.md.
+% Proof source and independent audit record: formal/pentagon-affine-products/.
 \section{Independent linear deformations of the pentagon factors}
 \label{sec:pentagon-affine}
 
@@ -66,36 +65,58 @@ sum one, and their weighted covector sum vanishes.
 For a product, same-factor pairings vanish. If the total weight in the first
 factor is $t$, the objective therefore has the form
 $t(1-t)B(\gamma,\eta)$, where $B$ is bilinear in the normalized closure
-weights of the factors. At a positive global maximum, maximizing successively
-in $\gamma$ and $\eta$ allows both to be chosen at vertices of their closure
-polytopes. The global value cannot increase, so these replacements preserve it.
-A vertex has at most three positive entries: more than three columns of the
-three closure equations admit a two-sided feasible perturbation. The remaining
-factor $t(1-t)$ is maximal at $t=1/2$.
+weights of the factors. At a positive global maximum, both factors have
+nonzero mass, so $0<t<1$ and $B(\gamma,\eta)>0$. Extend its word to a full
+facet order by assigning zero weight to unused facets. With this order and
+$\eta$ fixed, $B$ is linear in $\gamma$ and attains its maximum at a vertex
+of the first closure polytope. Replacing $\gamma$ by that vertex cannot
+decrease the value; since we started at a global maximum, the value is
+unchanged. Apply the same argument to $\eta$ with the new $\gamma$ fixed.
+Thus both closure weights may be chosen at vertices.
+
+A vertex has at most three positive entries. Otherwise the corresponding
+columns of the three equations $\sum\gamma_i=1$ and
+$\sum\gamma_i u_i=0$ have a nonzero dependence $\delta$. Extend $\delta$
+by zero outside the positive support. For sufficiently small $\varepsilon>0$,
+both $\gamma+\varepsilon\delta$ and $\gamma-\varepsilon\delta$ remain
+nonnegative and satisfy the same equations, contradicting extremality.
+Finally, keeping the two closure vertices and the word fixed while varying
+$t$ preserves feasibility. Since $B>0$, its factor $t(1-t)$ is maximal at
+$t=1/2$.
 
 Thus some maximizer uses at most three facets of each factor. This is an
 existence statement; it does not assert that all maximizing words are sparse.
 Moving the first weighted covector cyclically to the end preserves $Q$, since
 the change is its pairing with minus twice the sum of all the other weighted
 covectors, and closure makes that pairing zero. We may consequently group
-adjacent entries from the same factor cyclically. There are two, four, or six
-alternating groups; the two-group value is zero.
+adjacent entries from the same factor cyclically. There are equally many
+groups of each factor, and each uses at most three nonzero facets. Thus the
+number of alternating groups is two, four, or six. With two groups, each
+group contains every step of one factor, so both grouped sums are zero by
+factorwise closure and $Q=0$.
 
 Put $x_i=\gamma_i u_i$ and $y_j=\eta_j v_j$. These are factor steps with
 sum zero; their actual product weights carry an additional factor $1/2$.
-A four-group order $x,y,-x,-y$ has value $x\cdot y/2$. A six-group order
+A four-group order $x,y,-x,-y$ has value $x\cdot y/2$: its unscaled
+pairing sum is $2x\cdot y$, and the two half-masses contribute a factor
+$1/4$. A six-group order
 $x_1,y_1,x_2,y_2,x_3,y_3$ has value
 \[
  Q=\frac12(x_1\cdot y_1-x_3\cdot y_2).
 \]
-The latter identity follows by pairing each $p$-step with its preceding
-$q$-prefix: those prefixes are $x_1,-x_3,0$.
+To see this, let $P_j$ be the sum of the $q$-steps preceding $y_j$.
+The following $q$-steps sum to $-P_j$ by closure. The mixed terms involving
+$y_j$ therefore contribute
+$\tfrac14(P_j\cdot y_j-y_j\cdot(-P_j))=\tfrac12P_j\cdot y_j$.
+Here the three prefixes are $x_1,x_1+x_2=-x_3,0$, which gives the formula.
 Represent these expressions by matrices
 \[
  \frac12xy^T,\qquad \frac12(x_1y_1^T-x_3y_2^T),
 \]
 whose Frobenius pairing with the identity matrix is the objective. Under
-independent changes $G,H$, both types transform by the same linear map
+independent changes $G,H$, the support-normalized covectors become
+$G^{-T}u_i$ and $H^{-T}v_j$. Their closure weights are unchanged, and both
+matrix types transform by the same linear map
 $T\mapsto G^{-T}TH^{-1}$. It remains to show that every six-group matrix for
 regular pentagons lies in the convex hull of the four-group matrices.
 
@@ -106,7 +127,13 @@ Set
  s=\frac1{1+h},\qquad \rho=\frac{s^2}{2},\qquad
  \mathcal D=\operatorname{conv}\{\pm n_i n_j^T:0\le i,j<5\}.
 \]
-A positive closure triple has all cyclic angular gaps less than $\pi$.
+A positive closure triple places the origin in the interior of the triangle
+of its three normals. Indeed, its positive closure weights are barycentric
+coordinates of the origin, and three distinct points on the circle are
+noncollinear. If a cyclic angular gap were at least $\pi$, the three
+normals would lie in a closed semicircle and hence in a closed half-plane
+through the origin. Their triangle could not contain the origin in its
+interior. Thus every cyclic angular gap is less than $\pi$.
 Its three positive integer index gaps therefore sum to five and are at most
 two, so they are cyclic permutations of $(1,2,2)$. There are exactly five
 triples, all rotations of $\{n_0,n_2,n_3\}$, and no opposite pairs.
@@ -119,8 +146,12 @@ Indeed the closure weights are $h/(1+h),1/[2(1+h)],1/[2(1+h)]$.
 Every proper grouped sum of a triple is one step or its negative. The convex
 hull of all such sums, over the five triples, is $sD$: all $\pm sn_i$ occur,
 and the remaining steps are their contractions by $\lambda<1$.
-It follows, by expanding independent convex combinations in each factor,
-that the convex hull of the four-group matrices is exactly $\rho\mathcal D$.
+In particular, writing $x=s\sum_r a_r d_r$ and
+$y=s\sum_k b_k e_k$ with $d_r,e_k\in\{\pm n_i\}$ and probability
+weights $a_r,b_k$, bilinearity gives
+$\tfrac12xy^T=\rho\sum_{r,k}a_rb_kd_re_k^T\in\rho\mathcal D$.
+Conversely, each generator $\pm\rho n_i n_j^T$ is a four-group matrix.
+Thus the convex hull of the four-group matrices is exactly $\rho\mathcal D$.
 Every generator is feasible: choose a triple with the specified singled-out
 step, and group its other two steps together.
 
@@ -150,10 +181,20 @@ combinations, not signed combinations with negative weights.
 Every six-group matrix belongs to the four-group convex hull $\rho\mathcal D$.
 \end{lemma}
 \begin{proof}
-Rotate each triple to the representative above and cut the word at the
-$q$-step $se$. After division by $\rho$, the matrix is
-$ev^T-wz^T$, where $w\in\{a,b\}$ and $v,z$ are distinct members of
-$\{e,a,b\}$. Reflection $F=\operatorname{diag}(1,-1)$ on the left exchanges
+The set $\mathcal D$ is invariant under independent pentagon rotations,
+so we may use the representative triple above in both factors.
+A cyclic shift preserves the coefficient matrix as well as $Q$: moving
+a $q$-step $x$ from first to last changes the unscaled mixed matrix by
+$-2x(\sum_j y_j)^T=0$, and moving a $p$-step gives the analogous zero
+change by $q$-closure. Cut the word at the $q$-step $se$, meaning that
+this step becomes the first entry in the cyclic order.
+In the notation of the six-group formula, this means
+$x_1=se$. Write $x_3=sw$, $y_1=sv$ and $y_2=sz$; the remaining steps are
+fixed by closure. After division by $\rho$, the matrix is therefore
+$ev^T-wz^T$, where $w\in\{a,b\}$ and $(v,z)$ is an ordered pair of
+distinct members of $\{e,a,b\}$. These are the two possible orders of the
+remaining $q$-steps and the six orders of the $p$-steps.
+Reflection $F=\operatorname{diag}(1,-1)$ on the left exchanges
 $a,b$ and fixes $e$, so it suffices to take $w=a$. Its six possibilities are
 \[
 \begin{array}{c|cccccc}
@@ -182,8 +223,15 @@ Since areas multiply by absolute determinants, the systolic ratio becomes
  \frac{(1+h)^4}{2S^2}\frac{|\det M|}{m(M)^2}.
 \]
 Put $L=M/m(M)$. The inequalities defining $m(M)$ say exactly that
-$LD\subseteq D^\circ$. The polar regular decagon is
-$D^\circ=\sec\alpha\,R_\alpha D$, hence comparison of areas yields
+$LD\subseteq D^\circ$: they test every vertex of $LD$ against every
+vertex of $D$, and bilinearity extends them to both convex hulls.
+The vertices of $D$ have angular spacing $\pi/5=2\alpha$.
+Two adjacent polar boundary lines $d\cdot x=1$ therefore meet on their
+angular bisector at distance $\sec\alpha$ from the origin. It follows that
+\[
+ D^\circ=\sec\alpha\,R_\alpha D.
+\]
+Comparison of areas now yields
 \[
  |\det L|\le\sec^2\alpha.
 \]
@@ -196,9 +244,13 @@ which proves the bound. Equality of areas under convex-body containment
 holds precisely when $LD=D^\circ$. Then
 $\cos\alpha R_{-\alpha}L$ is a linear automorphism of $D$.
 Such an automorphism permutes vertices and preserves or reverses cyclic
-adjacency. Its action on two adjacent vertices determines it and agrees with
-an orthogonal dihedral symmetry. This proves the stated equality
-classification; conversely each listed matrix attains equality.
+adjacency, since it sends edges to edges. There is an orthogonal dihedral
+symmetry with the same images of any chosen adjacent vertex pair. Those
+two vertices are linearly independent, so the two linear maps agree
+everywhere. Consequently $L=\sec\alpha R_\alpha U$, and multiplying by
+$m(M)>0$ gives the stated form $M=tR_\alpha U$.
+Conversely, $UD=D$ and the polar identity imply
+$m(tR_\alpha U)=t\cos\alpha$, so every listed matrix attains equality.
 \end{proof}
 
 Every equality body in this family is a positive dilation of a linear
@@ -208,8 +260,10 @@ map $\operatorname{diag}(G^{-1},G^T)$ sends the product to
  P\times M^{-T}P=P\times t^{-1}R_\alpha UP.
 \]
 The symplectic rescaling $(q,p)\mapsto(t^{-1/2}q,t^{1/2}p)$ then gives
-$t^{-1/2}(P\times R_\alpha UP)$. Every orthogonal symmetry $U$ of the
-decagon sends $P$ to $P$ or $-P$, so the remaining regular product has
+$t^{-1/2}(P\times R_\alpha UP)$. The five normals of $P$ are every other
+vertex of $D$. A dihedral symmetry preserves or exchanges the two
+alternating vertex sets, so every such $U$ sends $P$ to $P$ or $-P$.
+The remaining regular product therefore has
 relative angle $\alpha$ or $\alpha+\pi$. Modulo the pentagon period
 $2\pi/5$, both $\alpha+\pi$ and the HKO angle $-\pi/2$ equal $-\alpha$;
 simultaneous reflection in both planes exchanges $\alpha$ and $-\alpha$

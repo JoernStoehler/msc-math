@@ -5,8 +5,8 @@ At the time of writing, the public development repository for this thesis is
   \url{https://github.com/JoernStoehler/msc-math}.
 \end{center}
 The public repository was checked on 18 September 2026 at commit
-\href{https://github.com/JoernStoehler/msc-math/tree/1bec30637070effe7ab8b0a022ae62e83f6bbcab}{\texttt{1bec30637070}}. The two certificate
-packets described below are present there. This review candidate and subsequent
+\href{https://github.com/JoernStoehler/msc-math/tree/1bec30637070effe7ab8b0a022ae62e83f6bbcab}{\texttt{1bec30637070}}. The HKO certificate and original
+pentagon-rotation packet described below are present there. This manuscript and subsequent
 research additions are held in the working repository; they are not all included
 in that public commit. The repository URL follows ongoing development.
 
@@ -20,6 +20,12 @@ and checks the exact predicates stated in
 Section~\ref{subsec:hko-local-maximum-computation-with-sagemath}.  Those
 predicates imply the theorem only together with the mathematical
 upper-function and slice argument given there.
+The annotated program printed in the appendix is maintained separately as
+\path{thesis/appendices/hko_core.py}. It reconstructs the same selected
+words, feasible sections, and exact derivative covectors; the appendix maps
+its shorter presentation to the public verifier
+\path{experiments/hko-local-maximum/theorem/verify.sage.py}.
+The appendix file was not part of the public commit cited above.
 
 The second ten-facet local maximum is maintained in
 \path{experiments/hko-local-maximum/non-hko/}. Its rational witness and
@@ -46,9 +52,29 @@ and root isolation inside the software trust boundary. The maintained
 affine-pentagon argument and its source-convention check are in
 \path{formal/pentagon-affine-products/}.
 
-Selected non-proof evidence is also tracked as ordinary repository files.  In
-particular, the product-capacity implementation audit retains its \(88\)-row
-numerical packet, and the historical first-order experiment retains its
+The numerical audits in Section~\ref{sec:numerics} have distinct evidence owners.
+The tracked report and producers for the \(249\) KKT systems and the complete
+\(88\)- and \(1271\)-word comparisons are in
+\path{experiments/dev-quadratic-program/tools/general_algorithm_ablation/}.
+Its \path{RESULTS.md} records the counts and outcomes; its \path{run.sh}
+produces new verification and numerical-audit transcripts. The original
+per-system output is not included as a tracked or registered artifact, so
+the retained report and a new execution are different evidence objects.
+
+The \(88\)-product audit is retained row by row in
+\path{experiments/dev-quadratic-program/tools/product_closure_route/sample5.jsonl},
+with its interpretation in that directory's \path{RESULTS.md}.
+The external \texttt{polytope-datasets} artifact supplies
+\path{random-product.jsonl} and \path{shared-cache.jsonl} for the separate
+\(10\,240\)-product observation. These are registered files,
+materialized under \path{experiments/polytope-datasets/}; they are not part
+of a plain checkout. The product report identifies the historical
+geometry-to-cache join and its scope. These numerical packets concern finite
+tests, with the production-to-development comparison recorded separately in
+\path{docs/numerics-correspondence-check/}.
+
+Other non-proof evidence is tracked as ordinary repository files. The
+historical first-order experiment retains its
 \(12\)-run finite-step panel.  The bounded generated-candidate experiment
 retains \(1675\) rows selected before the systolic ratio was computed, the
 corresponding \(1675\) evaluated rows, its frozen configuration, and compact

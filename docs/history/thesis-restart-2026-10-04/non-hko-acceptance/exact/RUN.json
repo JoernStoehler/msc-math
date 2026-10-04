@@ -1,0 +1,29 @@
+{
+  "started_utc": "2026-10-04T00:36:42.672253+00:00",
+  "python": "3.13.3 (main, Apr  9 2025, 04:03:52) [Clang 20.1.0 ]",
+  "sympy": "1.14.0",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "command": [
+    "experiments/hko-local-maximum/non-hko/verify.py",
+    "--output-dir",
+    "/tmp/msc-thesis-acceptance-nonhko-20261004/exact"
+  ],
+  "acceptance_arithmetic": [
+    "QQ",
+    "QQ(v,s)",
+    "QQ(z)"
+  ],
+  "source_sha256": {
+    "verify.py": "6f566d76a878e4308651c2b55e96674d6700913c6c90d516f66bd30ad0c2b473",
+    "certificate/certificate_base.json": "da8f8f15bcd2c4c117c92b7a351b08f06c16a90ba4b74a8025be24ffdb3e459e",
+    "code/certificate_exact.py": "3fb449f4b808c5e1407b6a31ba2d058d784bb0577836661f8168ae3b54124f80",
+    "code/family_exact.py": "2a7b0117444fec8ab48cc69589559a7087f0906a3d42b8b31642e743a230ec14",
+    "code/independent_audit.py": "deb40fec554b0ec47842fa3605654953324c9c9cecca207be9963229c66f4015",
+    "code/independent_exact.py": "83330b371bfa4ff0cb5a26b17a77b974d3fda56a6478c2e7d8cb4460cfdc9417",
+    "code/product_exact.py": "23f75b3b1bcd2afe8bf001f71e29da926efdc2b4ed6d2f41eef680bec5023088"
+  },
+  "network_used_by_verifier": false,
+  "retained_reports_used_for_acceptance": false,
+  "elapsed_seconds": 12.527603150003415,
+  "finished_utc": "2026-10-04T00:36:55.202835+00:00"
+}

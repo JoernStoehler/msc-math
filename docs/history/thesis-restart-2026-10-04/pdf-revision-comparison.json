@@ -1,0 +1,13 @@
+{
+  "observed_at": "2026-10-04T00:48:04+00:00",
+  "previous_pdf_sha256": "f70d31e1c6aadc49df9d90db07ca3ec073596bf043c4449801c66c5447b63e96",
+  "final_pdf_sha256": "27dbf152964bf3eeb6a15bf5f319ab4326de14d48a40e2e296f6008eff3e2f70",
+  "renderer": "pdftoppm -scale-to 1000 -jpeg -jpegopt quality=85",
+  "pages_compared": 100,
+  "changed_pages": [
+    98,
+    99,
+    100
+  ],
+  "scope": "Raster identity at this resolution links previously inspected unchanged pages; changed pages require new inspection."
+}

@@ -51,6 +51,11 @@ witness is `certificate/certificate_base.json`; `python verify.py` recomputes
 all the stated finite predicates. The proof is not a formalization in a proof
 assistant. A numerical value of the neighborhood radius is not asserted.
 
+Reproduction commands and evidence locations are in [README.md](README.md).
+Historical paths beginning `evidence/` and the original `RUN_LEDGER.md` are
+members of the nested source archive identified there, not direct paths in
+this integrated directory. The later retained rerun is under `verification/`.
+
 ## 2. Geometry, boundedness, and the local normal chart
 
 The body is the Lagrangian product \(H_*\times T_*\), where the hexagon, in
@@ -98,7 +103,9 @@ V(A)=\frac1{24}\sum_{(r_1,r_2,r_3,r_4),\epsilon}
 \]
 
 where the orientation signs are fixed at the base. The triangulation and its
-incidences are recomputed and retained in `evidence/exact/certificate_base_exact.json`.
+incidences are recomputed as `certificate_base_exact.json` in the verifier's
+output directory. The historical copy is the nested archive member
+`evidence/exact/certificate_base_exact.json` (see the README's evidence route).
 
 This normal chart also covers a full fixed-ten-facet Hausdorff neighborhood.
 Indeed, sufficiently close bodies contain the origin, and polarity preserves
@@ -556,8 +563,11 @@ The mathematical trust boundary is the HK formula, elementary convex/polytope
 geometry, the inverse function theorem, and the analytic argument in Section 8,
 together with correct exact algebra implementation. There is no unresolved
 mathematical blocker identified in this packet, but no proof-assistant claim
-or explicit-radius claim is made. Reproduction and exact source hashes are in
-`README.md`, `RUN_LEDGER.md`, and `evidence/exact/RUN.json`.
+or explicit-radius claim is made. Reproduction is described in
+[README.md](README.md). The archive route in [PROVENANCE.json](PROVENANCE.json)
+locates the historical `RUN_LEDGER.md` and `evidence/exact/RUN.json`, including
+the exact source hashes; `verification/` retains the later rerun and independent
+audit.
 
 The product equality construction was motivated by [BMP, Section 5.2]. That
 paper is not being credited with the full nonproduct local-maximality theorem

@@ -1,0 +1,34 @@
+   Compiling syn v2.0.117
+   Compiling serde v1.0.228
+   Compiling approx v0.5.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling memchr v2.8.0
+   Compiling rand_chacha v0.3.1
+   Compiling serde_json v1.0.149
+   Compiling rand v0.8.5
+   Compiling rand_distr v0.4.3
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling nalgebra-macros v0.2.2
+   Compiling tracing-attributes v0.1.31
+   Compiling enum_dispatch v0.3.13
+   Compiling nalgebra-macros v0.3.0
+   Compiling tracing v0.1.44
+   Compiling thiserror v1.0.69
+   Compiling num-complex v0.4.6
+   Compiling num-bigint v0.4.6
+   Compiling serde-big-array v0.5.1
+   Compiling clarabel v0.11.1
+   Compiling simba v0.9.1
+   Compiling simba v0.10.0
+   Compiling num-rational v0.4.2
+   Compiling good_lp v1.15.1
+   Compiling nalgebra v0.33.3
+   Compiling nalgebra v0.35.0
+   Compiling algebraic-numbers v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/algebraic-numbers)
+   Compiling euclidean-polytopes v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/euclidean-polytopes)
+   Compiling symplectic v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/symplectic)
+   Compiling exp-combinatorial-cells v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/experiments/combinatorial-cells)
+   Compiling exp-dev-flow-graph v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/experiments/dev-flow-graph)
+    Finished `release` profile [optimized + debuginfo] target(s) in 33.93s
+     Running `target/release/flow-graph-visualize-tube-data --facet-count 6 --master-seed 20260605 --attempt 3 --sigma 1,2,4,5,3 --output /tmp/msc-structural-figures-20261004/flow/flow-graph-f6-tube.json`

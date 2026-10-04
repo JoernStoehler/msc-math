@@ -129,6 +129,19 @@ capacity intervals. One body, \texttt{random\_F8\_s3\_45}, remains unresolved.
 No policy or tolerance was relaxed. The complete sample, including this
 body, remains in the historical statistical analysis.
 
+The largest historical numerical ratio belongs to the $5\times6$ product
+\texttt{random\_5x6\_s3\_168}. Its stored ratio is
+$0.86258589584944$; the current evaluation gives
+$0.8625858958494405$. Both capacity scalars round to
+$4.821447361515128$, while the current capacity interval has binary64
+endpoints printed as $4.821447361515127$ and $4.821447361515128$.
+The matched row and its source identifier are retained in
+\begin{quote}
+\small\raggedright
+\path{docs/ds-retrospective-revalidation/target-full/comparison.jsonl.gz}
+and \path{experiments/polytope-invariant-table/polytope-provenance-table.jsonl}.
+\end{quote}
+
 The current evaluator reconstructs the geometry of the stored binary64 input
 and returns rational product capacities or outward capacity bounds. Its
 volume calculation remains floating-point. Agreement of central values does
@@ -165,6 +178,30 @@ whereas combinatorial counts alone gave $0.043$. The comparison points to
 information in the ridge areas beyond those counts. Its split and feature
 list differ from the random-forest experiment, so the two scores do not rank
 the learning algorithms against each other.
+
+The 27 combinatorial descriptors are the four face counts; the simplicity
+indicator, simple-vertex fraction and edge density; and the mean, standard
+deviation, minimum and maximum of five lists: incident facets per vertex,
+vertex degrees, ridge sizes, vertices per facet and facet-neighbour counts.
+The random forest's twelve ridge descriptors are the mean, standard deviation,
+minimum, maximum, lower and upper quartiles, median, 90th and 95th percentiles and sum of the
+ridge areas divided by $\sqrt{\operatorname{vol}_4(K)}$, together with the
+largest-ridge and largest-three-ridge shares. The boosted model adds the
+fractions at or below normalized-area thresholds $10^{-3},10^{-2},10^{-1}$,
+entropy, effective face count and normalized entropy, giving 18 ridge
+descriptors. The full field names are recorded, respectively, in
+\begin{quote}
+\small\raggedright
+\path{experiments/sys-datascience/methods/prediction-ranking/artifacts/summary.json}
+and \path{experiments/sys-datascience/methods/_shared/random_only.py}.
+\end{quote}
+
+The boosted comparison used 8,704 training rows and 5,632 test rows. The
+held-out groups were products with 8, 10 or 12 facets and generic polytopes
+with 12 facets; all feature-family comparisons used this same split. Source
+labels determined groups but were not model covariates. The precise group
+counts, feature-family scores and current-schema input reconstruction are in
+\path{experiments/sys-datascience/methods/standard-baseline-p2/}.
 
 
 \subsection{Selection and comparison rules}\label{app:ds-selection}

@@ -1,0 +1,21 @@
+{
+  "table_sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+  "provenance_sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+  "script_sha256": "e7cbd5cbb09c03277dfbd447752e2d9de15b28392d62f88e49f1f8b1e48e2c21",
+  "rows": 14336,
+  "groups": 18,
+  "fractions": [
+    1.0,
+    0.5,
+    0.2,
+    0.1,
+    0.05,
+    0.02,
+    0.01
+  ],
+  "selection": "ceil(fraction * group size) rows, selected separately within every original source/facet/product group",
+  "statistic": "Spearman correlation after re-ranking R and sys inside each selected group, dividing each rank by selected group size, concatenating rows, and computing Spearman on these conditional percentiles",
+  "weighting": "Each retained row receives equal weight; product groups contain twice as many rows as generic groups, up to ceiling effects. Equal-group mean and median correlations also retained.",
+  "numerical_lineage": "Historical stored sys values; this analysis does not re-evaluate capacities or volumes.",
+  "inference": "Descriptive post-target conditioning, not an independent prospective experiment or identification of a causal mechanism. Narrow-range correlations may attenuate through range restriction alone."
+}

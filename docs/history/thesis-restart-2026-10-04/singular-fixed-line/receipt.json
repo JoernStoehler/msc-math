@@ -1,0 +1,78 @@
+{
+  "source": "crates/symplectic/src/algorithms/flow_graph/exact_tube.rs",
+  "defect": "solve_singular_fixed_tube discarded zero coefficient rows before checking whether their RHS was zero, so rank-one inconsistent systems could be reported as fixed lines.",
+  "counterexamples": [
+    {
+      "M": [
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "offset": [
+        -1,
+        0
+      ],
+      "equations": [
+        "0 = 1",
+        "x0 = 0"
+      ]
+    },
+    {
+      "M": [
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "offset": [
+        0,
+        -1
+      ],
+      "equations": [
+        "x1 = 0",
+        "0 = 1"
+      ]
+    }
+  ],
+  "fixture_domain": "unit square; constant action +1; both affine maps have determinant one",
+  "before": "new regression fails expecting EmptyTube; before.log",
+  "change": "Reject any zero LHS row with nonzero RHS before selecting nonzero rows; preserve consistent rank-one and rank-zero classification.",
+  "after_command": "cargo test -p symplectic --lib algorithms::flow_graph::exact_tube::tests::exact_singular -- --nocapture",
+  "after_result": "2 passed, 0 failed; after.log",
+  "test_coverage": [
+    "both contradictory row positions",
+    "consistent fixed-line controls for the same two matrices",
+    "existing identity-map positive singular fixed-set control"
+  ],
+  "limitations": [
+    "Synthetic algebraic classifier fixtures only; no realization as an actual polytope return map established.",
+    "Regular return-map theorem excludes singular systems.",
+    "Observed wrong classification was conservative UnsupportedPositiveSingular instead of EmptyTube; no incorrect scalar capacity demonstrated.",
+    "No commits, further agents, thesis edits or broad producer reruns; README edits separately authorized by parent/integration."
+  ],
+  "review_owner": "/root/acceptance/mathematical_review",
+  "independent_code_acceptance": "Accepted by /root/acceptance/mathematical_review after source diff and before/after log inspection.",
+  "authorized_documentation_change": {
+    "path": "crates/symplectic/src/algorithms/flow_graph/README.md",
+    "changes": [
+      "Replace both deleted thesis source references with thesis/chapters/05-flow-graph.tex.",
+      "Clarify exact_search validates every subset of one through four dual rows; direct resolver only structural checks plus local construction.",
+      "Preserve bounded-irredundancy, supplied-matrix-consistency, and finite-orbit-regularity limitations."
+    ],
+    "checks": [
+      "git diff --check passed",
+      "active thesis source path exists"
+    ],
+    "diff": "readme.patch"
+  },
+  "independent_documentation_acceptance": "Accepted by /root/acceptance/mathematical_review; no further wording correction needed."
+}

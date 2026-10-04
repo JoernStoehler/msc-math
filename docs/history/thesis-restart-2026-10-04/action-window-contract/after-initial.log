@@ -1,0 +1,11 @@
+   Compiling symplectic v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/symplectic)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.51s
+     Running tests/public_capacity_api.rs (target/debug/deps/public_capacity_api-064e6917644fa13b)
+
+running 1 test
+exact spectrum: {Ratio { numer: 4, denom: 1 }: 2, Ratio { numer: 8, denom: 1 }: 140}
+first omitted: None
+test general_hypercube_window_keeps_positive_nonmaximizing_kkt_words ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 11.29s
+

@@ -1,0 +1,82 @@
+{
+  "worktree": "/home/joern/.codex/worktrees/f171/msc-math",
+  "checkpoint": "fe3475b3",
+  "scope": "Correct general_qp_action_window complete positive-KKT word contract within existing exact transition-pruned candidate stream.",
+  "before": {
+    "hypercube_capacity": "4",
+    "window_multiple": "2",
+    "returned": 2,
+    "exact_expected": 142,
+    "missing": 140,
+    "exact_spectrum": {
+      "4": 2,
+      "8": 140
+    },
+    "log": "before.log"
+  },
+  "correction": "Disable direct and inherited curvature pruning for exact action multiples greater than one; retain scalar/minimizer pruning, certified beta/q predicates, exact fallback and exact inclusive cutoff.",
+  "tests": [
+    {
+      "command": "cargo test -p symplectic --test public_capacity_api",
+      "passed": 15,
+      "failed": 0,
+      "runtime_seconds": 19.31,
+      "log": "public-api.log"
+    },
+    {
+      "command": "cargo test -p exp-dev-quadratic-program --test selected_route_correspondence",
+      "passed": 4,
+      "failed": 0,
+      "runtime_seconds": 7.25,
+      "log": "correspondence.log"
+    },
+    {
+      "command": "git diff --check -- crates/symplectic experiments/dev-quadratic-program/docs/capacity-architecture.md",
+      "result": "pass"
+    }
+  ],
+  "regression_coverage": [
+    "complete hypercube positive KKT spectrum",
+    "exact multipliers 1, 199/100, 2",
+    "inclusive upper endpoint and exclusion below it",
+    "singular short-support KKT witnesses with positive beta/q"
+  ],
+  "other_pruning_review": [
+    "Short determinant rejects only certified affine inconsistency; rank-deficient short supports go to complete exact solver.",
+    "Verified inverse-defect rejects certified negative beta or nonpositive q; indeterminate/factorization failure/unsupported arithmetic go exact.",
+    "No further maximum-only filter found in selected route.",
+    "Transition graph restricts exact incidence and nonnegative omega; canonical simple cycles have distinct facets. Completeness is within this stated family only."
+  ],
+  "consumers": [
+    {
+      "path": "experiments/dev-quadratic-program/examples/owned_consumers.rs:113",
+      "multiple": "101/100",
+      "purpose": "near-minimizer API example with exact-all comparison"
+    },
+    {
+      "path": "experiments/dev-quadratic-program/tests/selected_route_correspondence.rs:66",
+      "multiple": "101/100",
+      "purpose": "F5 exact-all comparison; passed after correction"
+    },
+    {
+      "path": "experiments/dev-quadratic-program/tests/selected_route_correspondence.rs:102",
+      "multiple": "1001/1000",
+      "purpose": "F10 derivative/retained-route comparison; passed after correction"
+    },
+    {
+      "path": "experiments/sys-landscape/gradient-ascent-observed-general/main.rs:607",
+      "multiple": "101/100 then filters 1001/1000",
+      "purpose": "schema v2 basepoint branches and derivatives; tracked panel is historical v1 legacy route, no tracked v2 rows located"
+    }
+  ],
+  "limitations": [
+    "No claim of scalar-capacity error; scalar/minimizer route remains unchanged.",
+    "Wider windows may require more KKT solves and exact fallbacks; no broad timing benchmark performed.",
+    "No broad producer rerun or cached-data revalidation; retained historical v1 observed-general panel uses a different route.",
+    "A KKT witness does not alone establish a physical Reeb orbit or fixed-word maximum.",
+    "One witness per word does not enumerate continuous solution families; singular regression shows multiplier singularity rather than a continuous beta-family.",
+    "No further agents or commits; six owned files changed and unrelated edits preserved."
+  ],
+  "exact_counterexample": "exact-counterexample.json",
+  "diff": "changes.patch"
+}

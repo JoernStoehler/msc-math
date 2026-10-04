@@ -1,0 +1,12 @@
+   Compiling symplectic v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/symplectic)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.65s
+     Running tests/production_capacity_anchors.rs (target/release/deps/production_capacity_anchors-758e0e0e02baf937)
+
+running 4 tests
+test dyadic_input_can_have_a_non_dyadic_exact_capacity ... ok
+test axis_aligned_boxes_match_independent_planar_area_values ... ok
+test conformal_scaling_changes_capacity_quadratically ... ok
+test symplectic_shears_preserve_anchors_across_dispatch_routes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.06s
+

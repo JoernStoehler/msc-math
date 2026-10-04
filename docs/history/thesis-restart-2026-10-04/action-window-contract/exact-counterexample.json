@@ -1,0 +1,46 @@
+{
+  "sigma": [
+    0,
+    2,
+    4,
+    1,
+    5,
+    6,
+    3,
+    7
+  ],
+  "beta": [
+    "1/8",
+    "1/8",
+    "1/8",
+    "1/8",
+    "1/8",
+    "1/8",
+    "1/8",
+    "1/8"
+  ],
+  "q": "1/16",
+  "action": "8",
+  "mu": [
+    "1/8",
+    "1/8",
+    "-1/8",
+    "-1/8"
+  ],
+  "xi": "-1/8",
+  "tangent": [
+    "1",
+    "-1",
+    "1",
+    "1",
+    "1",
+    "-1",
+    "-1",
+    "-1"
+  ],
+  "zTHz": "8",
+  "perturbation_step": "1/16",
+  "perturbed_q": "5/64",
+  "exact_stationarity_closure_normalization_and_positivity_checked": true,
+  "strict_curvature_obstruction_checked": true
+}

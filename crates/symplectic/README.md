@@ -42,7 +42,7 @@ Start with
 facet-count and dual-norm limits, constructs exact binary64-rational geometry,
 checks primal norms, and dispatches exact q/p products to the KKT-free
 six-facet closure-vertex route; other inputs use the certified general QP
-route. Product results contain an exact dyadic-rational capacity and sparse
+route. Product results contain an exact rational capacity and sparse
 exact witnesses. General results contain outward binary64 bounds. Neither
 route promises every minimizing or near-minimizing orbit branch.
 
@@ -57,8 +57,13 @@ Use
 exactly admissible general-HK word with action at most the supplied exact
 multiple of capacity. It returns one exact `beta`, `q`, `mu`, and `xi` witness
 per word, so derivative consumers do not rerun the KKT solve. The endpoint is
-inclusive, and `maximum_action_multiple` must be at least one. Product action
-windows are not implemented.
+inclusive, and `maximum_action_multiple` must be at least one. The family is
+the exact incidence- and symplectic-sign-pruned directed cycle stream;
+admissibility means strictly positive `beta` and `q`, not local maximality of
+the fixed-word QP. Above a multiple of one the route disables curvature
+pruning, which can increase its cost relative to scalar capacity or exact
+minimizers. One witness per word does not enumerate a singular word's
+continuous solution family. Product action windows are not implemented.
 
 Callers that need intermediate geometry can instead use the named stages
 `check_facet_count`, `check_finite_dual_vertices`,

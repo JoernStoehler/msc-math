@@ -334,23 +334,22 @@ minimum-action simple Reeb orbits.
 \end{theorem}
 
 \begin{proof}
-Put \(T=c_{\mathrm{EHZ}}(K)\). Rudolf's nonsmooth billiard theorem gives a
-minimizing Minkowski billiard in \(K_q\), together with its polygonal
-dual in \(K_p\), having at most three bounce points and length \(T\)
-\cite[Theorem~1]{Rudolf2022}. Write its vertices as \(q_j\) and its dual
-vertices as \(p_j\), with indices understood cyclically.  In the notation
-needed here, write
+We first specify the billiard data used in the proof. For a convex body
+\(C\) and \(x\in\partial C\), write
 \[
   N_C(x)=\{u:\langle u,y-x\rangle\leq0\text{ for every }y\in C\}
 \]
-for the outward normal cone. Rudolf calls this a strong billiard because
-the paired polygons satisfy the following normal-cone relations:
+for the outward normal cone. A closed \emph{strong Minkowski billiard}
+in \(K_q\) is a polygonal curve with bounce points
+\(q_1,\ldots,q_m\in\partial K_q\), \(m\geq2\), admitting a dual polygon
+with vertices \(p_1,\ldots,p_m\in\partial K_p\) such that
 \[
   q_{j+1}-q_j\in N_{K_p}(p_j),
   \qquad
-  p_{j+1}-p_j\in-N_{K_q}(q_{j+1}),
+  p_{j+1}-p_j\in-N_{K_q}(q_{j+1}).
 \]
-Its length is
+Indices are cyclic; consecutive \(q_j\) are distinct, and no bounce point
+lies between its two neighbors on a straight segment. Its length is
 \[
   \ell_{K_p}(q)
   =\sum_j h_{K_p}(q_{j+1}-q_j)
@@ -359,9 +358,16 @@ Its length is
 Here the support function uses the Euclidean pairing between the \(p\)-plane
 and the \(q\)-plane: \(h_{K_p}(u)=\max_{p\in K_p}\langle p,u\rangle\).
 The last equality follows from the first normal-cone relation and
-\(p_j\in\partial K_p\). Consider the alternating broken line through
+\(p_j\in\partial K_p\).
+
+Rudolf's theorem applies to arbitrary convex bodies in \(\mathbb R^2\),
+including polygons: the least strong-billiard length equals
+\(T=c_{\mathrm{EHZ}}(K_q\times_LK_p)\), and a minimizing pair \((q,p)\)
+exists with \(m\leq3\) \cite[Definition~2 and Theorem~1]{Rudolf2022}.
+No smoothness or strict convexity is required. Choose such a pair and
+consider the alternating broken line through
 \[
-  (q_j,p_j),\ (q_{j+1},p_j),\ (q_{j+1},p_{j+1})
+  (q_j,p_j),\ (q_{j+1},p_j),\ (q_{j+1},p_{j+1}).
 \]
 On a \(q\)-leg, the fixed coordinate \(p_j\) lies on \(\partial K_p\),
 and convexity keeps the moving coordinate inside \(K_q\); the corresponding
@@ -393,7 +399,10 @@ does not assert that the corresponding broken path, drawn directly in
 \(K_q\) or \(K_p\), would remain inside that polygon.  Boundary placement is
 recovered only after the surgery has been shown to preserve dual minimality.
 
-Apply the splitting--merging--rescaling part of the proof of
+At the level of a cyclic velocity word, we split each mixed leg into pure
+facet directions, transfer the duration of a repeated direction to one of its
+occurrences and delete the other, then rescale all durations together if needed.
+Apply this splitting--merging--rescaling part of the proof of
 Theorem~\ref{thm:generalized-reeb-simple-minimizer} to \(z\). Approximation and
 compactness are unnecessary here because the billiard lift is already a finite
 broken line. The only extra point to retain from the billiard is its block
@@ -530,8 +539,10 @@ leaves at most \(5!=120\) orders.
 
 \begin{proof}
 Choose a global maximizer and let \(I_q\) and \(I_p\) be its \(q\)- and
-\(p\)-positions.  Its objective is positive, hence both factor weights are
-nonzero.  Put
+\(p\)-positions. Its objective is positive by
+Theorem~\ref{thm:quadratic-program-algorithm-hk2019-hk-formula}. A weight vector
+supported in only one factor has objective zero, because every same-factor
+symplectic pairing vanishes. Thus both factor weights are nonzero. Put
 \[
   t=\sum_{k\in I_q}\beta_k,\qquad
   \alpha_k=\frac{\beta_k}{t}\ (k\in I_q),\qquad
@@ -557,8 +568,12 @@ Its coefficients are the signed pairings
 
 With \(\gamma\) fixed, the bilinear factor is linear in \(\alpha\),
 so it has a maximizer at a vertex of \(C_q(\sigma)\).  Replacing \(\alpha\)
-by that vertex preserves global maximality.  Fixing the new \(\alpha\) and
-repeating the argument in \(C_p(\sigma)\) gives a global maximizer for which
+by that vertex, while keeping \(t\), \(\gamma\) and \(\sigma\) fixed, preserves
+feasibility and cannot decrease the objective. It cannot increase it either,
+since the original value was the global maximum over all words and weights.
+The replacement therefore retains the positive value \(Q_{\max}\).
+Fixing the new \(\alpha\) and repeating the same argument in
+\(C_p(\sigma)\) gives another global maximizer for which
 both normalized factor weights are vertices of the support-restricted closure
 polytopes.  Coordinate restrictions define faces of \(C_q\) and \(C_p\), and
 a vertex of a face is a vertex of the ambient polytope.
@@ -570,15 +585,21 @@ A vertex of
 \]
 has at most three positive coordinates.  Indeed, more than three positive
 columns in the three scalar equality constraints have a nontrivial linear
-dependence, which gives a feasible line through the point and contradicts
-extremality.  Thus each factor uses at most three facets.
+dependence. Extend its coefficients by zero to a nonzero vector \(d\)
+supported on the positive coordinates of \(x\). Both equality constraints
+are preserved by \(x\pm\varepsilon d\), and choosing
+\(0<\varepsilon<\min_{d_i\ne0}x_i/|d_i|\) keeps both vectors nonnegative.
+They are distinct feasible points with midpoint \(x\), contradicting
+extremality. Thus each factor uses at most three facets.
 
 For the selected vertices the bilinear value is positive.  Varying only the
 total factor weight gives
 \[
   \tau(1-\tau)B_\sigma(\alpha,\gamma),\qquad 0\leq\tau\leq1,
 \]
-which is maximal at \(\tau=1/2\).  Delete the remaining zero-weight positions.
+which is uniquely maximal at \(\tau=1/2\). Every such mass replacement is
+feasible, so global maximality forces \(t=1/2\). Delete the remaining
+zero-weight positions.
 The relative cyclic order and objective are unchanged, and the complete
 Haim--Kislev family contains the resulting word of length at most six.
 

@@ -1,0 +1,48 @@
+{
+  "base_commit": "2704f0541db8160f77dec73e767705bc06401d97",
+  "source_sha256": {
+    "scripts/artifacts.py": "70f4c43069ebc43c05c9d5a40ca17e6ee3bbd137facd69acfc571552de8b84ee",
+    "scripts/test_artifacts.py": "1152f31fb47294ad1fbe86bfad4022e9d98bafc8fc4770cd673a5f15a05a59f0",
+    "artifacts/registry.json": "c29296502713f37a19ad5410cbfd41b834815560ddcaae8f6621e8ecf6d17a7d"
+  },
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "scripts/test_artifacts.py"
+      ],
+      "started_at": "2026-10-04T01:31:06.232109+00:00",
+      "completed_at": "2026-10-04T01:31:06.441248+00:00",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ".........\n----------------------------------------------------------------------\nRan 9 tests in 0.018s\n\nOK\n"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "verify-cache",
+        "polytope-invariant-table"
+      ],
+      "started_at": "2026-10-04T01:31:06.441273+00:00",
+      "completed_at": "2026-10-04T01:31:06.577970+00:00",
+      "returncode": 0,
+      "stdout": "{\"artifact\": \"polytope-invariant-table\", \"snapshot\": \"c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a\", \"directory\": \"/home/joern/.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a\", \"files\": 1, \"bytes\": 24250539, \"status\": \"verified-local-cache\", \"remote_checked\": false}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "verify-cache",
+        "polytope-datasets"
+      ],
+      "started_at": "2026-10-04T01:31:06.578000+00:00",
+      "completed_at": "2026-10-04T01:31:06.992760+00:00",
+      "returncode": 0,
+      "stdout": "{\"artifact\": \"polytope-datasets\", \"snapshot\": \"f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96\", \"directory\": \"/home/joern/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96\", \"files\": 3, \"bytes\": 252398018, \"status\": \"verified-local-cache\", \"remote_checked\": false}\n",
+      "stderr": ""
+    }
+  ],
+  "scope": "Read-only local registered cache identity and complete payload verification; no R2/network/download/link installation."
+}

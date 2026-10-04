@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-04T01:39:15.120821+00:00",
+  "source": "docs/figure-reproduction.md",
+  "bash_blocks": [
+    {
+      "block": 1,
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "block": 2,
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "block": 3,
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "block": 4,
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "block": 5,
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "block": 6,
+      "returncode": 0,
+      "stderr": ""
+    },
+    {
+      "block": 7,
+      "returncode": 0,
+      "stderr": ""
+    }
+  ],
+  "scope": "Bash syntax only; actual producer executions and staged13figure PDF build are recorded separately."
+}

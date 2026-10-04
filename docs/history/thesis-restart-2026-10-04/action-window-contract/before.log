@@ -1,0 +1,23 @@
+   Compiling symplectic v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/crates/symplectic)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.60s
+     Running tests/public_capacity_api.rs (target/debug/deps/public_capacity_api-064e6917644fa13b)
+
+running 1 test
+exact spectrum: {Ratio { numer: 4, denom: 1 }: 2, Ratio { numer: 8, denom: 1 }: 140}
+first omitted: Some(([0, 2, 4, 1, 5, 6, 3, 7], Ratio { numer: 8, denom: 1 }))
+
+thread 'general_hypercube_window_keeps_positive_nonmaximizing_kkt_words' (155269) panicked at crates/symplectic/tests/public_capacity_api.rs:417:5:
+assertion `left == right` failed
+  left: 2
+ right: 142
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test general_hypercube_window_keeps_positive_nonmaximizing_kkt_words ... FAILED
+
+failures:
+
+failures:
+    general_hypercube_window_keeps_positive_nonmaximizing_kkt_words
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 14 filtered out; finished in 8.68s
+
+error: test failed, to rerun pass `-p symplectic --test public_capacity_api`

@@ -14,6 +14,7 @@ Output Artifacts: experiments/regular-products/rotated-regular-products/lagrangi
         experiments/regular-products/rotated-regular-products/lagrangian_products_7x7.png,
         experiments/regular-products/rotated-regular-products/lagrangian_products_polygon_pairs.png
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -195,15 +196,23 @@ def plot_heptagon_sweep(data: list[dict], output: Path):
 
 
 def main():
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-    data = load_jsonl(DATA_DIR / "lagrangian-products-5x5.jsonl")
-    plot_sweep(data, FIGURES_DIR / "lagrangian_products_5x5.png")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--data-dir", type=Path, default=DATA_DIR)
+    parser.add_argument("--out-dir", type=Path, default=FIGURES_DIR)
+    parser.add_argument("--only-pentagon", action="store_true",
+                        help="Render only the selected thesis rotation profile.")
+    args = parser.parse_args()
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    data = load_jsonl(args.data_dir / "lagrangian-products-5x5.jsonl")
+    plot_sweep(data, args.out_dir / "lagrangian_products_5x5.png")
+    if args.only_pentagon:
+        return
 
-    data_7x7 = load_jsonl(DATA_DIR / "lagrangian-products-7x7.jsonl")
-    plot_heptagon_sweep(data_7x7, FIGURES_DIR / "lagrangian_products_7x7.png")
+    data_7x7 = load_jsonl(args.data_dir / "lagrangian-products-7x7.jsonl")
+    plot_heptagon_sweep(data_7x7, args.out_dir / "lagrangian_products_7x7.png")
 
-    pair_data = load_pair_data(DATA_DIR)
-    plot_polygon_pairs(pair_data, FIGURES_DIR / "lagrangian_products_polygon_pairs.png")
+    pair_data = load_pair_data(args.data_dir)
+    plot_polygon_pairs(pair_data, args.out_dir / "lagrangian_products_polygon_pairs.png")
 
 
 if __name__ == "__main__":

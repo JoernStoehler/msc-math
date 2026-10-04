@@ -1,4 +1,4 @@
-\section{Three-Dimensional Visualization}
+\section{Viewing four-dimensional boundaries in three dimensions}
 \label{sec:visualization-3d}
 
 A four-dimensional polytope cannot be drawn directly, but its boundary can be
@@ -19,10 +19,19 @@ also distorts scale and clips arcs close to its pole.
 Figure~\ref{fig:visualization-projections} shows projected two-faces of the
 four-dimensional cube and the projected one-skeleton of the HKO polytope
 \(K_{\mathrm{HKO}}\) from Section~\ref{sec:hko-local-maximum} with one
-numerically recovered minimum-action generalized Reeb orbit.  The producer
+numerically recovered minimum-action generalized Reeb orbit. In panel (a),
+the coloured meshes help distinguish ridges and follow their common edges;
+their apparent areas cannot be used to compare the symplectic ridge areas
+studied in Section~\ref{sec:black-box-datascience}. In panel (b), the orange
+curve places a piecewise-linear orbit in relation to the polytope's boundary
+structure. Its six straight segments in four dimensions become curved arcs
+in the view. Their displayed lengths do not measure dwell times or action.
+The producer
 exports only recovered orbits passing numerical closure and containment checks
 within fixed tolerances.  The orbit shown is therefore a computed example, not
-a proof of a capacity statement.
+a proof of a capacity statement. The exporter, projection settings and
+figure-generation instructions are recorded in
+\path{experiments/visualization/README.md}.
 
 \begin{figure}[htbp]
   \centering

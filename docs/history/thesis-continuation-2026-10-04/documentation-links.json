@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-04T01:48:55.982829+00:00",
+  "scope": "Markdown filesystem targets in the new figure route, reproduction inventory and detailed thesis backlog; HTTP access checked separately by root.",
+  "source_sha256": {
+    "docs/figure-reproduction.md": "4c9270872095341c080311cc05b322c8aa9ccb2598a9f89622ad369ceb4dbdb4",
+    "docs/reproducibility.md": "541e5ad69c0cfdda20076d66dd8e983463907d17d4cb232d7d7b456547343352",
+    "docs/coordination/thesis-work.md": "360e0d89e6c9e5f4bf86ee26b49977d813fbfe8640112613f775865adaf03937"
+  },
+  "checked": 33,
+  "missing": []
+}

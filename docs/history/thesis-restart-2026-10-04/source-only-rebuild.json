@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-10-04T00:49:06+00:00",
+  "owner": "/root",
+  "scope": "Fresh empty source directory containing only the 61 manifest-listed tracked thesis files; uses installed host TeX environment. This is not a fresh-environment or full-data reproduction.",
+  "scratch_path": "/tmp/msc-thesis-final-source-rebuild-293y0rp0",
+  "source_tree_sha256": "ac7f7765be3e998fee23c47280f436a2aa11b6ebb37c71cdeb185bf2c0798426",
+  "build_command": "sh thesis/build.sh",
+  "build_exit_code": 0,
+  "build_seconds": 11.18,
+  "total_seconds": 33.79,
+  "retained_pdf_sha256": "27dbf152964bf3eeb6a15bf5f319ab4326de14d48a40e2e296f6008eff3e2f70",
+  "rebuilt_pdf_sha256": "99e36691256b11eb7557280a1ee26e65718d1c707d2d8dc6dfd197f8de59b43a",
+  "pdf_bytes_equal": false,
+  "layout_text_equal": true,
+  "raster_comparison": {
+    "renderer": "pdftoppm -r 96 -png",
+    "pages": 100,
+    "all_page_png_bytes_equal": true,
+    "mismatched_pages": []
+  },
+  "comparison_limit": "Matching extracted layout text and all100page rasters at96dpi supports same rendered content on this TeX/Poppler environment. PDF bytes differ; no cross-version byte-reproducibility promise."
+}

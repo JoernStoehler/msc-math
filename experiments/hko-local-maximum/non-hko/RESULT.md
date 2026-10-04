@@ -59,11 +59,18 @@ that a restricted family covers nearby bodies.
 
 ## Evidence and scope
 
-`evidence/exact/verify.log` is an actual complete run and ends with
-`ALL EXACT CHECKS PASS`. The entry point is `verify.py`; it reads the rational
-witness but does not trust or read the retained reports for acceptance.
-`evidence/reproduction/` records a second complete run from an extracted
-archive, together with deterministic result comparisons.
+The integrated rerun log [verification/20260924-original.log](verification/20260924-original.log)
+ends with `ALL EXACT CHECKS PASS`; its summary and the separate independent
+audit are retained in the same directory. The entry point is `verify.py`; it
+reads the rational witness but does not trust or read the retained reports for
+acceptance.
+
+The original `evidence/exact/verify.log` and `evidence/reproduction/` are
+preserved inside the nested source archive located by [README.md](README.md)
+and [PROVENANCE.json](PROVENANCE.json). The archived `evidence/reproduction/`
+directory records a second complete run from an extracted archive, with deterministic mathematical-result
+comparisons ignoring elapsed-time fields. These historical paths are archive
+members, not missing direct checkout files.
 
 The proof uses exact rational and rational-function arithmetic, not an interval
 claim derived from float64 samples. It is a computer-assisted mathematical
@@ -74,7 +81,8 @@ blocker is identified. Standard trust in the HK capacity formula, the analytic
 argument, and the exact algebra implementation remains explicit.
 
 The initial numerical discovery, including an aborted full-capacity polling
-attempt, is preserved and labelled in `discovery/` and `RUN_LEDGER.md`. None of
+attempt, is preserved and labelled in the same nested archive's `discovery/`
+and `RUN_LEDGER.md`. None of
 those heuristic computations is a premise of the completed theorem. The
 underlying product equality construction was motivated by the 2026 planar
 triangle-covering paper cited in `SOURCES.md`; the packet does not claim priority

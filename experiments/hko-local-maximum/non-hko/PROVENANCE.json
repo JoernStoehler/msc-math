@@ -33,5 +33,31 @@
   "known_numerical_failure": "Full scalar poll aborted after two probes on indeterminate HiGHS status; not used for proof.",
   "code_authorship_scope": "New candidate-specific exact proof/check code; supplied offline bridge reused for diagnostics.",
   "novelty_scope": "No claim of priority for the planar product equality construction; this packet certifies the full ten-facet local claim.",
-  "run_provenance": "evidence/exact/RUN.json"
+  "run_provenance": "evidence/exact/RUN.json",
+  "historical_path_base": "run_provenance and paths beginning evidence/ or discovery/, plus RUN_LEDGER.md, are relative to the nested archive root, not the integrated directory.",
+  "historical_archive": {
+    "repository_path": "docs/pro-handoffs/msc-math-consolidation-20260924/msc_math_consolidation_codex.zip",
+    "sha256": "82c40c7df813fdc0fa2c1b8e56cd4edbb5fd599108b87f37250f7c0ae91dae8b",
+    "nested_member": "incoming/non_hko_f10_certified_result.zip",
+    "nested_sha256": "adff85a5f18c83ab8ed97c55a48cf91382d206626461519550902706f61c0bd0",
+    "member_paths": [
+      "RUN_LEDGER.md",
+      "evidence/exact/RUN.json",
+      "evidence/exact/verify.log",
+      "evidence/reproduction/CLEAN_EXTRACTION.json",
+      "evidence/reproduction/verify.log",
+      "discovery/"
+    ],
+    "routing_checked_date": "2026-10-04",
+    "routing_check": "Both archive hashes and all 70 nested MANIFEST.sha256 entries verified; six current core source/witness hashes match evidence/exact/RUN.json."
+  },
+  "integrated_verification": {
+    "path_base": "experiments/hko-local-maximum/non-hko/",
+    "run_date": "2026-09-24",
+    "original_log": "verification/20260924-original.log",
+    "original_summary": "verification/20260924-original-summary.json",
+    "independent_log": "verification/20260924-independent.log",
+    "independent_result": "verification/20260924-independent.json",
+    "reproduction_instructions": "README.md"
+  }
 }

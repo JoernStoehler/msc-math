@@ -1,0 +1,82 @@
+Exact non-HKO F=10 local-maximum certificate
+Complete product capacity PASS: 624 ordered cases; max Q = 1/2
+base rank / relation / full chart PASS 0.715
+exact geometry and volume jets PASS 1.771
+weighted flat Hessian -13/432 PASS 2.375
+field section 1 / 24 seconds 0.345
+field section 2 / 24 seconds 0.728
+field section 3 / 24 seconds 0.973
+field section 4 / 24 seconds 1.302
+field section 5 / 24 seconds 1.468
+field section 6 / 24 seconds 1.562
+field section 7 / 24 seconds 1.871
+field section 8 / 24 seconds 2.069
+field section 9 / 24 seconds 2.427
+field section 10 / 24 seconds 2.756
+field section 11 / 24 seconds 3.105
+field section 12 / 24 seconds 3.408
+field section 13 / 24 seconds 3.793
+field section 14 / 24 seconds 4.185
+field section 15 / 24 seconds 4.574
+field section 16 / 24 seconds 4.942
+field section 17 / 24 seconds 5.274
+field section 18 / 24 seconds 5.57
+field section 19 / 24 seconds 5.797
+field section 20 / 24 seconds 6.173
+field section 21 / 24 seconds 6.482
+field section 22 / 24 seconds 6.668
+field section 23 / 24 seconds 7.073
+field section 24 / 24 seconds 7.461
+field flat-kernel solve
+field flat-kernel identity PASS 7.562
+direct section 1 / 24 PASS 0.899
+direct section 2 / 24 PASS 0.946
+direct section 3 / 24 PASS 0.978
+direct section 4 / 24 PASS 1.021
+direct section 5 / 24 PASS 1.05
+direct section 6 / 24 PASS 1.078
+direct section 7 / 24 PASS 1.117
+direct section 8 / 24 PASS 1.211
+direct section 9 / 24 PASS 1.247
+direct section 10 / 24 PASS 1.282
+direct section 11 / 24 PASS 1.313
+direct section 12 / 24 PASS 1.349
+direct section 13 / 24 PASS 1.386
+direct section 14 / 24 PASS 1.424
+direct section 15 / 24 PASS 1.459
+direct section 16 / 24 PASS 1.491
+direct section 17 / 24 PASS 1.524
+direct section 18 / 24 PASS 1.557
+direct section 19 / 24 PASS 1.589
+direct section 20 / 24 PASS 1.622
+direct section 21 / 24 PASS 1.655
+direct section 22 / 24 PASS 1.686
+direct section 23 / 24 PASS 1.72
+direct section 24 / 24 PASS 1.749
+ALL EXACT CHECKS PASS
+{
+  "status": "PASS",
+  "theorem_argument": "PROOF.md",
+  "base_capacity": "1",
+  "base_volume": "1/2",
+  "base_ratio": "1",
+  "genuine_facets": 10,
+  "vertices": 24,
+  "simple": true,
+  "sections": 24,
+  "positive_gradient_rank": 22,
+  "symmetry_rank": 15,
+  "equality_parameters_mod_symmetry": 2,
+  "remaining_transverse_directions": 1,
+  "full_chart_rank": 40,
+  "min_beta": "1/320",
+  "min_lambda": "3/36617",
+  "remaining_second_derivative": "-13/432",
+  "capacity_candidate_count": 624,
+  "family_capacity_identities": true,
+  "rational_function_kernel_identity": true,
+  "independent_direct_derivative_check": true,
+  "quantitative_neighborhood_radius": null,
+  "proof_assistant_formalization": false,
+  "elapsed_seconds": 12.527441887003079
+}

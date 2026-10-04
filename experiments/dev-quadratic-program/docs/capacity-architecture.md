@@ -296,6 +296,14 @@ PolytopeGeometry4d
               lazy exact resolution
 ```
 
+Curvature and cyclic inheritance are used for scalar capacity and tied
+minimizers only. For an exact action multiple greater than one, the production
+route disables both: a positive-curvature stationary word can still have
+strictly positive KKT beta and q and belong in the requested window. The
+inverse-defect feasibility predicates, exact fallback, and exact inclusive
+action comparison remain applicable. The hypercube regression in
+`crates/symplectic/tests/public_capacity_api.rs` exercises this distinction.
+
 An ordinary capacity caller should not need to know about:
 
 - `LBL^T`, LU, or symmetric eigendecomposition;

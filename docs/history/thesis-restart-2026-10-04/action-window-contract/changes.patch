@@ -1,0 +1,213 @@
+diff --git a/crates/symplectic/DEVELOPMENT.md b/crates/symplectic/DEVELOPMENT.md
+index f04d12a6..50dcf917 100644
+--- a/crates/symplectic/DEVELOPMENT.md
++++ b/crates/symplectic/DEVELOPMENT.md
+@@ -42,6 +42,15 @@ proved conservative replacement.
+ | General minimizers, action windows, and `solve_sigma_exact` | Exact resolution of requested witnesses/actions | These APIs explicitly return exact binary64-rational answers. The scalar bounds API is the cheaper surface when the caller does not need them. |
+ | Structural-product route | Exact support resolution only for indeterminate interval predicates, then exact comparison of possible winners | `ProductCapacity4d` currently returns an exact capacity and sparse exact winners. The proof/code bridge, intermediate interval audit, exact-all oracle, and fallback counts are in `formal/product-qp-six-facet-reduction.tex` and `experiments/dev-quadratic-program/tools/product_closure_route/{README.md,RESULTS.md}`. |
+ 
++Curvature and cyclic-obstruction pruning preserve scalar capacity and tied
++minimizers, but do not decide positive KKT feasibility. A general action
++window with multiple greater than one therefore disables both pruning paths;
++the certified beta/q predicates and exact fallback still apply. The hypercube
++regression in `tests/public_capacity_api.rs` compares the complete positive
++KKT spectrum, including nonmaximizing stationary words, against this window.
++See `lem:kkt-cyclic-obstruction-inheritance` in
++`formal/hk2017-qp-precision.tex` for the narrower curvature conclusion.
++
+ When changing one of these sites, measure the caller-shaped stages documented
+ in `experiments/dev-quadratic-program/performance/CURRENT_COSTS.md`. Do not use
+ the existence of an exact reference implementation as a reason to put it in
+diff --git a/crates/symplectic/README.md b/crates/symplectic/README.md
+index 934630e5..5b846b61 100644
+--- a/crates/symplectic/README.md
++++ b/crates/symplectic/README.md
+@@ -57,8 +57,13 @@ Use
+ exactly admissible general-HK word with action at most the supplied exact
+ multiple of capacity. It returns one exact `beta`, `q`, `mu`, and `xi` witness
+ per word, so derivative consumers do not rerun the KKT solve. The endpoint is
+-inclusive, and `maximum_action_multiple` must be at least one. Product action
+-windows are not implemented.
++inclusive, and `maximum_action_multiple` must be at least one. The family is
++the exact incidence- and symplectic-sign-pruned directed cycle stream;
++admissibility means strictly positive `beta` and `q`, not local maximality of
++the fixed-word QP. Above a multiple of one the route disables curvature
++pruning, which can increase its cost relative to scalar capacity or exact
++minimizers. One witness per word does not enumerate a singular word's
++continuous solution family. Product action windows are not implemented.
+ 
+ Callers that need intermediate geometry can instead use the named stages
+ `check_facet_count`, `check_finite_dual_vertices`,
+diff --git a/crates/symplectic/src/algorithms/capacity_4d/general.rs b/crates/symplectic/src/algorithms/capacity_4d/general.rs
+index b6771270..110ab9db 100644
+--- a/crates/symplectic/src/algorithms/capacity_4d/general.rs
++++ b/crates/symplectic/src/algorithms/capacity_4d/general.rs
+@@ -6,6 +6,9 @@
+ //! `tools/general_algorithm_ablation`; production fixes the chosen
+ //! LBLT/hybrid route. The correspondence suite must compare capacity bounds
+ //! after a semantic change to either file.
++//! Production also materializes exact action windows: above the minimum it
++//! must retain positive stationary words that the scalar route can discard
++//! using curvature.
+ 
+ use crate::exact::ExactOrbitKktData;
+ use crate::geom::rational_arithmetic::f64_to_rational;
+@@ -180,7 +183,7 @@ impl Interval {
+         self.lo.is_finite() && self.hi.is_finite() && self.lo <= self.hi
+     }
+ }
+-fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
++fn run_selected_route(cases: &[GeneralRouteCase], prune_nonmaximizers: bool) -> RouteStats {
+     debug_assert_eq!(
+         cases.len(),
+         1,
+@@ -234,7 +237,7 @@ fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
+                 continue;
+             }
+             let phase_started = Instant::now();
+-            let inherited = contains_certified_subword(word, &cache);
++            let inherited = prune_nonmaximizers && contains_certified_subword(word, &cache);
+             stats.lookup_time += phase_started.elapsed();
+             if inherited {
+                 stats.inherited_rejections += 1;
+@@ -244,7 +247,7 @@ fn run_selected_route(cases: &[GeneralRouteCase]) -> RouteStats {
+                 continue;
+             }
+ 
+-            let discover = word.len() >= 6;
++            let discover = prune_nonmaximizers && word.len() >= 6;
+             stats.lblt_factorizations += 1;
+             let (matrix, rhs) = build_augmented_system_from_dual_vertices(duals, word);
+             let factor = if discover {
+@@ -1360,7 +1363,15 @@ fn solve_selected_general_requested(
+     request: GeneralOutputRequest,
+ ) -> Result<Option<GeneralSolveOutput>, Vec<usize>> {
+     let cases = vec![(String::new(), duals.to_vec(), words)];
+-    let result = run_selected_route(&cases);
++    // Curvature excludes an interior maximum of Q, not a positive stationary
++    // KKT point. It preserves capacity and all tied minimizers, but a wider
++    // action window must test every word for positive KKT feasibility. See
++    // lem:kkt-cyclic-obstruction-inheritance in formal/hk2017-qp-precision.tex.
++    let prune_nonmaximizers = match &request {
++        GeneralOutputRequest::CapacityOnly => true,
++        GeneralOutputRequest::ExactWithinCapacityMultiple(value) => value.is_one(),
++    };
++    let result = run_selected_route(&cases, prune_nonmaximizers);
+     let Some(bounds) = result.best_action_lower.zip(result.best_action_upper) else {
+         return Ok(None);
+     };
+diff --git a/crates/symplectic/src/algorithms/capacity_4d/mod.rs b/crates/symplectic/src/algorithms/capacity_4d/mod.rs
+index 026659ce..a20457e9 100644
+--- a/crates/symplectic/src/algorithms/capacity_4d/mod.rs
++++ b/crates/symplectic/src/algorithms/capacity_4d/mod.rs
+@@ -564,6 +564,10 @@ fn general_qp_minimizers_assuming_checked(
+ /// The multiple is exact, inclusive, and must be at least one. This forces the
+ /// complete transition-pruned general candidate family even when the input is
+ /// a structural product.
++/// Admissibility here means strictly positive beta and q in the exact KKT
++/// system, with one witness per word, including singular solution families.
++/// For multiples above one, curvature cannot exclude nonmaximizing stationary
++/// words, so this route can cost more than scalar capacity or minimizers.
+ pub fn general_qp_action_window(
+     geometry: &PolytopeGeometry4d,
+     maximum_action_multiple: BigRational,
+diff --git a/crates/symplectic/tests/public_capacity_api.rs b/crates/symplectic/tests/public_capacity_api.rs
+index cf7b3b4e..2707d322 100644
+--- a/crates/symplectic/tests/public_capacity_api.rs
++++ b/crates/symplectic/tests/public_capacity_api.rs
+@@ -374,6 +374,76 @@ fn general_window_matches_complete_exact_enumeration() {
+     );
+ }
+ 
++#[test]
++fn general_hypercube_window_keeps_positive_nonmaximizing_kkt_words() {
++    let fixture = known_polytopes::hypercube();
++    let geometry = checked_geometry(&fixture.dual_vertices_f64);
++    let transition = symplectic::capacity_4d::capacity_transition_graph(&geometry);
++    let mut exact_candidates =
++        symplectic::algorithms::hk2017::SimpleDirectedCyclesCanonical::new(&transition)
++            .filter_map(|sigma| {
++                symplectic::kkt::rational_solver::solve_kkt_exact(&fixture.dual_vertices, &sigma)
++                    .filter(|result| result.q_exact.is_positive())
++                    .map(|result| {
++                        let action = BigRational::from_integer(1.into())
++                            / (result.q_exact.clone() + result.q_exact);
++                        (sigma, action)
++                    })
++            })
++            .collect::<Vec<_>>();
++    exact_candidates.sort_by(|left, right| left.1.cmp(&right.1).then_with(|| left.0.cmp(&right.0)));
++    let capacity_exact = exact_candidates[0].1.clone();
++    assert_eq!(capacity_exact, BigRational::from_integer(4.into()));
++    assert_eq!(exact_candidates.len(), 142);
++    assert_eq!(
++        exact_candidates
++            .iter()
++            .filter(|(_, action)| action == &BigRational::from_integer(8.into()))
++            .count(),
++        140
++    );
++
++    // A four-facet minimum uses one symplectic plane. Its unused closure
++    // constraints give the full KKT system zero rows, so this comparison also
++    // exercises positive witnesses with singular KKT systems.
++    let (matrix, _) = symplectic::kkt::qp_assembly::build_augmented_system_from_dual_vertices(
++        &fixture.dual_vertices_f64,
++        &exact_candidates[0].0,
++    );
++    assert!((0..matrix.nrows()).any(|row| matrix.row(row).iter().all(|value| *value == 0.0)));
++
++    // Multiples 1 and 1.99 contain just the two action-4 minima. At the exact
++    // inclusive endpoint 2, all 140 action-8 stationary words must reappear;
++    // curvature pruning previously discarded every one of them.
++    for (multiple, expected_count) in [
++        (BigRational::from_integer(1.into()), 2),
++        (BigRational::new(199.into(), 100.into()), 2),
++        (BigRational::from_integer(2.into()), 142),
++    ] {
++        let cutoff = &capacity_exact * &multiple;
++        let window =
++            general_qp_action_window(&geometry, multiple.clone()).expect("exact hypercube window");
++        assert_eq!(window.capacity_exact(), &capacity_exact);
++        assert_eq!(window.maximum_action_multiple(), &multiple);
++        assert!(window.witnesses().iter().all(|witness| {
++            witness.q.is_positive() && witness.beta.iter().all(BigRational::is_positive)
++        }));
++        let observed = window
++            .witnesses()
++            .iter()
++            .map(|witness| (witness.sigma.clone(), witness.action()))
++            .collect::<Vec<_>>();
++        let expected = exact_candidates
++            .iter()
++            .filter(|(_, action)| action <= &cutoff)
++            .cloned()
++            .collect::<Vec<_>>();
++        assert_eq!(expected.len(), expected_count);
++        assert_eq!(observed.len(), expected_count, "multiple {multiple}");
++        assert_eq!(observed, expected, "multiple {multiple}");
++    }
++}
++
+ #[test]
+ fn exact_sigma_validation_is_soft() {
+     let fixture = known_polytopes::simplex();
+diff --git a/experiments/dev-quadratic-program/docs/capacity-architecture.md b/experiments/dev-quadratic-program/docs/capacity-architecture.md
+index cebc59e2..80de7b69 100644
+--- a/experiments/dev-quadratic-program/docs/capacity-architecture.md
++++ b/experiments/dev-quadratic-program/docs/capacity-architecture.md
+@@ -296,6 +296,14 @@ PolytopeGeometry4d
+               lazy exact resolution
+ ```
+ 
++Curvature and cyclic inheritance are used for scalar capacity and tied
++minimizers only. For an exact action multiple greater than one, the production
++route disables both: a positive-curvature stationary word can still have
++strictly positive KKT beta and q and belong in the requested window. The
++inverse-defect feasibility predicates, exact fallback, and exact inclusive
++action comparison remain applicable. The hypercube regression in
++`crates/symplectic/tests/public_capacity_api.rs` exercises this distinction.
++
+ An ordinary capacity caller should not need to know about:
+ 
+ - `LBL^T`, LU, or symmetric eigendecomposition;
