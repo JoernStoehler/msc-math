@@ -1,0 +1,877 @@
+{
+  "checked_at": "2026-10-04T01:40:51.055033+00:00",
+  "owner": "/root/acceptance",
+  "scope": "Independent file identity check across current candidate, producer receipts, staged 13-asset rebuild and fresh HKO execution; does not rerun producers or mathematical proof.",
+  "files_checked": 173,
+  "checks": [
+    {
+      "path": "thesis/.gitignore",
+      "sha256": "020c2606e8ed484089c2083e0be438b9d0736bee1558a6b76af0d58bd23f69cf",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/README.md",
+      "sha256": "7b05704b0b61cc7fcdd223647d9a456030b1a3681bc69d8e8ad9bf7467fa657e",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/ai-use-disclosure.tex",
+      "sha256": "0b5d6aefa450fadfcabec1232eb55bdbe674a60d034a9dacd65653610bcbfd31",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/appendices/data-science.tex",
+      "sha256": "1d3839e7614b133e65e87c38ce908d5c67ba30acdd246bd51f691c6a65d54e15",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/appendices/hko-certificate.tex",
+      "sha256": "11da925dc6d636759b2231ebd8a32735830d631a1dd8935136e8d2c73649289f",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/appendices/hko_core.py",
+      "sha256": "4b82246259a04e5d4c3cc89134bf4a94de6c1899c2abca3fae8efc63119ac403",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/build.sh",
+      "sha256": "b4a2b2e1c2010ac851f345a4350147970f11ed90459010c4382dfd6010e61e28",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/00-abstract.tex",
+      "sha256": "2cfd538c9f521ca790ff6229e07ac2d939c05b57ec3c0d0f3f2ca358a16a6ae4",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/01-introduction.tex",
+      "sha256": "aaa4a884bc9daf7a64fc3c801f3c032f16a4ead34c3459b65a83b472326bd174",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/02-duality.tex",
+      "sha256": "a6e9a2e9a9d512a60d62a405aca19fa1f2858c0a13d74f08f092e80581d81f15",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/02-preliminaries-convex-hamiltonian-language.tex",
+      "sha256": "57e102e544ca8525dafea8d4d0e0986cac653e9000b9765c7b3ca22253b44823",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/02-preliminaries-convex-symplectic-notation.tex",
+      "sha256": "79e3e0915f8c80638797b4fc3768f1b44f3487a01ba589b5c87b7933b717fcd1",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/02-preliminaries-ehz-capacity.tex",
+      "sha256": "893551249cfe82d5bb58064b2af92efec484e960baea02b1eaded9ebbdc38374",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/02-preliminaries-lagrangian-products.tex",
+      "sha256": "8e895de3540cc5bc908ca8d69adc81d67c695cfaa94fb7e1b6c70254719e90c5",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/02-preliminaries-polytope-input-language.tex",
+      "sha256": "10660d042d029b2a14a8a7edb9aa04c2eb1e74071c1799298876e3521ccddb49",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/02-preliminaries.tex",
+      "sha256": "21ae62de0bcbb0359c07c690c10e32a2fbef2bbeab7360ef93dc3183e59d2c63",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/03-generalized-reeb-orbits-polytopes.tex",
+      "sha256": "10ef8913cd556a5a684d29a72616b4630601739dc92029c20dabc0788cb1ed00",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/04-quadratic-program.tex",
+      "sha256": "98919a7cce75ee7868eb27931730872ac99684bf3dacb88825e3ee464f947be7",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/05-flow-graph-ch2021-background-comparison.tex",
+      "sha256": "d9f2931d32aa2011eb119be13efc30d0608f591317ea29e78e47a4eef4e0cbaf",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/05-flow-graph.tex",
+      "sha256": "509dcc77594b8a495e569abf871fe8c44644ffcbb1dc727cbaed4e8e357cc27a",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/06-variation.tex",
+      "sha256": "b69f9d13d30586b1e96c6efd560c69cd7306f50d37c1d32f285ea8212edf04a8",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/07-hko.tex",
+      "sha256": "7421b4704564e0db8c7bb81f7c02fd9f3a756e9fbcacff66976ddc6fa8db6e3a",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/08-data-science.tex",
+      "sha256": "4c7e4436641d8b01c7819cc1cdbae8f21a73cc71fac7fc36c8efbc148aecaa00",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/09-rotated-regular-polygons.tex",
+      "sha256": "42f9e1f927faefd8a8c4b3a70787d992c7fa7d63c45a540322dc027a3916de36",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/10-affine-pentagons.tex",
+      "sha256": "a6326b73d74863b937a32c3defb6660f10b35faa57cb1c60d057b2ac980f7e40",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/11-product-position.tex",
+      "sha256": "01b91794a8fb1764a39b193fd4f93533b7e7025425dd54f196c0c5867a4a3f06",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/12-visualization.tex",
+      "sha256": "e33f58d1bd6ea1e97b6fc3f3711bf5291a467fae47874bd0d9639ce6eb5ff170",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/13-numerics.tex",
+      "sha256": "4989b174d2db6777811b8d92cfc6f5e6388e13cd94ff20830983dadd6d63ae37",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/14-code-data.tex",
+      "sha256": "cb7d1dfde12c3a92c0784e71412a415bf0eda369591bd0313472c614bb746c0a",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/15-ai-reflection.tex",
+      "sha256": "6c3d357577137d9b364420e157fb600096251aa1c8735ba833a231c00bc795c4",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/16-conclusion.tex",
+      "sha256": "eb673aee108c065fba235d2f67dff918724d485eb0297aaf14d5a2f712389bbb",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/hko-lemma-bounds.tex",
+      "sha256": "fbb10152c9ac7b74f8f32b86362432457b95ebd0dac6da111e38ffd3d9c6c10c",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/hko-lemma-conclusion.tex",
+      "sha256": "eb1f60832f4b94bf24d3b992a48c22d999f87f9d84058300e47b587dc1be79d6",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/hko-lemma-geometry.tex",
+      "sha256": "ff101a2e12ca0c38a3484f7b170ec35f7ddd71e3af7f9db1903db482e7c2a10b",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/chapters/hko-sections.tex",
+      "sha256": "af1ff5abca41d43203dc7a28ed6fb089089a7fdb2a16690ee4da64467723a52a",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/check-build.sh",
+      "sha256": "7a8d93b03e9af138d85c994530677eb401c887da685c15cf116ec5da3e6109b8",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/association-generic.pdf",
+      "sha256": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/association-products.pdf",
+      "sha256": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/conditional-ridge-correlation.pdf",
+      "sha256": "912e9bef768cff74c26a09d453e6ab4c56a56af2fca4152919aa5f72e6b4bdff",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/derivative-and-kkt-scale.pdf",
+      "sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/foundations/characteristic-normalization.pdf",
+      "sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/foundations/facet-polarity.pdf",
+      "sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/foundations/generate.py",
+      "sha256": "7f78cad2b403edca7da04ba2e2cb64374af8558db0fd693aff93ffd115f46a37",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/hko-recovery-by-source-distance.pdf",
+      "sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/make_hko_figures.py",
+      "sha256": "3ddad1c1ca4e1a9c1db88fbd927ec0417d9bf30288dfe957d0408b6dfa34b99f",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/plot_association.py",
+      "sha256": "7d19e62e1784f21e1a2728f43c2e8b1b51726842bf22dacab2fbd6b6566cefbc",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/rotation-profile.png",
+      "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/symmetry-extension.pdf",
+      "sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/upper-bound-mechanisms.pdf",
+      "sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/visualization/viz-hko-pentagon-min-orbit.png",
+      "sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/figures/visualization/viz-hypercube-ridges.png",
+      "sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/label-map.py",
+      "sha256": "8a831b54f37282ea95f228344d88d2189af4105f4b264526e3357b238c4d2e03",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/lookup.sh",
+      "sha256": "ec5df6819867777306942455956a6484ae8bc4300bc4e95752de0efb76e70532",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/main.tex",
+      "sha256": "b31fd5aa962489408d8f5b2e5d77a57322001ceadb9e2b1760087ffe91eaf704",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/preamble.tex",
+      "sha256": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/references/additional.bib",
+      "sha256": "720756062d9e994ac915c8d2149d59d2dda0483bddd188a4859f99523363f3a9",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/references/ai.bib",
+      "sha256": "229ebfb782a8afca9198cf3f81c31b561b4bf5b041315f76aceb7a79b96e5342",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/references/data-science.bib",
+      "sha256": "a4aec4018ff328c4f8348c982785709a491d346b60ad43db5670bcc212219c77",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/references/main.bib",
+      "sha256": "c98ae0d18c67d51f7f32969487f7086c79af75a79a99cd44a6dbd50fc93a88f3",
+      "kind": "candidate source"
+    },
+    {
+      "path": "thesis/tests/lookup.sh",
+      "sha256": "e7701b33831d032901e0cf400d7d98bd2fbc24d83041ce2d7cc792f0af00146d",
+      "kind": "candidate source"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/thesis-candidate.pdf",
+      "sha256": "d27e2f5330c61b25df23939a3da8118da98dd95aa6f336ac9d09d52302724a81",
+      "kind": "candidate PDF"
+    },
+    {
+      "path": "thesis/figures/plot_association.py",
+      "sha256": "7d19e62e1784f21e1a2728f43c2e8b1b51726842bf22dacab2fbd6b6566cefbc",
+      "kind": "empirical producer"
+    },
+    {
+      "path": "experiments/sys-datascience/methods/selection-mechanism/analyze.py",
+      "sha256": "e7cbd5cbb09c03277dfbd447752e2d9de15b28392d62f88e49f1f8b1e48e2c21",
+      "kind": "empirical producer"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/ascent-continuation/analyze_hko_calibration.py",
+      "sha256": "4fdd3f8d29f38f40527f8e18e52c744cda876e17744e73284cd04fba44a25b14",
+      "kind": "empirical producer"
+    },
+    {
+      "path": "experiments/dev-gradient-ascent/endpoint-model-audit/analyze.py",
+      "sha256": "370895485623de2d749438be4ab0605f08e3518be67faa9f4874f9ebe001d280",
+      "kind": "empirical producer"
+    },
+    {
+      "path": "experiments/regular-products/rotated-regular-products/analyze.py",
+      "sha256": "01b76b673c72df97b472e6b0f182919abe19be37042d1949d9aa3489aa8784e6",
+      "kind": "empirical producer"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative.log",
+      "sha256": "fcd9cf4da84c28a436acbd6ad6e6b1ee7b5766bcfaaee2228fbad2718ebbf274",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rotation.log",
+      "sha256": "5e6aa08110ee263e1a1737aaf4e04a868e7147c9d2abc8fe0f80619d8ee170a4",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional.log",
+      "sha256": "ae49a2800c5a803d14b47c6df47cf84a935313a03d0aa29e010408e4143c77bc",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration.log",
+      "sha256": "a3b035c711bf70f63021c7064568555172480026a98dbc7a1b379a1f958f3740",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association.log",
+      "sha256": "e56fff117402e7913006003df780df9381596ade6453afd0acf15a1653d7fe9f",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rotation/lagrangian_products_5x5.png",
+      "sha256": "7172cd6f7d0ed252273bb0591866492b5b85783a13cdbaf1cc50e652672d3c90",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/conditional-ranks-fresh.png",
+      "sha256": "f47a6f3c639c0f51496dc538df69db9891ecf79531dff101505c4e3aee442d25",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/association-products-fresh.png",
+      "sha256": "e70855083ec500ca6c1a5daeffb3ee88328fdcd9b313cb15c60982d3b907f553",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/association-products-selected.png",
+      "sha256": "e70855083ec500ca6c1a5daeffb3ee88328fdcd9b313cb15c60982d3b907f553",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/conditional-ridge-correlation-selected.png",
+      "sha256": "f47a6f3c639c0f51496dc538df69db9891ecf79531dff101505c4e3aee442d25",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/derivative-and-kkt-scale-selected.png",
+      "sha256": "bfa6ef3b53bd1b5ced8fdbd6b9384dbf5c879b92cae97847bacbf82369412baa",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/hko-recovery-by-source-distance-selected.png",
+      "sha256": "51544e8bcecd139cb39f0503ea5ccf428424dff4c70594324b52c8a4e76a2f26",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/association-generic-selected.png",
+      "sha256": "08189ed1e67eef881d8338dc464f60f858b8164743936fc1f1847f4bf93f3573",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/comparison-contact-sheet.png",
+      "sha256": "6c83c60d7d651e42f5745b1916ff6ad7c9c9867a29b699e361c997ded2d1862f",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/association-generic-fresh.png",
+      "sha256": "08189ed1e67eef881d8338dc464f60f858b8164743936fc1f1847f4bf93f3573",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/recovery-by-source-distance-fresh.png",
+      "sha256": "51544e8bcecd139cb39f0503ea5ccf428424dff4c70594324b52c8a4e76a2f26",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rendered/derivative-and-kkt-scale-fresh.png",
+      "sha256": "bfa6ef3b53bd1b5ced8fdbd6b9384dbf5c879b92cae97847bacbf82369412baa",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/reference-distance-by-compute.png",
+      "sha256": "7a41d18ad72e9080dfec2509c4a32243b80697d5dc93e083989ecd171e7cc0e2",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/state-recovery.csv",
+      "sha256": "a8ef7e6aa9da7db16ace5cc7e28a57338a8e3c40da3b174e072afd0f2305ead4",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/compute-by-method.png",
+      "sha256": "cf18c9bba2fa64c7ba203c754dfd5930f612cb01c2697d0eff314c1001196cae",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/REPORT.md",
+      "sha256": "b8b73409cdbf7627a7e86ecf1b6f0e89cf4579be72cb8722f260ac9b53dbbc63",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/recovery-by-source-distance.pdf",
+      "sha256": "8833cef6f3446cbd57afc9e283ea267246ebc34317f7a2ef9f6c017c36d62d33",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/prediction-error-by-distance.png",
+      "sha256": "7ee392400ac6f4e4e73c456bc5426a0e22ca42d02136000dcc185138c449dffd",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/recovery-by-source-distance.png",
+      "sha256": "ba90b39540791b2ae6461145654ccc446f9f6f1f0cf10c2babfa4589aeff7d09",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/method-recovery-by-distance.png",
+      "sha256": "093b383f6899d55f036c775aed5bbd939e2cdd6c56c44b3ba3c73feb8a849b58",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/analysis.json",
+      "sha256": "503bcdbfb24f45fa1d5f6b34b35cb2f4a51d0a3f18afc685888535e93d629f2f",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/compute-by-method.csv",
+      "sha256": "f51749cc22894b4eafac0b6641f33ce92b47e8f4da9e61a11a3905a4860bdb10",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/method-comparison.csv",
+      "sha256": "302a36a4a53af8b314d20ca6ff909c182b7154b46e74c05b81d8ba8b824bf5b7",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/association-products.pdf",
+      "sha256": "6092df1a23e9011bd6b90b49085443a9e9f6896ea7cdf0e35fa88f5ecb17ac11",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/association-generic.pdf",
+      "sha256": "0d87b08eb4f7a86149e40e9c36dcbe4a0c500b56d91b133db75b726174a4b35b",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/plot-receipt.json",
+      "sha256": "d107c9ff564e9e0e5493b165f816634a56e98f8686d3d27047fb28c5080f2a6d",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative/derivative-and-kkt-scale.png",
+      "sha256": "121d8745d61ec3f9a6632bc36f9d72f2ec28670ce952708f796b313496a1aaa2",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative/REPORT.md",
+      "sha256": "722619d4307cb834047bf80ad74ac9cbfda5efcc517b9a618af89c504863b596",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative/derivative-and-kkt-scale.pdf",
+      "sha256": "1e63f7c8e394b2b879146d691d56bd189b8128126c7c0cc30d6d5b18305dd9ec",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/selection-checksums.tsv",
+      "sha256": "f5316db4e82d7489b393ac4b56d4ecb42499f210f0b5678b75393e7003f05bce",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks.png",
+      "sha256": "c0df63677ae322527f5953c70c2becacecc60e12b38b0c952ad1d977e5f7e754",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks-by-group.tsv",
+      "sha256": "31a9ae12fdedd8fafe7847ee7162f8792cdbf54ff15918a92bb2f03e7c32558b",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/metadata.json",
+      "sha256": "4618edf89e8c705ddbcaf33ca399bae5b3829f1862e1df33c047340452e5cc0e",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks.pdf",
+      "sha256": "d878a72b5aa72eb56abda6d609d8b91f72dd87cef694d61e68b4666a170b046f",
+      "kind": "empirical output"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks.tsv",
+      "sha256": "86c0629667782b72c85b0efc0ab2fcc26d2ca928943e80fe2dcac9cd9ba7db61",
+      "kind": "empirical output"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "81c058aa9399b8bc3d8ba6274c42fe3a4fd7ea5626d9e02c92e04ef64922ed08",
+      "kind": "structural source"
+    },
+    {
+      "path": "thesis/figures/foundations/generate.py",
+      "sha256": "7f78cad2b403edca7da04ba2e2cb64374af8558db0fd693aff93ffd115f46a37",
+      "kind": "structural source"
+    },
+    {
+      "path": "thesis/figures/make_hko_figures.py",
+      "sha256": "3ddad1c1ca4e1a9c1db88fbd927ec0417d9bf30288dfe957d0408b6dfa34b99f",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/figure_config.py",
+      "sha256": "0c3d65a23e1ad3413969a1f5f561953c0725221db97a2a32d4a3e5946299bbfc",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/dev-flow-graph/visualize-tube/main.rs",
+      "sha256": "12bd9f1c067e45b595924af22ded2a0fab0f48996bf7cf66d91df1fbf168bb85",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/dev-flow-graph/visualize-tube/render.py",
+      "sha256": "832bdbfb34e73e98cf12ebbf4bc3c33be8261849ccdc43ae106e3b33ad37ba66",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/src/main.rs",
+      "sha256": "4cecf5b949f7ba2a97f4d31acb6f32cc47a608cef5fc58638d1376874269df75",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/src/trajectories.rs",
+      "sha256": "9eaffe8bc590107d93415b82257916e0280b1c351bb5d70f7c803514a4b43a87",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/src/orbit_collection.rs",
+      "sha256": "a6df713d5bb167bbb440d3c86ec174603366869ff10b6e9e29c154ec7cb80d1b",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/src/models.rs",
+      "sha256": "dd7789e55062c61eb07955ddf4d875320f6e8b31d9ba31315bb996657238de28",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/viewer/screenshot-figures.mjs",
+      "sha256": "ed9fc47b5823a8d053738ed7a0ba368cf545320af782da6cff00983e981b6c7e",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/viewer/index.html",
+      "sha256": "7f36d8078cd4c28246804c80ba201a8cf9375dbd2025eb07a8a44fdeacdb7017",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/viewer/viz.js",
+      "sha256": "fad14f7ec18a274b09c458f34c2e7877a35352afaec48b33360fad2364140293",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/viewer/projection.js",
+      "sha256": "ce30fc335cebcdc451ba4fc5987e3fd17583e7ce83219946587393ff17017414",
+      "kind": "structural source"
+    },
+    {
+      "path": "experiments/visualization/viewer/embed-data.sh",
+      "sha256": "4cff3d5e5a54cea8398bdb5ea99235fd085b3b9fb9fdac94e90f8e8cd4c1792f",
+      "kind": "structural source"
+    },
+    {
+      "path": "thesis/figures/foundations/characteristic-normalization.pdf",
+      "sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee",
+      "kind": "selected structural figure"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/foundations/characteristic-normalization.pdf",
+      "sha256": "d6ce2c05f8b8fc1626977981ae91c934b657841cc0e6d02b3c93f0c9f0f9f4b2",
+      "kind": "fresh structural figure"
+    },
+    {
+      "path": "thesis/figures/foundations/facet-polarity.pdf",
+      "sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6",
+      "kind": "selected structural figure"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/foundations/facet-polarity.pdf",
+      "sha256": "490d3202861ed4cc827843d01f32eca3146eec39224d5f9949be5cc084bad124",
+      "kind": "fresh structural figure"
+    },
+    {
+      "path": "thesis/figures/upper-bound-mechanisms.pdf",
+      "sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66",
+      "kind": "selected structural figure"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/upper-bound-mechanisms.pdf",
+      "sha256": "30f7a2a20e39300ee20fee0b54c43e9d055d3f3b210991317e0e6d32b9fbb0d4",
+      "kind": "fresh structural figure"
+    },
+    {
+      "path": "thesis/figures/symmetry-extension.pdf",
+      "sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6",
+      "kind": "selected structural figure"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/symmetry-extension.pdf",
+      "sha256": "21eea64e06b62074f6e08618ba5c4a4133b3c7b5956674d6c57e960ccf6d5742",
+      "kind": "fresh structural figure"
+    },
+    {
+      "path": "thesis/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+      "kind": "selected structural figure"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "sha256": "6f37b3d7a42e7d1d3e750ae7d2862cedcd8990ab0931b90f07b7abd054caf9ad",
+      "kind": "fresh structural figure"
+    },
+    {
+      "path": "thesis/figures/visualization/viz-hypercube-ridges.png",
+      "sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "kind": "selected structural figure"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/visualization/viz-hypercube-ridges.png",
+      "sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "kind": "fresh structural figure"
+    },
+    {
+      "path": "thesis/figures/visualization/viz-hko-pentagon-min-orbit.png",
+      "sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "kind": "selected structural figure"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/visualization/viz-hko-pentagon-min-orbit.png",
+      "sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "kind": "fresh structural figure"
+    },
+    {
+      "path": "experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json",
+      "sha256": "4d69c9800adc7d889f0687c9376248af346f7b95449c911d135850f43b24df18",
+      "kind": "retained structural JSON"
+    },
+    {
+      "path": "experiments/visualization/viewer/data/hypercube.json",
+      "sha256": "b789061897658685c148264e7d5f0708d77b0ff7c489a1921bd7692663d2c273",
+      "kind": "retained structural JSON"
+    },
+    {
+      "path": "experiments/visualization/viewer/data/hko_pentagon.json",
+      "sha256": "b75c778a0c36449a3238b09ea9001f11b99607bf65d3fdc6b6228547206d5817",
+      "kind": "retained structural JSON"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/association-generic.pdf",
+      "sha256": "0d87b08eb4f7a86149e40e9c36dcbe4a0c500b56d91b133db75b726174a4b35b",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/association-generic.pdf",
+      "sha256": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/association/association-products.pdf",
+      "sha256": "6092df1a23e9011bd6b90b49085443a9e9f6896ea7cdf0e35fa88f5ecb17ac11",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/association-products.pdf",
+      "sha256": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/conditional/conditional-ranks.pdf",
+      "sha256": "d878a72b5aa72eb56abda6d609d8b91f72dd87cef694d61e68b4666a170b046f",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/conditional-ridge-correlation.pdf",
+      "sha256": "912e9bef768cff74c26a09d453e6ab4c56a56af2fca4152919aa5f72e6b4bdff",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/hko-calibration/recovery-by-source-distance.pdf",
+      "sha256": "8833cef6f3446cbd57afc9e283ea267246ebc34317f7a2ef9f6c017c36d62d33",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/hko-recovery-by-source-distance.pdf",
+      "sha256": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/derivative/derivative-and-kkt-scale.pdf",
+      "sha256": "1e63f7c8e394b2b879146d691d56bd189b8128126c7c0cc30d6d5b18305dd9ec",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/derivative-and-kkt-scale.pdf",
+      "sha256": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/rotation/lagrangian_products_5x5.png",
+      "sha256": "7172cd6f7d0ed252273bb0591866492b5b85783a13cdbaf1cc50e652672d3c90",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/rotation-profile.png",
+      "sha256": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/foundations/characteristic-normalization.pdf",
+      "sha256": "d6ce2c05f8b8fc1626977981ae91c934b657841cc0e6d02b3c93f0c9f0f9f4b2",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/foundations/characteristic-normalization.pdf",
+      "sha256": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/foundations/facet-polarity.pdf",
+      "sha256": "490d3202861ed4cc827843d01f32eca3146eec39224d5f9949be5cc084bad124",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/foundations/facet-polarity.pdf",
+      "sha256": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/upper-bound-mechanisms.pdf",
+      "sha256": "30f7a2a20e39300ee20fee0b54c43e9d055d3f3b210991317e0e6d32b9fbb0d4",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/upper-bound-mechanisms.pdf",
+      "sha256": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/symmetry-extension.pdf",
+      "sha256": "21eea64e06b62074f6e08618ba5c4a4133b3c7b5956674d6c57e960ccf6d5742",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/symmetry-extension.pdf",
+      "sha256": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "sha256": "6f37b3d7a42e7d1d3e750ae7d2862cedcd8990ab0931b90f07b7abd054caf9ad",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/flow-graph/flow-graph-f6-tube-sequence.pdf",
+      "sha256": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/visualization/viz-hypercube-ridges.png",
+      "sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/visualization/viz-hypercube-ridges.png",
+      "sha256": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/figure-reproduction/structural/outputs/visualization/viz-hko-pentagon-min-orbit.png",
+      "sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "kind": "staged regenerated asset"
+    },
+    {
+      "path": "thesis/figures/visualization/viz-hko-pentagon-min-orbit.png",
+      "sha256": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+      "kind": "selected asset"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/regenerated-assets.pdf",
+      "sha256": "17d905bd263d0ba184f47f95f47fc4982605be44cfa5d312c6ea4c3ed9fc3c09",
+      "kind": "regenerated-assets PDF"
+    },
+    {
+      "path": "thesis/appendices/hko_core.py",
+      "sha256": "4b82246259a04e5d4c3cc89134bf4a94de6c1899c2abca3fae8efc63119ac403",
+      "kind": "HKO source/canonical"
+    },
+    {
+      "path": "experiments/hko-local-maximum/theorem/verify.sage.py",
+      "sha256": "004ea0d83fd3706f93f934e8eea3897fed2d495c46ec46ce089c65479fb2b2b8",
+      "kind": "HKO source/canonical"
+    },
+    {
+      "path": "experiments/hko-local-maximum/theorem/witness.json",
+      "sha256": "98362e00408d1bc6b3085b2ed6cc23174c3270c6b0ad6219a00e3a7732f5472c",
+      "kind": "HKO source/canonical"
+    },
+    {
+      "path": "experiments/hko-local-maximum/theorem/verification-summary.json",
+      "sha256": "8b407b20033d7acc774795a2326cf4c14e021d7e7793de7a560b8b5223cd15c0",
+      "kind": "HKO source/canonical"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/hko-execution/appendix-core.log",
+      "sha256": "719d4d2ef88ef6e8f5c635d60a976bb1b7c9e89a81d04082a02a171bc27dfa05",
+      "kind": "HKO run log"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/hko-execution/full-verifier.log",
+      "sha256": "c731a765702858a0d91065c1c4afd77c6da5196dcc2d6725fd2fb3c2fa96727f",
+      "kind": "HKO run log"
+    },
+    {
+      "path": "docs/history/thesis-continuation-2026-10-04/hko-execution/verification-summary.json",
+      "sha256": "8b407b20033d7acc774795a2326cf4c14e021d7e7793de7a560b8b5223cd15c0",
+      "kind": "fresh HKO summary"
+    }
+  ],
+  "fresh_structural_gzip_payloads_checked": 3,
+  "all_101_rebuild_raster_maps_equal": true,
+  "previous_bundle_git_diff_empty": true,
+  "status": "pass"
+}

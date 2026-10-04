@@ -1,0 +1,25 @@
+Generating viz-hypercube-ridges...
+browser warning WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
+browser log THREE.WebGLRenderer: Context Lost.
+render diagnostic {
+  name: 'hypercube',
+  groups: [ 1, 12 ],
+  calls: 58,
+  colored: 0,
+  lost: true
+}
+  → /tmp/msc-structural-figures-20261004/viewer-packet/figures/viz-hypercube-ridges.png
+Generating viz-hko-pentagon-min-orbit...
+browser warning [.WebGL-0x3efc00162600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+browser warning [.WebGL-0x3efc00162600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+browser warning [.WebGL-0x3efc00162600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+browser warning [.WebGL-0x3efc00162600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+render diagnostic {
+  name: 'hko_pentagon',
+  groups: [ 1, 0 ],
+  calls: 16,
+  colored: 13568,
+  lost: false
+}
+  → /tmp/msc-structural-figures-20261004/viewer-packet/figures/viz-hko-pentagon-min-orbit.png
+Done. 2 figures saved to /tmp/msc-structural-figures-20261004/viewer-packet/figures/

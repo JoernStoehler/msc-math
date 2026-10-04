@@ -202,7 +202,7 @@ The two packets are \path{general_algorithm_ablation/} and
 against the production implementation on fixed fixtures.
 
 An audit of the general development implementation compared the floating-point
-predicates with exact dyadic-rational arithmetic on \(249\) KKT systems: ordinary generated systems,
+predicates with exact rational arithmetic on dyadic inputs for \(249\) KKT systems: ordinary generated systems,
 scales from \(10^{-2}\) through \(10^3\), and systems approaching singularity
 down to binary64 coincidence.  It found no incorrect determinate decision and
 no violation of a \(\beta\)- or \(Q\)-radius.  Fifteen cases were
@@ -250,8 +250,8 @@ evidence, not all-input equivalence.\footnote{The test source is
 its execution and fixture scope are recorded in
 \path{docs/numerics-correspondence-check/README.md}.}
 
-The guarantees above concern the exact dyadic polytope represented by the
-input.  They do not propagate measurement error or prior rounding uncertainty
+The guarantees above concern the polytope defined by the exact dyadic input
+rows.  They do not propagate measurement error or prior rounding uncertainty
 in the coordinates, and they apply only within the stated facet, norm, and
 candidate-count limits.  The HKO certificate instead represents its algebraic input in an exact
 ordered field.  The analytic rotated-pentagon proof does not depend on

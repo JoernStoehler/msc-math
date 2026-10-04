@@ -32,9 +32,11 @@ capacity contracts at several levels: public scalar bounds, alternative
 implementations, mathematical properties and known values, minimizing words,
 and recovered orbits. Those layers do **not** all exercise the same evaluator.
 In particular, the retained axioms and orbit-recovery packets use the legacy
-pruned/unpruned HK2017 and billiard routes. There is currently no corresponding
-end-to-end property or geometric-recovery suite for the production
-`capacity_4d` API. The current entry points are:
+pruned/unpruned HK2017 and billiard routes. A small independent anchor suite
+now exercises the production `capacity_4d` dispatcher on boxes, uniform
+scalings and exact symplectic shears. It does not supply the legacy campaign's
+full property coverage or a production geometric-recovery suite. The current
+entry points are:
 
 ### 1. Compile smoke and development gate
 
@@ -76,6 +78,23 @@ capacity/winners. It is a finite correspondence gate, not an independent proof:
 some compared paths deliberately share exact kernels or enumeration helpers.
 
 ### 3. Properties and known-value anchors
+
+```bash
+cargo test -p symplectic --release --test production_capacity_anchors
+```
+
+This production test obtains expected capacities from planar rectangle areas
+and capacity axioms, without calling another candidate/KKT implementation as
+its oracle. Four tests cover 14 fixed bodies: two boxes, three uniform
+scalings, eight integer symplectic shears that force a switch from the product
+to the general dispatcher, and an integer-input cube with non-dyadic exact
+capacity `4/9`. The checks require the known value to lie in a narrow returned
+interval and check exact product values where used. Every input coordinate is
+exactly representable in binary64. This is bounded known-value, conformality
+and symplectic-invariance evidence, not an all-input property proof or orbit
+reconstruction check.
+
+The larger retained legacy campaign is separate:
 
 ```bash
 cargo test -p dev-capacity-validation --release --bin axioms-correctness

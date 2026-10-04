@@ -21,8 +21,9 @@ pub const MAX_INPUT_FACETS: usize = 16;
 /// Exact geometry of the binary64 polytope
 /// `{x in R^4 : <dual_vertices[i], x> <= 1}`.
 ///
-/// The exact coordinates are the dyadic rationals represented by the input
-/// binary64 values, not unavailable source rationals or algebraic numbers.
+/// The supplied dual coordinates are the dyadic rationals represented by the
+/// input binary64 values, not unavailable source rationals or algebraic numbers.
+/// Reconstructed primal coordinates are exact rationals and need not be dyadic.
 /// This is a plain data object: constructing it proves exact polytope validity,
 /// but does not establish the separate numerical-size policy required by the
 /// certified f64 capacity route.

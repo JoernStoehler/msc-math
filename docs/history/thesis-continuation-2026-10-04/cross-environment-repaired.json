@@ -1,0 +1,181 @@
+{
+  "started_at": "2026-10-04T01:46:40.424446+00:00",
+  "completed_at": "2026-10-04T01:47:03.066667+00:00",
+  "elapsed_seconds": 22.64224690300034,
+  "source_tree_sha256": "00d03cebeefa4d83774983d6744fc7be85745dc1265bba958521487a50cf6e6e",
+  "candidate_pdf_sha256": "d27e2f5330c61b25df23939a3da8118da98dd95aa6f336ac9d09d52302724a81",
+  "image": "sha256:f61a94c452ec20c17a9ff338601a9ade32326be8928fd13239fae03e7367f295",
+  "image_tag": "msc-math-sbx:local",
+  "container_name": "msc-thesis-cross-env-repaired-20261004-181386",
+  "constraints": {
+    "cpus": 2,
+    "memory_bytes": 2147483648,
+    "pids_limit": 256,
+    "total_timeout_seconds": 180,
+    "network": "bridge only during package retrieval; explicitly disconnected before build",
+    "writes": "disposable container overlay and isolated source copy only; no image commit or host installation"
+  },
+  "steps": [
+    {
+      "name": "create",
+      "command": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "msc-thesis-cross-env-repaired-20261004-181386",
+        "--network",
+        "bridge",
+        "--cpus",
+        "2",
+        "--memory",
+        "2g",
+        "--pids-limit",
+        "256",
+        "--user",
+        "0",
+        "--mount",
+        "type=bind,source=/tmp/msc-thesis-cross-env-repaired-fpie56vl,target=/work",
+        "--workdir",
+        "/work",
+        "--entrypoint",
+        "/bin/sh",
+        "sha256:f61a94c452ec20c17a9ff338601a9ade32326be8928fd13239fae03e7367f295",
+        "-c",
+        "exec sleep 180"
+      ],
+      "started_at": "2026-10-04T01:46:40.424473+00:00",
+      "elapsed_seconds": 0.31821004399535013,
+      "exit_code": 0
+    },
+    {
+      "name": "packages-before",
+      "command": [
+        "docker",
+        "exec",
+        "msc-thesis-cross-env-repaired-20261004-181386",
+        "dpkg-query",
+        "-W",
+        "-f=${Package}\t${Version}\n"
+      ],
+      "started_at": "2026-10-04T01:46:40.742690+00:00",
+      "elapsed_seconds": 0.0741587580050691,
+      "exit_code": 0
+    },
+    {
+      "name": "package-index",
+      "command": [
+        "docker",
+        "exec",
+        "msc-thesis-cross-env-repaired-20261004-181386",
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "update",
+        "-o",
+        "Acquire::Retries=0",
+        "-o",
+        "Acquire::http::Timeout=20",
+        "-o",
+        "Acquire::https::Timeout=20"
+      ],
+      "started_at": "2026-10-04T01:46:40.816853+00:00",
+      "elapsed_seconds": 4.423697949001507,
+      "exit_code": 0
+    },
+    {
+      "name": "install-declared-lmodern",
+      "command": [
+        "docker",
+        "exec",
+        "msc-thesis-cross-env-repaired-20261004-181386",
+        "env",
+        "DEBIAN_FRONTEND=noninteractive",
+        "apt-get",
+        "install",
+        "-y",
+        "--no-install-recommends",
+        "-o",
+        "Acquire::Retries=0",
+        "-o",
+        "Acquire::http::Timeout=20",
+        "-o",
+        "Acquire::https::Timeout=20",
+        "lmodern"
+      ],
+      "started_at": "2026-10-04T01:46:45.240558+00:00",
+      "elapsed_seconds": 6.4064657729977625,
+      "exit_code": 0
+    },
+    {
+      "name": "packages-after",
+      "command": [
+        "docker",
+        "exec",
+        "msc-thesis-cross-env-repaired-20261004-181386",
+        "dpkg-query",
+        "-W",
+        "-f=${Package}\t${Version}\n"
+      ],
+      "started_at": "2026-10-04T01:46:51.647031+00:00",
+      "elapsed_seconds": 0.07067705299414229,
+      "exit_code": 0
+    },
+    {
+      "name": "disable-network-before-build",
+      "command": [
+        "docker",
+        "network",
+        "disconnect",
+        "bridge",
+        "msc-thesis-cross-env-repaired-20261004-181386"
+      ],
+      "started_at": "2026-10-04T01:46:51.717994+00:00",
+      "elapsed_seconds": 0.10842713600140996,
+      "exit_code": 0
+    },
+    {
+      "name": "build",
+      "command": [
+        "docker",
+        "exec",
+        "--user",
+        "1000",
+        "--workdir",
+        "/work",
+        "msc-thesis-cross-env-repaired-20261004-181386",
+        "sh",
+        "thesis/build.sh"
+      ],
+      "started_at": "2026-10-04T01:46:51.826425+00:00",
+      "elapsed_seconds": 10.837273668999842,
+      "exit_code": 0
+    }
+  ],
+  "failed_step": null,
+  "scratch_directory": "/tmp/msc-thesis-cross-env-repaired-fpie56vl",
+  "scope": "One existing-image dependency repair: install documented lmodern and package-manager dependencies, then frozen-source build. Not a fresh-machine installation or raw-data/figure reproduction.",
+  "added_or_changed_packages": [
+    "libfontenc1\t1:1.1.8-1build2",
+    "lmodern\t2.005-1build1",
+    "xfonts-encodings\t1:1.0.5-0ubuntu3",
+    "xfonts-utils\t1:7.7+7build1"
+  ],
+  "removed_or_replaced_packages": [],
+  "container_absent_after_run": true,
+  "pdf_produced": true,
+  "overfull_boxes": 0,
+  "undefined_references_or_citations": false,
+  "pdf_sha256": "f09acee885c27f07375ff7d11ee0acc3241aa570c90e940e303d1120446fcfff",
+  "pdf_bytes": 1754122,
+  "pages": 101,
+  "layout_text_identical": false,
+  "canonical_sources_unchanged": true,
+  "environment": {
+    "uid": 1000,
+    "pdftex": "1.40.28",
+    "tex_live": "2025/Debian",
+    "biber": "2.21"
+  },
+  "host_candidate_pdftex": "1.40.25"
+}

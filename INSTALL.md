@@ -146,6 +146,11 @@ R2 even when a local cache exists. Omit `--no-link` when the producer needs
 the repository links. Links point into an environment-specific cache and may
 not resolve in a different execution environment.
 
+For an existing cache, `python3 scripts/artifacts.py verify-cache ARTIFACT`
+checks its registered manifest and all payload hashes offline, without
+installing links or downloading data. Its output reports the verified local
+directory and explicitly records that the remote was not checked.
+
 [Artifact contracts](docs/artifacts.md) explain cache placement, link handling
 and publication. For Codex Cloud use the configured setup/maintenance scripts
 described in [environment details](docs/development-environments.md), not the
@@ -165,7 +170,8 @@ verifier that owns the requested result:
   producer. Historical ratios, current capacity reevaluation and the one
   unresolved geometry have distinct evidence contracts.
 - [Thesis reproduction and archive](docs/reproducibility.md) for the result
-  inventory, final PDF and release bundle.
+  inventory, final PDF and release bundle; [selected figures](docs/figure-reproduction.md)
+  for complete fresh-output plotting, copy and isolated-build commands.
 
 Record the source commit, actual tool versions, command and inputs with a run.
 Use the producer's comparison contract: timing-bearing logs and outputs from

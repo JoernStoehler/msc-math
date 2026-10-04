@@ -179,6 +179,30 @@ information in the ridge areas beyond those counts. Its split and feature
 list differ from the random-forest experiment, so the two scores do not rank
 the learning algorithms against each other.
 
+The 27 combinatorial descriptors are the four face counts; the simplicity
+indicator, simple-vertex fraction and edge density; and the mean, standard
+deviation, minimum and maximum of five lists: incident facets per vertex,
+vertex degrees, ridge sizes, vertices per facet and facet-neighbour counts.
+The random forest's twelve ridge descriptors are the mean, standard deviation,
+minimum, maximum, lower and upper quartiles, median, 90th and 95th percentiles and sum of the
+ridge areas divided by $\sqrt{\operatorname{vol}_4(K)}$, together with the
+largest-ridge and largest-three-ridge shares. The boosted model adds the
+fractions at or below normalized-area thresholds $10^{-3},10^{-2},10^{-1}$,
+entropy, effective face count and normalized entropy, giving 18 ridge
+descriptors. The full field names are recorded, respectively, in
+\begin{quote}
+\small\raggedright
+\path{experiments/sys-datascience/methods/prediction-ranking/artifacts/summary.json}
+and \path{experiments/sys-datascience/methods/_shared/random_only.py}.
+\end{quote}
+
+The boosted comparison used 8,704 training rows and 5,632 test rows. The
+held-out groups were products with 8, 10 or 12 facets and generic polytopes
+with 12 facets; all feature-family comparisons used this same split. Source
+labels determined groups but were not model covariates. The precise group
+counts, feature-family scores and current-schema input reconstruction are in
+\path{experiments/sys-datascience/methods/standard-baseline-p2/}.
+
 
 \subsection{Selection and comparison rules}\label{app:ds-selection}
 

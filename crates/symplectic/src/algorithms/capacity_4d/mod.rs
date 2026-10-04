@@ -14,7 +14,7 @@
 //! that need intermediate geometry can instead use
 //! [`exact_binary64_polytope_geometry`], the explicit input checks, and then
 //! [`capacity`] or [`qp_minimizers`]. Product results include an exact
-//! dyadic-rational value; general results include outward binary64 bounds.
+//! rational value; general results include outward binary64 bounds.
 
 mod general;
 mod geometry;

@@ -30,6 +30,32 @@ source-to-PDF build without relying on existing build files. It does not test
 a new tool environment, cross-version byte identity, or regeneration of the
 figures and empirical data.
 
+The subsequent [continuation check](history/thesis-continuation-2026-10-04/regenerated-assets-rebuild.json)
+regenerated all thirteen selected graphics, staged them into a fresh source
+copy and built the revised 101-page manuscript. Its extracted layout text and
+all page rasters at 96 dpi matched the separately built candidate. The figures
+used verified retained empirical inputs; the selected flow and visualization
+JSON exports were also regenerated. This extends the check through the figure
+producer and publication-copy steps, while leaving raw dataset evaluation,
+authenticated R2 retrieval and a fresh tool installation untested.
+
+A later [isolated existing-image attempt](history/thesis-continuation-2026-10-04/cross-environment-build.json)
+used TeX Live 2025/Biber 2.21, two CPUs, 2 GiB and no network. It stopped before
+producing a PDF because that image lacks `lmodern.sty`; `lmodern` is already
+listed in the setup requirements. No package installation or image rebuild was
+performed in that first attempt. A separately authorized
+[dependency-only retry](history/thesis-continuation-2026-10-04/cross-environment-repaired.json)
+installed `lmodern` and its three package-manager dependencies in a new
+disposable container, disconnected networking, and successfully built the
+same frozen source into 101 pages with no overfull boxes or undefined
+references. The complete setup and build took 22.64 seconds. PDF bytes and
+extracted layout text differ from the accepted candidate; the
+[comparison](history/thesis-continuation-2026-10-04/cross-environment-comparison.json)
+records those differences. This checks a second existing TeX environment
+after one documented dependency repair, not a fresh-machine installation,
+regeneration of empirical data or a replacement accepted PDF. Both containers
+were removed and the canonical sources stayed unchanged.
+
 ## Mathematical results and exact checks
 
 The selected “Availability of Code and Data” chapter distinguishes the current
@@ -49,6 +75,13 @@ proof routes from earlier computational certificates:
   The selected rotation and affine chapters do not depend on the older
   [Sage enumeration packet](../experiments/regular-products/pentagon-rotation-formula-proof/README.md),
   whose classifier and full stdout remain available as the earlier proof route.
+
+The continuation also [executed the printed HKO appendix command and full
+26-row verifier](history/thesis-continuation-2026-10-04/hko-execution/receipt.json)
+with Sage 10.9, using copied verifier inputs and preserving canonical outputs.
+Both passed; the full verification summary matched the retained bytes. This
+checks the named executable routes on the installed environment, not the
+entire analytic implication or a fresh Sage installation.
 
 Run the commands in the packet READMEs, inspecting their output paths before
 execution: the HKO verifier writes its retained summary and the displayed full
@@ -78,9 +111,11 @@ not proof-assistant formalizations.
   in [the numerical chapter](../thesis/chapters/13-numerics.tex) and
   [the code/data chapter](../thesis/chapters/14-code-data.tex). A retained summary
   does not imply that every original per-system transcript is included.
-- Figure-producing experiments keep their source assets and regeneration
-  commands beside the producer. Publication copies under `thesis/` remain
-  deliberate because the thesis must build as a self-contained artifact.
+- [Selected-figure reproduction](figure-reproduction.md) maps all thirteen
+  graphics to their producers, exact input requirements, fresh-output commands
+  and publication-copy names. It includes the separate current-schema input
+  requirement for the P2 model comparison. Publication copies under `thesis/`
+  remain deliberate because the thesis must build as a self-contained artifact.
 
 These artifacts make the thesis results immediately inspectable. A smoke run
 demonstrates plumbing only; it is not a replacement for retained full data or

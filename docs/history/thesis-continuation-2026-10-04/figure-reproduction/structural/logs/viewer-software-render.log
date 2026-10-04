@@ -1,0 +1,21 @@
+Generating viz-hypercube-ridges...
+render diagnostic {
+  name: 'hypercube',
+  groups: [ 1, 12 ],
+  calls: 13,
+  colored: 252970,
+  lost: false
+}
+browser warning [.WebGL-0x1d8c00160200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+  → /tmp/msc-structural-figures-20261004/viewer-packet/figures/viz-hypercube-ridges.png
+Generating viz-hko-pentagon-min-orbit...
+render diagnostic {
+  name: 'hko_pentagon',
+  groups: [ 1, 0 ],
+  calls: 16,
+  colored: 13568,
+  lost: false
+}
+browser warning [.WebGL-0x1d8c00160e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+  → /tmp/msc-structural-figures-20261004/viewer-packet/figures/viz-hko-pentagon-min-orbit.png
+Done. 2 figures saved to /tmp/msc-structural-figures-20261004/viewer-packet/figures/

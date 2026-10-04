@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import importlib.util
+import io
 import json
 from pathlib import Path
 import tempfile
@@ -118,6 +119,52 @@ class ArtifactTests(unittest.TestCase):
                     artifacts.install_links(
                         {"links": {"source": "target"}}, files
                     )
+
+    def test_verify_cache_is_offline_and_detects_corruption(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            staging = root / "staging"
+            staging.mkdir()
+            (staging / "data.jsonl").write_bytes(b"{\"value\": 1}\n")
+            records = artifacts.file_records(staging)
+            snapshot = artifacts.snapshot_id("example", records)
+            directory = root / "example" / snapshot
+            directory.mkdir(parents=True)
+            files = directory / "files"
+            staging.rename(files)
+            manifest = artifacts.identity("example", records) | {"snapshot": snapshot}
+            manifest_path = directory / "manifest.json"
+            manifest_path.write_bytes(artifacts.canonical_json(manifest))
+            registry = {"artifacts": {"example": {"snapshot": snapshot, "links": {"data.jsonl": "unused"}}}}
+            args = artifacts.parser().parse_args(["verify-cache", "example", "--cache-root", raw])
+            before = artifacts.file_records(directory)
+            with (
+                mock.patch.object(artifacts, "load_registry", return_value=registry),
+                mock.patch.object(artifacts, "run_rclone", side_effect=AssertionError("network access")),
+                mock.patch.object(artifacts, "install_links", side_effect=AssertionError("link mutation")),
+                mock.patch("sys.stdout", new_callable=io.StringIO) as output,
+            ):
+                args.function(args)
+                result = json.loads(output.getvalue())
+                self.assertEqual(result["status"], "verified-local-cache")
+                self.assertFalse(result["remote_checked"])
+                self.assertEqual(result["files"], 1)
+                self.assertEqual(artifacts.file_records(directory), before)
+                (files / "data.jsonl").write_bytes(b"{\"value\": 2}\n")
+                with self.assertRaisesRegex(artifacts.ArtifactError, "size/hash"):
+                    args.function(args)
+                (files / "data.jsonl").write_bytes(b"{\"value\": 1}\n")
+                (files / "extra").write_text("unexpected")
+                with self.assertRaisesRegex(artifacts.ArtifactError, "inventory"):
+                    args.function(args)
+                (files / "extra").unlink()
+                manifest["files"][0]["size"] += 1
+                manifest_path.write_bytes(artifacts.canonical_json(manifest))
+                with self.assertRaisesRegex(artifacts.ArtifactError, "digest"):
+                    args.function(args)
+                manifest_path.unlink()
+                with self.assertRaisesRegex(artifacts.ArtifactError, "cached manifest"):
+                    args.function(args)
 
 
 if __name__ == "__main__":

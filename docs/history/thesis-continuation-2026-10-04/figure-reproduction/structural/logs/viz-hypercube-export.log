@@ -1,0 +1,31 @@
+    Blocking waiting for file lock on artifact directory
+   Compiling visualization v0.1.0 (/home/joern/.codex/worktrees/f171/msc-math/experiments/visualization)
+    Finished `release` profile [optimized + debuginfo] target(s) in 28.29s
+     Running `target/release/visualization hypercube /tmp/msc-structural-figures-20261004/viewer-packet/viewer/data/hypercube.json`
+Computing orbits for hypercube...
+  Found 142 orbits (min action = 4.000000, max action = 8.000000)
+  min-action orbit (c=4.0000) → 4 segments, facets [0, 4, 1, 5]
+  min-action orbit #2 (c=4.0000) → 4 segments, facets [2, 6, 3, 7]
+  orbit #3 (action=8.0000) → 8 segments, facets [0, 2, 6, 4, 3, 1, 5, 7]
+  orbit #4 (action=8.0000) → 8 segments, facets [0, 2, 6, 4, 3, 1, 7, 5]
+  orbit #5 (action=8.0000) → 8 segments, facets [0, 3, 7, 4, 2, 1, 5, 6]
+  orbit #6 (action=8.0000) → 8 segments, facets [0, 3, 7, 4, 2, 1, 6, 5]
+  orbit #7 (action=8.0000) → 8 segments, facets [0, 4, 1, 2, 6, 3, 7, 5]
+  orbit #8 (action=8.0000) → 8 segments, facets [0, 4, 1, 2, 6, 5, 3, 7]
+  orbit #9 (action=8.0000) → 8 segments, facets [0, 4, 1, 3, 7, 2, 6, 5]
+  orbit #10 (action=8.0000) → 8 segments, facets [0, 4, 1, 3, 7, 5, 2, 6]
+  orbit #11 (action=8.0000) → 8 segments, facets [0, 4, 2, 1, 6, 3, 7, 5]
+  orbit #12 (action=8.0000) → 8 segments, facets [0, 4, 3, 1, 7, 2, 6, 5]
+  orbit #13 (action=8.0000) → 8 segments, facets [0, 6, 3, 4, 7, 1, 5, 2]
+  orbit #14 (action=8.0000) → 8 segments, facets [0, 6, 3, 7, 2, 4, 1, 5]
+  orbit #15 (action=8.0000) → 8 segments, facets [0, 7, 2, 4, 6, 1, 5, 3]
+  orbit #16 (action=8.0000) → 8 segments, facets [0, 7, 2, 6, 3, 4, 1, 5]
+  orbit #17 (action=8.0000) → 8 segments, facets [0, 2, 4, 1, 6, 3, 7, 5]
+  orbit #18 (action=8.0000) → 8 segments, facets [0, 2, 4, 6, 1, 3, 7, 5]
+  orbit #19 (action=8.0000) → 8 segments, facets [0, 2, 4, 6, 3, 1, 5, 7]
+  orbit #20 (action=8.0000) → 8 segments, facets [0, 2, 6, 3, 4, 1, 5, 7]
+  Capped at 20 orbits (skipped 122)
+  Two-face F_0 ∩ F_5: 2 displacement direction(s)
+  displaced v1 (ε=0.02) → 4 segments, closed=true
+  displaced v2 (ε=0.02) → 4 segments, closed=true
+Exported hypercube: 16 vertices, 32 edges, 24 ridges, 22 trajectories → /tmp/msc-structural-figures-20261004/viewer-packet/viewer/data/hypercube.json

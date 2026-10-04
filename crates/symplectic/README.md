@@ -42,7 +42,7 @@ Start with
 facet-count and dual-norm limits, constructs exact binary64-rational geometry,
 checks primal norms, and dispatches exact q/p products to the KKT-free
 six-facet closure-vertex route; other inputs use the certified general QP
-route. Product results contain an exact dyadic-rational capacity and sparse
+route. Product results contain an exact rational capacity and sparse
 exact witnesses. General results contain outward binary64 bounds. Neither
 route promises every minimizing or near-minimizing orbit branch.
 

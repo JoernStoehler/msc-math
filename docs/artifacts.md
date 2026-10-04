@@ -45,6 +45,20 @@ It downloads into a temporary directory, checks the exact file inventory,
 sizes, and hashes, then installs the cache atomically. Use `--no-link` when a
 consumer needs the cache directory but not the established worktree paths.
 
+If the registered snapshot is already cached, verify its local inventory and
+payload without credentials, network access, symlink installation or writes:
+
+```bash
+python3 scripts/artifacts.py verify-cache polytope-invariant-table
+```
+
+This checks the local manifest against the snapshot identity in the registry,
+then checks every payload's name, size and SHA-256. Its JSON result supplies the
+verified cache directory for consumers with explicit input-path options. It
+does not check whether R2 is reachable or still holds the snapshot. A missing
+cache still requires `materialize`; the offline command never downloads data.
+The same cache-root overrides apply to both commands.
+
 ## Publish a finalized snapshot
 
 Publishing is a deliberate retention step, not part of an ordinary producer

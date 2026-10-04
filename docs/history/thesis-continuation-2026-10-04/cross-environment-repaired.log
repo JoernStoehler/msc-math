@@ -1,0 +1,3651 @@
+
+### create
+f8c5bf7906b0aed3f51f7d4a7df58c1f2dda4f42ecc0a2cf0facc9a9a8710c5c
+
+### packages-before
+adduser	3.153ubuntu1
+apt	3.2.0
+base-files	14ubuntu6.1
+base-passwd	3.6.8
+bash	5.3-2ubuntu1
+bc	1.07.1-4build1
+biber	2.21-2
+bind9-dnsutils	1:9.20.24-1ubuntu0.2
+bind9-host	1:9.20.24-1ubuntu0.2
+bind9-libs	1:9.20.24-1ubuntu0.2
+binutils	2.46-3ubuntu2
+binutils-common	2.46-3ubuntu2
+binutils-x86-64-linux-gnu	2.46-3ubuntu2
+bsdextrautils	2.41.3-3ubuntu2
+bsdutils	1:2.41.3-3ubuntu2
+bubblewrap	0.11.1-1ubuntu0.1
+build-essential	12.12ubuntu2.26.04.2
+bzip2	1.0.8-6ubuntu0.1
+ca-certificates	20260601~26.04.1
+ca-certificates-java	20260311
+coreutils	9.5-1ubuntu2+0.0.0~ubuntu25
+coreutils-from-uutils	0.0.0~ubuntu25
+cpp	4:15.2.0-5ubuntu1
+cpp-15	15.2.0-16ubuntu1
+cpp-15-x86-64-linux-gnu	15.2.0-16ubuntu1
+cpp-x86-64-linux-gnu	4:15.2.0-5ubuntu1
+curl	8.18.0-1ubuntu2.5
+dash	0.5.12-12ubuntu3
+debconf	1.5.92
+debianutils	5.23.2build1
+default-jdk-headless	2:1.25-77
+default-jre-headless	2:1.25-77
+diffutils	1:3.12-1
+dirmngr	2.4.8-4ubuntu3
+docker-buildx-plugin	0.36.1-1~ubuntu.26.04~resolute
+docker-ce-cli	5:29.7.2-1~ubuntu.26.04~resolute
+docker-compose-plugin	5.5.0-1~ubuntu.26.04~resolute
+dpkg	1.23.7ubuntu1
+dpkg-dev	1.23.7ubuntu1
+e2fsprogs	1.47.2-3ubuntu4
+eslint	6.4.0~dfsg+~6.1.9-12
+findutils	4.10.0-3build2
+fontconfig	2.17.1-3ubuntu1
+fontconfig-config	2.17.1-3ubuntu1
+fonts-dejavu-core	2.37-8build1
+fonts-dejavu-mono	2.37-8build1
+fonts-lmodern	2.005-1build1
+g++	4:15.2.0-5ubuntu1
+g++-15	15.2.0-16ubuntu1
+g++-15-x86-64-linux-gnu	15.2.0-16ubuntu1
+g++-x86-64-linux-gnu	4:15.2.0-5ubuntu1
+gcc	4:15.2.0-5ubuntu1
+gcc-15	15.2.0-16ubuntu1
+gcc-15-base	15.2.0-16ubuntu1
+gcc-15-x86-64-linux-gnu	15.2.0-16ubuntu1
+gcc-16-base	16-20260322-1ubuntu1
+gcc-x86-64-linux-gnu	4:15.2.0-5ubuntu1
+gh	2.46.0-4
+git	1:2.53.0-1ubuntu1
+git-man	1:2.53.0-1ubuntu1
+gnu-coreutils	9.7-3ubuntu2
+gnupg	2.4.8-4ubuntu3
+golang	2:1.26~1
+golang-1.26	1.26.0-1
+golang-1.26-doc	1.26.0-1
+golang-1.26-go	1.26.0-1
+golang-1.26-src	1.26.0-1
+golang-doc	2:1.26~1
+golang-go	2:1.26~1
+golang-src	2:1.26~1
+gpg	2.4.8-4ubuntu3
+gpg-agent	2.4.8-4ubuntu3
+gpgconf	2.4.8-4ubuntu3
+gpgsm	2.4.8-4ubuntu3
+gpgv	2.4.8-4ubuntu3
+graphviz	14.1.2-1ubuntu1
+grep	3.12-1
+groff-base	1.23.0-10
+gyp	0.16.2-2build1
+gzip	1.14-1~exp2ubuntu1.1
+handlebars	3:4.7.7+~4.1.0-1
+hostname	3.25build1
+init-system-helpers	1.69
+java-common	0.77
+jq	1.8.1-4ubuntu2
+latexmk	1:4.87~ds-1
+less	668-1build1
+libacl1	2.3.2-2
+libada-url0-3	3.4.3-1
+libalgorithm-c3-perl	0.11-2
+libaom3	3.13.1-2ubuntu0.1
+libapache-pom-java	33-2build1
+libapparmor1	5.0.2-0ubuntu1~26.04.1
+libapt-pkg7.0	3.2.0
+libasan8	16-20260322-1ubuntu1
+libassuan9	3.0.2-2build1
+libatomic1	16-20260322-1ubuntu1
+libattr1	1:2.5.2-4
+libaudit-common	1:4.1.2-1build1
+libaudit1	1:4.1.2-1build1
+libautovivification-perl	0.18-2build5
+libb-hooks-endofscope-perl	0.28-2
+libb-hooks-op-check-perl	0.22-3build2
+libbibtex-parser-perl	1.93+dfsg-1
+libbinutils	2.46-3ubuntu2
+libblkid1	2.41.3-3ubuntu2
+libbrotli1	1.2.0-3build1
+libbsd0	0.12.2-2build2
+libbtparse2	0.91-1
+libbusiness-isbn-data-perl	20260214.001-1
+libbusiness-isbn-perl	3.012-1
+libbusiness-ismn-perl	1.205-1
+libbusiness-issn-perl	1.008-1
+libbz2-1.0	1.0.8-6ubuntu0.1
+libc-bin	2.43-2ubuntu2.4
+libc-dev-bin	2.43-2ubuntu2.4
+libc-gconv-modules-extra	2.43-2ubuntu2.4
+libc6	2.43-2ubuntu2.4
+libc6-dev	2.43-2ubuntu2.4
+libcairo2	1.18.4-3
+libcap-ng0	0.8.5-4build5
+libcap2	1:2.75-10ubuntu2
+libcares2	1.34.6-1
+libcbor0.10	0.10.2-2ubuntu3
+libcc1-0	16-20260322-1ubuntu1
+libcdt6	14.1.2-1ubuntu1
+libcgraph8	14.1.2-1ubuntu1
+libclass-accessor-perl	0.51-2
+libclass-c3-perl	0.35-2
+libclass-data-inheritable-perl	0.10-1
+libclass-inspector-perl	1.36-3
+libclass-method-modifiers-perl	2.15-1
+libclass-singleton-perl	1.6-2
+libclone-perl	0.47-1
+libclone-pp-perl	1.08-2
+libcom-err2	1.47.2-3ubuntu4
+libcommons-logging-java	1.3.0-1ubuntu1
+libcommons-parent-java	56-1build1
+libcrypt-dev	1:4.5.1-1
+libcrypt1	1:4.5.1-1
+libctf-nobfd0	2.46-3ubuntu2
+libctf0	2.46-3ubuntu2
+libcurl3t64-gnutls	8.18.0-1ubuntu2.5
+libcurl4t64	8.18.0-1ubuntu2.5
+libdata-compare-perl	1.29-1
+libdata-dump-perl	1.25-1
+libdata-optlist-perl	0.114-1
+libdata-uniqid-perl	0.12-3
+libdate-simple-perl	3.0300-3build7
+libdatetime-calendar-julian-perl	0.107-1
+libdatetime-format-builder-perl	0.8300-1
+libdatetime-format-strptime-perl	1.8000-1
+libdatetime-locale-perl	1:1.45-1
+libdatetime-perl	2:1.65-1build3
+libdatetime-timezone-perl	1:2.65-1+2025b
+libdatrie1	0.2.14-1
+libdb5.3t64	5.3.28+dfsg2-10ubuntu1
+libdebconfclient0	0.280ubuntu1
+libdeflate0	1.23-2ubuntu1
+libdevel-callchecker-perl	0.009-3
+libdevel-stacktrace-perl	2.0500-1
+libdpkg-perl	1.23.7ubuntu1
+libdynaloader-functions-perl	0.004-2
+libedit2	3.1-20251016-1
+libencode-eucjpascii-perl	0.03-1build5
+libencode-eucjpms-perl	0.07-5
+libencode-hanextra-perl	0.23-6build5
+libencode-jis2k-perl	0.05-1build4
+libencode-locale-perl	1.05-3
+liberror-perl	0.17030-1
+libeval-closure-perl	0.14-3
+libexception-class-perl	1.45-1
+libexpat1	2.7.4-1
+libexporter-tiny-perl	1.006003-1
+libext2fs2t64	1.47.2-3ubuntu4
+libffi8	3.5.2-4
+libfido2-1	1.16.0-2build1
+libfile-find-rule-perl	0.35-1build1
+libfile-listing-perl	6.16-1
+libfile-sharedir-perl	1.118-3
+libfile-slurper-perl	0.014-1
+libfontbox-java	1:1.8.16-5
+libfontconfig1	2.17.1-3ubuntu1
+libfreetype6	2.14.2+dfsg-1ubuntu0.1
+libfribidi0	1.0.16-5
+libgcc-15-dev	15.2.0-16ubuntu1
+libgcc-s1	16-20260322-1ubuntu1
+libgcrypt20	1.12.0-2ubuntu1
+libgd3	2.3.3-13ubuntu2
+libgdbm-compat4t64	1.26-1build1
+libgdbm6t64	1.26-1build1
+libglib2.0-0t64	2.88.0-1ubuntu0.1
+libgmp10	2:6.3.0+dfsg-5ubuntu2
+libgnutls30t64	3.8.12-2ubuntu1.1
+libgomp1	16-20260322-1ubuntu1
+libgpg-error0	1.58-2
+libgprofng0	2.46-3ubuntu2
+libgraph-easy-perl	0.76-3
+libgraphite2-3	1.3.14-11ubuntu1.1
+libgssapi-krb5-2	1.22.1-2ubuntu4.1
+libgvc7	14.1.2-1ubuntu1
+libgvplugin-gd8	14.1.2-1ubuntu1
+libgvplugin-pango8	14.1.2-1ubuntu1
+libgvpr2	14.1.2-1ubuntu1
+libharfbuzz0b	12.3.2-2
+libheif-plugin-aomdec	1.21.2-3ubuntu0.5
+libheif1	1.21.2-3ubuntu0.5
+libhogweed6t64	3.10.2-1
+libhtml-parser-perl	3.83-1ubuntu0.1
+libhtml-tagset-perl	3.24-1
+libhtml-tree-perl	5.07-3
+libhttp-cookies-perl	6.11-1
+libhttp-date-perl	6.06-1ubuntu0.26.04.1
+libhttp-message-perl	7.01-1ubuntu1
+libhttp-negotiate-perl	6.01-2
+libhwasan0	16-20260322-1ubuntu1
+libice6	2:1.1.1-1build1
+libicu78	78.2-2ubuntu1
+libidn2-0	2.3.8-4build1
+libimagequant0	4.4.1-1
+libio-html-perl	1.004-3
+libio-socket-ssl-perl	2.098-1
+libio-string-perl	1.08-4
+libipc-run3-perl	0.049-1
+libisl23	0.27-1build1
+libitm1	16-20260322-1ubuntu1
+libjansson4	2.14-2build4
+libjbig0	2.1-6.1ubuntu3
+libjemalloc2	5.3.0-4
+libjpeg-turbo8	2.1.5-4ubuntu4
+libjpeg8	8c-2ubuntu12
+libjq1	1.8.1-4ubuntu2
+libjs-events	3.3.0+~3.0.3-1
+libjs-inherits	2.0.4-6
+libjs-prettify	2015.12.04+dfsg-3
+libjs-regenerate	1.4.2-3
+libjs-source-map	0.7.0++dfsg2+really.0.6.1-15
+libjs-sprintf-js	1.1.3+ds1+~1.1.4-2
+libjs-util	0.12.5+~1.0.10-2
+libjson-c5	0.18+ds-3
+libk5crypto3	1.22.1-2ubuntu4.1
+libkeyutils1	1.6.3-6ubuntu3
+libkpathsea6	2025.20250727.75242+ds-5build1
+libkrb5-3	1.22.1-2ubuntu4.1
+libkrb5support0	1.22.1-2ubuntu4.1
+libksba8	1.6.7-2build1
+liblatex-tounicode-perl	1.93-1
+liblcms2-2	2.17-1ubuntu0.2
+libldap-common	2.6.10+dfsg-1ubuntu5
+libldap2	2.6.10+dfsg-1ubuntu5
+liblerc4	4.0.0+ds-5ubuntu2
+liblingua-translit-perl	0.29-2
+liblist-allutils-perl	0.19-1
+liblist-moreutils-perl	0.430-2
+liblist-moreutils-xs-perl	0.430-4build1
+liblist-someutils-perl	0.59-1
+liblist-utilsby-perl	0.12-2
+libllhttp9.3	9.3.3~really9.3.0+~cs12.11.8-3build1
+liblmdb0	0.9.31-1build2
+liblog-log4perl-perl	1.57-1
+liblsan0	16-20260322-1ubuntu1
+liblsof0	4.99.4+dfsg-2build2
+libltdl7	2.5.4-9
+liblwp-mediatypes-perl	6.04-2
+liblwp-protocol-https-perl	6.14-1
+liblz4-1	1.10.0-8
+liblzma5	5.8.3-1
+libmaxminddb0	1.12.2-1build2
+libmd0	1.1.0-2build4
+libmime-charset-perl	1.013.1-2
+libmodule-implementation-perl	0.09-2
+libmodule-runtime-perl	0.018-1
+libmount1	2.41.3-3ubuntu2
+libmpc3	1.3.1-3
+libmpfi0	1.5.4+ds-4build1
+libmpfr6	4.2.2-3
+libmro-compat-perl	0.15-2
+libnamespace-autoclean-perl	0.31-1
+libnamespace-clean-perl	0.27-2
+libncursesw6	6.6+20251231-1
+libnet-http-perl	6.24-1build1
+libnet-ssleay-perl	1.94-3
+libnettle8t64	3.10.2-1
+libnghttp2-14	1.68.0-2ubuntu0.2
+libnode-dev	22.22.1+dfsg+~cs22.19.15-1ubuntu1
+libnode127	22.22.1+dfsg+~cs22.19.15-1ubuntu1
+libnpth0t64	1.8-3build1
+libnspr4	2:4.38.2-1ubuntu1
+libnss3	2:3.120-1ubuntu2.1
+libnumber-compare-perl	0.03-3
+libonig5	6.9.10-1build1
+libp11-kit0	0.26.2-2
+libpackage-stash-perl	0.40-1
+libpam-modules	1.7.0-5ubuntu3.1
+libpam-modules-bin	1.7.0-5ubuntu3.1
+libpam-runtime	1.7.0-5ubuntu3.1
+libpam0g	1.7.0-5ubuntu3.1
+libpango-1.0-0	1.57.0-1
+libpangocairo-1.0-0	1.57.0-1
+libpangoft2-1.0-0	1.57.0-1
+libpaper-utils	2.2.5-0.3maysync1
+libpaper2	2.2.5-0.3maysync1
+libparams-classify-perl	0.015-2build6
+libparams-util-perl	1.102-3build1
+libparams-validate-perl	1.31-2build4
+libparams-validationcompiler-perl	0.31-1
+libparse-recdescent-perl	1.967015+dfsg-4
+libpathplan4	14.1.2-1ubuntu1
+libpcre2-8-0	10.46-1build1
+libpcsclite1	2.4.1-1
+libpdfbox-java	1:1.8.16-5
+libperl5.40	5.40.1-7ubuntu0.1
+libpipeline1	1.5.8-2
+libpixman-1-0	0.46.4-1
+libpkgconf7	2.5.1-4
+libpng16-16t64	1.6.57-1
+libpopt0	1.19+dfsg-2build1
+libpotrace0	1.16-2build2
+libproc2-0	2:4.0.4-9ubuntu1
+libpsl5t64	0.21.2-1.1build2
+libptexenc1	2025.20250727.75242+ds-5build1
+libpython3-stdlib	3.14.3-0ubuntu2
+libpython3.14-minimal	3.14.4-1ubuntu0.1
+libpython3.14-stdlib	3.14.4-1ubuntu0.1
+libquadmath0	16-20260322-1ubuntu1
+libreadline8t64	8.3-4
+libreadonly-perl	2.050-3
+libregexp-common-perl	2024080801-1
+librole-tiny-perl	2.002004-1
+librtmp1	2.4+20151223.gitfa8646d.1-3
+libsasl2-2	2.1.28+dfsg1-9ubuntu3
+libsasl2-modules-db	2.1.28+dfsg1-9ubuntu3
+libseccomp2	2.6.0-2ubuntu5
+libselinux1	3.9-4build1
+libsemanage-common	3.9-1build1
+libsemanage2	3.9-1build1
+libsepol2	3.9-2
+libsframe3	2.46-3ubuntu2
+libsharpyuv0	1.5.0-0.1build1
+libsimdjson29	4.2.4-1
+libsimdutf31	8.0.0-1
+libsm6	2:1.2.6-1build1
+libsmartcols1	2.41.3-3ubuntu2
+libsombok3	2.4.0-2build2
+libsort-key-perl	1.33-3build5
+libspecio-perl	0.53-1
+libsqlite3-0	3.46.1-9ubuntu0.2
+libss2	1.47.2-3ubuntu4
+libssh2-1t64	1.11.1-1ubuntu0.26.04.3
+libssl-dev	3.5.5-1ubuntu3.4
+libssl3t64	3.5.5-1ubuntu3.4
+libstdc++-15-dev	15.2.0-16ubuntu1
+libstdc++6	16-20260322-1ubuntu1
+libsub-exporter-perl	0.990-1
+libsub-exporter-progressive-perl	0.001013-3
+libsub-identify-perl	0.14-4
+libsub-install-perl	0.929-1
+libsub-name-perl	0.28-1
+libsub-quote-perl	2.006009-1ubuntu1
+libsynctex2	2025.20250727.75242+ds-5build1
+libsystemd0	259.5-0ubuntu3.4
+libtasn1-6	4.21.0-2
+libteckit0	2.5.13+ds-1
+libtexlua53-5	2025.20250727.75242+ds-5build1
+libtext-bibtex-perl	0.91-1
+libtext-charwidth-perl	0.04-11build4
+libtext-csv-perl	2.06-1
+libtext-csv-xs-perl	1.61-1
+libtext-glob-perl	0.11-3
+libtext-roman-perl	3.5-4
+libtext-wrapi18n-perl	0.06-10
+libthai-data	0.1.30-1
+libthai0	0.1.30-1
+libtie-cycle-perl	1.233-1
+libtiff6	4.7.0-3ubuntu5
+libtimedate-perl	2.3300-2
+libtinfo6	6.6+20251231-1
+libtirpc-common	1.3.7-0.1
+libtirpc3t64	1.3.7-0.1
+libtry-tiny-perl	0.32-1
+libtsan2	16-20260322-1ubuntu1
+libubsan1	16-20260322-1ubuntu1
+libuchardet0	0.0.8-2
+libudev1	259.5-0ubuntu3.4
+libunicode-linebreak-perl	0.0.20190101-3
+libunistring5	1.3-2build1
+liburcu8t64	0.15.6-1
+liburi-perl	5.34-2build1
+libuuid1	2.41.3-3ubuntu2
+libuv1-dev	1.51.0-2ubuntu1
+libuv1t64	1.51.0-2ubuntu1
+libvariable-magic-perl	0.64-1build1
+libwebp7	1.5.0-0.1build1
+libwrap0	7.6.q-36build2
+libwww-perl	6.81-1ubuntu0.1
+libwww-robotrules-perl	6.02-1build1
+libx11-6	2:1.8.13-1
+libx11-data	2:1.8.13-1
+libxau6	1:1.0.11-1build2
+libxaw7	2:1.0.16-1build1
+libxcb-render0	1.17.0-2ubuntu1
+libxcb-shm0	1.17.0-2ubuntu1
+libxcb1	1.17.0-2ubuntu1
+libxdmcp6	1:1.1.5-2
+libxdot4	14.1.2-1ubuntu1
+libxext6	2:1.3.4-1build3
+libxi6	2:1.8.2-2
+libxml-libxml-perl	2.0207+dfsg+really+2.0207-0ubuntu7
+libxml-libxml-simple-perl	1.01-3
+libxml-libxslt-perl	2.003000-4
+libxml-namespacesupport-perl	1.12-2
+libxml-sax-base-perl	1.09-3
+libxml-sax-perl	1.02+dfsg-4
+libxml-writer-perl	0.900-2
+libxml2-16	2.15.2+dfsg-0.1ubuntu0.1
+libxmu6	2:1.1.3-4
+libxpm4	1:3.5.17-1ubuntu0.26.04.1
+libxrender1	1:0.9.12-1build1
+libxslt1.1	1.1.45-0.1
+libxstring-perl	0.005-2build4
+libxt6t64	1:1.2.1-1.3build1
+libxxhash0	0.8.3-2build1
+libzstd1	1.5.7+dfsg-3
+libzzip-0-13t64	0.13.78+dfsg.1-0.2
+linux-libc-dev	7.0.0-31.31
+login	1:4.16.0-2+really2.41.3-3ubuntu2
+login.defs	1:4.17.4-2ubuntu3
+logsave	1.47.2-3ubuntu4
+lsof	4.99.4+dfsg-2build2
+lto-disabled-list	79
+make	4.4.1-3
+man-db	2.13.1-1build1
+mawk	1.3.4.20260129-1
+media-types	14.0.0build1
+mount	2.41.3-3ubuntu2
+ncurses-base	6.6+20251231-1
+ncurses-bin	6.6+20251231-1
+netbase	6.5build1
+node-abbrev	1.1.1+~1.1.2-1
+node-acorn	8.16.0+ds+~cs25.18.7-4
+node-agent-base	7.1.4~0~2025070717+~cs15.2.7-1build1
+node-ajv	8.17.1~ds+~3.0.1+~3.1.0-4build1
+node-ajv-keywords	5.1.0-4
+node-ampproject-remapping	2.2.0+~cs5.15.37-1
+node-ansi-escapes	5.0.0+really.4.3.1-1
+node-ansi-regex	6.2.2+~cs4.0.2-1build3
+node-ansi-styles	6.2.3-1
+node-anymatch	3.1.3+~cs8.0.6-1
+node-aproba	2.1.0-1
+node-archy	1.0.0-7
+node-are-we-there-yet	4.0.2+~1.1.2-1
+node-argparse	2.0.1-3
+node-arrify	2.0.1-3
+node-assert	2.0.0+~cs3.9.8-2
+node-async	3.2.6+dfsg-3
+node-async-each	1.0.3-3
+node-babel-helper-define-polyfill-provider	0.3.3~0~20220913+ds1-1
+node-babel-plugin-add-module-exports	1.0.4+dfsg1~cs5.8.0-4
+node-babel-plugin-lodash	3.3.4+~cs2.0.1-8build1
+node-babel-plugin-polyfill-corejs2	0.3.3~0~20220913+ds1-1
+node-babel-plugin-polyfill-corejs3	0.6.0~0~20220913+ds1-1
+node-babel-plugin-polyfill-regenerator	0.4.1~0~20220913+ds1-1
+node-babel7	7.20.15+ds1+~cs214.269.168-16
+node-babel7-runtime	7.20.15+ds1+~cs214.269.168-16
+node-balanced-match	2.0.0-1
+node-base64-js	1.5.1+dfsg+~1.3.0-3
+node-binary-extensions	2.2.0-2
+node-brace-expansion	2.0.1+~1.1.0-2
+node-braces	3.0.3+~3.0.5-1
+node-browserslist	4.28.1+~cs8.14.48-1
+node-builtins	5.0.1-1
+node-cacache	17.0.3+ds1+~cs8.2.7-3
+node-camelcase	7.0.0-4
+node-caniuse-lite	1.0.30001780+dfsg+~1.0.5-1
+node-chalk	5.6.2+dfsg-5build3
+node-chokidar	3.6.0-5
+node-chownr	3.0.0-2
+node-chrome-trace-event	1.0.3-2
+node-ci-info	4.4.0+~cs8.2.0-3build3
+node-cjs-module-lexer	1.2.3+dfsg-1
+node-cli-table	0.3.11+~cs0.13.4-3
+node-cliui	7.0.4+repack+1+~cs1.4.2-2
+node-clone	2.1.2+~2.1.4-1
+node-clone-deep	4.0.1+~cs7.0.2-1
+node-color-convert	2.0.1+~cs2.0.0-2
+node-color-name	1.1.4+~1.1.1-2
+node-colors	1.4.0-4build1
+node-columnify	1.6.0+~1.5.4-1
+node-commander	14.0.3-7
+node-commondir	1.0.1+~1.0.0-1
+node-concat-stream	2.0.0+~2.0.3-1
+node-console-control-strings	1.1.0-3
+node-convert-source-map	2.0.0+~2.0.3-2
+node-copy-concurrently	1.0.5-11
+node-core-js	3.33.2-1build2
+node-core-js-compat	3.33.2-1build2
+node-core-js-pure	3.33.2-1build2
+node-core-util-is	1.0.3-1
+node-corepack	0.24.0-5build1
+node-css-loader	6.8.1+~cs14.0.17-2
+node-css-selector-tokenizer	0.8.0+~cs4.8.3-1
+node-data-uri-to-buffer	6.0.2~0~2025070717+~cs15.2.7-1build1
+node-debbundle-es-to-primitive	1.2.1+~cs9.7.25-2
+node-debug	4.4.3+~4.1.13-1
+node-decamelize	4.0.0-2
+node-decompress-response	6.0.0-3
+node-deep-equal	2.2.3+~cs43.15.94-1
+node-deep-is	0.1.4-1
+node-defaults	1.0.4+~1.0.3-1
+node-define-properties	1.2.1+~cs2.2.3-1
+node-define-property	2.0.2+really+2.0.2-3
+node-defined	1.0.1+~1.0.2-1
+node-del	7.1.0-2
+node-delegates	1.0.0-3
+node-depd	2.0.0-2
+node-diff	5.0.0~dfsg+~5.0.1-6
+node-doctrine	3.0.0-4
+node-electron-to-chromium	1.5.322-1
+node-encoding	0.1.13-2
+node-enhanced-resolve	5.15.0-1
+node-envinfo	7.11.0+~cs14.3.0-7build1
+node-err-code	2.0.3+dfsg-3
+node-errno	1.0.0-3
+node-error-ex	1.3.4-1
+node-es-abstract	1.20.4+~cs26.27.47-2
+node-es-module-lexer	1.1.0+dfsg-3
+node-es6-error	4.1.1-5
+node-escape-string-regexp	4.0.0-2
+node-escodegen	2.1.0+dfsg+~0.0.10-2
+node-eslint-scope	7.1.1+~3.7.4-1
+node-eslint-utils	3.0.0-4
+node-eslint-visitor-keys	3.3.0+~1.0.0-2
+node-espree	9.4.1~dfsg-2
+node-esprima	4.0.1+ds+~4.0.3-2
+node-esquery	1.4.2~ds-2
+node-esrecurse	4.3.0-2
+node-estraverse	5.3.0+ds+~5.1.1-1
+node-esutils	2.0.3+~2.0.2-2
+node-events	3.3.0+~3.0.3-1
+node-execa	8.0.1+dfsg1+~cs12.0.0-1build2
+node-fancy-log	1.3.3+~cs1.3.1-2
+node-fast-deep-equal	3.1.3-3
+node-fast-levenshtein	2.0.6+ds-3
+node-fetch	3.3.2+~cs11.4.11-3
+node-file-entry-cache	6.0.1+~3.0.4+~2.0.0+~1.0.0+~2.0.1-5
+node-fill-range	7.1.1+~7.0.3-1
+node-find-cache-dir	3.3.2+~3.2.1-1
+node-find-up	6.3.0-8
+node-flat-cache	3.0.4~6.0.1+~3.0.4+~2.0.0+~1.0.0+~2.0.1-5
+node-flatted	3.4.2~ds-1
+node-for-in	1.0.2-4
+node-for-own	1.0.0-3
+node-foreground-child	4.0.3-1
+node-fs-readdir-recursive	1.1.0+~1.1.3-1
+node-fs-write-stream-atomic	1.0.10-6
+node-function-bind	1.1.2+~cs2.1.14-2
+node-functional-red-black-tree	1.0.1+20181105-8
+node-gauge	4.0.4-2
+node-get-caller-file	2.0.5+~cs1.1.1-4
+node-get-stream	8.0.1-11
+node-glob	10.3.6+~cs0.4.15-8build1
+node-glob-parent	6.0.2+~5.1.3-1
+node-globals	13.23.0-1
+node-globby	13.1.3+~cs16.25.40-4
+node-got	11.8.5+~cs58.13.36-6
+node-graceful-fs	4.2.11-1
+node-gyp	12.1.0+~6.1.0-3
+node-has-flag	5.0.1-1
+node-has-unicode	2.0.1-5
+node-hosted-git-info	9.0.2-1build1
+node-http-proxy-agent	7.0.2~0~2025070717+~cs15.2.7-1build1
+node-https-proxy-agent	7.0.6~0~2025070717+~cs15.2.7-1build1
+node-iconv-lite	0.6.3-3
+node-icss-utils	5.1.0+~5.1.2-1
+node-ieee754	1.2.1-3
+node-iferr	1.0.2+~1.0.4-1
+node-ignore	5.2.1-1
+node-imurmurhash	0.1.4+dfsg+~0.1.1-2
+node-indent-string	4.0.0-2
+node-inherits	2.0.4-6
+node-ini	3.0.1-2
+node-interpret	2.2.0-3
+node-ip	2.0.1+~1.1.3-3
+node-ip-regex	4.3.0+~4.1.1-1
+node-is-arrayish	0.3.4-1
+node-is-binary-path	2.1.0-5
+node-is-buffer	2.0.5-2
+node-is-descriptor	3.0.0-2
+node-is-extendable	1.0.1-3
+node-is-extglob	2.1.1-5
+node-is-glob	4.0.3-2
+node-is-number	7.0.0-4
+node-is-path-cwd	2.2.0-2
+node-is-path-inside	3.0.3-2
+node-is-plain-obj	3.0.0-2
+node-is-plain-object	5.0.0-8
+node-is-stream	3.0.0-5
+node-is-windows	1.0.2+~cs1.0.0-1
+node-isarray	2.0.5-4
+node-isexe	2.0.0+~2.0.1-5
+node-isobject	4.0.0-2
+node-istanbul	0.4.5+repack10+~cs98.25.59-7
+node-jest-debbundle	29.6.2~ds3+~cs73.45.28-3build3
+node-jest-worker	29.6.2~ds3+~cs73.45.28-3build3
+node-js-tokens	8.0.0-2
+node-js-yaml	4.1.1+dfsg+~4.0.9-1
+node-jsesc	3.0.2+~3.0.1-1
+node-json-buffer	3.0.1+~3.0.2-1
+node-json-parse-better-errors	1.0.2+~cs3.3.1-3
+node-json-schema	0.4.0+~7.0.15-1
+node-json-schema-traverse	1.0.0-3
+node-json-stable-stringify	1.0.2+repack1+~cs1.0.34-2
+node-json5	2.2.3+dfsg-3
+node-jsonify	0.0.1-1
+node-jsonparse	1.3.1-10
+node-kind-of	6.0.3+dfsg-2
+node-levn	0.4.1+dfsg-2
+node-llhttp	9.3.3~really9.3.0+~cs12.11.8-3build1
+node-loader-runner	4.3.1-1
+node-locate-path	7.1.1-2
+node-lodash	4.17.23+dfsg-1
+node-lodash-packages	4.17.23+dfsg-1
+node-long	5.2.3-3
+node-lowercase-keys	2.0.0-2
+node-lru-cache	10.0.1-3
+node-make-dir	3.1.0-3
+node-memfs	3.4.12+~cs1.0.3-1
+node-memory-fs	0.5.0+~0.3.3-2
+node-merge-stream	2.0.0+~1.1.2-2
+node-micromatch	4.0.8+~4.0.10-2
+node-mime	4.1.0+dfsg+~cs8.97.10-6build5
+node-mime-types	3.0.2+~3.0.1-1
+node-mimic-fn	4.0.0-6
+node-mimic-response	3.1.0-9
+node-minimatch	9.0.3-6
+node-minimist	1.2.8+~cs5.3.5-1
+node-minipass	5.0.0+~cs13.3.24-1build1
+node-mkdirp	2.1.6+~cs5.2.1-5
+node-move-concurrently	1.0.1-7
+node-ms	2.1.3+~cs0.7.31-3
+node-mute-stream	0.0.8+~0.0.1-3
+node-n3	1.16.3+~1.2.3+~1.10.4-3
+node-negotiator	0.6.3+~0.6.1-1
+node-neo-async	2.6.2+~cs3.0.0-3
+node-nopt	9.0.0-1build1
+node-normalize-package-data	8.0.0+~2.4.4-3build1
+node-normalize-path	3.0.0+~3.0.2-1
+node-npm-bundled	2.0.1-2
+node-npm-package-arg	10.0.0+~3.0.0-2
+node-npm-run-path	5.1.0+~4.0.0-9
+node-npmlog	7.0.1+~4.1.4-1
+node-object-assign	4.1.1-7
+node-object-inspect	1.12.2+~cs1.8.1-1
+node-once	1.4.1-1
+node-optimist	0.6.1+~0.0.30-2
+node-optionator	0.9.1+dfsg+~cs1.2.3-1
+node-osenv	0.1.5+~0.1.3-1
+node-p-cancelable	2.1.1-1
+node-p-limit	4.0.0+~cs4.0.0-5
+node-p-locate	6.0.0-14
+node-p-map	4.0.0+~3.1.0+~3.0.1-2
+node-parse-json	5.2.0+~cs5.1.7-2
+node-path-dirname	1.0.2-2
+node-path-exists	5.0.0-9
+node-path-is-absolute	2.0.0-2
+node-path-is-inside	1.0.2+~1.0.3-1
+node-path-scurry	1.9.2-2
+node-path-type	4.0.0-3
+node-picocolors	1.1.1-1
+node-pify	5.0.0+~cs5.0.1-1
+node-pkg-dir	5.0.0-2
+node-postcss	8.5.8+~cs9.3.30-1
+node-postcss-modules-extract-imports	3.1.0-1
+node-postcss-modules-values	4.0.0+~4.0.2-1
+node-postcss-value-parser	4.2.0-1
+node-prelude-ls	1.2.1+dfsg-3
+node-process-nextick-args	2.0.1-3
+node-progress	2.0.3-2
+node-promise-inflight	1.0.1+~1.0.3-1
+node-promise-retry	2.0.1-4
+node-promzard	0.3.0-2
+node-prr	1.0.1-3
+node-quick-lru	6.1.1-4
+node-randombytes	2.1.0+~2.0.3-1
+node-read	1.0.7-5
+node-read-package-json	5.0.2+~2.0.0-5build1
+node-read-pkg	5.2.0-2
+node-readable-stream	3.6.0+~cs3.0.0-4build1
+node-readdirp	3.6.0-3
+node-rechoir	0.8.0+~0.6.4-1
+node-regenerate	1.4.2-3
+node-regenerate-unicode-properties	10.2.2+ds-2
+node-regenerator-runtime	0.15.2+~0.10.8-1
+node-regenerator-transform	0.15.2+~0.10.8-1
+node-regexpp	3.2.0-7
+node-regexpu-core	6.2.0-2build1
+node-regjsgen	0.8.0+ds-1
+node-regjsparser	0.12.0+ds-2
+node-repeat-string	1.6.1+repack-1
+node-require-directory	2.1.1+~2.1.7-1
+node-resolve	1.22.10+~cs5.37.15-1
+node-resolve-cwd	3.0.0-2
+node-resolve-from	5.0.0+~3.1.0+~3.3.0+~2.0.0-1
+node-resumer	0.0.0-6
+node-retry	0.13.1.+~cs2.19.16-1
+node-rimraf	4.4.1-6
+node-run-queue	2.0.0-3
+node-safe-buffer	5.2.1+~cs2.1.2-3
+node-schema-utils	4.2.0~ds-4
+node-semver	7.6.1+~7.5.8-2
+node-serialize-javascript	7.0.4+~5.0.4-1
+node-set-blocking	2.0.0-2
+node-set-immediate-shim	2.0.0-2
+node-shebang-command	2.0.0-1
+node-shebang-regex	3.0.0-2
+node-signal-exit	4.1.0-8
+node-slash	5.1.0-2build1
+node-slice-ansi	5.0.0+~cs9.0.0-5
+node-source-list-map	2.0.1+dfsg+~0.1.2-1
+node-source-map	0.7.0++dfsg2+really.0.6.1-15
+node-source-map-support	0.5.21+ds+~0.5.10-2
+node-spdx-correct	3.2.0+~3.1.3-1
+node-spdx-exceptions	2.5.0-1
+node-spdx-expression-parse	4.0.0+~3.0.5-1
+node-spdx-license-ids	3.26.0-1
+node-sprintf-js	1.1.3+ds1+~1.1.4-2
+node-ssri	9.0.1-3
+node-string-decoder	1.3.0-6
+node-string-width	4.2.3+~cs13.2.3-1
+node-strip-ansi	7.2.0-1
+node-strip-bom	4.0.0-2
+node-strip-eof	3.0.0-6
+node-strip-json-comments	4.0.0-4
+node-supports-color	10.2.2+ds-3
+node-tapable	2.2.1-3
+node-tape	5.6.1+~cs8.20.19-5
+node-tar	6.2.1+ds1+~cs6.1.13-10
+node-terser	5.46.1-4
+node-text-table	0.2.0-5
+node-through	2.3.8+~cs0.0.33-1
+node-time-stamp	2.2.0-2
+node-to-fast-properties	3.0.1-3
+node-to-regex-range	5.0.1-4
+node-tslib	2.4.1-1
+node-type-check	0.4.0+dfsg-3
+node-typedarray	0.0.7-1
+node-undici	7.18.2+dfsg+~cs3.2.0-1build1
+node-unicode-canonical-property-names-ecmascript	2.0.1-1
+node-unicode-match-property-ecmascript	2.0.0-2
+node-unicode-match-property-value-ecmascript	2.2.0+ds-1build1
+node-unicode-property-aliases-ecmascript	2.1.0+ds-1
+node-unique-filename	1.1.1+ds-2
+node-util	0.12.5+~1.0.10-2
+node-util-deprecate	1.0.2-4
+node-uuid	8.3.2+~8.3.4-3
+node-v8-compile-cache	2.4.0-4
+node-v8flags	3.2.0+~3.1.1-1
+node-validate-npm-package-license	3.0.4-3
+node-validate-npm-package-name	5.0.0+~4.0.0-1
+node-watchpack	2.4.0+~cs2.8.1-1
+node-wcwidth.js	1.0.2-2
+node-webassemblyjs	1.14.1+dfsg3+~cs1.2.7-2
+node-webpack-sources	3.2.3+~3.2.0-2
+node-which	2.0.2+~cs1.3.2-5
+node-wide-align	1.1.3-4
+node-wordwrap	1.0.0-4
+node-wrap-ansi	8.0.1+~8.0.1-3
+node-wrappy	1.0.2-3
+node-write	2.0.0~6.0.1+~3.0.4+~2.0.0+~1.0.0+~2.0.1-5
+node-write-file-atomic	7.0.1+~4.0.3-1
+node-xtend	4.0.2-3
+node-y18n	5.0.8+~5.0.0-4
+node-yallist	4.0.0+~4.0.1-2
+node-yargs	16.2.0+~16.0.4-7
+node-yargs-parser	21.1.1+~21.0.0-4
+nodejs	22.22.1+dfsg+~cs22.19.15-1ubuntu1
+npm	9.2.0~ds3-1
+openjdk-25-jdk-headless	25.0.4+7-1~26.04
+openjdk-25-jre-headless	25.0.4+7-1~26.04
+openssh-client	1:10.2p1-2ubuntu3.6
+openssl	3.5.5-1ubuntu3.4
+openssl-provider-legacy	3.5.5-1ubuntu3.4
+passwd	1:4.17.4-2ubuntu3
+patch	2.8-2build1
+perl	5.40.1-7ubuntu0.1
+perl-base	5.40.1-7ubuntu0.1
+perl-modules-5.40	5.40.1-7ubuntu0.1
+perl-openssl-defaults	7build4
+pinentry-curses	1.3.2-3ubuntu1
+pkg-config	2.5.1-4
+pkgconf	2.5.1-4
+pkgconf-bin	2.5.1-4
+preview-latex-style	13.2-1.1
+procps	2:4.0.4-9ubuntu1
+psmisc	23.7-2ubuntu2
+python3	3.14.3-0ubuntu2
+python3-minimal	3.14.3-0ubuntu2
+python3-packaging	26.0-1
+python3-pip	25.1.1+dfsg-1ubuntu2
+python3-wheel	0.46.3-2
+python3.14	3.14.4-1ubuntu0.1
+python3.14-minimal	3.14.4-1ubuntu0.1
+readline-common	8.3-4
+ripgrep	15.1.0-1ubuntu1
+rpcsvc-proto	1.4.3-1build1
+rsync	3.4.1+ds1-7ubuntu0.3
+rust-coreutils	0.8.0-0ubuntu3
+sed	4.9-2ubuntu1
+sensible-utils	0.0.26build1
+socat	1.8.1.1-1ubuntu0.1
+sudo	1.9.17p2-1ubuntu3
+sudo-common	1.2ubuntu
+sysvinit-utils	3.15-5ubuntu1
+t1utils	1.41-4build4
+tar	1.35+dfsg-4ubuntu0.4
+terser	5.46.1-4
+tex-common	6.20
+texlive-base	2025.20260124-1
+texlive-bibtex-extra	2025.20260124-1
+texlive-binaries	2025.20250727.75242+ds-5build1
+texlive-latex-base	2025.20260124-1
+texlive-latex-extra	2025.20260124-1
+texlive-latex-recommended	2025.20260124-1
+texlive-pictures	2025.20260124-1
+tini	0.19.0-6
+tzdata	2026c-0ubuntu0.26.04.1
+ubuntu-keyring	2023.11.28.1build1
+ucf	3.0052ubuntu1
+unzip	6.0-29ubuntu1
+util-linux	2.41.3-3ubuntu2
+webpack	5.105.4+dfsg1+~cs15.13.23-2
+x11-common	1:7.7+26ubuntu1
+xdg-utils	1.2.1-2ubuntu2
+xz-utils	5.8.3-1
+zip	3.0-15ubuntu3
+zlib1g	1:1.3.dfsg+really1.3.1-1ubuntu3
+
+### package-index
+Get:1 https://download.docker.com/linux/ubuntu resolute InRelease [32.5 kB]
+Get:2 https://download.docker.com/linux/ubuntu resolute/stable amd64 Packages [32.0 kB]
+Get:3 http://archive.ubuntu.com/ubuntu resolute InRelease [136 kB]
+Get:4 http://security.ubuntu.com/ubuntu resolute-security InRelease [137 kB]
+Get:5 http://archive.ubuntu.com/ubuntu resolute-updates InRelease [137 kB]
+Get:6 http://security.ubuntu.com/ubuntu resolute-security/restricted amd64 Packages [549 kB]
+Get:7 http://archive.ubuntu.com/ubuntu resolute-backports InRelease [137 kB]
+Get:8 http://security.ubuntu.com/ubuntu resolute-security/main amd64 Packages [676 kB]
+Get:9 http://archive.ubuntu.com/ubuntu resolute/universe amd64 Packages [20.1 MB]
+Get:10 http://security.ubuntu.com/ubuntu resolute-security/universe amd64 Packages [237 kB]
+Get:11 http://security.ubuntu.com/ubuntu resolute-security/multiverse amd64 Packages [13.6 kB]
+Get:12 http://archive.ubuntu.com/ubuntu resolute/restricted amd64 Packages [189 kB]
+Get:13 http://archive.ubuntu.com/ubuntu resolute/multiverse amd64 Packages [352 kB]
+Get:14 http://archive.ubuntu.com/ubuntu resolute/main amd64 Packages [1874 kB]
+Get:15 http://archive.ubuntu.com/ubuntu resolute-updates/restricted amd64 Packages [599 kB]
+Get:16 http://archive.ubuntu.com/ubuntu resolute-updates/universe amd64 Packages [399 kB]
+Get:17 http://archive.ubuntu.com/ubuntu resolute-updates/multiverse amd64 Packages [14.9 kB]
+Get:18 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 Packages [884 kB]
+Get:19 http://archive.ubuntu.com/ubuntu resolute-backports/universe amd64 Packages [3306 B]
+Fetched 26.5 MB in 3s (7588 kB/s)
+Reading package lists...
+
+### install-declared-lmodern
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Solving dependencies...
+The following additional packages will be installed:
+  libfontenc1 xfonts-encodings xfonts-utils
+The following NEW packages will be installed:
+  libfontenc1 lmodern xfonts-encodings xfonts-utils
+0 upgraded, 4 newly installed, 0 to remove and 63 not upgraded.
+Need to get 10.2 MB of archives.
+After this operation, 35.2 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu resolute/main amd64 libfontenc1 amd64 1:1.1.8-1build2 [14.1 kB]
+Get:2 http://archive.ubuntu.com/ubuntu resolute/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu3 [576 kB]
+Get:3 http://archive.ubuntu.com/ubuntu resolute/main amd64 xfonts-utils amd64 1:7.7+7build1 [97.1 kB]
+Get:4 http://archive.ubuntu.com/ubuntu resolute/universe amd64 lmodern all 2.005-1build1 [9538 kB]
+Fetched 10.2 MB in 2s (6688 kB/s)
+Selecting previously unselected package libfontenc1:amd64.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 98735 files and directories currently installed.)
+Preparing to unpack .../libfontenc1_1%3a1.1.8-1build2_amd64.deb ...
+Unpacking libfontenc1:amd64 (1:1.1.8-1build2) ...
+Selecting previously unselected package xfonts-encodings.
+Preparing to unpack .../xfonts-encodings_1%3a1.0.5-0ubuntu3_all.deb ...
+Unpacking xfonts-encodings (1:1.0.5-0ubuntu3) ...
+Selecting previously unselected package xfonts-utils.
+Preparing to unpack .../xfonts-utils_1%3a7.7+7build1_amd64.deb ...
+Unpacking xfonts-utils (1:7.7+7build1) ...
+Selecting previously unselected package lmodern.
+Preparing to unpack .../lmodern_2.005-1build1_all.deb ...
+Unpacking lmodern (2.005-1build1) ...
+Setting up libfontenc1:amd64 (1:1.1.8-1build2) ...
+Setting up xfonts-encodings (1:1.0.5-0ubuntu3) ...
+Setting up xfonts-utils (1:7.7+7build1) ...
+Setting up lmodern (2.005-1build1) ...
+Processing triggers for libc-bin (2.43-2ubuntu2.4) ...
+Processing triggers for man-db (2.13.1-1build1) ...
+Processing triggers for tex-common (6.20) ...
+Running mktexlsr. This may take some time... done.
+Running updmap-sys. This may take some time... done.
+Running mktexlsr /var/lib/texmf ... done.
+Processing triggers for fontconfig (2.17.1-3ubuntu1) ...
+
+### packages-after
+adduser	3.153ubuntu1
+apt	3.2.0
+base-files	14ubuntu6.1
+base-passwd	3.6.8
+bash	5.3-2ubuntu1
+bc	1.07.1-4build1
+biber	2.21-2
+bind9-dnsutils	1:9.20.24-1ubuntu0.2
+bind9-host	1:9.20.24-1ubuntu0.2
+bind9-libs	1:9.20.24-1ubuntu0.2
+binutils	2.46-3ubuntu2
+binutils-common	2.46-3ubuntu2
+binutils-x86-64-linux-gnu	2.46-3ubuntu2
+bsdextrautils	2.41.3-3ubuntu2
+bsdutils	1:2.41.3-3ubuntu2
+bubblewrap	0.11.1-1ubuntu0.1
+build-essential	12.12ubuntu2.26.04.2
+bzip2	1.0.8-6ubuntu0.1
+ca-certificates	20260601~26.04.1
+ca-certificates-java	20260311
+coreutils	9.5-1ubuntu2+0.0.0~ubuntu25
+coreutils-from-uutils	0.0.0~ubuntu25
+cpp	4:15.2.0-5ubuntu1
+cpp-15	15.2.0-16ubuntu1
+cpp-15-x86-64-linux-gnu	15.2.0-16ubuntu1
+cpp-x86-64-linux-gnu	4:15.2.0-5ubuntu1
+curl	8.18.0-1ubuntu2.5
+dash	0.5.12-12ubuntu3
+debconf	1.5.92
+debianutils	5.23.2build1
+default-jdk-headless	2:1.25-77
+default-jre-headless	2:1.25-77
+diffutils	1:3.12-1
+dirmngr	2.4.8-4ubuntu3
+docker-buildx-plugin	0.36.1-1~ubuntu.26.04~resolute
+docker-ce-cli	5:29.7.2-1~ubuntu.26.04~resolute
+docker-compose-plugin	5.5.0-1~ubuntu.26.04~resolute
+dpkg	1.23.7ubuntu1
+dpkg-dev	1.23.7ubuntu1
+e2fsprogs	1.47.2-3ubuntu4
+eslint	6.4.0~dfsg+~6.1.9-12
+findutils	4.10.0-3build2
+fontconfig	2.17.1-3ubuntu1
+fontconfig-config	2.17.1-3ubuntu1
+fonts-dejavu-core	2.37-8build1
+fonts-dejavu-mono	2.37-8build1
+fonts-lmodern	2.005-1build1
+g++	4:15.2.0-5ubuntu1
+g++-15	15.2.0-16ubuntu1
+g++-15-x86-64-linux-gnu	15.2.0-16ubuntu1
+g++-x86-64-linux-gnu	4:15.2.0-5ubuntu1
+gcc	4:15.2.0-5ubuntu1
+gcc-15	15.2.0-16ubuntu1
+gcc-15-base	15.2.0-16ubuntu1
+gcc-15-x86-64-linux-gnu	15.2.0-16ubuntu1
+gcc-16-base	16-20260322-1ubuntu1
+gcc-x86-64-linux-gnu	4:15.2.0-5ubuntu1
+gh	2.46.0-4
+git	1:2.53.0-1ubuntu1
+git-man	1:2.53.0-1ubuntu1
+gnu-coreutils	9.7-3ubuntu2
+gnupg	2.4.8-4ubuntu3
+golang	2:1.26~1
+golang-1.26	1.26.0-1
+golang-1.26-doc	1.26.0-1
+golang-1.26-go	1.26.0-1
+golang-1.26-src	1.26.0-1
+golang-doc	2:1.26~1
+golang-go	2:1.26~1
+golang-src	2:1.26~1
+gpg	2.4.8-4ubuntu3
+gpg-agent	2.4.8-4ubuntu3
+gpgconf	2.4.8-4ubuntu3
+gpgsm	2.4.8-4ubuntu3
+gpgv	2.4.8-4ubuntu3
+graphviz	14.1.2-1ubuntu1
+grep	3.12-1
+groff-base	1.23.0-10
+gyp	0.16.2-2build1
+gzip	1.14-1~exp2ubuntu1.1
+handlebars	3:4.7.7+~4.1.0-1
+hostname	3.25build1
+init-system-helpers	1.69
+java-common	0.77
+jq	1.8.1-4ubuntu2
+latexmk	1:4.87~ds-1
+less	668-1build1
+libacl1	2.3.2-2
+libada-url0-3	3.4.3-1
+libalgorithm-c3-perl	0.11-2
+libaom3	3.13.1-2ubuntu0.1
+libapache-pom-java	33-2build1
+libapparmor1	5.0.2-0ubuntu1~26.04.1
+libapt-pkg7.0	3.2.0
+libasan8	16-20260322-1ubuntu1
+libassuan9	3.0.2-2build1
+libatomic1	16-20260322-1ubuntu1
+libattr1	1:2.5.2-4
+libaudit-common	1:4.1.2-1build1
+libaudit1	1:4.1.2-1build1
+libautovivification-perl	0.18-2build5
+libb-hooks-endofscope-perl	0.28-2
+libb-hooks-op-check-perl	0.22-3build2
+libbibtex-parser-perl	1.93+dfsg-1
+libbinutils	2.46-3ubuntu2
+libblkid1	2.41.3-3ubuntu2
+libbrotli1	1.2.0-3build1
+libbsd0	0.12.2-2build2
+libbtparse2	0.91-1
+libbusiness-isbn-data-perl	20260214.001-1
+libbusiness-isbn-perl	3.012-1
+libbusiness-ismn-perl	1.205-1
+libbusiness-issn-perl	1.008-1
+libbz2-1.0	1.0.8-6ubuntu0.1
+libc-bin	2.43-2ubuntu2.4
+libc-dev-bin	2.43-2ubuntu2.4
+libc-gconv-modules-extra	2.43-2ubuntu2.4
+libc6	2.43-2ubuntu2.4
+libc6-dev	2.43-2ubuntu2.4
+libcairo2	1.18.4-3
+libcap-ng0	0.8.5-4build5
+libcap2	1:2.75-10ubuntu2
+libcares2	1.34.6-1
+libcbor0.10	0.10.2-2ubuntu3
+libcc1-0	16-20260322-1ubuntu1
+libcdt6	14.1.2-1ubuntu1
+libcgraph8	14.1.2-1ubuntu1
+libclass-accessor-perl	0.51-2
+libclass-c3-perl	0.35-2
+libclass-data-inheritable-perl	0.10-1
+libclass-inspector-perl	1.36-3
+libclass-method-modifiers-perl	2.15-1
+libclass-singleton-perl	1.6-2
+libclone-perl	0.47-1
+libclone-pp-perl	1.08-2
+libcom-err2	1.47.2-3ubuntu4
+libcommons-logging-java	1.3.0-1ubuntu1
+libcommons-parent-java	56-1build1
+libcrypt-dev	1:4.5.1-1
+libcrypt1	1:4.5.1-1
+libctf-nobfd0	2.46-3ubuntu2
+libctf0	2.46-3ubuntu2
+libcurl3t64-gnutls	8.18.0-1ubuntu2.5
+libcurl4t64	8.18.0-1ubuntu2.5
+libdata-compare-perl	1.29-1
+libdata-dump-perl	1.25-1
+libdata-optlist-perl	0.114-1
+libdata-uniqid-perl	0.12-3
+libdate-simple-perl	3.0300-3build7
+libdatetime-calendar-julian-perl	0.107-1
+libdatetime-format-builder-perl	0.8300-1
+libdatetime-format-strptime-perl	1.8000-1
+libdatetime-locale-perl	1:1.45-1
+libdatetime-perl	2:1.65-1build3
+libdatetime-timezone-perl	1:2.65-1+2025b
+libdatrie1	0.2.14-1
+libdb5.3t64	5.3.28+dfsg2-10ubuntu1
+libdebconfclient0	0.280ubuntu1
+libdeflate0	1.23-2ubuntu1
+libdevel-callchecker-perl	0.009-3
+libdevel-stacktrace-perl	2.0500-1
+libdpkg-perl	1.23.7ubuntu1
+libdynaloader-functions-perl	0.004-2
+libedit2	3.1-20251016-1
+libencode-eucjpascii-perl	0.03-1build5
+libencode-eucjpms-perl	0.07-5
+libencode-hanextra-perl	0.23-6build5
+libencode-jis2k-perl	0.05-1build4
+libencode-locale-perl	1.05-3
+liberror-perl	0.17030-1
+libeval-closure-perl	0.14-3
+libexception-class-perl	1.45-1
+libexpat1	2.7.4-1
+libexporter-tiny-perl	1.006003-1
+libext2fs2t64	1.47.2-3ubuntu4
+libffi8	3.5.2-4
+libfido2-1	1.16.0-2build1
+libfile-find-rule-perl	0.35-1build1
+libfile-listing-perl	6.16-1
+libfile-sharedir-perl	1.118-3
+libfile-slurper-perl	0.014-1
+libfontbox-java	1:1.8.16-5
+libfontconfig1	2.17.1-3ubuntu1
+libfontenc1	1:1.1.8-1build2
+libfreetype6	2.14.2+dfsg-1ubuntu0.1
+libfribidi0	1.0.16-5
+libgcc-15-dev	15.2.0-16ubuntu1
+libgcc-s1	16-20260322-1ubuntu1
+libgcrypt20	1.12.0-2ubuntu1
+libgd3	2.3.3-13ubuntu2
+libgdbm-compat4t64	1.26-1build1
+libgdbm6t64	1.26-1build1
+libglib2.0-0t64	2.88.0-1ubuntu0.1
+libgmp10	2:6.3.0+dfsg-5ubuntu2
+libgnutls30t64	3.8.12-2ubuntu1.1
+libgomp1	16-20260322-1ubuntu1
+libgpg-error0	1.58-2
+libgprofng0	2.46-3ubuntu2
+libgraph-easy-perl	0.76-3
+libgraphite2-3	1.3.14-11ubuntu1.1
+libgssapi-krb5-2	1.22.1-2ubuntu4.1
+libgvc7	14.1.2-1ubuntu1
+libgvplugin-gd8	14.1.2-1ubuntu1
+libgvplugin-pango8	14.1.2-1ubuntu1
+libgvpr2	14.1.2-1ubuntu1
+libharfbuzz0b	12.3.2-2
+libheif-plugin-aomdec	1.21.2-3ubuntu0.5
+libheif1	1.21.2-3ubuntu0.5
+libhogweed6t64	3.10.2-1
+libhtml-parser-perl	3.83-1ubuntu0.1
+libhtml-tagset-perl	3.24-1
+libhtml-tree-perl	5.07-3
+libhttp-cookies-perl	6.11-1
+libhttp-date-perl	6.06-1ubuntu0.26.04.1
+libhttp-message-perl	7.01-1ubuntu1
+libhttp-negotiate-perl	6.01-2
+libhwasan0	16-20260322-1ubuntu1
+libice6	2:1.1.1-1build1
+libicu78	78.2-2ubuntu1
+libidn2-0	2.3.8-4build1
+libimagequant0	4.4.1-1
+libio-html-perl	1.004-3
+libio-socket-ssl-perl	2.098-1
+libio-string-perl	1.08-4
+libipc-run3-perl	0.049-1
+libisl23	0.27-1build1
+libitm1	16-20260322-1ubuntu1
+libjansson4	2.14-2build4
+libjbig0	2.1-6.1ubuntu3
+libjemalloc2	5.3.0-4
+libjpeg-turbo8	2.1.5-4ubuntu4
+libjpeg8	8c-2ubuntu12
+libjq1	1.8.1-4ubuntu2
+libjs-events	3.3.0+~3.0.3-1
+libjs-inherits	2.0.4-6
+libjs-prettify	2015.12.04+dfsg-3
+libjs-regenerate	1.4.2-3
+libjs-source-map	0.7.0++dfsg2+really.0.6.1-15
+libjs-sprintf-js	1.1.3+ds1+~1.1.4-2
+libjs-util	0.12.5+~1.0.10-2
+libjson-c5	0.18+ds-3
+libk5crypto3	1.22.1-2ubuntu4.1
+libkeyutils1	1.6.3-6ubuntu3
+libkpathsea6	2025.20250727.75242+ds-5build1
+libkrb5-3	1.22.1-2ubuntu4.1
+libkrb5support0	1.22.1-2ubuntu4.1
+libksba8	1.6.7-2build1
+liblatex-tounicode-perl	1.93-1
+liblcms2-2	2.17-1ubuntu0.2
+libldap-common	2.6.10+dfsg-1ubuntu5
+libldap2	2.6.10+dfsg-1ubuntu5
+liblerc4	4.0.0+ds-5ubuntu2
+liblingua-translit-perl	0.29-2
+liblist-allutils-perl	0.19-1
+liblist-moreutils-perl	0.430-2
+liblist-moreutils-xs-perl	0.430-4build1
+liblist-someutils-perl	0.59-1
+liblist-utilsby-perl	0.12-2
+libllhttp9.3	9.3.3~really9.3.0+~cs12.11.8-3build1
+liblmdb0	0.9.31-1build2
+liblog-log4perl-perl	1.57-1
+liblsan0	16-20260322-1ubuntu1
+liblsof0	4.99.4+dfsg-2build2
+libltdl7	2.5.4-9
+liblwp-mediatypes-perl	6.04-2
+liblwp-protocol-https-perl	6.14-1
+liblz4-1	1.10.0-8
+liblzma5	5.8.3-1
+libmaxminddb0	1.12.2-1build2
+libmd0	1.1.0-2build4
+libmime-charset-perl	1.013.1-2
+libmodule-implementation-perl	0.09-2
+libmodule-runtime-perl	0.018-1
+libmount1	2.41.3-3ubuntu2
+libmpc3	1.3.1-3
+libmpfi0	1.5.4+ds-4build1
+libmpfr6	4.2.2-3
+libmro-compat-perl	0.15-2
+libnamespace-autoclean-perl	0.31-1
+libnamespace-clean-perl	0.27-2
+libncursesw6	6.6+20251231-1
+libnet-http-perl	6.24-1build1
+libnet-ssleay-perl	1.94-3
+libnettle8t64	3.10.2-1
+libnghttp2-14	1.68.0-2ubuntu0.2
+libnode-dev	22.22.1+dfsg+~cs22.19.15-1ubuntu1
+libnode127	22.22.1+dfsg+~cs22.19.15-1ubuntu1
+libnpth0t64	1.8-3build1
+libnspr4	2:4.38.2-1ubuntu1
+libnss3	2:3.120-1ubuntu2.1
+libnumber-compare-perl	0.03-3
+libonig5	6.9.10-1build1
+libp11-kit0	0.26.2-2
+libpackage-stash-perl	0.40-1
+libpam-modules	1.7.0-5ubuntu3.1
+libpam-modules-bin	1.7.0-5ubuntu3.1
+libpam-runtime	1.7.0-5ubuntu3.1
+libpam0g	1.7.0-5ubuntu3.1
+libpango-1.0-0	1.57.0-1
+libpangocairo-1.0-0	1.57.0-1
+libpangoft2-1.0-0	1.57.0-1
+libpaper-utils	2.2.5-0.3maysync1
+libpaper2	2.2.5-0.3maysync1
+libparams-classify-perl	0.015-2build6
+libparams-util-perl	1.102-3build1
+libparams-validate-perl	1.31-2build4
+libparams-validationcompiler-perl	0.31-1
+libparse-recdescent-perl	1.967015+dfsg-4
+libpathplan4	14.1.2-1ubuntu1
+libpcre2-8-0	10.46-1build1
+libpcsclite1	2.4.1-1
+libpdfbox-java	1:1.8.16-5
+libperl5.40	5.40.1-7ubuntu0.1
+libpipeline1	1.5.8-2
+libpixman-1-0	0.46.4-1
+libpkgconf7	2.5.1-4
+libpng16-16t64	1.6.57-1
+libpopt0	1.19+dfsg-2build1
+libpotrace0	1.16-2build2
+libproc2-0	2:4.0.4-9ubuntu1
+libpsl5t64	0.21.2-1.1build2
+libptexenc1	2025.20250727.75242+ds-5build1
+libpython3-stdlib	3.14.3-0ubuntu2
+libpython3.14-minimal	3.14.4-1ubuntu0.1
+libpython3.14-stdlib	3.14.4-1ubuntu0.1
+libquadmath0	16-20260322-1ubuntu1
+libreadline8t64	8.3-4
+libreadonly-perl	2.050-3
+libregexp-common-perl	2024080801-1
+librole-tiny-perl	2.002004-1
+librtmp1	2.4+20151223.gitfa8646d.1-3
+libsasl2-2	2.1.28+dfsg1-9ubuntu3
+libsasl2-modules-db	2.1.28+dfsg1-9ubuntu3
+libseccomp2	2.6.0-2ubuntu5
+libselinux1	3.9-4build1
+libsemanage-common	3.9-1build1
+libsemanage2	3.9-1build1
+libsepol2	3.9-2
+libsframe3	2.46-3ubuntu2
+libsharpyuv0	1.5.0-0.1build1
+libsimdjson29	4.2.4-1
+libsimdutf31	8.0.0-1
+libsm6	2:1.2.6-1build1
+libsmartcols1	2.41.3-3ubuntu2
+libsombok3	2.4.0-2build2
+libsort-key-perl	1.33-3build5
+libspecio-perl	0.53-1
+libsqlite3-0	3.46.1-9ubuntu0.2
+libss2	1.47.2-3ubuntu4
+libssh2-1t64	1.11.1-1ubuntu0.26.04.3
+libssl-dev	3.5.5-1ubuntu3.4
+libssl3t64	3.5.5-1ubuntu3.4
+libstdc++-15-dev	15.2.0-16ubuntu1
+libstdc++6	16-20260322-1ubuntu1
+libsub-exporter-perl	0.990-1
+libsub-exporter-progressive-perl	0.001013-3
+libsub-identify-perl	0.14-4
+libsub-install-perl	0.929-1
+libsub-name-perl	0.28-1
+libsub-quote-perl	2.006009-1ubuntu1
+libsynctex2	2025.20250727.75242+ds-5build1
+libsystemd0	259.5-0ubuntu3.4
+libtasn1-6	4.21.0-2
+libteckit0	2.5.13+ds-1
+libtexlua53-5	2025.20250727.75242+ds-5build1
+libtext-bibtex-perl	0.91-1
+libtext-charwidth-perl	0.04-11build4
+libtext-csv-perl	2.06-1
+libtext-csv-xs-perl	1.61-1
+libtext-glob-perl	0.11-3
+libtext-roman-perl	3.5-4
+libtext-wrapi18n-perl	0.06-10
+libthai-data	0.1.30-1
+libthai0	0.1.30-1
+libtie-cycle-perl	1.233-1
+libtiff6	4.7.0-3ubuntu5
+libtimedate-perl	2.3300-2
+libtinfo6	6.6+20251231-1
+libtirpc-common	1.3.7-0.1
+libtirpc3t64	1.3.7-0.1
+libtry-tiny-perl	0.32-1
+libtsan2	16-20260322-1ubuntu1
+libubsan1	16-20260322-1ubuntu1
+libuchardet0	0.0.8-2
+libudev1	259.5-0ubuntu3.4
+libunicode-linebreak-perl	0.0.20190101-3
+libunistring5	1.3-2build1
+liburcu8t64	0.15.6-1
+liburi-perl	5.34-2build1
+libuuid1	2.41.3-3ubuntu2
+libuv1-dev	1.51.0-2ubuntu1
+libuv1t64	1.51.0-2ubuntu1
+libvariable-magic-perl	0.64-1build1
+libwebp7	1.5.0-0.1build1
+libwrap0	7.6.q-36build2
+libwww-perl	6.81-1ubuntu0.1
+libwww-robotrules-perl	6.02-1build1
+libx11-6	2:1.8.13-1
+libx11-data	2:1.8.13-1
+libxau6	1:1.0.11-1build2
+libxaw7	2:1.0.16-1build1
+libxcb-render0	1.17.0-2ubuntu1
+libxcb-shm0	1.17.0-2ubuntu1
+libxcb1	1.17.0-2ubuntu1
+libxdmcp6	1:1.1.5-2
+libxdot4	14.1.2-1ubuntu1
+libxext6	2:1.3.4-1build3
+libxi6	2:1.8.2-2
+libxml-libxml-perl	2.0207+dfsg+really+2.0207-0ubuntu7
+libxml-libxml-simple-perl	1.01-3
+libxml-libxslt-perl	2.003000-4
+libxml-namespacesupport-perl	1.12-2
+libxml-sax-base-perl	1.09-3
+libxml-sax-perl	1.02+dfsg-4
+libxml-writer-perl	0.900-2
+libxml2-16	2.15.2+dfsg-0.1ubuntu0.1
+libxmu6	2:1.1.3-4
+libxpm4	1:3.5.17-1ubuntu0.26.04.1
+libxrender1	1:0.9.12-1build1
+libxslt1.1	1.1.45-0.1
+libxstring-perl	0.005-2build4
+libxt6t64	1:1.2.1-1.3build1
+libxxhash0	0.8.3-2build1
+libzstd1	1.5.7+dfsg-3
+libzzip-0-13t64	0.13.78+dfsg.1-0.2
+linux-libc-dev	7.0.0-31.31
+lmodern	2.005-1build1
+login	1:4.16.0-2+really2.41.3-3ubuntu2
+login.defs	1:4.17.4-2ubuntu3
+logsave	1.47.2-3ubuntu4
+lsof	4.99.4+dfsg-2build2
+lto-disabled-list	79
+make	4.4.1-3
+man-db	2.13.1-1build1
+mawk	1.3.4.20260129-1
+media-types	14.0.0build1
+mount	2.41.3-3ubuntu2
+ncurses-base	6.6+20251231-1
+ncurses-bin	6.6+20251231-1
+netbase	6.5build1
+node-abbrev	1.1.1+~1.1.2-1
+node-acorn	8.16.0+ds+~cs25.18.7-4
+node-agent-base	7.1.4~0~2025070717+~cs15.2.7-1build1
+node-ajv	8.17.1~ds+~3.0.1+~3.1.0-4build1
+node-ajv-keywords	5.1.0-4
+node-ampproject-remapping	2.2.0+~cs5.15.37-1
+node-ansi-escapes	5.0.0+really.4.3.1-1
+node-ansi-regex	6.2.2+~cs4.0.2-1build3
+node-ansi-styles	6.2.3-1
+node-anymatch	3.1.3+~cs8.0.6-1
+node-aproba	2.1.0-1
+node-archy	1.0.0-7
+node-are-we-there-yet	4.0.2+~1.1.2-1
+node-argparse	2.0.1-3
+node-arrify	2.0.1-3
+node-assert	2.0.0+~cs3.9.8-2
+node-async	3.2.6+dfsg-3
+node-async-each	1.0.3-3
+node-babel-helper-define-polyfill-provider	0.3.3~0~20220913+ds1-1
+node-babel-plugin-add-module-exports	1.0.4+dfsg1~cs5.8.0-4
+node-babel-plugin-lodash	3.3.4+~cs2.0.1-8build1
+node-babel-plugin-polyfill-corejs2	0.3.3~0~20220913+ds1-1
+node-babel-plugin-polyfill-corejs3	0.6.0~0~20220913+ds1-1
+node-babel-plugin-polyfill-regenerator	0.4.1~0~20220913+ds1-1
+node-babel7	7.20.15+ds1+~cs214.269.168-16
+node-babel7-runtime	7.20.15+ds1+~cs214.269.168-16
+node-balanced-match	2.0.0-1
+node-base64-js	1.5.1+dfsg+~1.3.0-3
+node-binary-extensions	2.2.0-2
+node-brace-expansion	2.0.1+~1.1.0-2
+node-braces	3.0.3+~3.0.5-1
+node-browserslist	4.28.1+~cs8.14.48-1
+node-builtins	5.0.1-1
+node-cacache	17.0.3+ds1+~cs8.2.7-3
+node-camelcase	7.0.0-4
+node-caniuse-lite	1.0.30001780+dfsg+~1.0.5-1
+node-chalk	5.6.2+dfsg-5build3
+node-chokidar	3.6.0-5
+node-chownr	3.0.0-2
+node-chrome-trace-event	1.0.3-2
+node-ci-info	4.4.0+~cs8.2.0-3build3
+node-cjs-module-lexer	1.2.3+dfsg-1
+node-cli-table	0.3.11+~cs0.13.4-3
+node-cliui	7.0.4+repack+1+~cs1.4.2-2
+node-clone	2.1.2+~2.1.4-1
+node-clone-deep	4.0.1+~cs7.0.2-1
+node-color-convert	2.0.1+~cs2.0.0-2
+node-color-name	1.1.4+~1.1.1-2
+node-colors	1.4.0-4build1
+node-columnify	1.6.0+~1.5.4-1
+node-commander	14.0.3-7
+node-commondir	1.0.1+~1.0.0-1
+node-concat-stream	2.0.0+~2.0.3-1
+node-console-control-strings	1.1.0-3
+node-convert-source-map	2.0.0+~2.0.3-2
+node-copy-concurrently	1.0.5-11
+node-core-js	3.33.2-1build2
+node-core-js-compat	3.33.2-1build2
+node-core-js-pure	3.33.2-1build2
+node-core-util-is	1.0.3-1
+node-corepack	0.24.0-5build1
+node-css-loader	6.8.1+~cs14.0.17-2
+node-css-selector-tokenizer	0.8.0+~cs4.8.3-1
+node-data-uri-to-buffer	6.0.2~0~2025070717+~cs15.2.7-1build1
+node-debbundle-es-to-primitive	1.2.1+~cs9.7.25-2
+node-debug	4.4.3+~4.1.13-1
+node-decamelize	4.0.0-2
+node-decompress-response	6.0.0-3
+node-deep-equal	2.2.3+~cs43.15.94-1
+node-deep-is	0.1.4-1
+node-defaults	1.0.4+~1.0.3-1
+node-define-properties	1.2.1+~cs2.2.3-1
+node-define-property	2.0.2+really+2.0.2-3
+node-defined	1.0.1+~1.0.2-1
+node-del	7.1.0-2
+node-delegates	1.0.0-3
+node-depd	2.0.0-2
+node-diff	5.0.0~dfsg+~5.0.1-6
+node-doctrine	3.0.0-4
+node-electron-to-chromium	1.5.322-1
+node-encoding	0.1.13-2
+node-enhanced-resolve	5.15.0-1
+node-envinfo	7.11.0+~cs14.3.0-7build1
+node-err-code	2.0.3+dfsg-3
+node-errno	1.0.0-3
+node-error-ex	1.3.4-1
+node-es-abstract	1.20.4+~cs26.27.47-2
+node-es-module-lexer	1.1.0+dfsg-3
+node-es6-error	4.1.1-5
+node-escape-string-regexp	4.0.0-2
+node-escodegen	2.1.0+dfsg+~0.0.10-2
+node-eslint-scope	7.1.1+~3.7.4-1
+node-eslint-utils	3.0.0-4
+node-eslint-visitor-keys	3.3.0+~1.0.0-2
+node-espree	9.4.1~dfsg-2
+node-esprima	4.0.1+ds+~4.0.3-2
+node-esquery	1.4.2~ds-2
+node-esrecurse	4.3.0-2
+node-estraverse	5.3.0+ds+~5.1.1-1
+node-esutils	2.0.3+~2.0.2-2
+node-events	3.3.0+~3.0.3-1
+node-execa	8.0.1+dfsg1+~cs12.0.0-1build2
+node-fancy-log	1.3.3+~cs1.3.1-2
+node-fast-deep-equal	3.1.3-3
+node-fast-levenshtein	2.0.6+ds-3
+node-fetch	3.3.2+~cs11.4.11-3
+node-file-entry-cache	6.0.1+~3.0.4+~2.0.0+~1.0.0+~2.0.1-5
+node-fill-range	7.1.1+~7.0.3-1
+node-find-cache-dir	3.3.2+~3.2.1-1
+node-find-up	6.3.0-8
+node-flat-cache	3.0.4~6.0.1+~3.0.4+~2.0.0+~1.0.0+~2.0.1-5
+node-flatted	3.4.2~ds-1
+node-for-in	1.0.2-4
+node-for-own	1.0.0-3
+node-foreground-child	4.0.3-1
+node-fs-readdir-recursive	1.1.0+~1.1.3-1
+node-fs-write-stream-atomic	1.0.10-6
+node-function-bind	1.1.2+~cs2.1.14-2
+node-functional-red-black-tree	1.0.1+20181105-8
+node-gauge	4.0.4-2
+node-get-caller-file	2.0.5+~cs1.1.1-4
+node-get-stream	8.0.1-11
+node-glob	10.3.6+~cs0.4.15-8build1
+node-glob-parent	6.0.2+~5.1.3-1
+node-globals	13.23.0-1
+node-globby	13.1.3+~cs16.25.40-4
+node-got	11.8.5+~cs58.13.36-6
+node-graceful-fs	4.2.11-1
+node-gyp	12.1.0+~6.1.0-3
+node-has-flag	5.0.1-1
+node-has-unicode	2.0.1-5
+node-hosted-git-info	9.0.2-1build1
+node-http-proxy-agent	7.0.2~0~2025070717+~cs15.2.7-1build1
+node-https-proxy-agent	7.0.6~0~2025070717+~cs15.2.7-1build1
+node-iconv-lite	0.6.3-3
+node-icss-utils	5.1.0+~5.1.2-1
+node-ieee754	1.2.1-3
+node-iferr	1.0.2+~1.0.4-1
+node-ignore	5.2.1-1
+node-imurmurhash	0.1.4+dfsg+~0.1.1-2
+node-indent-string	4.0.0-2
+node-inherits	2.0.4-6
+node-ini	3.0.1-2
+node-interpret	2.2.0-3
+node-ip	2.0.1+~1.1.3-3
+node-ip-regex	4.3.0+~4.1.1-1
+node-is-arrayish	0.3.4-1
+node-is-binary-path	2.1.0-5
+node-is-buffer	2.0.5-2
+node-is-descriptor	3.0.0-2
+node-is-extendable	1.0.1-3
+node-is-extglob	2.1.1-5
+node-is-glob	4.0.3-2
+node-is-number	7.0.0-4
+node-is-path-cwd	2.2.0-2
+node-is-path-inside	3.0.3-2
+node-is-plain-obj	3.0.0-2
+node-is-plain-object	5.0.0-8
+node-is-stream	3.0.0-5
+node-is-windows	1.0.2+~cs1.0.0-1
+node-isarray	2.0.5-4
+node-isexe	2.0.0+~2.0.1-5
+node-isobject	4.0.0-2
+node-istanbul	0.4.5+repack10+~cs98.25.59-7
+node-jest-debbundle	29.6.2~ds3+~cs73.45.28-3build3
+node-jest-worker	29.6.2~ds3+~cs73.45.28-3build3
+node-js-tokens	8.0.0-2
+node-js-yaml	4.1.1+dfsg+~4.0.9-1
+node-jsesc	3.0.2+~3.0.1-1
+node-json-buffer	3.0.1+~3.0.2-1
+node-json-parse-better-errors	1.0.2+~cs3.3.1-3
+node-json-schema	0.4.0+~7.0.15-1
+node-json-schema-traverse	1.0.0-3
+node-json-stable-stringify	1.0.2+repack1+~cs1.0.34-2
+node-json5	2.2.3+dfsg-3
+node-jsonify	0.0.1-1
+node-jsonparse	1.3.1-10
+node-kind-of	6.0.3+dfsg-2
+node-levn	0.4.1+dfsg-2
+node-llhttp	9.3.3~really9.3.0+~cs12.11.8-3build1
+node-loader-runner	4.3.1-1
+node-locate-path	7.1.1-2
+node-lodash	4.17.23+dfsg-1
+node-lodash-packages	4.17.23+dfsg-1
+node-long	5.2.3-3
+node-lowercase-keys	2.0.0-2
+node-lru-cache	10.0.1-3
+node-make-dir	3.1.0-3
+node-memfs	3.4.12+~cs1.0.3-1
+node-memory-fs	0.5.0+~0.3.3-2
+node-merge-stream	2.0.0+~1.1.2-2
+node-micromatch	4.0.8+~4.0.10-2
+node-mime	4.1.0+dfsg+~cs8.97.10-6build5
+node-mime-types	3.0.2+~3.0.1-1
+node-mimic-fn	4.0.0-6
+node-mimic-response	3.1.0-9
+node-minimatch	9.0.3-6
+node-minimist	1.2.8+~cs5.3.5-1
+node-minipass	5.0.0+~cs13.3.24-1build1
+node-mkdirp	2.1.6+~cs5.2.1-5
+node-move-concurrently	1.0.1-7
+node-ms	2.1.3+~cs0.7.31-3
+node-mute-stream	0.0.8+~0.0.1-3
+node-n3	1.16.3+~1.2.3+~1.10.4-3
+node-negotiator	0.6.3+~0.6.1-1
+node-neo-async	2.6.2+~cs3.0.0-3
+node-nopt	9.0.0-1build1
+node-normalize-package-data	8.0.0+~2.4.4-3build1
+node-normalize-path	3.0.0+~3.0.2-1
+node-npm-bundled	2.0.1-2
+node-npm-package-arg	10.0.0+~3.0.0-2
+node-npm-run-path	5.1.0+~4.0.0-9
+node-npmlog	7.0.1+~4.1.4-1
+node-object-assign	4.1.1-7
+node-object-inspect	1.12.2+~cs1.8.1-1
+node-once	1.4.1-1
+node-optimist	0.6.1+~0.0.30-2
+node-optionator	0.9.1+dfsg+~cs1.2.3-1
+node-osenv	0.1.5+~0.1.3-1
+node-p-cancelable	2.1.1-1
+node-p-limit	4.0.0+~cs4.0.0-5
+node-p-locate	6.0.0-14
+node-p-map	4.0.0+~3.1.0+~3.0.1-2
+node-parse-json	5.2.0+~cs5.1.7-2
+node-path-dirname	1.0.2-2
+node-path-exists	5.0.0-9
+node-path-is-absolute	2.0.0-2
+node-path-is-inside	1.0.2+~1.0.3-1
+node-path-scurry	1.9.2-2
+node-path-type	4.0.0-3
+node-picocolors	1.1.1-1
+node-pify	5.0.0+~cs5.0.1-1
+node-pkg-dir	5.0.0-2
+node-postcss	8.5.8+~cs9.3.30-1
+node-postcss-modules-extract-imports	3.1.0-1
+node-postcss-modules-values	4.0.0+~4.0.2-1
+node-postcss-value-parser	4.2.0-1
+node-prelude-ls	1.2.1+dfsg-3
+node-process-nextick-args	2.0.1-3
+node-progress	2.0.3-2
+node-promise-inflight	1.0.1+~1.0.3-1
+node-promise-retry	2.0.1-4
+node-promzard	0.3.0-2
+node-prr	1.0.1-3
+node-quick-lru	6.1.1-4
+node-randombytes	2.1.0+~2.0.3-1
+node-read	1.0.7-5
+node-read-package-json	5.0.2+~2.0.0-5build1
+node-read-pkg	5.2.0-2
+node-readable-stream	3.6.0+~cs3.0.0-4build1
+node-readdirp	3.6.0-3
+node-rechoir	0.8.0+~0.6.4-1
+node-regenerate	1.4.2-3
+node-regenerate-unicode-properties	10.2.2+ds-2
+node-regenerator-runtime	0.15.2+~0.10.8-1
+node-regenerator-transform	0.15.2+~0.10.8-1
+node-regexpp	3.2.0-7
+node-regexpu-core	6.2.0-2build1
+node-regjsgen	0.8.0+ds-1
+node-regjsparser	0.12.0+ds-2
+node-repeat-string	1.6.1+repack-1
+node-require-directory	2.1.1+~2.1.7-1
+node-resolve	1.22.10+~cs5.37.15-1
+node-resolve-cwd	3.0.0-2
+node-resolve-from	5.0.0+~3.1.0+~3.3.0+~2.0.0-1
+node-resumer	0.0.0-6
+node-retry	0.13.1.+~cs2.19.16-1
+node-rimraf	4.4.1-6
+node-run-queue	2.0.0-3
+node-safe-buffer	5.2.1+~cs2.1.2-3
+node-schema-utils	4.2.0~ds-4
+node-semver	7.6.1+~7.5.8-2
+node-serialize-javascript	7.0.4+~5.0.4-1
+node-set-blocking	2.0.0-2
+node-set-immediate-shim	2.0.0-2
+node-shebang-command	2.0.0-1
+node-shebang-regex	3.0.0-2
+node-signal-exit	4.1.0-8
+node-slash	5.1.0-2build1
+node-slice-ansi	5.0.0+~cs9.0.0-5
+node-source-list-map	2.0.1+dfsg+~0.1.2-1
+node-source-map	0.7.0++dfsg2+really.0.6.1-15
+node-source-map-support	0.5.21+ds+~0.5.10-2
+node-spdx-correct	3.2.0+~3.1.3-1
+node-spdx-exceptions	2.5.0-1
+node-spdx-expression-parse	4.0.0+~3.0.5-1
+node-spdx-license-ids	3.26.0-1
+node-sprintf-js	1.1.3+ds1+~1.1.4-2
+node-ssri	9.0.1-3
+node-string-decoder	1.3.0-6
+node-string-width	4.2.3+~cs13.2.3-1
+node-strip-ansi	7.2.0-1
+node-strip-bom	4.0.0-2
+node-strip-eof	3.0.0-6
+node-strip-json-comments	4.0.0-4
+node-supports-color	10.2.2+ds-3
+node-tapable	2.2.1-3
+node-tape	5.6.1+~cs8.20.19-5
+node-tar	6.2.1+ds1+~cs6.1.13-10
+node-terser	5.46.1-4
+node-text-table	0.2.0-5
+node-through	2.3.8+~cs0.0.33-1
+node-time-stamp	2.2.0-2
+node-to-fast-properties	3.0.1-3
+node-to-regex-range	5.0.1-4
+node-tslib	2.4.1-1
+node-type-check	0.4.0+dfsg-3
+node-typedarray	0.0.7-1
+node-undici	7.18.2+dfsg+~cs3.2.0-1build1
+node-unicode-canonical-property-names-ecmascript	2.0.1-1
+node-unicode-match-property-ecmascript	2.0.0-2
+node-unicode-match-property-value-ecmascript	2.2.0+ds-1build1
+node-unicode-property-aliases-ecmascript	2.1.0+ds-1
+node-unique-filename	1.1.1+ds-2
+node-util	0.12.5+~1.0.10-2
+node-util-deprecate	1.0.2-4
+node-uuid	8.3.2+~8.3.4-3
+node-v8-compile-cache	2.4.0-4
+node-v8flags	3.2.0+~3.1.1-1
+node-validate-npm-package-license	3.0.4-3
+node-validate-npm-package-name	5.0.0+~4.0.0-1
+node-watchpack	2.4.0+~cs2.8.1-1
+node-wcwidth.js	1.0.2-2
+node-webassemblyjs	1.14.1+dfsg3+~cs1.2.7-2
+node-webpack-sources	3.2.3+~3.2.0-2
+node-which	2.0.2+~cs1.3.2-5
+node-wide-align	1.1.3-4
+node-wordwrap	1.0.0-4
+node-wrap-ansi	8.0.1+~8.0.1-3
+node-wrappy	1.0.2-3
+node-write	2.0.0~6.0.1+~3.0.4+~2.0.0+~1.0.0+~2.0.1-5
+node-write-file-atomic	7.0.1+~4.0.3-1
+node-xtend	4.0.2-3
+node-y18n	5.0.8+~5.0.0-4
+node-yallist	4.0.0+~4.0.1-2
+node-yargs	16.2.0+~16.0.4-7
+node-yargs-parser	21.1.1+~21.0.0-4
+nodejs	22.22.1+dfsg+~cs22.19.15-1ubuntu1
+npm	9.2.0~ds3-1
+openjdk-25-jdk-headless	25.0.4+7-1~26.04
+openjdk-25-jre-headless	25.0.4+7-1~26.04
+openssh-client	1:10.2p1-2ubuntu3.6
+openssl	3.5.5-1ubuntu3.4
+openssl-provider-legacy	3.5.5-1ubuntu3.4
+passwd	1:4.17.4-2ubuntu3
+patch	2.8-2build1
+perl	5.40.1-7ubuntu0.1
+perl-base	5.40.1-7ubuntu0.1
+perl-modules-5.40	5.40.1-7ubuntu0.1
+perl-openssl-defaults	7build4
+pinentry-curses	1.3.2-3ubuntu1
+pkg-config	2.5.1-4
+pkgconf	2.5.1-4
+pkgconf-bin	2.5.1-4
+preview-latex-style	13.2-1.1
+procps	2:4.0.4-9ubuntu1
+psmisc	23.7-2ubuntu2
+python3	3.14.3-0ubuntu2
+python3-minimal	3.14.3-0ubuntu2
+python3-packaging	26.0-1
+python3-pip	25.1.1+dfsg-1ubuntu2
+python3-wheel	0.46.3-2
+python3.14	3.14.4-1ubuntu0.1
+python3.14-minimal	3.14.4-1ubuntu0.1
+readline-common	8.3-4
+ripgrep	15.1.0-1ubuntu1
+rpcsvc-proto	1.4.3-1build1
+rsync	3.4.1+ds1-7ubuntu0.3
+rust-coreutils	0.8.0-0ubuntu3
+sed	4.9-2ubuntu1
+sensible-utils	0.0.26build1
+socat	1.8.1.1-1ubuntu0.1
+sudo	1.9.17p2-1ubuntu3
+sudo-common	1.2ubuntu
+sysvinit-utils	3.15-5ubuntu1
+t1utils	1.41-4build4
+tar	1.35+dfsg-4ubuntu0.4
+terser	5.46.1-4
+tex-common	6.20
+texlive-base	2025.20260124-1
+texlive-bibtex-extra	2025.20260124-1
+texlive-binaries	2025.20250727.75242+ds-5build1
+texlive-latex-base	2025.20260124-1
+texlive-latex-extra	2025.20260124-1
+texlive-latex-recommended	2025.20260124-1
+texlive-pictures	2025.20260124-1
+tini	0.19.0-6
+tzdata	2026c-0ubuntu0.26.04.1
+ubuntu-keyring	2023.11.28.1build1
+ucf	3.0052ubuntu1
+unzip	6.0-29ubuntu1
+util-linux	2.41.3-3ubuntu2
+webpack	5.105.4+dfsg1+~cs15.13.23-2
+x11-common	1:7.7+26ubuntu1
+xdg-utils	1.2.1-2ubuntu2
+xfonts-encodings	1:1.0.5-0ubuntu3
+xfonts-utils	1:7.7+7build1
+xz-utils	5.8.3-1
+zip	3.0-15ubuntu3
+zlib1g	1:1.3.dfsg+really1.3.1-1ubuntu3
+
+### disable-network-before-build
+
+### build
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 15 June 2025. Version 4.87.
+Latexmk: making output directory 'build'
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'pdflatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -interaction=nonstopmode -halt-on-error -recorder -output-directory="build"  "main.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.sty
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype-pdftex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texmf/tex/latex/lm/lmodern.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def)))
+(/usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstpatch.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg))
+==> First Aid for listings.sty no longer applied!
+    Expected:
+        2024/09/23 1.10c (Carsten Heinz)
+    but found:
+        2025/11/14 1.11b (Carsten Heinz)
+    so I'm assuming it got fixed.
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.sty
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.def))
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-dm.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-compat.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/alphabetic.bbx
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/standard.bbx))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/cbx/alphabetic.cbx)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)))
+(./preamble.tex (/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/mdframed/md-frame-0.mdf)))
+(/usr/share/texmf/tex/latex/lm/t1lmr.fd) (build/main.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-cmr.cfg)
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/english.lbx)
+No file main.bbl.
+(/usr/share/texmf/tex/latex/lm/ot1lmr.fd)
+(/usr/share/texmf/tex/latex/lm/omllmm.fd)
+(/usr/share/texmf/tex/latex/lm/omslmsy.fd)
+(/usr/share/texmf/tex/latex/lm/omxlmex.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg)
+(./chapters/00-abstract.tex) (./ai-use-disclosure.tex [1{/var/lib/texmf/fonts/m
+ap/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/us
+r/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm
+/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}]
+
+LaTeX Warning: Reference `sec:rotated-regular-polygons' on page 2 undefined on 
+input line 26.
+
+
+LaTeX Warning: Reference `eq:ds-pentagon-ridge-capacity' on page 2 undefined on
+ input line 29.
+
+
+LaTeX Warning: Reference `sec:pentagon-affine' on page 2 undefined on input lin
+e 34.
+
+[2])
+No file main.toc.
+[3] (./chapters/01-introduction.tex
+
+LaTeX Warning: Citation 'Viterbo2000' on page 4 undefined on input line 5.
+
+
+LaTeX Warning: Citation 'HaimKislevOstrover2024' on page 4 undefined on input l
+ine 17.
+
+
+LaTeX Warning: Citation 'Edtmair2024' on page 4 undefined on input line 57.
+
+
+LaTeX Warning: Citation 'HaimKislevOstrover2024' on page 4 undefined on input l
+ine 66.
+
+
+LaTeX Warning: Citation 'AbbondandoloEdtmairKang2024' on page 4 undefined on in
+put line 68.
+
+
+LaTeX Warning: Citation 'Edtmair2024' on page 4 undefined on input line 75.
+
+[4]
+
+LaTeX Warning: Citation 'AKO2014' on page 5 undefined on input line 83.
+
+
+LaTeX Warning: Citation 'AB2023' on page 5 undefined on input line 93.
+
+
+LaTeX Warning: Citation 'HaimKislev2025Zoll' on page 5 undefined on input line 
+103.
+
+
+LaTeX Warning: Citation 'HaimKislev2025Zoll' on page 5 undefined on input line 
+106.
+
+
+LaTeX Warning: Reference `thm:hko-ten-facet-local-maximum' on page 5 undefined 
+on input line 120.
+
+
+LaTeX Warning: Reference `thm:hko-ten-facet-local-maximum' on page 5 undefined 
+on input line 129.
+
+
+LaTeX Warning: Reference `sec:hko-local-maximum' on page 5 undefined on input l
+ine 134.
+
+[5{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}]
+
+LaTeX Warning: Citation 'HK2017' on page 6 undefined on input line 160.
+
+
+LaTeX Warning: Citation 'CH2021' on page 6 undefined on input line 172.
+
+
+LaTeX Warning: Reference `sec:pentagon-affine' on page 6 undefined on input lin
+e 188.
+
+
+LaTeX Warning: Reference `sec:product-rotation' on page 6 undefined on input li
+ne 195.
+
+
+LaTeX Warning: Reference `eq:ds-pentagon-ridge-capacity' on page 6 undefined on
+ input line 220.
+
+
+LaTeX Warning: Reference `eq:ds-triangle-profile' on page 6 undefined on input 
+line 220.
+
+[6]
+
+LaTeX Warning: Reference `sec:preliminaries' on page 7 undefined on input line 
+233.
+
+
+LaTeX Warning: Reference `sec:quadratic-program-algorithm-hk2019' on page 7 und
+efined on input line 233.
+
+
+LaTeX Warning: Reference `sec:flow-graph-algorithm-ch2021' on page 7 undefined 
+on input line 235.
+
+
+LaTeX Warning: Reference `sec:first-order-perturbations' on page 7 undefined on
+ input line 236.
+
+
+LaTeX Warning: Reference `sec:hko-local-maximum' on page 7 undefined on input l
+ine 239.
+
+
+LaTeX Warning: Reference `sec:first-order-perturbations' on page 7 undefined on
+ input line 241.
+
+
+LaTeX Warning: Reference `sec:black-box-datascience' on page 7 undefined on inp
+ut line 243.
+
+
+LaTeX Warning: Reference `sec:rotated-regular-polygons' on page 7 undefined on 
+input line 244.
+
+
+LaTeX Warning: Reference `sec:pentagon-affine' on page 7 undefined on input lin
+e 244.
+
+
+LaTeX Warning: Reference `sec:product-rotation' on page 7 undefined on input li
+ne 246.
+
+) (./chapters/02-preliminaries.tex
+(./chapters/02-preliminaries-convex-symplectic-notation.tex [7])
+(./chapters/02-preliminaries-convex-hamiltonian-language.tex
+
+LaTeX Warning: Reference `eq:preliminaries-generalized-characteristic' on page 
+8 undefined on input line 37.
+
+[8]) (./chapters/02-preliminaries-ehz-capacity.tex
+
+LaTeX Warning: Citation 'AAO2014' on page 9 undefined on input line 13.
+
+
+LaTeX Warning: Reference `def:preliminaries-generalized-characteristic' on page
+ 9 undefined on input line 26.
+
+
+LaTeX Warning: Citation 'AAO2014' on page 9 undefined on input line 27.
+
+
+LaTeX Warning: Reference `sec:generalized-reeb-orbits-polytopes' on page 9 unde
+fined on input line 29.
+
+[9 <./figures/foundations/characteristic-normalization.pdf>]
+
+LaTeX Warning: Citation 'Viterbo2000' on page 10 undefined on input line 61.
+
+
+LaTeX Warning: Reference `eq:preliminaries-systolic-ratio' on page 10 undefined
+ on input line 96.
+
+
+LaTeX Warning: Reference `eq:preliminaries-systolic-ratio' on page 10 undefined
+ on input line 123.
+
+) (./chapters/02-preliminaries-polytope-input-language.tex [10])
+(./chapters/02-preliminaries-lagrangian-products.tex [11 <./figures/foundations
+/facet-polarity.pdf>]
+
+LaTeX Warning: Reference `sec:generalized-reeb-orbits-polytopes' on page 12 und
+efined on input line 33.
+
+) (./chapters/02-duality.tex
+
+LaTeX Warning: Reference `eq:preliminaries-dual-problem' on page 12 undefined o
+n input line 29.
+
+
+LaTeX Warning: Citation 'AAO2014' on page 12 undefined on input line 42.
+
+
+LaTeX Warning: Citation 'HK2017' on page 12 undefined on input line 43.
+
+[12]
+
+LaTeX Warning: Reference `eq:preliminaries-dual-euler-lagrange' on page 13 unde
+fined on input line 105.
+
+
+LaTeX Warning: Reference `eq:preliminaries-dual-functional' on page 13 undefine
+d on input line 141.
+
+[13])) (./chapters/03-generalized-reeb-orbits-polytopes.tex [14]
+
+LaTeX Warning: Reference `def:preliminaries-generalized-characteristic' on page
+ 15 undefined on input line 39.
+
+
+LaTeX Warning: Reference `def:preliminaries-generalized-characteristic' on page
+ 15 undefined on input line 67.
+
+
+LaTeX Warning: Reference `eq:generalized-reeb-polytope-subdifferential' on page
+ 15 undefined on input line 68.
+
+
+LaTeX Warning: Reference `lem:generalized-reeb-base-point-recovery' on page 15 
+undefined on input line 109.
+
+[15]
+
+LaTeX Warning: Reference `eq:generalized-reeb-closure' on page 16 undefined on 
+input line 177.
+
+(/usr/share/texmf/tex/latex/lm/ot1lmss.fd)
+
+LaTeX Warning: Reference `eq:generalized-reeb-base-point-inequalities' on page 
+16 undefined on input line 212.
+
+[16]
+
+LaTeX Warning: Reference `eq:generalized-reeb-base-point-equalities' on page 17
+ undefined on input line 224.
+
+
+LaTeX Warning: Reference `eq:generalized-reeb-base-point-inequalities' on page 
+17 undefined on input line 235.
+
+
+LaTeX Warning: Reference `lem:preliminaries-shoelace' on page 17 undefined on i
+nput line 247.
+
+
+LaTeX Warning: Citation 'HK2017' on page 17 undefined on input line 256.
+
+[17]
+
+LaTeX Warning: Reference `lem:preliminaries-shoelace' on page 18 undefined on i
+nput line 336.
+
+[18]
+
+LaTeX Warning: Reference `lem:preliminaries-shoelace' on page 19 undefined on i
+nput line 405.
+
+
+LaTeX Warning: Reference `lem:preliminaries-shoelace' on page 19 undefined on i
+nput line 435.
+
+
+LaTeX Warning: Reference `lem:generalized-reeb-splitting' on page 19 undefined 
+on input line 437.
+
+
+LaTeX Warning: Reference `thm:generalized-reeb-simple-minimizer' on page 19 und
+efined on input line 440.
+
+
+LaTeX Warning: Reference `thm:preliminaries-clarke-dual-action' on page 19 unde
+fined on input line 442.
+
+
+LaTeX Warning: Reference `lem:generalized-reeb-pw-affine-approx' on page 19 und
+efined on input line 450.
+
+
+LaTeX Warning: Reference `lem:generalized-reeb-splitting' on page 19 undefined 
+on input line 453.
+
+
+LaTeX Warning: Reference `lem:generalized-reeb-merging' on page 19 undefined on
+ input line 454.
+
+[19]
+
+LaTeX Warning: Reference `lem:generalized-reeb-compactness' on page 20 undefine
+d on input line 482.
+
+
+LaTeX Warning: Reference `thm:preliminaries-clarke-dual-action' on page 20 unde
+fined on input line 485.
+
+
+LaTeX Warning: Reference `eq:preliminaries-dual-multiplier-value' on page 20 un
+defined on input line 496.
+
+
+LaTeX Warning: Reference `lem:generalized-reeb-base-point-recovery' on page 20 
+undefined on input line 509.
+
+) (./chapters/04-quadratic-program.tex
+
+LaTeX Warning: Citation 'HK2017' on page 20 undefined on input line 7.
+
+
+LaTeX Warning: Reference `sec:generalized-reeb-orbits-polytopes' on page 20 und
+efined on input line 24.
+
+[20]
+
+LaTeX Warning: Reference `sec:generalized-reeb-orbits-polytopes' on page 21 und
+efined on input line 63.
+
+
+LaTeX Warning: Reference `lem:preliminaries-shoelace' on page 21 undefined on i
+nput line 103.
+
+
+LaTeX Warning: Reference `eq:preliminaries-dual-problem' on page 21 undefined o
+n input line 110.
+
+
+LaTeX Warning: Reference `thm:preliminaries-clarke-dual-action' on page 21 unde
+fined on input line 111.
+
+[21]
+
+LaTeX Warning: Reference `thm:generalized-reeb-simple-minimizer' on page 22 und
+efined on input line 119.
+
+
+LaTeX Warning: Citation 'HK2017' on page 22 undefined on input line 132.
+
+
+LaTeX Warning: Reference `eq:preliminaries-dual-multiplier-value' on page 22 un
+defined on input line 184.
+
+
+LaTeX Warning: Reference `thm:preliminaries-clarke-dual-action' on page 22 unde
+fined on input line 186.
+
+[22]
+
+LaTeX Warning: Reference `eq:qp-stationary-system' on page 23 undefined on inpu
+t line 278.
+
+
+LaTeX Warning: Reference `lem:generalized-reeb-base-point-recovery' on page 23 
+undefined on input line 297.
+
+[23]
+
+LaTeX Warning: Citation 'Rudolf2022' on page 24 undefined on input line 366.
+
+[24]
+
+LaTeX Warning: Reference `thm:generalized-reeb-simple-minimizer' on page 25 und
+efined on input line 406.
+
+
+LaTeX Warning: Reference `prop:quadratic-program-global-maximizer-realization' 
+on page 25 undefined on input line 434.
+
+[25]
+
+LaTeX Warning: Citation 'KruppRudolf2022' on page 26 undefined on input line 47
+6.
+
+
+LaTeX Warning: Reference `thm:quadratic-program-algorithm-hk2019-hk-formula' on
+ page 26 undefined on input line 543.
+
+[26] [27]
+
+LaTeX Warning: Reference `alg:quadratic-program-product-closure-vertices' on pa
+ge 28 undefined on input line 607.
+
+
+LaTeX Warning: Reference `alg:quadratic-program-product-closure-vertices' on pa
+ge 28 undefined on input line 642.
+
+
+LaTeX Warning: Reference `sec:numerics' on page 28 undefined on input line 647.
+
+
+) (./chapters/05-flow-graph.tex
+
+LaTeX Warning: Citation 'CH2021' on page 28 undefined on input line 12.
+
+[28]
+
+LaTeX Warning: Reference `sec:generalized-reeb-orbits-polytopes' on page 29 und
+efined on input line 33.
+
+
+LaTeX Warning: Reference `eq:fg-primitive-time' on page 29 undefined on input l
+ine 112.
+
+
+LaTeX Warning: Reference `eq:fg-tube-composition' on page 29 undefined on input
+ line 115.
+
+[29]
+
+LaTeX Warning: Reference `fig:flow-graph-tube-sequence' on page 30 undefined on
+ input line 130.
+
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd)
+
+LaTeX Warning: Reference `sec:published-code-data' on page 30 undefined on inpu
+t line 148.
+
+
+LaTeX Warning: Reference `ex:flow-graph-return-map' on page 30 undefined on inp
+ut line 192.
+
+
+LaTeX Warning: Reference `ex:flow-graph-return-map' on page 30 undefined on inp
+ut line 192.
+
+[30] [31 <./figures/flow-graph/flow-graph-f6-tube-sequence.pdf>]
+
+LaTeX Warning: Reference `def:flow-graph-regular-presentation' on page 32 undef
+ined on input line 246.
+
+
+LaTeX Warning: Reference `alg:idealized-exhaustive-flow-graph-search' on page 3
+2 undefined on input line 261.
+
+
+LaTeX Warning: Reference `lem:flow-graph-tube-semantics' on page 32 undefined o
+n input line 270.
+
+[32]
+
+LaTeX Warning: Reference `thm:generalized-reeb-simple-minimizer' on page 33 und
+efined on input line 279.
+
+
+LaTeX Warning: Reference `lem:flow-graph-tube-semantics' on page 33 undefined o
+n input line 284.
+
+
+LaTeX Warning: Reference `thm:exact-flow-graph-correctness' on page 33 undefine
+d on input line 293.
+
+
+LaTeX Warning: Reference `alg:idealized-exhaustive-flow-graph-search' on page 3
+3 undefined on input line 296.
+
+
+LaTeX Warning: Reference `thm:exact-flow-graph-correctness' on page 33 undefine
+d on input line 307.
+
+
+LaTeX Warning: Reference `thm:exact-flow-graph-correctness' on page 33 undefine
+d on input line 338.
+
+
+LaTeX Warning: Reference `cor:rational-flow-graph-correctness' on page 33 undef
+ined on input line 339.
+
+[33]
+
+LaTeX Warning: Reference `def:flow-graph-regular-presentation' on page 34 undef
+ined on input line 434.
+
+(./chapters/05-flow-graph-ch2021-background-comparison.tex
+
+LaTeX Warning: Citation 'CH2021' on page 34 undefined on input line 6.
+
+[34]
+
+LaTeX Warning: Citation 'CH2021' on page 35 undefined on input line 16.
+
+
+LaTeX Warning: Citation 'CH2021' on page 35 undefined on input line 19.
+
+)
+
+LaTeX Warning: Reference `def:flow-graph-regular-presentation' on page 35 undef
+ined on input line 450.
+
+
+LaTeX Warning: Reference `sec:quadratic-program-algorithm-hk2019' on page 35 un
+defined on input line 453.
+
+) (./chapters/06-variation.tex [35]
+
+LaTeX Warning: Citation 'Leipold2026' on page 36 undefined on input line 18.
+
+
+LaTeX Warning: Reference `sec:quadratic-program-algorithm-hk2019' on page 36 un
+defined on input line 36.
+
+
+LaTeX Warning: Reference `eq:first-order-volume-variation' on page 36 undefined
+ on input line 72.
+
+
+LaTeX Warning: Reference `eq:quadratic-program-algorithm-hk2019-q' on page 36 u
+ndefined on input line 99.
+
+[36]
+
+LaTeX Warning: Reference `eq:first-order-upper-function' on page 37 undefined o
+n input line 141.
+
+[37]
+
+LaTeX Warning: Reference `eq:first-order-regular-q-derivative' on page 38 undef
+ined on input line 253.
+
+
+LaTeX Warning: Reference `eq:first-order-regular-sys-derivative' on page 38 und
+efined on input line 255.
+
+
+LaTeX Warning: Reference `eq:first-order-explicit-q-variation' on page 38 undef
+ined on input line 258.
+
+
+LaTeX Warning: Reference `eq:first-order-volume-variation' on page 38 undefined
+ on input line 259.
+
+
+LaTeX Warning: Reference `eq:first-order-regular-q-derivative' on page 38 undef
+ined on input line 260.
+
+[38]
+
+LaTeX Warning: Reference `eq:first-order-regular-envelope' on page 39 undefined
+ on input line 293.
+
+
+LaTeX Warning: Reference `def:preliminaries-systolic-ratio-symmetries' on page 
+39 undefined on input line 309.
+
+
+LaTeX Warning: Reference `lem:hko-negative-slopes' on page 39 undefined on inpu
+t line 312.
+
+
+LaTeX Warning: Reference `eq:first-order-maximin-direction' on page 39 undefine
+d on input line 316.
+
+
+LaTeX Warning: Reference `eq:first-order-finite-gap-model' on page 39 undefined
+ on input line 329.
+
+
+LaTeX Warning: Reference `subsec:black-box-datascience-finite-budget-optimizati
+on' on page 39 undefined on input line 344.
+
+[39] (/usr/share/texmf/tex/latex/lm/ts1lmr.fd)
+
+LaTeX Warning: Reference `eq:first-order-envelope-derivative' on page 40 undefi
+ned on input line 371.
+
+
+LaTeX Warning: Reference `sec:hko-local-maximum' on page 40 undefined on input 
+line 394.
+
+
+LaTeX Warning: Reference `sec:hko-local-maximum' on page 40 undefined on input 
+line 416.
+
+) (./chapters/07-hko.tex [40{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
+
+LaTeX Warning: Citation 'HaimKislevOstrover2024' on page 41 undefined on input 
+line 8.
+
+(./chapters/hko-lemma-geometry.tex [41] [42]
+
+LaTeX Warning: Reference `lem:hko-smooth-volume' on page 43 undefined on input 
+line 128.
+
+) (./chapters/hko-lemma-bounds.tex
+
+LaTeX Warning: Reference `app:hko-cas' on page 43 undefined on input line 57.
+
+[43] [44]
+
+LaTeX Warning: Reference `tab:hko-exact-choices' on page 45 undefined on input 
+line 160.
+
+
+LaTeX Warning: Reference `lem:hko-exact-bounds' on page 45 undefined on input l
+ine 184.
+
+[45]
+
+LaTeX Warning: Reference `app:hko-cas' on page 46 undefined on input line 207.
+
+
+LaTeX Warning: Reference `lem:hko-exact-bounds' on page 46 undefined on input l
+ine 211.
+
+) (./chapters/hko-lemma-conclusion.tex
+
+LaTeX Warning: Reference `lem:hko-exact-bounds' on page 46 undefined on input l
+ine 4.
+
+
+LaTeX Warning: Reference `fig:hko-upper-mechanism' on page 46 undefined on inpu
+t line 30.
+
+
+LaTeX Warning: Reference `lem:hko-negative-slopes' on page 46 undefined on inpu
+t line 67.
+
+[46]
+
+LaTeX Warning: Reference `lem:hko-exact-bounds' on page 47 undefined on input l
+ine 96.
+
+
+LaTeX Warning: Reference `fig:hko-symmetry-extension' on page 47 undefined on i
+nput line 100.
+
+
+LaTeX Warning: Reference `thm:hko-ten-facet-local-maximum' on page 47 undefined
+ on input line 113.
+
+
+LaTeX Warning: Reference `lem:hko-row-neighborhood' on page 47 undefined on inp
+ut line 114.
+
+
+LaTeX Warning: Reference `lem:hko-symmetry-decomposition' on page 47 undefined 
+on input line 116.
+
+
+LaTeX Warning: Reference `lem:hko-slice-decrease' on page 47 undefined on input
+ line 118.
+
+) [47 <./figures/upper-bound-mechanisms.pdf>] [48 <./figures/symmetry-extension
+.pdf>] (./chapters/hko-sections.tex
+
+Package longtable Warning: Column widths have changed
+(longtable)                in table 1 on input line 44.
+
+) [49] [50]
+
+LaTeX Warning: Reference `lem:hko-negative-slopes' on page 51 undefined on inpu
+t line 176.
+
+[51]
+
+LaTeX Warning: Reference `lem:hko-row-neighborhood' on page 52 undefined on inp
+ut line 201.
+
+) (./chapters/08-data-science.tex [52]
+
+LaTeX Warning: Reference `app:ds-evaluation' on page 53 undefined on input line
+ 67.
+
+
+LaTeX Warning: Reference `app:ds-generation' on page 53 undefined on input line
+ 81.
+
+
+LaTeX Warning: Reference `app:ds-evaluation' on page 53 undefined on input line
+ 83.
+
+
+LaTeX Warning: Reference `fig:ds-ridge-association' on page 53 undefined on inp
+ut line 85.
+
+
+LaTeX Warning: Reference `fig:ds-ridge-products' on page 53 undefined on input 
+line 85.
+
+
+LaTeX Warning: Reference `fig:ds-conditional-ranks' on page 53 undefined on inp
+ut line 91.
+
+
+LaTeX Warning: Reference `app:ds-selection' on page 53 undefined on input line 
+119.
+
+[53]
+
+LaTeX Warning: Reference `app:ds-prediction' on page 54 undefined on input line
+ 127.
+
+
+LaTeX Warning: Reference `app:ds-evaluation' on page 54 undefined on input line
+ 135.
+
+
+LaTeX Warning: Reference `app:ds-evaluation' on page 54 undefined on input line
+ 135.
+
+[54 <./figures/conditional-ridge-correlation.pdf>] [55 <./figures/association-g
+eneric.pdf>] [56 <./figures/association-products.pdf>]
+
+LaTeX Warning: Reference `app:ds-selection' on page 57 undefined on input line 
+189.
+
+
+LaTeX Warning: Reference `app:ds-selection' on page 57 undefined on input line 
+207.
+
+[57]
+
+LaTeX Warning: Reference `thm:rotated-pentagon-product-formula' on page 58 unde
+fined on input line 267.
+
+
+LaTeX Warning: Reference `eq:ds-pentagon-ridge-capacity' on page 58 undefined o
+n input line 268.
+
+
+LaTeX Warning: Reference `app:ds-triangle-profile' on page 58 undefined on inpu
+t line 281.
+
+[58]
+
+LaTeX Warning: Citation 'dsGardner2002' on page 59 undefined on input line 312.
+
+
+[59]
+
+LaTeX Warning: Reference `app:ds-selection' on page 60 undefined on input line 
+381.
+
+
+LaTeX Warning: Reference `app:ds-triangle-profile' on page 60 undefined on inpu
+t line 409.
+
+
+LaTeX Warning: Reference `eq:ds-triangle-profile' on page 60 undefined on input
+ line 411.
+
+
+LaTeX Warning: Reference `app:ds-balance' on page 60 undefined on input line 41
+6.
+
+
+LaTeX Warning: Reference `app:ds-deformations' on page 60 undefined on input li
+ne 442.
+
+[60]
+
+LaTeX Warning: Citation 'dsDeBoer2005' on page 61 undefined on input line 484.
+
+
+LaTeX Warning: Reference `app:ds-adaptive' on page 61 undefined on input line 5
+09.
+
+
+LaTeX Warning: Reference `app:ds-deformations' on page 61 undefined on input li
+ne 514.
+
+[61]
+
+LaTeX Warning: Reference `subsec:first-order-search-model' on page 62 undefined
+ on input line 519.
+
+
+LaTeX Warning: Citation 'dsHansen2016' on page 62 undefined on input line 549.
+
+
+LaTeX Warning: Reference `app:ds-local-optimization' on page 62 undefined on in
+put line 554.
+
+
+LaTeX Warning: Reference `app:ds-probes' on page 62 undefined on input line 573
+.
+
+
+LaTeX Warning: Citation 'dsBMP2026' on page 62 undefined on input line 580.
+
+) (./chapters/09-rotated-regular-polygons.tex [62]
+
+LaTeX Warning: Reference `fig:rotated-pentagons-curve' on page 63 undefined on 
+input line 27.
+
+[63 <./figures/rotation-profile.png>]
+
+LaTeX Warning: Citation 'HaimKislevOstrover2024' on page 64 undefined on input 
+line 91.
+
+
+LaTeX Warning: Citation 'HK2017' on page 64 undefined on input line 134.
+
+
+Overfull \hbox (14.83606pt too wide) in paragraph at lines 132--135
+\T1/lmr/m/n/10.95 (-20) This uses the traver-sal or-der of the quadratic-progra
+m chap-ter. The Haim--Kislev for-mula [[]]
+[64]
+
+LaTeX Warning: Reference `eq:pentagon-q-definition' on page 65 undefined on inp
+ut line 202.
+
+
+LaTeX Warning: Reference `eq:pentagon-known-endpoints' on page 65 undefined on 
+input line 225.
+
+
+LaTeX Warning: Reference `eq:pentagon-hk' on page 65 undefined on input line 22
+5.
+
+[65]
+
+LaTeX Warning: Reference `eq:pentagon-interpolation' on page 66 undefined on in
+put line 232.
+
+
+LaTeX Warning: Reference `eq:pentagon-attaining-word' on page 66 undefined on i
+nput line 240.
+
+
+LaTeX Warning: Reference `eq:pentagon-capacity-profile' on page 66 undefined on
+ input line 248.
+
+
+LaTeX Warning: Reference `thm:rotated-pentagon-product-formula' on page 66 unde
+fined on input line 266.
+
+) (./chapters/10-affine-pentagons.tex [66]
+
+LaTeX Warning: Citation 'HK2017' on page 67 undefined on input line 56.
+
+[67] [68]
+
+LaTeX Warning: Reference `lem:pentagon-affine-identities' on page 69 undefined 
+on input line 207.
+
+
+LaTeX Warning: Reference `thm:pentagon-affine-capacity' on page 69 undefined on
+ input line 212.
+
+[69]) (./chapters/11-product-position.tex
+
+LaTeX Warning: Citation 'HK2017' on page 70 undefined on input line 52.
+
+[70]
+
+LaTeX Warning: Reference `prop:preliminaries-sys-hausdorff-continuity' on page 
+71 undefined on input line 130.
+
+
+LaTeX Warning: Reference `eq:product-mass-bound' on page 71 undefined on input 
+line 135.
+
+[71]
+
+LaTeX Warning: Reference `thm:product-initial-rotation' on page 72 undefined on
+ input line 184.
+
+) (./chapters/12-visualization.tex
+
+LaTeX Warning: Reference `fig:visualization-projections' on page 72 undefined o
+n input line 19.
+
+
+LaTeX Warning: Reference `sec:hko-local-maximum' on page 72 undefined on input 
+line 21.
+
+
+LaTeX Warning: Reference `sec:black-box-datascience' on page 72 undefined on in
+put line 25.
+
+[72]) (./chapters/13-numerics.tex [73 <./figures/visualization/viz-hypercube-ri
+dges.png (PNG copy)> <./figures/visualization/viz-hko-pentagon-min-orbit.png (P
+NG copy)>]
+
+LaTeX Warning: Reference `eq:quadratic-program-algorithm-hk2019-q' on page 74 u
+ndefined on input line 62.
+
+[74]
+
+LaTeX Warning: Reference `alg:quadratic-program-product-closure-vertices' on pa
+ge 75 undefined on input line 148.
+
+[75]
+
+LaTeX Warning: Reference `thm:quadratic-program-product-six-facet' on page 76 u
+ndefined on input line 236.
+
+
+LaTeX Warning: Reference `sec:published-code-data' on page 76 undefined on inpu
+t line 241.
+
+[76]) (./chapters/14-code-data.tex
+
+LaTeX Warning: Reference `subsec:hko-local-maximum-computation-with-sagemath' o
+n page 77 undefined on input line 20.
+
+[77]
+
+LaTeX Warning: Reference `sec:numerics' on page 78 undefined on input line 55.
+
+) (./chapters/15-ai-reflection.tex [78]
+
+LaTeX Warning: Citation 'aiGuo2025' on page 79 undefined on input line 51.
+
+[79]
+
+LaTeX Warning: Citation 'aiOuyang2022' on page 80 undefined on input line 129.
+
+[80]) (./chapters/16-conclusion.tex [81]
+
+LaTeX Warning: Reference `eq:ds-pentagon-ridge-capacity' on page 82 undefined o
+n input line 71.
+
+
+LaTeX Warning: Reference `eq:ds-triangle-profile' on page 82 undefined on input
+ line 73.
+
+[82]) (./appendices/data-science.tex
+
+LaTeX Warning: Reference `sec:black-box-datascience' on page 83 undefined on in
+put line 4.
+
+
+LaTeX Warning: Reference `eq:ds-triangle-profile' on page 83 undefined on input
+ line 10.
+
+[83]
+
+LaTeX Warning: Reference `tab:ds-evidence-index' on page 84 undefined on input 
+line 105.
+
+[84]
+
+LaTeX Warning: Citation 'dsBreiman2001' on page 85 undefined on input line 158.
+
+
+
+LaTeX Warning: Citation 'dsSklearnHGB' on page 85 undefined on input line 175.
+
+
+Overfull \hbox (63.52841pt too wide) in paragraph at lines 174--181
+[]\T1/lmr/m/n/10.95 (-20) A sep-a-rate feature-family com-par-i-son used histog
+ram-based gradient-boosted re-gres-sion [[]],
+[85]
+
+LaTeX Warning: Reference `tab:ds-evidence-index' on page 86 undefined on input 
+line 243.
+
+[86] [87] [88]
+
+LaTeX Warning: Reference `subsec:black-box-datascience-finite-budget-optimizati
+on' on page 89 undefined on input line 422.
+
+[89] [90] [91 <./figures/hko-recovery-by-source-distance.pdf>] [92 <./figures/d
+erivative-and-kkt-scale.pdf>] [93]
+
+LaTeX Warning: Reference `tab:ds-evidence-index' on page 94 undefined on input 
+line 678.
+
+ignored error: Infinite glue shrinkage found in box being split [94]) [95]
+(./appendices/hko-certificate.tex
+
+LaTeX Warning: Reference `lem:hko-exact-bounds' on page 96 undefined on input l
+ine 7.
+
+
+LaTeX Warning: Reference `sec:published-code-data' on page 96 undefined on inpu
+t line 12.
+
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
+(./appendices/hko_core.py) (./appendices/hko_core.py [96])
+
+LaTeX Warning: Reference `lem:hko-smooth-volume' on page 97 undefined on input 
+line 49.
+
+(./appendices/hko_core.py)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-euf.cfg)
+
+LaTeX Warning: Reference `lem:hko-exact-bounds' on page 97 undefined on input l
+ine 63.
+
+
+LaTeX Warning: Reference `lem:hko-negative-slopes' on page 97 undefined on inpu
+t line 64.
+
+[97] (./appendices/hko_core.py)
+
+LaTeX Warning: Reference `lem:hko-row-neighborhood' on page 98 undefined on inp
+ut line 90.
+
+
+LaTeX Warning: Reference `lem:hko-smooth-volume' on page 98 undefined on input 
+line 90.
+
+
+LaTeX Warning: Reference `lem:hko-negative-slopes' on page 98 undefined on inpu
+t line 91.
+
+
+LaTeX Warning: Reference `lem:hko-symmetry-decomposition' on page 98 undefined 
+on input line 91.
+
+)
+
+LaTeX Warning: Empty bibliography on input line 92.
+
+
+Package longtable Warning: Table widths have changed. Rerun LaTeX.
+
+[98] (build/main.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                main
+(biblatex)                and rerun LaTeX afterwards.
+
+ )
+(see the transcript file for additional information)</usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/share/texmf/fonts/type1/
+public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/s
+hare/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/publi
+c/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share/t
+exmf/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lm
+mi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fon
+ts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb>
+</usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1
+/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/shar
+e/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/
+lmr9.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/f
+onts/type1/public/lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.p
+fb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/ty
+pe1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></us
+r/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/pu
+blic/lm/lmtt9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on build/main.pdf (98 pages, 1700267 bytes).
+Transcript written on build/main.log.
+Latexmk: Getting log file 'build/main.log'
+Latexmk: Examining 'build/main.fls'
+Latexmk: Examining 'build/main.log'
+Latexmk: References changed.
+Latexmk: References changed.
+====== biblatex/biber in use
+Latexmk: Log file says output to 'build/main.pdf'
+Latexmk: Bibliography file(s) from .bcf file:
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
+Sources for biber
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
+  build/main.bcf
+Latexmk: applying rule 'biber build/main'...
+Rule 'biber build/main':  Reasons for rerun
+Category 'other':
+  Rerun of 'biber build/main' forced or previously required:
+    Reason or flag: 'Initial set up of rule'
+
+------------
+Run number 1 of rule 'biber build/main'
+------------
+------------
+Running 'biber  "build/main.bcf"'
+------------
+INFO - This is Biber 2.21
+INFO - Logfile is 'build/main.blg'
+INFO - Reading 'build/main.bcf'
+INFO - Found 21 citekeys in bib section 0
+INFO - Processing section 0
+INFO - Looking for bibtex file 'references/main.bib' for section 0
+INFO - LaTeX decoding ...
+INFO - Found BibTeX data source 'references/main.bib'
+INFO - Looking for bibtex file 'references/additional.bib' for section 0
+INFO - LaTeX decoding ...
+INFO - Found BibTeX data source 'references/additional.bib'
+INFO - Looking for bibtex file 'references/data-science.bib' for section 0
+INFO - LaTeX decoding ...
+INFO - Found BibTeX data source 'references/data-science.bib'
+INFO - Looking for bibtex file 'references/ai.bib' for section 0
+INFO - LaTeX decoding ...
+INFO - Found BibTeX data source 'references/ai.bib'
+INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+INFO - Sorting list 'anyt/global//global/global/global' of type 'entry' with template 'anyt' and locale 'en-US'
+INFO - No sort tailoring available for locale 'en-US'
+INFO - Writing 'build/main.bbl' with encoding 'UTF-8'
+INFO - Output to build/main.bbl
+Latexmk: Found biber source file(s) [build/main.bcf, references/additional.bib, references/ai.bib, references/data-science.bib, references/main.bib]
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Changed files or newly in use/created:
+  build/main.aux
+  build/main.bbl
+  build/main.out
+  build/main.toc
+
+------------
+Run number 2 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -interaction=nonstopmode -halt-on-error -recorder -output-directory="build"  "main.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.sty
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype-pdftex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texmf/tex/latex/lm/lmodern.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def)))
+(/usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstpatch.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg))
+==> First Aid for listings.sty no longer applied!
+    Expected:
+        2024/09/23 1.10c (Carsten Heinz)
+    but found:
+        2025/11/14 1.11b (Carsten Heinz)
+    so I'm assuming it got fixed.
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.sty
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.def))
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-dm.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-compat.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/alphabetic.bbx
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/standard.bbx))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/cbx/alphabetic.cbx)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)))
+(./preamble.tex (/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/mdframed/md-frame-0.mdf)))
+(/usr/share/texmf/tex/latex/lm/t1lmr.fd) (build/main.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-cmr.cfg)
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg))
+(build/main.out) (build/main.out)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/english.lbx)
+(build/main.bbl) (/usr/share/texmf/tex/latex/lm/ot1lmr.fd)
+(/usr/share/texmf/tex/latex/lm/omllmm.fd)
+(/usr/share/texmf/tex/latex/lm/omslmsy.fd)
+(/usr/share/texmf/tex/latex/lm/omxlmex.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg)
+(./chapters/00-abstract.tex) (./ai-use-disclosure.tex [1{/var/lib/texmf/fonts/m
+ap/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/us
+r/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm
+/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}] [2])
+(build/main.toc [3]) [4] (./chapters/01-introduction.tex [5] [6{/usr/share/texm
+f/fonts/enc/dvips/lm/lm-mathex.enc}] [7]) (./chapters/02-preliminaries.tex
+(./chapters/02-preliminaries-convex-symplectic-notation.tex [8])
+(./chapters/02-preliminaries-convex-hamiltonian-language.tex [9])
+(./chapters/02-preliminaries-ehz-capacity.tex [10 <./figures/foundations/charac
+teristic-normalization.pdf>])
+(./chapters/02-preliminaries-polytope-input-language.tex [11])
+(./chapters/02-preliminaries-lagrangian-products.tex [12 <./figures/foundations
+/facet-polarity.pdf>]) (./chapters/02-duality.tex [13] [14]))
+(./chapters/03-generalized-reeb-orbits-polytopes.tex [15] [16]
+(/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
+(./chapters/04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27]
+[28]) (./chapters/05-flow-graph.tex [29] [30]
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd) [31] [32 <./figures/flow-graph/flow-g
+raph-f6-tube-sequence.pdf>] [33] [34]
+(./chapters/05-flow-graph-ch2021-background-comparison.tex [35]))
+(./chapters/06-variation.tex [36] [37] [38] [39] [40]
+(/usr/share/texmf/tex/latex/lm/ts1lmr.fd)) (./chapters/07-hko.tex [41{/usr/shar
+e/texmf/fonts/enc/dvips/lm/lm-ts1.enc}] (./chapters/hko-lemma-geometry.tex
+[42] [43]) (./chapters/hko-lemma-bounds.tex [44] [45] [46])
+(./chapters/hko-lemma-conclusion.tex [47]) [48 <./figures/upper-bound-mechanism
+s.pdf>] [49 <./figures/symmetry-extension.pdf>] (./chapters/hko-sections.tex)
+[50] [51] [52]) (./chapters/08-data-science.tex [53] [54] [55 <./figures/condit
+ional-ridge-correlation.pdf>] [56 <./figures/association-generic.pdf>] [57 <./f
+igures/association-products.pdf>] [58] [59] [60] [61] [62])
+(./chapters/09-rotated-regular-polygons.tex [63] [64 <./figures/rotation-profil
+e.png>] [65] [66]) (./chapters/10-affine-pentagons.tex [67] [68] [69] [70])
+(./chapters/11-product-position.tex [71] [72]) (./chapters/12-visualization.tex
+[73]) (./chapters/13-numerics.tex [74 <./figures/visualization/viz-hypercube-ri
+dges.png (PNG copy)> <./figures/visualization/viz-hko-pentagon-min-orbit.png (P
+NG copy)>] [75] [76] [77]) (./chapters/14-code-data.tex [78])
+(./chapters/15-ai-reflection.tex [79] [80] [81]) (./chapters/16-conclusion.tex
+[82] [83]) (./appendices/data-science.tex [84] [85] [86] [87] [88] [89]
+[90] [91] [92 <./figures/hko-recovery-by-source-distance.pdf>] [93 <./figures/d
+erivative-and-kkt-scale.pdf>] [94]
+ignored error: Infinite glue shrinkage found in box being split [95]) [96]
+(./appendices/hko-certificate.tex
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
+(./appendices/hko_core.py) (./appendices/hko_core.py [97])
+(./appendices/hko_core.py)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-euf.cfg) [98]
+(./appendices/hko_core.py)) [99] [100] [101] (build/main.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+Package biblatex Warning: Please rerun LaTeX.
+
+ )</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb><
+/usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1
+/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr
+/share/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/pub
+lic/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share
+/texmf/fonts/type1/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/
+lmmi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/f
+onts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/typ
+e1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/sh
+are/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/l
+m/lmr9.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf
+/fonts/type1/public/lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10
+.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/
+type1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></
+usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/
+public/lm/lmtt9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on build/main.pdf (101 pages, 1753919 bytes).
+Transcript written on build/main.log.
+Latexmk: Getting log file 'build/main.log'
+Latexmk: Examining 'build/main.fls'
+Latexmk: Examining 'build/main.log'
+Latexmk: Found input bbl file 'build/main.bbl'
+Latexmk: References changed.
+Latexmk: References changed.
+Latexmk: Log file says output to 'build/main.pdf'
+Latexmk: Bibliography file(s) from .bcf file:
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
+Sources for biber
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
+  build/main.bcf
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Changed files or newly in use/created:
+  build/main.aux
+  build/main.out
+  build/main.run.xml
+  build/main.toc
+
+------------
+Run number 3 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -interaction=nonstopmode -halt-on-error -recorder -output-directory="build"  "main.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.sty
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype-pdftex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texmf/tex/latex/lm/lmodern.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def)))
+(/usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstpatch.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg))
+==> First Aid for listings.sty no longer applied!
+    Expected:
+        2024/09/23 1.10c (Carsten Heinz)
+    but found:
+        2025/11/14 1.11b (Carsten Heinz)
+    so I'm assuming it got fixed.
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.sty
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.def))
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-dm.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-compat.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/alphabetic.bbx
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/standard.bbx))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/cbx/alphabetic.cbx)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)))
+(./preamble.tex (/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/mdframed/md-frame-0.mdf)))
+(/usr/share/texmf/tex/latex/lm/t1lmr.fd) (build/main.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-cmr.cfg)
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg))
+(build/main.out) (build/main.out)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/english.lbx)
+(build/main.bbl) (/usr/share/texmf/tex/latex/lm/ot1lmr.fd)
+(/usr/share/texmf/tex/latex/lm/omllmm.fd)
+(/usr/share/texmf/tex/latex/lm/omslmsy.fd)
+(/usr/share/texmf/tex/latex/lm/omxlmex.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg)
+(./chapters/00-abstract.tex) (./ai-use-disclosure.tex [1{/var/lib/texmf/fonts/m
+ap/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/us
+r/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm
+/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}] [2])
+(build/main.toc [3]) [4] (./chapters/01-introduction.tex [5] [6{/usr/share/texm
+f/fonts/enc/dvips/lm/lm-mathex.enc}] [7]) (./chapters/02-preliminaries.tex
+(./chapters/02-preliminaries-convex-symplectic-notation.tex [8])
+(./chapters/02-preliminaries-convex-hamiltonian-language.tex [9])
+(./chapters/02-preliminaries-ehz-capacity.tex [10 <./figures/foundations/charac
+teristic-normalization.pdf>])
+(./chapters/02-preliminaries-polytope-input-language.tex [11])
+(./chapters/02-preliminaries-lagrangian-products.tex [12 <./figures/foundations
+/facet-polarity.pdf>]) (./chapters/02-duality.tex [13] [14]))
+(./chapters/03-generalized-reeb-orbits-polytopes.tex [15] [16]
+(/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
+(./chapters/04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27]
+[28]) (./chapters/05-flow-graph.tex [29] [30]
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd) [31] [32 <./figures/flow-graph/flow-g
+raph-f6-tube-sequence.pdf>] [33] [34]
+(./chapters/05-flow-graph-ch2021-background-comparison.tex [35]))
+(./chapters/06-variation.tex [36] [37] [38] [39] [40]
+(/usr/share/texmf/tex/latex/lm/ts1lmr.fd)) (./chapters/07-hko.tex [41{/usr/shar
+e/texmf/fonts/enc/dvips/lm/lm-ts1.enc}] (./chapters/hko-lemma-geometry.tex
+[42] [43]) (./chapters/hko-lemma-bounds.tex [44] [45] [46])
+(./chapters/hko-lemma-conclusion.tex [47]) [48 <./figures/upper-bound-mechanism
+s.pdf>] [49 <./figures/symmetry-extension.pdf>] (./chapters/hko-sections.tex)
+[50] [51] [52]) (./chapters/08-data-science.tex [53] [54] [55 <./figures/condit
+ional-ridge-correlation.pdf>] [56 <./figures/association-generic.pdf>] [57 <./f
+igures/association-products.pdf>] [58] [59] [60] [61] [62])
+(./chapters/09-rotated-regular-polygons.tex [63] [64 <./figures/rotation-profil
+e.png>] [65] [66]) (./chapters/10-affine-pentagons.tex [67] [68] [69] [70])
+(./chapters/11-product-position.tex [71] [72]) (./chapters/12-visualization.tex
+[73]) (./chapters/13-numerics.tex [74 <./figures/visualization/viz-hypercube-ri
+dges.png (PNG copy)> <./figures/visualization/viz-hko-pentagon-min-orbit.png (P
+NG copy)>] [75] [76] [77]) (./chapters/14-code-data.tex [78])
+(./chapters/15-ai-reflection.tex [79] [80] [81]) (./chapters/16-conclusion.tex
+[82] [83]) (./appendices/data-science.tex [84] [85] [86] [87] [88] [89]
+[90] [91] [92 <./figures/hko-recovery-by-source-distance.pdf>] [93 <./figures/d
+erivative-and-kkt-scale.pdf>] [94]
+ignored error: Infinite glue shrinkage found in box being split [95]) [96]
+(./appendices/hko-certificate.tex
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
+(./appendices/hko_core.py) (./appendices/hko_core.py [97])
+(./appendices/hko_core.py)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-euf.cfg) [98]
+(./appendices/hko_core.py)) [99] [100] [101] (build/main.aux) )</usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/share/texmf/f
+onts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.
+pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts
+/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb>
+</usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share/texmf/fonts/type1
+/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/sh
+are/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fonts/type1/public/
+lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texm
+f/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.
+pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/ty
+pe1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmr9.pfb></usr/s
+hare/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/publi
+c/lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/t
+exmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lm
+sy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fo
+nts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on build/main.pdf (101 pages, 1754122 bytes).
+Transcript written on build/main.log.
+Latexmk: Getting log file 'build/main.log'
+Latexmk: Examining 'build/main.fls'
+Latexmk: Examining 'build/main.log'
+Latexmk: Found input bbl file 'build/main.bbl'
+Latexmk: Log file says output to 'build/main.pdf'
+Latexmk: Bibliography file(s) from .bcf file:
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
+Sources for biber
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
+  build/main.bcf
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Changed files or newly in use/created:
+  build/main.run.xml
+
+------------
+Run number 4 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -interaction=nonstopmode -halt-on-error -recorder -output-directory="build"  "main.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.sty
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype-pdftex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/microtype.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texmf/tex/latex/lm/lmodern.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def)))
+(/usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstpatch.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg))
+==> First Aid for listings.sty no longer applied!
+    Expected:
+        2024/09/23 1.10c (Carsten Heinz)
+    but found:
+        2025/11/14 1.11b (Carsten Heinz)
+    so I'm assuming it got fixed.
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.sty
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.def))
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-dm.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-compat.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/alphabetic.bbx
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/standard.bbx))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/cbx/alphabetic.cbx)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)))
+(./preamble.tex (/usr/share/texlive/texmf-dist/tex/latex/mdframed/mdframed.sty
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/mdframed/md-frame-0.mdf)))
+(/usr/share/texmf/tex/latex/lm/t1lmr.fd) (build/main.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-cmr.cfg)
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg))
+(build/main.out) (build/main.out)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/english.lbx)
+(build/main.bbl) (/usr/share/texmf/tex/latex/lm/ot1lmr.fd)
+(/usr/share/texmf/tex/latex/lm/omllmm.fd)
+(/usr/share/texmf/tex/latex/lm/omslmsy.fd)
+(/usr/share/texmf/tex/latex/lm/omxlmex.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg)
+(./chapters/00-abstract.tex) (./ai-use-disclosure.tex [1{/var/lib/texmf/fonts/m
+ap/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/us
+r/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm
+/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}] [2])
+(build/main.toc [3]) [4] (./chapters/01-introduction.tex [5] [6{/usr/share/texm
+f/fonts/enc/dvips/lm/lm-mathex.enc}] [7]) (./chapters/02-preliminaries.tex
+(./chapters/02-preliminaries-convex-symplectic-notation.tex [8])
+(./chapters/02-preliminaries-convex-hamiltonian-language.tex [9])
+(./chapters/02-preliminaries-ehz-capacity.tex [10 <./figures/foundations/charac
+teristic-normalization.pdf>])
+(./chapters/02-preliminaries-polytope-input-language.tex [11])
+(./chapters/02-preliminaries-lagrangian-products.tex [12 <./figures/foundations
+/facet-polarity.pdf>]) (./chapters/02-duality.tex [13] [14]))
+(./chapters/03-generalized-reeb-orbits-polytopes.tex [15] [16]
+(/usr/share/texmf/tex/latex/lm/ot1lmss.fd) [17] [18] [19] [20])
+(./chapters/04-quadratic-program.tex [21] [22] [23] [24] [25] [26] [27]
+[28]) (./chapters/05-flow-graph.tex [29] [30]
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd) [31] [32 <./figures/flow-graph/flow-g
+raph-f6-tube-sequence.pdf>] [33] [34]
+(./chapters/05-flow-graph-ch2021-background-comparison.tex [35]))
+(./chapters/06-variation.tex [36] [37] [38] [39] [40]
+(/usr/share/texmf/tex/latex/lm/ts1lmr.fd)) (./chapters/07-hko.tex [41{/usr/shar
+e/texmf/fonts/enc/dvips/lm/lm-ts1.enc}] (./chapters/hko-lemma-geometry.tex
+[42] [43]) (./chapters/hko-lemma-bounds.tex [44] [45] [46])
+(./chapters/hko-lemma-conclusion.tex [47]) [48 <./figures/upper-bound-mechanism
+s.pdf>] [49 <./figures/symmetry-extension.pdf>] (./chapters/hko-sections.tex)
+[50] [51] [52]) (./chapters/08-data-science.tex [53] [54] [55 <./figures/condit
+ional-ridge-correlation.pdf>] [56 <./figures/association-generic.pdf>] [57 <./f
+igures/association-products.pdf>] [58] [59] [60] [61] [62])
+(./chapters/09-rotated-regular-polygons.tex [63] [64 <./figures/rotation-profil
+e.png>] [65] [66]) (./chapters/10-affine-pentagons.tex [67] [68] [69] [70])
+(./chapters/11-product-position.tex [71] [72]) (./chapters/12-visualization.tex
+[73]) (./chapters/13-numerics.tex [74 <./figures/visualization/viz-hypercube-ri
+dges.png (PNG copy)> <./figures/visualization/viz-hko-pentagon-min-orbit.png (P
+NG copy)>] [75] [76] [77]) (./chapters/14-code-data.tex [78])
+(./chapters/15-ai-reflection.tex [79] [80] [81]) (./chapters/16-conclusion.tex
+[82] [83]) (./appendices/data-science.tex [84] [85] [86] [87] [88] [89]
+[90] [91] [92 <./figures/hko-recovery-by-source-distance.pdf>] [93 <./figures/d
+erivative-and-kkt-scale.pdf>] [94]
+ignored error: Infinite glue shrinkage found in box being split [95]) [96]
+(./appendices/hko-certificate.tex
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
+(./appendices/hko_core.py) (./appendices/hko_core.py [97])
+(./appendices/hko_core.py)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-euf.cfg) [98]
+(./appendices/hko_core.py)) [99] [100] [101] (build/main.aux) )</usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/share/texmf/f
+onts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.
+pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts
+/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb>
+</usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share/texmf/fonts/type1
+/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/sh
+are/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/share/texmf/fonts/type1/public/
+lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texm
+f/fonts/type1/public/lm/lmr17.pfb></usr/share/texmf/fonts/type1/public/lm/lmr6.
+pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/ty
+pe1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmr9.pfb></usr/s
+hare/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/publi
+c/lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/t
+exmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lm
+sy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fo
+nts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on build/main.pdf (101 pages, 1754122 bytes).
+Transcript written on build/main.log.
+Latexmk: Getting log file 'build/main.log'
+Latexmk: Examining 'build/main.fls'
+Latexmk: Examining 'build/main.log'
+Latexmk: Found input bbl file 'build/main.bbl'
+Latexmk: Log file says output to 'build/main.pdf'
+Latexmk: Bibliography file(s) from .bcf file:
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
+Sources for biber
+  references/additional.bib
+  references/ai.bib
+  references/data-science.bib
+  references/main.bib
+  build/main.bcf
+Latexmk: All targets (build/main.pdf) are up-to-date
+
+Latexmk: Missing bbl file 'build/main.bbl' in following:
+ No file main.bbl.
+Latexmk: Missing input file 'main.toc' message in .log file:
+  No file main.toc.
+Latexmk: Using biber to make bibliography file(s).
+Latexmk: Using biber to make bibliography file(s).
+Latexmk: Using biber to make bibliography file(s).
+Latexmk: Using biber to make bibliography file(s).

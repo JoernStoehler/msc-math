@@ -27,6 +27,12 @@ npx playwright@1.61.1 install --with-deps chromium  # one-time browser setup
 node screenshot-figures.mjs
 ```
 
+The screenshot producer selects Chromium's SwiftShader software renderer and
+rejects a lost WebGL context or an entirely white rendered frame before saving.
+This matters on hosts where automatic GPU selection can return a blank PNG
+without a process error. Browser setup must install the revision required by
+the pinned Playwright version; an unrelated installed Chromium is insufficient.
+
 For a single JSON export, run:
 
 ```bash

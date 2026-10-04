@@ -1,12 +1,15 @@
 # Current thesis work remaining
 
 Reconciled against the selected source and the 4 October 2026 restart
-candidate. This remains the detailed obligation owner for `thesis/main.tex`;
+continuation candidate. This remains the detailed obligation owner for `thesis/main.tex`;
 [current.json](current.json) owns live assignments. The preserved checkpoint
 `fe3475b3` supplied most of the source repairs below, now assembled with the
 restart corrections. Exact source/PDF identity and bounded review outcomes are
-in [the integration record](../history/thesis-restart-2026-10-04/integration.md)
-and [candidate manifest](../history/thesis-restart-2026-10-04/candidate-manifest.json).
+in [the continuation integration record](../history/thesis-continuation-2026-10-04/integration.md)
+and [candidate manifest](../history/thesis-continuation-2026-10-04/candidate-manifest.json).
+The first 100-page acceptance bundle at `2704f054` remains immutable; the
+101-page continuation adds missing model-feature/split details and clarifies
+exact rational outputs from dyadic inputs.
 A clean build or agent review does not establish human PASS. No submission or
 public release is implied. Human acceptance, the overall data-science scope
 classification and long-horizon reproduction completeness remain unknown.
@@ -136,9 +139,14 @@ remain unchanged.
 
 **Status: source and layout repairs completed.** Panel interpretations,
 exact cube example, separate audit-packet owners, external-data status and
-appendix/public-version distinction are present. The integrated 100-page build
-has no overfull/underfull or undefined-reference warnings. Final PDF inspection
-is recorded against the retained candidate, rather than the earlier snapshots.
+appendix/public-version distinction are present. The integrated 101-page build
+has no overfull boxes or undefined-reference warnings. Independent continuation
+inspection covers its changed pages and binds the unchanged pages to the
+earlier full inspection. All thirteen selected figures have been regenerated
+from named inputs and staged into an isolated source copy; the resulting PDF
+matches all 101 candidate page rasters at 96 dpi and its extracted layout text.
+The blank-success WebGL screenshot failure found by that run is repaired. The
+commands, copy names and limits are in [figure reproduction](../figure-reproduction.md).
 
 **Selected sources:**
 
@@ -350,8 +358,8 @@ rewriting unflagged AI v1 prose are not required repairs.
 3. Inspect changed pages and adjacent floats, references, tables, and appendix
    continuations. Record the exact source revision and PDF hash.
 4. Keep `docs/resume/` frozen as historical evidence. The new
-   `docs/history/thesis-restart-2026-10-04/candidate-manifest.json` identifies
-   the retained candidate and all tracked thesis-source hashes. Recheck those
+   `docs/history/thesis-continuation-2026-10-04/candidate-manifest.json` identifies
+   the current retained candidate and all tracked thesis-source hashes. Recheck those
    hashes after integration; a later source edit requires a new candidate and
    explicit review disposition.
 5. Freeze one exact candidate for any eventual final human judgment. The
@@ -370,9 +378,14 @@ rewriting unflagged AI v1 prose are not required repairs.
 - The wide general-QP action-window contract received a separate targeted
   repair and regression review in the restart. This does not imply a wrong
   scalar capacity result or a complete audit of every consumer.
-- The reproduction inventory now distinguishes current analytic and exact
-  routes, historical evidence and authenticated bulk-data materialization.
+- The reproduction inventory distinguishes current analytic and exact routes,
+  historical evidence and authenticated bulk-data materialization. The selected
+  thirteen-figure producer/copy/PDF chain now passes on the installed host;
+  three selected structural JSON exports were recomputed and empirical plots
+  used verified retained inputs. This does not rerun historical capacity data
+  or verify R2 access. The current 45-feature P2 modeling table requires its
+  separate reconstruction; the historical plotting table lacks six columns.
   A fresh independent environment has not reproduced every empirical producer,
-  figure and final PDF, and original timing/machine metadata is incomplete.
+  and original timing/machine metadata is incomplete.
 - Submission status/current institutional rules and Jörn/Kai review remain
   externally unestablished; no administrative action is selected by this file.

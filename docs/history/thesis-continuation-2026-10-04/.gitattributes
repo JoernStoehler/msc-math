@@ -1,0 +1,3 @@
+# Preserve raw execution logs; whitespace is evidence, not source formatting.
+*.log -whitespace
+cross-environment-layout.diff -whitespace

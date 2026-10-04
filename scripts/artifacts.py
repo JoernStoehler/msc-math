@@ -328,6 +328,33 @@ def list_artifacts(_: argparse.Namespace) -> None:
         print(f"{name}\t{entry.get('snapshot', 'unpublished')}\t{entry.get('description', '')}")
 
 
+def verify_cache(args: argparse.Namespace) -> None:
+    """Verify a cached registered snapshot without network access or writes."""
+    registry = load_registry()
+    try:
+        entry = registry["artifacts"][args.artifact]
+    except KeyError as error:
+        raise ArtifactError(f"unknown artifact: {args.artifact}") from error
+    snapshot = entry["snapshot"]
+    cache_root = Path(args.cache_root).expanduser() if args.cache_root else default_cache_root()
+    directory = cache_root.resolve() / args.artifact / snapshot
+    try:
+        raw_manifest = (directory / "manifest.json").read_bytes()
+    except OSError as error:
+        raise ArtifactError(f"cannot read cached manifest: {directory}: {error}") from error
+    manifest = parse_manifest(raw_manifest, args.artifact, snapshot)
+    verify_directory(directory / "files", manifest["files"])
+    print(json.dumps({
+        "artifact": args.artifact,
+        "snapshot": snapshot,
+        "directory": str(directory),
+        "files": len(manifest["files"]),
+        "bytes": sum(record["size"] for record in manifest["files"]),
+        "status": "verified-local-cache",
+        "remote_checked": False,
+    }))
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     subparsers = result.add_subparsers(dest="command", required=True)
@@ -344,6 +371,12 @@ def parser() -> argparse.ArgumentParser:
     materialize_parser.add_argument("--cache-root")
     materialize_parser.add_argument("--no-link", action="store_true")
     materialize_parser.set_defaults(function=materialize)
+    verify_parser = subparsers.add_parser(
+        "verify-cache", help="verify a registered local cache without network access or writes"
+    )
+    verify_parser.add_argument("artifact")
+    verify_parser.add_argument("--cache-root")
+    verify_parser.set_defaults(function=verify_cache)
     list_parser = subparsers.add_parser("list", help="list registered shared artifacts")
     list_parser.set_defaults(function=list_artifacts)
     return result

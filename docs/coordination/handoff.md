@@ -1,19 +1,65 @@
-# Current handoff
+# Thesis continuation — 4 October 2026
 
-**4 October 2026: bounded restart completed before the 04:00 Europe/Berlin hard stop.** The commit containing this handoff retains the checked candidate and repository improvements on `thesis/2026-10-04-candidate`, preserving checkpoint `fe3475b3` and its pre-run base `52b1526c8ff5613a400f2f4028b4290f35841b21`. Worktree: `/home/joern/.codex/worktrees/f171/msc-math`.
+The bounded thesis/repository continuation is closed within the original
+**02:00 UTC / 04:00 Europe/Berlin hard stop**, with no human questions.
+The commit containing this handoff retains the delivery; broader project
+completion and human PASS remain unasserted. Worktree:
+`/home/joern/.codex/worktrees/f171/msc-math`; branch
+`thesis/2026-10-04-candidate`. `current.json` owns assignments.
 
-The [delivery record](../history/thesis-restart-2026-10-04/README.md) identifies the final **100-page PDF**, source manifest, independent acceptance, numerical repairs and exact evidence. PDF SHA-256: `27dbf152964bf3eeb6a15bf5f319ab4326de14d48a40e2e296f6008eff3e2f70`. The selected source remains `thesis/main.tex`; ordinary build: `sh thesis/build.sh`. Recheck retained source/PDF/evidence identity with:
+The current candidate is the **101-page PDF** in
+[the continuation packet](../history/thesis-continuation-2026-10-04/README.md),
+SHA-256 `d27e2f5330c61b25df23939a3da8118da98dd95aa6f336ac9d09d52302724a81`.
+The selected source is still `thesis/main.tex`; build with `sh thesis/build.sh`.
+Its 61-file source identity is
+`00d03cebeefa4d83774983d6744fc7be85745dc1265bba958521487a50cf6e6e`.
+Independent acceptance froze at 01:49:46 UTC, manifest
+`81f5d804509f3a0b6068775a5e9a1bb74699ed3d589fe163860b7dde4156efba`.
+A build or finite test alone does not establish mathematical or human acceptance.
+
+This continuation added the promised prediction features and split to Appendix
+A, corrected exact-rational versus dyadic-input wording, repaired a screenshot
+producer that silently saved a blank canvas, and added safe figure-output and
+offline artifact-cache verification routes. All thirteen selected figures were
+regenerated; a fresh source copy using those outputs reproduced the candidate's
+text and all 101 page rasters at 96 dpi. Four production capacity tests on 14
+fixed geometric bodies passed. The printed HKO appendix command and full
+26-row Sage verifier passed with unchanged canonical inputs/outputs. A second installed TeX environment also built the same 101-page source after
+installing its missing declared font dependency in a disposable, resource-capped
+container; the different PDF is supporting evidence, not the selected candidate.
+The
+[figure runbook](../figure-reproduction.md) records commands and their limits.
+
+The earlier `2704f054` commit, its checked 100-page PDF and
+[acceptance bundle](../history/thesis-restart-2026-10-04/README.md) remain
+unchanged historical evidence, along with checkpoint `fe3475b3` and
+`docs/resume/`. The earlier bundle's identity checker targets its own source
+revision, not the changed continuation checkout. Use the new identity checker:
 
 ```sh
-python3 docs/history/thesis-restart-2026-10-04/verify-candidate.py
+python3 docs/history/thesis-continuation-2026-10-04/verify-candidate.py
 ```
 
-All seven selected-source obligations are dispositioned, and the scientific dashboard is reconciled against this candidate and 96 explicit source hashes. Independent acceptance covers all eleven required areas, all 100 pages at sequential-text/overview level and 64 individually rendered pages. Six scoped findings were closed. Tests/builds and finite exact checks do not supply human PASS or unrestricted correctness.
+Root stopped the earlier run prematurely at 00:55 UTC despite the broader
+unfinished objective; Jörn challenged that decision and work resumed at 01:27.
+A persistent goal was not set. Its absence did not revoke task authorization.
+The continuation's concrete findings demonstrate that useful work remained.
+The [supervision record](../history/thesis-continuation-2026-10-04/supervision.md)
+evaluates the observed repair/review cycles and failed stopping criterion;
+sustained orchestration effectiveness or resource savings remain unestablished.
 
-Human/Kai PASS, overall DS scope, full fresh-environment/data reproduction and actual submission/archive status remain unknown or outside this delivery. The named DS table retains one unresolved body and uncertified volume ratios; production-flow correspondence remains bounded. No university submission or public release was performed. `docs/resume/` remains unchanged historical evidence; its old mismatches do not describe the new candidate.
+Operational integration `/root/integration`, independent acceptance
+`/root/acceptance` and supervision `/root/supervision` are released, along with
+their selected children. Root owns final custody and the commit.
+An old mathematical child has ambiguous native `pending_init` metadata despite
+explicit release/interrupt; it has no assigned work. Numeric quota and actual
+spend are unknown. The expiring read-only review server remains for artifact
+access; no producer or container remains running. No work continues after
+the hard stop without new authorization.
 
-Operational integration `/root/integration` and independent acceptance `/root/acceptance` completed. Supervision `/root/supervision` ended at 00:52:07 UTC; its [assessment](../history/thesis-restart-2026-10-04/supervision.md) records successful direct correction cycles, a duplicated short verifier run, context growth and untested surge/forced-stop behavior. Sustained orchestration effectiveness is not established. All assignments are released; one mathematical child retains ambiguous native `pending_init` metadata despite explicit interrupt/stop. No further work is assigned there.
-
-Root thread `01a10453-ff7a-7f91-8f86-a53f73cd3d35` integrated this local delivery; the commit containing this handoff is its retained revision. Remaining-weekly-quota authorization had no known numeric balance; actual spend is unknown. The hard stop was a ceiling, not a reason to invent new work after scoped acceptance. Further execution requires a new selected task; no unattended producer or review is planned.
-
-The earlier [restart handoff](restart-2026-10-04.md) is retained as historical input. It does not supersede this completed state.
+Remaining limits include human/Kai PASS, overall DS scope, fresh-machine setup,
+authenticated R2 retrieval, the one unresolved retained body, uncertified
+historical volume ratios, and broader production-flow correspondence. The
+current 45-feature P2 table was not rebuilt; its documented CPU/resource
+restriction remains in force. Actual submission/archive status is unknown;
+no university submission or public release is part of this run.

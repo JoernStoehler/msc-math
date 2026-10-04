@@ -9,8 +9,11 @@ are repo-root relative unless they begin with `../`.
 Read this file if you need broad empirical context across regular polygon
 pairs.
 
-Do not read this folder for the pentagon formula proof. For that proof, go to
-`../pentagon-rotation-formula-proof/README.md`.
+The selected analytic pentagon proof is maintained in
+[`formal/pentagon-affine-products/`](../../../formal/pentagon-affine-products/README.md).
+The earlier computational proof is retained in
+`../pentagon-rotation-formula-proof/README.md`. Neither proof requires refreshing
+these empirical sweeps.
 
 Do not open generated JSONL or PNG files by default. Open them only when you
 are regenerating plots or checking a specific empirical claim.
@@ -41,3 +44,22 @@ Refresh the plots:
 ```bash
 uv run --script experiments/regular-products/rotated-regular-products/analyze.py
 ```
+
+The default plot command reads the retained JSONL files and replaces the PNGs
+beside them. To reproduce only the selected thesis profile into a fresh directory,
+without running the capacity producer or replacing retained figures:
+
+```bash
+rotation_plot_dir=$(mktemp -d)
+MPLBACKEND=Agg uv run --script \
+  experiments/regular-products/rotated-regular-products/analyze.py \
+  --only-pentagon --out-dir "$rotation_plot_dir"
+```
+
+This reads `lagrangian-products-5x5.jsonl` and writes
+`lagrangian_products_5x5.png`; `--data-dir` optionally selects another input
+directory. The selected thesis copy is `thesis/figures/rotation-profile.png`.
+Copying a regenerated plot into the thesis is a deliberate step after review;
+the thesis build uses its retained copy. The curve overlays the analytic formula
+and the historical finite-QP samples; this plotting command does not reevaluate
+or certify those samples. Rendering can reproduce while file metadata differs.

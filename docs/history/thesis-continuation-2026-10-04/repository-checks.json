@@ -1,0 +1,78 @@
+{
+  "observed_at": "2026-10-04T01:54:06.080704+00:00",
+  "scope": "Continuation checks; earlier complete library/workspace checks remain in the immutable predecessor packet. No capacity algorithm changed during the continuation.",
+  "checks": [
+    {
+      "command": "cargo test -p symplectic --release --test production_capacity_anchors",
+      "result": "4 passed, 0 failed, 0 ignored; 14 fixed geometric bodies",
+      "log": "production-capacity-anchors.log"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "check": "Identity checker isolated temporary Git fixture",
+      "result": "Accepted matching specimen; rejected source drift, newly tracked thesis file, wrong accepted PDF and out-of-repository evidence path. The actual final-candidate invocation waits for final manifests."
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "scope": "Tracked changes at observation; final staged check still required."
+    },
+    {
+      "command": "scripts/repo-status-summary.sh",
+      "exit_code": 0,
+      "result": "Dated 31 May baseline has thousands of changed paths; not used to establish current validity. Recent scope-specific retained checks govern."
+    },
+    {
+      "check": "Final identity schema isolated temporary Git fixture",
+      "result": "Accepted valid specimen including independent accepted_receipts_sha256; rejected receipt drift."
+    },
+    {
+      "check": "Root visual spot check",
+      "result": "New appendix pages86\u201387 rendered at1600pixels and inspected; no additional issue."
+    }
+  ],
+  "final_candidate_identity": {
+    "command": "python3 docs/history/thesis-continuation-2026-10-04/verify-candidate.py",
+    "exit_code": 0,
+    "observed_at": "2026-10-04T01:54:06.293145+00:00",
+    "repository_files_bound": 312,
+    "scope": "61thesis input inventory/aggregate, candidatePDF, buildlog, independent acceptance/source/report/receipt bindings and retained evidence identity."
+  },
+  "final_dashboard_http": {
+    "command": "python3 -m unittest scripts/test_project_dashboard.py",
+    "tests": 8,
+    "exit_code": 0,
+    "seconds": 4.904
+  },
+  "prior_bundle_preservation": {
+    "comparison_commit": "2704f0541db8160f77dec73e767705bc06401d97",
+    "paths": [
+      "docs/history/thesis-restart-2026-10-04",
+      "docs/resume"
+    ],
+    "git_diff_exit_code": 0
+  },
+  "final_dashboard_structure": {
+    "command": "python3 scripts/serve-project-dashboard.py --check",
+    "exit_code": 0,
+    "scientific_reconciled": true,
+    "changed_sources": [],
+    "source_count": 159
+  },
+  "final_graph_check": {
+    "command": "python3 scripts/render-workflow-graph.py --check",
+    "exit_code": 0
+  },
+  "review_delivery": {
+    "url": "http://100.70.188.20:57909",
+    "served_candidate_sha256": "d27e2f5330c61b25df23939a3da8118da98dd95aa6f336ac9d09d52302724a81",
+    "served_bytes": 1768254,
+    "scope": "HTTP retrieval from this host; not human or independent-device receipt"
+  },
+  "checkpoint_fe3475b3_is_ancestor": true,
+  "live_docker_containers_at_final_check": [],
+  "new_packet_raw_whitespace": "Retained .log files and cross-environment-layout.diff have narrow local Git whitespace attributes; evidence bytes were not normalized."
+}

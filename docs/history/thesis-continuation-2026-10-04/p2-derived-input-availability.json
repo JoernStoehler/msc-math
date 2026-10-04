@@ -1,0 +1,6 @@
+{
+  "checked_at": "2026-10-04T01:38:09.651831+00:00",
+  "searched_pattern": "/tmp/sys-ds-p2-current-full*",
+  "matching_directories": [],
+  "scope": "Read-only explicitly named historical derived-table scratch locations; not a whole-filesystem search or R2 availability check."
+}
