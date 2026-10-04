@@ -249,13 +249,15 @@ the computation is not part of this check.
   `docs/empirical-viterbo-design/desk/product-position-research/README.md`.
   The later lift-containment counterfamily is reviewed research context, not a
   separately selected thesis theorem.
-- **Selection unresolved; currently omitted:** the fixed regular
-  pentagon/symmetric-partner bound. Jörn reacted positively to the class and
-  result, but no retained final instruction selects it for the manuscript. Its
-  exact source is
-  `docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md`;
-  absence from the manuscript is neither a known rejection nor a mandatory
-  addition.
+- **Selected for inclusion on 3 October; currently omitted:** the fixed regular
+  pentagon / arbitrary centrally symmetric partner exact capacity formula,
+  sharp ratio and equality class. Jörn explicitly selected inclusion; proof
+  acceptance and presentation remain open. Compare a compact self-contained
+  proof with a method-first treatment using actual reader-facing candidates,
+  rendered length, conceptual dependencies and figure needs. Source:
+  `docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md`.
+  The independent-affine theorem covers a different class; no publication-wide
+  novelty claim is established. No substantial execution package is approved.
 - **Reviewed but unselected optional results:** harmonic blind-direction
   families, ridge circulation bounds, the moment counterexample, and
   joint-representation separations under

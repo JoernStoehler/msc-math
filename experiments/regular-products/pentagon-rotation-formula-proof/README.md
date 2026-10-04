@@ -1,10 +1,19 @@
 # Pentagon Rotation Formula Proof
 
-This folder owns the exact executable proof for the formula for
+This folder retains the exact executable component of the original
+computational proof for the formula for
 
 ```text
 sys(P_5 x_L R(theta)P_5).
 ```
+
+The current thesis proves the rotation formula analytically in
+[Chapter 9](../../../thesis/chapters/09-rotated-regular-polygons.tex).
+[Chapter 10](../../../thesis/chapters/10-affine-pentagons.tex) gives the
+independent-linear-deformation extension. Neither argument depends on this
+certificate or on rerunning it. This packet preserves the earlier route;
+the reduction, sign-to-action implications and continuity argument remain
+mathematical inputs to that route.
 
 The sibling folder `../rotated-regular-products/` owns the sampled sweep and
 profile figure used by the chapter.  `../pentagon-rotation-empirics/` owns
@@ -20,7 +29,7 @@ are repo-root relative unless they begin with `../`.
 executable_proof.sage.py
 ```
 
-Exact SageMath executable proof. The default invocation runs the full
+Exact SageMath classifier for the original proof route. The default invocation runs the full
 certificate. `--limit N` runs the same assertions on a prefix.
 
 The executable refuses to run when Python assertions are disabled. Its output
@@ -40,11 +49,12 @@ stdout file before using it as evidence.
 
 ## Read Path
 
-1. To check the proof result, read this README and
+1. To inspect the original computational result, read this README and
    `executable_proof.full.stdout.txt`.
 2. To inspect the proof code, read `executable_proof.sage.py`.
-3. For current thesis prose, start at
-   `thesis/09-rotated-regular-polygons.tex` and follow its included TeX files.
+3. For the current proof, read
+   `thesis/chapters/09-rotated-regular-polygons.tex`; the selected build is
+   documented in `thesis/README.md`.
 4. Do not open empirical JSONL/PNG/HTML artifacts for proof verification.
 
 ## Proof Surface Routing
@@ -55,12 +65,17 @@ Use these files for different questions:
 | --- | --- |
 | What is the executable proof? | `executable_proof.sage.py` |
 | What did the full proof run print? | `executable_proof.full.stdout.txt` |
-| Where does the thesis explain the proof architecture? | `thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex`, `thesis/09-rotated-regular-polygons-exact-certificate.tex` |
+| Where is the current analytic rotation proof? | `thesis/chapters/09-rotated-regular-polygons.tex` |
+| Where is the independent-linear-deformation proof? | `formal/pentagon-affine-products/research.tex`, with thesis exposition in `thesis/chapters/10-affine-pentagons.tex` |
+| Where does the thesis describe the original certificate and its trust boundary? | `thesis/chapters/14-code-data.tex` |
 | Where is older formal source material? | `formal/legacy/pentagon-rotation-capacity.tex`, treated as stale source material |
 | Where are empirical figures and viewer artifacts? | `../rotated-regular-products/` for the profile sweep; `../pentagon-rotation-empirics/` for orbit and branch diagnostics |
 
-The formal file is useful for earlier notation and active-branch material, but
-the current lower-bound proof source is the executable Sage certificate.
+The legacy formal file is useful for earlier notation and active-branch
+material. The maintained analytic source and proof-route comparison are in
+`formal/pentagon-affine-products/README.md`. The certificate is the finite
+computational component of the historical lower-bound route, not an input to
+the current analytic proof.
 
 ## Commands
 
