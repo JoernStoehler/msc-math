@@ -1,0 +1,3 @@
+APPROVE shared-standard/final-v1
+
+The message reflects the user’s requested shared standard and read-only reviewer role, preserves exact-text approval and attribution, and makes no unsupported quality or cost claim. No consequential source omission found.

@@ -89,34 +89,12 @@ If a surface cannot be updated, report its stale or unsaved state in the handoff
 not restart paused thesis work or establish ongoing monitoring.
 ## Collaboration and planning
 
-### Review prepared messages before sending
-
-Prepared user-visible messages require a named, separate subagent's approval of
-the complete message text before sending. This includes reports, recommendations,
-handoffs, execution summaries and progress updates. Put `[review: SUBAGENT_NAME_OR_UUID]`
-in the message itself; the reviewer approves that attribution along with the body.
-Review of a source document, plan or earlier wording does not approve the message.
-Only whitespace and Unicode normalization may differ; substantive edits need review again.
-
-Direct synchronous conversation can proceed without this gate: immediate questions,
-answers and corrections while jointly discussing the current issue, without delivering
-a prepared work result. A report does not become exempt because it answers the latest
-question or is posted in chat. On uncertainty, use review. Native agent-to-agent
-messages are outside this user-visible gate; reviewers do not recursively review
-their private returns.
-
-Use the [message-review workflow](.agents/skills/message-review/SKILL.md): give the
-reviewer the actual conversation, any governing decisions, uncertainties or objections
-and exact candidate. It examines the sender's framing and uses context-appropriate
-review criteria. The coordinator retains responsibility for correcting rejected text,
-acting on unfinished work, and sending only the approved version. Never claim an
-approval based on the coordinator's own receipt. If a subagent is unavailable, keep
-prepared delivery pending and state that limitation directly in synchronous chat;
-do not silently waive the gate or ask Jörn to perform the review.
-
-The repository checker verifies text and receipt consistency. It does not intercept
-platform message delivery or establish that approved prose is good. No pre-delivery
-runtime enforcement has been installed. Keep those guarantees distinct.
+Before sending a prepared user-visible message, use the
+[message-review workflow](.agents/skills/message-review/SKILL.md) to obtain a separate
+subagent's approval of the exact complete text, including `[review: REVIEWER]`.
+Substantive changes require renewed review. Direct synchronous conversation and
+private native agent messages are exempt; the skill owns the boundaries and procedure.
+If required review is unavailable, keep prepared delivery pending.
 
 Keep the Codex+user workflow moving: during unfinished authorized work, treat
 brief acknowledgments such as "thx" as acknowledgment, not a stop, pause or scope

@@ -1,0 +1,7 @@
+Yes—that’s the cleaner design. Sender and reviewer now use the same [message-review skill](https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/.agents/skills/message-review/SKILL.md), with a shared standard and brief role instructions. The separate prompt template is gone.
+
+The reviewer receives the message or file, the skill and sufficient conversation context, with the assignment “act as a read-only reviewer.” It returns approval of that candidate version, or rejection with substantive reasons and corrections. No schema, hashes or repeated message text.
+
+AGENTS.md now contains seven lines for the review rule and trigger, down from 29. The skill is roughly half its former length. Exact-text approval, reviewer attribution and renewed review after changes remain.
+
+[review: /root/shared_review]

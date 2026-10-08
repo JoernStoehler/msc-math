@@ -1,4 +1,4 @@
-"""Focused tests for the exact-message receipt contract (stdlib only)."""
+"""Historical tests for the retired exact-message receipt contract (stdlib only)."""
 
 import copy
 import importlib.util

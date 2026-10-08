@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Check an independent review receipt against the complete outgoing message.
+"""Historical schema/hash verifier; not required by the current message-review skill.
+
+Check an independent review receipt against the complete outgoing message.
 
 This is an explicit pre-send check, not a platform send hook. A receipt records
 review; it cannot authenticate who wrote it. The coordinator must verify that
