@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+PATH="$HOME/.local/bin:$PATH"
+export PATH
+codex_client_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+codex_client_python="${CODEX_HOME:-$HOME/.codex}/shell-client-venv/bin/python"
+if [ ! -x "$codex_client_python" ]; then codex_client_python=python3; fi
+exec "$codex_client_python" "$codex_client_dir/codex-session.py" "$@"

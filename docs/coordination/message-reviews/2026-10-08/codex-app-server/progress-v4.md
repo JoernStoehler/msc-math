@@ -1,0 +1,1 @@
+The failure checks now cover unknown RPC outcomes, preserving a created thread ID, refusing automatic approvals, and bounded polling; all 13 pass. An independent code review caught a polling deadline issue, which I fixed. I’m adding the discovery links and retained validation notes, then checking the final package. [review: /root/message_reviewer]

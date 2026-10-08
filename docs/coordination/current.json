@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-04T21:05:03.251388+00:00",
+  "updated_at": "2026-10-08T12:47:13.748842+00:00",
   "scope": "Consolidated registered msc-math worktrees and their retained session results on main. Historical assignments are released; unrelated host processes and account balances are not fully surveyed.",
   "summary": "Worktrees consolidated and retired; main is the only registered checkout. Original manuscript/PDF and newest postmortem preserved, stale owners released, temporary outputs archived. Selected symmetric-partner inclusion, human PASS and full reproduction remain unresolved.",
   "tasks": [
@@ -2301,6 +2301,23 @@
       ],
       "updated_at": "2026-10-04T21:05:03.251388+00:00",
       "depends_on": []
+    },
+    {
+      "id": "codex-shell-app-server",
+      "title": "Codex app-server skill for shell/cloud agents",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "outcome": "Repo-local codex-app-server skill and shell client integrated with Claude discovery. Workstation 0.161.0 create/disconnect/follow-up/fork/title/archive/restore checks and 13 offline regression tests passed. Fresh Claude-cloud install/device login/network/lifetime unverified; no new login grant or host daemon restart. Existing one-shot cloud CLI workflow retained.",
+      "depends_on": [],
+      "sources": [
+        ".agents/skills/codex-app-server/SKILL.md",
+        ".agents/skills/codex-app-server/references/design-notes.md",
+        "docs/development-environments.md"
+      ],
+      "authorization": "J\u00f6rn requested repo-local daemon-backed skill/wrapper on 8 October 2026, explicitly a skill rather than the OpenAI Claude Code plugin. Implementation and bounded tests only; no device grant or substantial workload selected.",
+      "next_step": "Use in a selected cloud task; authenticate only after authorization for that particular device grant. Fresh-cloud behavior remains unverified.",
+      "updated_at": "2026-10-08T12:47:13.748842+00:00"
     }
   ],
   "decisions": [
@@ -2745,6 +2762,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-08T12:47:13.748842+00:00",
+      "text": "Added selected repo-local shell app-server client/skill for agents lacking codex_tui tools. Host persistent-thread checks and offline regressions passed; fresh Claude-cloud setup/login/lifetime remains unverified."
+    },
     {
       "at": "2026-10-04T09:23:53.562093Z",
       "text": "Merged workflow, calibration/planning and thesis continuation onto main; preserved newest postmortem and remote friction records. Released stale owners; selected symmetric-partner inclusion remains a manuscript coverage gap."

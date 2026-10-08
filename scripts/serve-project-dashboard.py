@@ -19,6 +19,8 @@ STATE = "docs/coordination/current.json"
 BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
+    ".agents/skills/codex-app-server/SKILL.md",
+    ".agents/skills/codex-app-server/references/design-notes.md",
     "docs/history/post-consolidation-health-2026-10-04/README.md",
     "docs/history/post-consolidation-health-2026-10-04/artifact-restoration.json",
     "docs/history/post-consolidation-health-2026-10-04/facet-cache-preservation.json",

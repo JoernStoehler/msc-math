@@ -1,0 +1,1 @@
+APPROVE push-progress-v1. The message matches the mixed-workspace evidence and describes the authorized staging work without claiming the push is complete.

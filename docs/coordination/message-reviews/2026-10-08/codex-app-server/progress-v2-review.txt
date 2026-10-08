@@ -1,0 +1,1 @@
+APPROVE progress-v2. The transport correction and dependency choice match the supplied evidence. The daemon ownership statement describes the intended reconnect workflow without claiming that wrapper validation is complete.

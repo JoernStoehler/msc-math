@@ -1,0 +1,19 @@
+Reviewer: /root/wrapper_review (bounded read-only pass, no model tests/network/install/lifecycle actions)
+
+Initial return:
+Two actionable findings from the bounded read-only pass:
+
+- P2 — wait does not bound elapsed time. Checks its deadline only after snapshot, which performs two sequential RPCs per thread, each with an independent timeout. Slow responses across several IDs can keep wait --seconds 60 blocked substantially longer than 60 seconds; --seconds 0 also performs potentially slow RPCs. Pass a remaining deadline into polling RPCs, and explicitly document the separately bounded snapshot behavior for zero seconds. Socket discovery and initialization also sit outside the polling deadline.
+- P2 — maintenance reference is missing. SKILL.md directs maintainers to references/design-notes.md, but that file was absent during review. Add the retained notes or remove the instruction.
+
+Recheck return, verbatim:
+Both findings resolved on read-only recheck:
+
+- Polling RPCs now share the remaining deadline; incomplete snapshots return 124 with explicit uncertainty. Zero-second snapshots and discovery timeouts are documented separately.
+- references/design-notes.md now exists and retains the maintenance evidence.
+
+One small documentation correction remains: SKILL.md:70 says exit 124 means work “remains active,” but snapshotIncomplete can mean current activity is unknown. Change to “work remains active, or its current status could not be confirmed within the window.”
+
+No newly introduced consequential defect established. No executions, network requests, or edits performed.
+
+Sender disposition: Applied the requested uncertainty wording before final delivery.

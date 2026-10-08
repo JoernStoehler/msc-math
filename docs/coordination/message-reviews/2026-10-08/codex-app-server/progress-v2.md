@@ -1,0 +1,1 @@
+The control socket uses WebSocket framing, so a plain JSON-lines client won’t work. I’m using one small Python dependency, `websocket-client`, to handle that transport while keeping the agent-facing commands simple. The daemon will own the running tasks, so callers can reconnect to inspect or follow up. [review: /root/message_reviewer]

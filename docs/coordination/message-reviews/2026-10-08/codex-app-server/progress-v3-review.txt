@@ -1,0 +1,1 @@
+APPROVE progress-v3. The reported checks match the supplied execution evidence, and the text clearly identifies fresh Claude-cloud installation and login as untested.

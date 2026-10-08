@@ -25,6 +25,10 @@ when he last measured them. The command, revision, dependencies and machine
 details were not specified here; do not extend this observation to Sage setup,
 thesis builds, dataset downloads or full experiment runs.
 
+### Codex inside a Claude cloud microVM
+
+The repository-local [codex-app-server skill](../.agents/skills/codex-app-server/SKILL.md) supplies explicit installer/dependency setup, per-grant device-code login and a shell client for persistent local Codex threads. Jörn completes the displayed grant URL/code within 15 minutes. It needs neither the OpenAI Claude Code plugin nor `codex_tui.*` tools. The workstation 0.161.0 checks cover create/disconnect/read/follow-up/fork/archive; fresh cloud installation, network, login and process lifetime are unverified. A cloud VM has its own daemon and credentials; the wrapper does not connect it to workstation sessions or promise recovery after VM deletion.
+
 ### Jörn's terminal and browser access
 
 All three terminal paths reach the Ubuntu workstation. They are clients of one

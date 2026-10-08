@@ -1,0 +1,1 @@
+APPROVE progress-v1. The capability statements match the supplied evidence, and the proposed wrapper fits the requested shell-accessible workflow. The text clearly describes work in progress and does not imply that device login or implementation validation has occurred.
