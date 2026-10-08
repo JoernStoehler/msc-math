@@ -1,0 +1,10 @@
+Case A conversation: Jörn: Let's try a new attempt to get msc-math into a working state. How close are we to cloud work from the repo alone, without machine config, skill installations or ignored data not stored anywhere? How good are skills and harness? Agents often expect me to track what needs doing and their errors. Walltime and unnecessary human involvement are concerns.
+Candidate A: We are fairly close for ordinary code and thesis work. I built the thesis: 101 pages with no undefined references. Rust has tracked dependency contracts. The local harness is uncommitted; data needs private R2 credentials; some workflows use workstation services. Here is a report of the checks and a programme of further tests.
+
+Case B conversation: Jörn: I'm wondering whether working in the cloud would even improve this collaboration. Maybe the real problem is how the agents choose what to do, rather than where they run.
+Candidate B: That is worth separating. Moving execution could help availability, while leaving the same planning and communication failures intact. We can investigate the portability dependencies independently while keeping open whether migration would help the collaboration.
+
+Case C conversation: Jörn: Does the reviewer really need to assume that every conversation has a request?
+Candidate C: Please specify the settled objective and acceptance criteria before I can review the conversation.
+
+Apply current reviewer prompt to all three. No expected verdict is supplied. Assess actual context and candidate, not a remembered verdict. These are short synthetic applications, not a blinded evaluation or demonstration of reliability.

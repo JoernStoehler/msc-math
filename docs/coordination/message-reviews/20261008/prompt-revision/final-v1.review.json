@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "verdict": "APPROVE",
+  "reviewer": "/root/prompt_review",
+  "reviewed_at": "2026-10-08T12:26:03Z",
+  "message_sha256": "6bd596580e03ba83de6e11872001d918d9ac4ee5542707e06f01eb02b955d27b",
+  "context_sha256": "7f0bf757967f1d5c7f179557a45e212ccdff28eb734c733db1309d978d2878c9",
+  "approved_text": "This is the reviewer prompt now in use:\n\n```text\nYou are reviewing a message before it is sent to Jörn. Decide whether this exact text is fit to send at this point in the actual conversation.\n\nRead the supplied conversation, relevant instructions and candidate. Establish what is understood, uncertain or disputed, and what, if anything, has been requested, agreed or authorized. Do not assume a settled task, goal, deliverable or desired conclusion. Examine the sender's interpretation rather than adopting it.\n\nExamine the message's claims, assumptions, questions, proposals and implications for subsequent interaction or work. Use relevance, reasoning, evidence, clarity, user effort and follow-through as lenses where useful; derive specific criteria from this situation. Exploration need not complete a task, and brevity alone is not success.\n\nFor each consequential concern, identify the wording and relevant context, explain the likely consequence, and give an actionable correction. Review the whole message. If more agent work or context is needed, say specifically what; do not offload that work to Jörn. Do not invent preferences, acceptance, authority or psychological causes.\n\nReturn APPROVE or REJECT for this exact candidate, with your consequential findings, required next action and any important uncertainty in your interpretation. Approval requires no unresolved consequential objection, not perfection or your preferred style. Replacement wording needs its own review.\n\nYou own the review; the sender owns revision, action and delivery. Return your authored receipt under the supplied exact-text/context protocol. Review the outgoing message, not merely its source artifact.\n```\n\nFor cost, the default is a fresh reviewer receiving that prompt, the exact message, relevant verbatim conversation excerpts and necessary instructions/evidence together, then returning one response without tools. That permits a single inference workflow; native runtime internals are not guaranteed.\n\nA summary can orient the reviewer, but shouldn't replace the pertinent turns. Forking N messages risks missing earlier steering. Logs and repo files are retrieved only when missing context could change the judgment. Receipt storage and hash checks run outside the reviewer, so they don't require extra reviewer calls. Per-review token and walltime cost remains unmeasured.\n\n[review: /root/prompt_review]",
+  "checks": {
+    "answer_relevance": {
+      "status": "PASS",
+      "reason": "Supplies the requested usable prompt and answers the subsequent questions about review calls and context."
+    },
+    "user_effort": {
+      "status": "PASS",
+      "reason": "Makes the sender responsible for supplying context and completing additional agent work rather than asking Jörn to prepare it."
+    },
+    "evidence_scope": {
+      "status": "PASS",
+      "reason": "Describes the supplied current workflow while explicitly leaving runtime internals and measured cost unknown."
+    },
+    "continuation": {
+      "status": "PASS",
+      "reason": "Preserves sender responsibility for revision, action and delivery without imposing a settled task model."
+    },
+    "communication": {
+      "status": "PASS",
+      "reason": "The prompt is usable, context-first and explicit about the exact-text gate; the attribution names this reviewer."
+    }
+  }
+}

@@ -10,27 +10,31 @@ Prevent Jörn having to reconstruct the answer, manage agent follow-through, or 
 ## Coordinator: prepare the review
 
 1. Write the complete candidate to a UTF-8 file, including `[review: REVIEWER]`. Use the actual canonical native subagent name or UUID returned by the runtime. Nothing user-visible is appended after approval. Only whitespace and Unicode normalization that leave the normalized text identical are permitted. Markdown punctuation and emphasis changes require renewed review.
-2. Prepare a context file containing the actual user request and relevant subsequent steering, the selected objective, governing decisions/authority, unresolved objections and necessary evidence. Preserve the user's wording. State factual uncertainties; do not instruct the reviewer to endorse the preferred framing. For corrections, include what the user rejected and whether they accepted any earlier artifact. A change in relevant user steering invalidates prior approval.
-3. Give a separate native subagent this workflow and the two files. Prefer a fresh context for a consequential disputed framing. Reuse a reviewer for routine updates when it has the necessary context. Assign review only; the coordinator owns implementation and integration. The reviewer may make bounded read-only checks but does not restart the underlying work or spawn recursive message reviewers.
+2. Prepare a context file containing the relevant conversation in the user's wording, governing instructions/decisions, uncertainties or disagreements and necessary evidence. Include goals, requests, authority or acceptance only insofar as they actually exist; distinguish them from the sender's interpretation. Do not replace the conversation with a summary that assumes the sender's framing. For corrections, include what the user rejected and whether they accepted any earlier artifact. A change in relevant user steering invalidates prior approval.
+3. Default to a separate native subagent with no inherited conversation (`fork_turns="none"`). Supply this prompt, the exact candidate, relevant verbatim conversation excerpts and necessary instructions/evidence inline, including already-computed text/context hashes. Request one response with no tools when that packet is sufficient. Reuse a reviewer only when retained context is useful and up to date; do not inherit the whole root merely for convenience. Assign review only; the coordinator owns implementation and integration. If missing context could change the judgment, obtain the particular additional context before approval; bounded reviewer retrieval is allowed when useful. Do not restart the underlying work or spawn recursive message reviewers.
 4. A rejection means revise and resubmit the complete message, or do the missing work before drafting. Do not send the rejected text with disclaimers, a review promise or amendments that make Jörn assemble a replacement. If approval would require a real user decision, the reviewer identifies the exact decision and why; it does not invent permission requirements.
 
-## Reviewer: check the message in its actual context
+## Reviewer prompt template
 
-Read the context and complete candidate before forming a verdict. Judge usefulness and consequential defects, not compliance phrases, a preferred prose style, minimum length or whether every checklist topic appears in the answer. Obtain enough necessary evidence to judge claims; reject unsupported claims instead of certifying unavailable evidence.
+Pass the following prompt with paths to the actual conversation/context, candidate message and intended receipt. This is the substantive review workflow; the receipt mechanics below retain exact-text accountability.
 
-For each of these five checks, record `PASS` or `FAIL` with a short reason specific to the candidate:
+> You are reviewing a message before it is sent to Jörn. Decide whether this exact text is fit to send at this point in the actual conversation.
+>
+> Read the supplied conversation, relevant instructions and candidate. Establish what is understood, uncertain or disputed, and what, if anything, has been requested, agreed or authorized. Do not assume a settled task, goal, deliverable or desired conclusion. Examine the sender's interpretation rather than adopting it.
+>
+> Examine the message's claims, assumptions, questions, proposals and implications for subsequent interaction or work. Use relevance, reasoning, evidence, clarity, user effort and follow-through as lenses where useful; derive specific criteria from this situation. Exploration need not complete a task, and brevity alone is not success.
+>
+> For each consequential concern, identify the wording and relevant context, explain the likely consequence, and give an actionable correction. Review the whole message. If more agent work or context is needed, say specifically what; do not offload that work to Jörn. Do not invent preferences, acceptance, authority or psychological causes.
+>
+> Return APPROVE or REJECT for this exact candidate, with your consequential findings, required next action and any important uncertainty in your interpretation. Approval requires no unresolved consequential objection, not perfection or your preferred style. Replacement wording needs its own review.
+>
+> You own the review; the sender owns revision, action and delivery. Return your authored receipt under the supplied exact-text/context protocol. Review the outgoing message, not merely its source artifact.
 
-- **answer_relevance:** Does it answer the actual request at the right scope, with the main point apparent early? Are activities/component checks being substituted for the requested assessment or outcome? Is a rejected report being treated as accepted? Does a correction provide a coherent replacement when needed?
-- **user_effort:** Can Jörn understand and use it without reconstructing scattered context, navigating an unnecessary report, supervising remaining work or diagnosing an agent-resolvable uncertainty? Does any question have the concrete object, context and purpose needed, and require his knowledge/judgment/authority? Are timing and available attention respected?
-- **evidence_scope:** Are facts, judgments, proposals and uncertainty distinguished at the strength their evidence supports? Does a compile, source review, synthetic test or approval get promoted into a broader readiness claim? Are self-explanations or inferred causes presented as established facts?
-- **continuation:** Does a final/end-of-work message legitimately complete the selected objective or present a genuine required input? If work remains authorized and feasible, return the unfinished obligation and concrete next operation instead of approving a component stop. For progress messages, check that updates do not imply false closure. Criticism, corrections and acknowledgments do not by themselves authorize stopping.
-- **communication:** Is the message organized around what Jörn needs to know or decide? Remove activity narration, unsupported assurances, repetition, unnecessary apology/self-commentary and avoidable retrieval burden. Respect his requested detail and format; useful context is allowed and brevity alone is not success.
-
-Reject on any consequential failure. Explain the defect and an actionable correction, rather than rewrite only the latest complained-about dimension. When a check is not relevant, record `PASS` and why. Do not require irrelevant content to be added to satisfy the checklist.
+The receipt retains five legacy identifiers: `answer_relevance`, `user_effort`, `evidence_scope`, `continuation`, `communication`. They are accountability fields, not definitions of ordinary words or a requirement that the conversation contain a request or task. For each, record `PASS` or `FAIL` and a candidate-specific reason; record non-applicability explicitly as `PASS` with its reason. Any consequential finding must affect the verdict, including one that does not fit those identifiers. A `PASS` on an inapplicable field does not establish completion, acceptance or authority. Do not add irrelevant content merely to populate the receipt.
 
 ## Reviewer: return and retain an approval
 
-Only the reviewer writes the receipt. It contains:
+Only the reviewer authors the receipt. The sender may store a reviewer-returned JSON receipt verbatim, after checking the native return's identity, or the reviewer may write it through a tool when needed. It contains:
 
 ```json
 {
@@ -51,7 +55,11 @@ Only the reviewer writes the receipt. It contains:
 }
 ```
 
-Use the repository helper's `normalize_text` and `text_sha256` functions to compute hashes. Receipts and associated text/context files belong in `docs/coordination/message-reviews/<date>/<packet>/`, with each revision named separately; do not overwrite earlier rejected/approved versions. These files are review evidence, not a competing assignment store. Keep credentials and irrelevant private history out of packets.
+The sender can supply hashes computed with the repository helper's `normalize_text` and `text_sha256` functions; the pre-send checker independently verifies them against the returned complete text and context. Do not ask an LLM to calculate a cryptographic hash by hand. Receipts and associated text/context files belong in `docs/coordination/message-reviews/<date>/<packet>/`, with each revision named separately; do not overwrite earlier rejected/approved versions. These files are review evidence, not a competing assignment store. Keep credentials and irrelevant private history out of packets.
+
+## Context and review cost
+
+A sufficient inline packet permits one response without tools; native runtime internals and cost are not guaranteed by this instruction. More context increases input cost; retrieval adds tool/inference rounds. Forking a fixed number of messages can omit decisive earlier steering and can include irrelevant material. A summary can help orientation, but retain the pertinent verbatim turns so the reviewer can question the sender's interpretation. Session-log pointers require retrieval and are recovery routes, not the default input. Include repo evidence only when needed to assess a consequential claim; do not rerun passed tests or re-prove mathematics merely because a message mentions them. Report packet size, reviewer tool rounds and observed latency when assessing cost; do not infer dollars from token counts or advertise measured savings without a comparison.
 
 A `REJECT` receipt uses the same fields with failing checks and the inspected candidate in `approved_text`; the verdict makes it ineligible for delivery. Return the verdict, identity, receipt path and concrete corrections to the coordinator through native transport. Native returns do not themselves require another reviewer.
 

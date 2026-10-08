@@ -1,0 +1,7 @@
+Native reviewer /root/prompt_review returned these judgments in the same no-tool response as final-v1 review. This is a bounded synthetic application, not a blind comparison or demonstrated future reliability. Returned text:
+
+Case A: REJECT — “Fairly close” generalizes from build and dependency checks without establishing repo-alone viability or addressing the user's collaboration and walltime concerns; identify the unresolved dependencies and what the checks actually establish before proposing more tests.
+
+Case B: APPROVE — Keeps the migration question open and distinguishes execution availability from planning and communication, without assuming the user has chosen migration.
+
+Case C: REJECT — Requires the very settled objective the user is questioning; review the actual exchange and its uncertainty without making a request or acceptance criteria prerequisites.

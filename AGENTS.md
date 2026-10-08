@@ -106,9 +106,9 @@ messages are outside this user-visible gate; reviewers do not recursively review
 their private returns.
 
 Use the [message-review workflow](.agents/skills/message-review/SKILL.md): give the
-reviewer the actual request, governing decisions, unresolved objections and exact
-candidate. It checks relevance, user effort, evidence/scope, continuation and
-communication. The coordinator retains responsibility for correcting rejected text,
+reviewer the actual conversation, any governing decisions, uncertainties or objections
+and exact candidate. It examines the sender's framing and uses context-appropriate
+review criteria. The coordinator retains responsibility for correcting rejected text,
 acting on unfinished work, and sending only the approved version. Never claim an
 approval based on the coordinator's own receipt. If a subagent is unavailable, keep
 prepared delivery pending and state that limitation directly in synchronous chat;
