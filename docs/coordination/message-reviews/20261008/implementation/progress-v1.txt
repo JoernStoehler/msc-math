@@ -1,0 +1,3 @@
+The rule now requires a separate reviewer to approve the complete outgoing message, including its reviewer attribution. The checklist covers relevance, effort imposed on you, evidence, continuation and presentation. The runtime check found that Stop hooks run after text is streamed, so they cannot prevent delivery; the implementation will distinguish an instruction gate from a platform-enforced block.
+
+[review: /root/message_review]

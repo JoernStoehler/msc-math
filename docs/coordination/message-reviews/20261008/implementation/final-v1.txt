@@ -1,0 +1,9 @@
+Implemented your rule in [project guidance](https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/AGENTS.md): prepared messages require a separate subagent to approve their complete text, including the reviewer attribution. Direct synchronous discussion stays exempt.
+
+The reviewer checks relevance, burden on you, evidence, continuation and presentation. The portable checker rejects altered text, changed context, missing checks and self-review. Revisions require renewed approval. Eight focused tests pass.
+
+**The remaining limitation is enforcement:** this runtime has no pre-delivery message hook. The protocol is independently checkable, but a sender can still bypass it. A hard block would require a buffering client or runtime change.
+
+This message went through the new gate.
+
+[review: /root/message_review]
