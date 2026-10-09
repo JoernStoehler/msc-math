@@ -1,0 +1,126 @@
+{
+  "captured_at": "2026-10-09T12:40:01.689370+00:00",
+  "origin_head": "01aba0a3",
+  "canonical_incident": "/workspaces/agent-skills/incidents/intake/2026-10-09T124001Z-agent-account-and-message-review-failure.md",
+  "files": [
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/agent-account-execution-20261009/proof-discovery.md",
+      "archive_path": "evidence/docs/coordination/agent-account-execution-20261009/proof-discovery.md",
+      "sha256": "f5997029e207eec311ef14912161fe318a00d5a7dca0233e8dbaccebb69651ad",
+      "bytes": 13095
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/agent-account-execution-20261009/empirical-discovery.md",
+      "archive_path": "evidence/docs/coordination/agent-account-execution-20261009/empirical-discovery.md",
+      "sha256": "69c93ca9cd93fbfa854aa70814f479fd096ce073e8b7607602b0e5f39813199d",
+      "bytes": 11100
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/plan-prevention/candidate-v1.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/plan-prevention/candidate-v1.md",
+      "sha256": "b4135858523b3ba502da4c04b8290e23637b7a2af765fafb933e184ade0b1a7c",
+      "bytes": 182
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/plan-prevention/context.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/plan-prevention/context.md",
+      "sha256": "42d9fa4af82bc3ee20eaa7ce8cfb03345aa0d32a96c0f16153334ef5d1f01fbe",
+      "bytes": 1843
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/plan-prevention/candidate-v1.review.txt",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/plan-prevention/candidate-v1.review.txt",
+      "sha256": "1e0a2460ef3a151bfc7e3b7b57fb7a41fc283a418a3c6101e9a807da5660e817",
+      "bytes": 181
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/plan-prevention/approval-audit-status.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/plan-prevention/approval-audit-status.md",
+      "sha256": "e783a30968bc3012b3f9e849517b5dcf5fa87bf12be70bb9a5e1409b79184c40",
+      "bytes": 745
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/reviewer-audit/native-return.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/reviewer-audit/native-return.md",
+      "sha256": "5045b5a79456c92d41f4de6723195fc0a004c5ea368401a5820e4d9a7bdee646",
+      "bytes": 11523
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/reviewer-audit/context.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/reviewer-audit/context.md",
+      "sha256": "33064936866ede4cad9cb02ee3897597464961e851a42d13ce7699b0bf2a643d",
+      "bytes": 2234
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/fresh-review-test/candidate-v1.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/fresh-review-test/candidate-v1.md",
+      "sha256": "7089a814259964f58c30b365db614c5ca866d72fbbdccccbada986ed5c69a517",
+      "bytes": 186
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/fresh-review-test/conversation.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/fresh-review-test/conversation.md",
+      "sha256": "dbeb560fe6e501df3328cc788896432d7bc020c83e2b2099f95bd588359b711f",
+      "bytes": 25466
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/fresh-review-test/evidence.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/fresh-review-test/evidence.md",
+      "sha256": "6161cbca5bffa2cfde2de1271cd4e73690b76c6e999c2dae818aa363e4b49f80",
+      "bytes": 598
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/fresh-review-test/supplied-draft.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/fresh-review-test/supplied-draft.md",
+      "sha256": "6c1f30304b7e77b1c91e8a93dc6b8b872fd4b1d48ec45543ee5593bf92fafe86",
+      "bytes": 615
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/fresh-review-test/test-design.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/fresh-review-test/test-design.md",
+      "sha256": "488053676318b3054245244515325681f9cd17707b0dc238b507a45158dbef35",
+      "bytes": 1480
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/fresh-review-test/native-verdict.txt",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/fresh-review-test/native-verdict.txt",
+      "sha256": "2ae51e91c508bee19c0174f78740b536d76b66ecad4b5963e418de39299643a4",
+      "bytes": 532
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/fresh-review-test/actual-inputs.txt",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/fresh-review-test/actual-inputs.txt",
+      "sha256": "260b6a8db4e87a78d250acedf07d77bec892e88736fa5831175b3662c43ef603",
+      "bytes": 1215
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/message-reviews/2026-10-09/full-funding-proposal/report-v2.md",
+      "archive_path": "evidence/docs/coordination/message-reviews/2026-10-09/full-funding-proposal/report-v2.md",
+      "sha256": "223e9d4fe3295876e9e602205864b46e19729023de58b98fa13731b43ced20ef",
+      "bytes": 24504
+    },
+    {
+      "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+      "origin_path": "docs/coordination/agent-account-execution-20261009/full-proposal.md",
+      "archive_path": "evidence/docs/coordination/agent-account-execution-20261009/full-proposal.md",
+      "sha256": "c1a150f0a93705ae99f512cb366f7af8203991ad49f9061549c10c55b863c302",
+      "bytes": 26329
+    }
+  ]
+}

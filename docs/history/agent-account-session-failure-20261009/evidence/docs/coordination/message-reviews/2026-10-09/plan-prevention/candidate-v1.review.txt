@@ -1,0 +1,1 @@
+Native /root/message_reviewer: APPROVE prevention-v1. It briefly confirms the authorized correction, keeps routine prevention with root and asks no further user review or approval.

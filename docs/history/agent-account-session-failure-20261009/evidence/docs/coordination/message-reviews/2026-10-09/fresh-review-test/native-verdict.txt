@@ -1,0 +1,5 @@
+REJECT fresh-prevention-v1.
+
+The edit claim is supported by the revised execution section. The objection is delivery: Jörn explicitly asked for these routine planning fixes to happen silently, and the assistant already acknowledged that instruction and committed to implementing them. This message adds another unrequested report about the same internal work, with no remaining decision for him.
+
+Retain the fixes without sending this candidate. Report when there is a meaningful result, blocker or choice requiring his attention.
