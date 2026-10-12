@@ -7596,6 +7596,6 @@
     "explicit_tracked_source_paths": 201,
     "directory_references": 2,
     "unreferenced_tracked_paths": 3340,
-    "meaning": "Direct source links are discovery evidence, not proof that every linked file was fully reviewed. Directory links do not count all their descendants as reviewed."
+    "meaning": "The explicit_tracked_source_paths and unreferenced_tracked_paths fields compare current source-reference path strings with the frozen 10 October pre-migration census. They count baseline paths with and without an exact current reference, respectively; moved files are not matched to their former paths. These cross-era unchanged-path comparisons do not measure current source coverage or review completeness. directory_references counts current directory references, without counting their descendants as reviewed."
   }
 }

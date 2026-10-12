@@ -1,16 +1,21 @@
 # Current handoff
 
-## 12 October: checkpoint wrap-up planning
+## 12 October: checkpoint wrap-up complete
 
-Migration checkpoints `2f1fc5e2` and `88240a2d` are committed on
-`codex/topic-migration-20261012`. Jörn requested up to fifteen minutes of
-planning/questions at 11:30 UTC; execution remains to be selected, with a
-possible later sixty-minute ceiling. The [migration ledger](../repository-organization/inventory/migration-results-2026-10-12.md#proposed-checkpoint-wrap-up-12-october)
-owns the concrete residual fixes, integration boundary and proposed checks.
-Occupied main and sibling worktrees contain independent uncommitted changes;
-no merge, push or broader consolidation is selected. Existing thesis gaps do
-not restart thesis work. Current planning/delivery status belongs to
-[current.json](current.json).
+Jörn confirmed no other sessions are active and approved up to sixty minutes of
+useful work at 12:01:29 UTC (hard stop 13:01:29 UTC). Main's existing changes are
+preserved in `185155fe`; its working tree is clean. The migration and follow-up
+remain on `codex/topic-migration-20261012`. Merge and resumption from main are
+later steps, not part of this execution.
+
+The [wrap-up and integration map](../repository-organization/inventory/migration-results-2026-10-12.md#checkpoint-wrap-up-and-later-integration)
+owns the narrow fixes, checks and remaining main/sibling reconciliation.
+Worktrees `337f` and `fde8` still contain uncommitted versions not preserved by
+the main checkpoint. Preserve their deltas before any later cleanup; no session
+liveness investigation is needed under Jörn's explicit inactivity statement.
+Focused checks and independent assembled review passed; execution is complete.
+Current status belongs to [current.json](current.json).
+Existing thesis acceptance/coverage gaps do not restart thesis work.
 
 ## 12 October: organization migration complete in f7e0
 

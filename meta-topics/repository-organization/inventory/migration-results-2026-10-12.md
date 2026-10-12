@@ -79,7 +79,7 @@ work.
 
 ## Proposed checkpoint wrap-up, 12 October
 
-**Planning only; execution awaits Jörn's selection.** At 11:30 UTC Jörn
+**Historical proposal; execution approved at 12:01:29 UTC.** At 11:30 UTC Jörn
 requested a planning/questions phase of up to fifteen minutes and said a later
 execution phase could receive up to sixty minutes. This does not extend the
 expired migration window or restart thesis production.
@@ -145,3 +145,75 @@ on 12 October: the demonstrated fixes, ten-minute ownership limit, preservation
 boundary and focused completion checks fit the planning request and proposed
 execution ceiling. This is agent review of a proposal, not Jörn's execution
 approval or a claim that the fixes have been made.
+
+
+## Checkpoint wrap-up and later integration
+
+Jörn confirmed at 12:01:29 UTC that no other sessions are active, authorized
+committing main and allowed up to sixty minutes of useful wrap-up. He left the
+branch merge and resumption from main for later. This supersedes the proposal's
+ownership/liveness lookup: no such investigation was needed.
+
+Main is preserved as `185155feb116b108abf46a72980cb411dfab8378` (425 changed
+files, expanding the 100 collapsed status entries). The checkpoint includes all
+existing nonignored tracked/untracked work, deletions and ten Claude skill
+symlinks; main's working tree is clean. This preserves the existing state,
+including retained certificates/proof inputs and optional workload caches;
+it does not certify those results or enact their old proposals. No merge or
+push occurred. Main now has its own checkpoint beyond the common ancestor
+`844fc5be`; the earlier zero-divergence observation no longer describes HEAD.
+
+The branch wrap-up repairs the missing-Pandoc setup path and clarifies that
+inventory coverage counts compare current references with a frozen census by
+exact path string. Schema and dated census are preserved. The two remaining
+expired 3–4 October resource/launch questions are dispositioned at their
+[retention owner](../../project-management/expired-window-retention-2026-10-12.md).
+Current planning/execution state replaces the obsolete uncommitted summary and
+expired migration next step. The missing-Pandoc diagnostic/target check and
+inventory regeneration/check passed; coordination structure/link and graph freshness checks passed. Independent
+assembled review by `/root/wrapup_gaps` found one stale planning next-step;
+it was corrected, and the reviewer approved closure. The reviewer inspected
+the diff and relied on assigned-worker reports for main preservation/sibling
+comparison, without repeating passed tests. No full scientific tests or
+producers were run. The wrap-up is complete within the authorized window.
+
+### Later integration map
+
+The main checkpoint preserves main only. Neither dirty sibling may be discarded
+on that basis. The following map is a bounded read-only comparison, not an
+assessment of scientific validity or a decision to promote every retained file.
+
+| Source | Material to reconcile | Current destination / treatment |
+| --- | --- | --- |
+| Main | Skill replacements, Claude/config discovery, review-files and serving changes | `.agents/`, `.claude/`, `.codex/`, scripts; combine live-task-graph skill changes with migrated owner paths. |
+| Main | Codex/environment documentation; friction F04 | `meta-topics/development-environment/{codex-reference,development-environments}.md`; `meta-topics/project-management/friction/F04.md`. |
+| Main | Discovery desk, arbitrary-partner additions, HKO acceptance/scientific packets | `topics/empirical-studies/discovery-design/desk/`, `topics/products/pentagon-arbitrary-partner/`, `topics/variation-and-local-maxima/hko-local-maximum/`; preserve producer/evidence links and version-level caveats. |
+| Main and siblings | Registry, handoff, project facts, dashboard/server | Combine substantive obligations in `meta-topics/project-management/{current.json,handoff.md}`, `docs/project-facts.md` and dashboard/server; preserve compatibility links and do not resurrect expired launches. |
+| Main and siblings | Generated task graphs | Regenerate from reconciled registry; historical SVGs do not own current state. |
+| Main | Old quota/selection records | `docs/history/coordination/quota-reset-2026-10-04.md` and `docs/history/coordination/thesis-selection-2026-10-03/selection-structure.md`. |
+| `337f` | Support-surface preferences, F17/context-reset and research-enablement findings | Development-environment requirements; project-management/friction; agent-workflow findings/evidence. Old prompts remain historical. |
+| `fde8` | Agent-account pilot, Codex lookup diagnosis, failed-session evidence/reviews | Agent-workflow writing/account evidence and historical development-environment diagnosis; link retained consumer routes after settling destinations. |
+
+At 12:03 UTC the bounded comparison found six tracked changes and seventy
+untracked files in `337f`. The seventy did not exist at their original paths in
+main/migration and had no exact-byte same-basename match among retained migration
+files. This is evidence of unpreserved file versions, not proof of novel ideas.
+Its five registry updates concern catch22 diagnosis, research-backchain and
+research-agenda comparisons, preparation-choice recovery, and context-reset
+cause; four are recorded done and preparation recovery blocked. These are
+recorded dispositions, not new assignments.
+
+`fde8` had seven tracked changes and 144 untracked files. Seventeen untracked
+files have exact-byte same-basename matches in the retained failed-session
+archive; the other 127 were not matched by that bounded check. Potentially
+unpreserved packages include thirteen writing/account pilot files,
+`docs/history/codex-lookup-latency-20261009/`, and additional session-support and
+review packets. Its old handoff/dashboard layers describe failed/closed work;
+retain useful evidence without copying superseded notices into current views.
+
+For a later integration: first preserve sibling deltas independently; assemble
+main plus migration in an isolated candidate; reconcile moved paths and current
+obligations semantically; bring over selected sibling evidence with explicit
+retention dispositions; regenerate views and check the resulting links. Leave
+all occupied checkout files intact until their versions have been preserved.
+The present wrap-up does not perform that merge or resume thesis work.

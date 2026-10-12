@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-12T11:36:34Z",
+  "updated_at": "2026-10-12T12:06:18Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "12 October bulk topic/meta migration is committed on codex/topic-migration-20261012 (2f1fc5e2; storage clarification 88240a2d). Bounded migration reviews and consumer checks are retained in the migration ledger. At 11:30 UTC Jörn requested up to fifteen minutes of wrap-up planning; execution remains to be selected, with a possible sixty-minute ceiling. Existing thesis coverage and full-review gaps remain unresolved. Occupied main and sibling worktrees have independent uncommitted changes; no merge or push is selected.",
+  "summary": "12 October migration and narrow checkpoint wrap-up are complete on codex/topic-migration-20261012. Main existing work is preserved in185155fe and main is clean. Setup diagnostic, inventory count semantics and expired live decision records are repaired; focused checks and independent assembled review passed. Jörn left the branch merge and main resumption for later. Sibling337f/fde8 uncommitted versions are mapped and must be preserved before later cleanup. Existing thesis coverage/full-review gaps remain unchanged.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2606,14 +2606,34 @@
       "depends_on": [
         "cleanup-workflow-design-20261010"
       ],
-      "outcome": "Concrete narrow wrap-up plan prepared and independently approved. Direct report prepared; proposed execution awaits Jörn selection. No implementation, merge, push or thesis restart.",
+      "outcome": "Concrete narrow wrap-up plan prepared and independently approved; Jörn selected its execution at12:01:29 UTC with explicit main-checkpoint authorization.",
       "authorization": "Jörn requested <=15 minutes planning/questions at 11:30:07 UTC and clarified execution TBC; subsequent execution can receive up to60 minutes but scope/launch are not yet selected.",
       "sources": [
         "meta-topics/repository-organization/inventory/migration-results-2026-10-12.md"
       ],
-      "updated_at": "2026-10-12T11:36:34Z",
-      "next_step": "Jörn selects the proposed narrow wrap-up; receiving coordinator preserves the pending execution decision.",
+      "updated_at": "2026-10-12T12:05:35Z",
+      "next_step": "Consult checkpoint-wrapup-execution-20261012 and the retained integration map for the executed result and later merge boundary.",
       "blocker": null
+    },
+    {
+      "id": "checkpoint-wrapup-execution-20261012",
+      "title": "Checkpoint main and finish bounded migration wrap-up",
+      "status": "done",
+      "owner": null,
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "depends_on": [
+        "checkpoint-wrapup-plan-20261012"
+      ],
+      "outcome": "Main existing nonignored work preserved in185155fe (425 files) with clean main checkout. Two script/presentation fixes and expired current-state records repaired; later main/sibling integration map retained. Focused checks passed and independent assembled review approved after correcting stale planning next-step wording.",
+      "authorization": "Jörn12:01:29 UTC: no other sessions active, commit main; later merge this branch/resume there. Up to60 minutes, earlier stop when no useful work remains. Hard stop13:01:29 UTC.",
+      "sources": [
+        "meta-topics/repository-organization/inventory/migration-results-2026-10-12.md"
+      ],
+      "updated_at": "2026-10-12T12:06:18Z",
+      "blocker": null,
+      "next_step": "Later merge/main resumption remains deferred by Jörn. Preserve sibling337f/fde8 deltas before cleanup and use retained integration map."
     }
   ],
   "decisions": [
@@ -2780,13 +2800,16 @@
     {
       "id": "oct03-resource-scope",
       "question": "Does Jörn authorize parallel Codex agents for this execution window, with paid APIs excluded?",
-      "status": "open",
-      "recommendation": "Use the reported abundant token allowance for a reviewed coherent package; exclude paid API calls unless separately authorized.",
-      "consequence": "Latest user report: five-hour walltime maximum with 98% of weekly quota available. Exact remaining quota and cutoff are unmeasured. Task/prompt design is selected; execution package, parallel-agent scope and paid API spending remain unselected.",
+      "status": "resolved",
+      "recommendation": "Expired 3–4 October resource/launch question; retain underlying workflow and thesis obligations at their current owners and select any future package using current scope/resources.",
+      "consequence": "Closed as an expired request, not as approved or executed. Historical quotas, staffing and 02:00 deadline establish no current authorization. Existing workflow implementation/acceptance and thesis obligations remain unresolved.",
       "sources": [
         "AGENTS.md",
-        "meta-topics/agent-workflow/collaboration-rationale.md"
-      ]
+        "meta-topics/agent-workflow/collaboration-rationale.md",
+        "meta-topics/project-management/expired-window-retention-2026-10-12.md"
+      ],
+      "owner": null,
+      "updated_at": "2026-10-12T12:03:11Z"
     },
     {
       "id": "oct03-goal-interactivity",
@@ -2857,28 +2880,29 @@
     {
       "id": "oct04-workflow-fix-window",
       "question": "Approve a revised combined remaining-window programme with a justified scale-out allocation through02:00UTC?",
-      "status": "open",
-      "owner": "01a103dc-762f-7ef1-a094-4b0247b290ff",
-      "recommendation": "Four-production-worker proposal was rejected by Jörn. Compare actual independent output/review/integration ownership and higher-parallelism combinations before revising the single offered review request. No approval inferred.",
-      "consequence": "No substantial work or continuation goal launched. Required approval remains open; existing bounded planning and measurements do not authorize execution.",
+      "status": "resolved",
+      "owner": null,
+      "recommendation": "Expired 3–4 October resource/launch question; retain underlying workflow and thesis obligations at their current owners and select any future package using current scope/resources.",
+      "consequence": "Closed as an expired request, not as approved or executed. Historical quotas, staffing and 02:00 deadline establish no current authorization. Existing workflow implementation/acceptance and thesis obligations remain unresolved.",
       "sources": [
         "AGENTS.md",
         "meta-topics/agent-workflow/collaboration-rationale.md",
-        "meta-topics/agent-workflow/process-audit/REPORT.md"
+        "meta-topics/agent-workflow/process-audit/REPORT.md",
+        "meta-topics/project-management/expired-window-retention-2026-10-12.md"
       ],
-      "updated_at": "2026-10-03T23:12:46.113982Z"
+      "updated_at": "2026-10-12T12:03:11Z"
     },
     {
       "id": "checkpoint-wrapup-execution-20261012",
       "question": "Execute the reviewed narrow repository wrap-up under a sixty-minute cap?",
-      "status": "open",
-      "owner": "01a12679-8534-7d83-96a4-81abb73de51c",
+      "status": "resolved",
+      "owner": null,
       "recommendation": "Run current-state/obsolete-link/inventory-count repairs and bounded integration map, then review and commit on the migration branch. Keep broader session consolidation separate.",
-      "consequence": "Jörn explicitly selected planning only and kept execution TBC; possible sixty-minute ceiling is not a launch. Preserve this decision across handoff.",
+      "consequence": "Approved by Jörn at12:01:29 UTC for up to60 minutes, stopping earlier when useful work ends. Explicitly checkpoint main; leave branch merge and resumption for later. User confirms other sessions inactive.",
       "sources": [
         "meta-topics/repository-organization/inventory/migration-results-2026-10-12.md"
       ],
-      "updated_at": "2026-10-12T11:36:34Z"
+      "updated_at": "2026-10-12T12:02:38Z"
     }
   ],
   "resources": [
@@ -2893,6 +2917,12 @@
       "value": "Planning/questions only through 11:45:07 UTC (fifteen minutes from request). Possible later execution ceiling sixty minutes, launch pending. No current quota or billed-spend estimate established.",
       "observed_at": "2026-10-12T11:34:43Z",
       "basis": "Jörn direct messages at 11:30:07, 11:30:32 and 11:30:38 UTC."
+    },
+    {
+      "label": "12 October checkpoint execution",
+      "value": "Approved12:01:29–13:01:29 UTC at most; finish earlier when useful work complete. Other sessions inactive per Jörn. Quota/billed expenditure not currently measured.",
+      "observed_at": "2026-10-12T12:02:38Z",
+      "basis": "Direct user authorization and inactivity statement at12:01:29 UTC."
     }
   ],
   "links": [
@@ -2970,6 +3000,14 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-12T12:06:18Z",
+      "text": "Completed main preservation and reviewed narrow wrap-up; released execution owner. Later merge and sibling retention are documented; no push, merge or thesis restart."
+    },
+    {
+      "at": "2026-10-12T12:02:38Z",
+      "text": "Launched authorized main preservation and bounded wrap-up; user resolved inactivity uncertainty. Main merge remains later."
+    },
     {
       "at": "2026-10-12T11:34:43Z",
       "text": "Recorded committed migration and bounded wrap-up planning; proposed execution and occupied-main integration remain unselected."

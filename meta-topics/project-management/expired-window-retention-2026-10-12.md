@@ -33,3 +33,11 @@ retains the initial unauthorized scheduling/cancellation and later explicitly
 selected replacement attempt with bounded setup checks. It establishes no reset
 redemption outcome or current timer status. Old host commands, reset expiry and
 interactive session identifiers are dated provenance, not instructions to act.
+
+The authorized checkpoint wrap-up also found `oct03-resource-scope` and
+`oct04-workflow-fix-window` still presented as open questions. They refer to
+the same expired 3–4 October resources and launch windows and are now resolved
+as expired, without retroactive approval or a claim of implementation. The
+workflow-delivery/acceptance and thesis obligations remain at their existing
+registry/backlog owners. This closes obsolete launch questions, not those
+substantive obligations.

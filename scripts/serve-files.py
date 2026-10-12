@@ -137,7 +137,7 @@ def main():
     parser.add_argument('--root', action='append', help='directory to expose; repeatable')
     args = parser.parse_args()
     if not shutil.which('pandoc'):
-        parser.error('Pandoc is required for Markdown rendering; see INSTALL.md')
+        parser.error('Pandoc is required for Markdown rendering; see meta-topics/development-environment/installation-workflow.md')
     roots = args.root or [
         str(pathlib.Path(__file__).resolve().parent.parent),
         '/workspaces/msc-math',
