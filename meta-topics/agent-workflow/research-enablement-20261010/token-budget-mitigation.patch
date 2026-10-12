@@ -1,0 +1,28 @@
+--- a/.codex/config.toml
++++ b/.codex/config.toml
+@@ -61,16 +61,17 @@
+ # this explicit setting can also expose it for other selected models.
+ sleep_tool = true
+ 
+-# PROVISIONAL TRIAL: approved by Jörn on 2026-10-03, assessed at CLI 0.160.0.
+-# Expose remaining context capacity and context-window tools. Warn once per
+-# window below 20,000 tokens before auto-compaction; this starting threshold is
+-# speculative, not a measured optimum or a spending allowance. Recheck useful
+-# warnings, model compatibility and continuity across compaction; revise/disable
+-# if unhelpful. See docs/codex.md and docs/codex-config-proposals.md.
++# Proposed mitigation for the 10 October 2026 context-loss event.
++# In inspected CLI 0.162.1, token_budget changes automatic compaction to a
++# fresh-window reset without a summary. Disable that branch to restore normal
++# summarizing compaction. This also removes its capacity tools/metadata/warnings;
++# it does not establish summary quality or adoption by an existing thread.
++# Diagnosis: docs/coordination/message-reviews/2026-10-10/recovery-25m/context-cause.md.
++# The 3 October awareness trial remains provenance; re-enabling requires review
++# of reset semantics and an explicit decision under the config edit boundary.
+ [features.token_budget]
+-enabled = true
++enabled = false
+ reminder_threshold_tokens = 20000
+-# The optional history/notes extension is outside this trial.
+ use_history_notes_extension = false
+ 
+ # Disable the listed legacy shared sandbox skills. Host/plugin skills and other

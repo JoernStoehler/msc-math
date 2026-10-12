@@ -217,3 +217,75 @@ obligations semantically; bring over selected sibling evidence with explicit
 retention dispositions; regenerate views and check the resulting links. Leave
 all occupied checkout files intact until their versions have been preserved.
 The present wrap-up does not perform that merge or resume thesis work.
+
+
+## Old worktree cleanup and recovery
+
+At 13:19:50 UTC Jörn expanded the cleanup to the old branches and worktrees.
+His preceding inactivity statement remains applicable. The main/migration merge
+remains deferred; this cleanup preserves useful older work in current topic
+owners and removes redundant checkouts/branch names after recovery verification.
+
+Complete original working files from `337f`, `fde8` and `b58e` are preserved at
+`/workspaces/archived/msc-math-worktree-cleanup-20261012/`. Each `<id>.tar.gz`
+includes tracked, untracked and ignored entries except the checkout-specific
+`.git` pointer. Each `<id>.manifest.json` records the original HEAD, status and
+per-entry file hash/mode or symlink target. All tar entries were stream-verified
+against their manifests. `history.bundle` preserves all pre-cleanup Git refs and
+complete history; `refs-before.txt` records their original identities. This is
+local recovery storage, not an R2 publication or independent off-machine backup.
+
+Useful material integrated into maintained ownership:
+
+- [Research enablement/context recovery](../../agent-workflow/research-enablement-20261010/README.md),
+  named support requirements in project facts/environment guidance, and
+  [F17](../../project-management/friction/F17.md), with its Page source link
+  repaired by guarded patch sequence 23. The unresolved status is unchanged;
+  historical mitigation is not activated.
+- [Account pilot](../../agent-workflow/agent-account-pilot-20261008/README.md):
+  thirteen pilot files plus six exact source snapshots. Original input hashes
+  match; this bounded comparison does not establish human usability or benefit
+  from a whole-thesis rewrite.
+- [Codex lookup history](../../development-environment/codex-lookup-latency-20261009/README.md):
+  fifteen exact files with withdrawn/superseded guidance and reduced personal
+  skill acceptance explicitly distinguished. No old patch or runtime change is
+  activated.
+
+Transient message reviews, expired dispatches and old coordination snapshots
+remain in the recovery archive, rather than being repopulated into active
+source searches. The registry retains completed bounded findings and parked,
+uncompleted preparation without resurrecting the withdrawn ninety-minute ask.
+
+| Old branch | Original tip | Retention disposition |
+| --- | --- | --- |
+| `codex/session-postmortem-2026-10-04` | `f5bd793b` | Already ancestor of main and migration. |
+| `consolidation/workflow-20261004` | `fbf9ad07` | Already ancestor of main and migration. |
+| `thesis/2026-10-04-candidate` | `4dff4475` | Already ancestor of main and migration. |
+| `archive/failed-communication-inventory-20261009-b58e` | `ecba254c` | Two unique failed-closeout commits retained in bundle, not promoted. |
+| `archive/unaccepted-claim-repair-20261010` | `679726e0` | Two unique commits retained; proposed patch remains unaccepted/inactive. |
+| `preserve/fde8-session-20261009` | `bd52727f` | Two unique commits retained; all substantive files are represented by the fde8 source snapshot. Five differing old registry/graph/handoff/dashboard versions remain historical. |
+
+To recover a historical committed branch, clone `history.bundle` into a fresh
+location and select its original ref. To recover a dirty checkout, select the
+manifest's HEAD there and extract its tar archive over that fresh checkout;
+the archived `.git` pointer was intentionally omitted. Consult manifests for
+untracked/ignored files and exact byte identities. Do not overwrite a live
+checkout to perform recovery. No source release, scientific validation or
+thesis promotion follows from this preservation.
+
+**Removal completed, 12 October 13:27 UTC:** all three old worktrees and six
+listed local branches are removed. Only main and the f7e0 migration checkout
+remain. The bundle passed `git bundle verify`, isolated mirror clone and
+connectivity validation; all six retired branch tips matched the mirror.
+Every original checkout file was rehashed against its archive manifest before
+removal. [Recovery identities](old-worktree-recovery-2026-10-12.json) bind the
+archives and bundle. The temporary restore-test mirror was then removed.
+Independent bounded content review by `/root/wrapup_gaps` approved the integrated
+meaning and caveats; that review is separate from archive verification and
+establishes no new mathematics or runtime acceptance.
+
+Final source routing, coordination structure and graph freshness checks passed.
+The new retained research-enablement account has an explicit dashboard serving
+entry. The new current account links resolve; frozen evidence keeps original
+path spelling and its documented provenance limits. The cleanup is complete;
+main and the migration branch remain unmerged as requested.

@@ -1,0 +1,41 @@
+{
+  "frozen_at": "2026-10-08T13:36:09.705977+00:00",
+  "checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+  "files": {
+    "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md": {
+      "sha256": "ec5f4cdb73fd870582aea8b1e12248dd3dbacf76b962deb9b00b8d9addb3a944",
+      "bytes": 6502,
+      "whitespace_words": 933
+    },
+    "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/source-check.md": {
+      "sha256": "3177ce60572007c3acf726f6a42b4bce16dd2744dc4eed15791088f8580cd248",
+      "bytes": 4303,
+      "whitespace_words": 540
+    },
+    "docs/history/symmetric-partner-candidate-2026-10-03/README.md": {
+      "sha256": "68f3400ee67d65b9fb69f55464f1a6e36ff9e2edd947ad47f6a89c887caad950",
+      "bytes": 3797,
+      "whitespace_words": 459
+    },
+    "docs/history/symmetric-partner-candidate-2026-10-03/section.tex": {
+      "sha256": "e9e77c2ee2bbfbc983ba42be042a2215ee9c678011da0329012e3b1b7a0a91fa",
+      "bytes": 5835,
+      "whitespace_words": 719
+    },
+    "experiments/writing-quality/agent-account-pilot-20261008/full-account.md": {
+      "sha256": "b6765647e159a1eeea9a5f9baad367230f2b3265b975f0b9e855dcef3f50e77c",
+      "bytes": 8405,
+      "whitespace_words": 956
+    },
+    "experiments/writing-quality/agent-account-pilot-20261008/supplement.md": {
+      "sha256": "3e9569395bd730f13e1a8ce0844b995644c5b39e0ac073d60a9946e082ea267f",
+      "bytes": 3109,
+      "whitespace_words": 357
+    },
+    "experiments/writing-quality/agent-account-pilot-20261008/consumer-task.md": {
+      "sha256": "fabf427ed70d4e3f11f8f8f4e867d882b0c361a4f2a5cfa9f31b2511d0007be6",
+      "bytes": 2423,
+      "whitespace_words": 342
+    }
+  }
+}

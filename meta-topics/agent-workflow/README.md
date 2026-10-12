@@ -49,3 +49,9 @@ Current assignments and resource observations remain in
 [Historical cloud/harness requests](historical-continuation-requests-2026-10-08.md)
 preserve the questions behind retired dispatches without assuming current owners
 or completed assessments.
+
+[10 October research enablement and context recovery](research-enablement-20261010/README.md)
+retains support requirements, the source-qualified F17 audit and dated,
+unselected research comparisons. [The 8 October account pilot](agent-account-pilot-20261008/README.md)
+retains its matched sources, consumer returns and bounded writing-method result;
+it does not activate the later failed account programme.

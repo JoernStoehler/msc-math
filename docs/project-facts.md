@@ -485,3 +485,17 @@ and does not settle the other data-science gaps.
     that the exposition explain why the proof is product-specific, state the
     theorem and algorithm before their proof, and postpone scope/use caveats
     until after the main statements.
+
+## Research surfaces and human interaction
+
+On 10 October 2026, 15:16–15:33 UTC, Jörn specified claude.ai Chat/Cowork,
+ChatGPT Chat and Work, Claude Code/Codex on chosen machines or microVMs through
+CLI/TUI/remote clients, and their cloud coding surfaces. His main benefit is
+better input, alerts for agent requests, native rendered files and fewer
+undocumented surprises. He also values separate Chat quota and observes less
+unwanted runaway execution there. These are his intended use and observations;
+they do not certify feature parity, persistence, permissions or reliability.
+Source: thread `01a1263d-568e-7100-aae5-eac9275fca3f`, continuing the supplied
+`01a125a6-d5b7-72a0-8064-6cee3eeb95fc`. Technical inventory belongs to agent
+investigation. [Environment requirements](../meta-topics/development-environment/development-environments.md) own the
+support implications and capability evidence.

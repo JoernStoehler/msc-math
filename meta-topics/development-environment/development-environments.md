@@ -5,25 +5,46 @@
 For Codex TUI features, project/host configuration ownership and release-matched
 implementation links, see [the Codex reference](codex-reference.md).
 
-Jörn specified these project support targets on 2026-09-30 in Codex thread
-`01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a`. This is user-confirmed working context,
-not an end-to-end capability check or an implemented migration plan.
+Jörn expanded the intended surfaces in thread
+`01a1263d-568e-7100-aae5-eac9275fca3f` on 10 October 2026
+(15:16–15:33 UTC), continuing `01a125a6-d5b7-72a0-8064-6cee3eeb95fc`.
+These are support requirements and attributed observations, not end-to-end checks.
 
-| Surface | Execution and intended use |
+| Surface | Intended support |
 | --- | --- |
-| Ubuntu workstation + Codex TUI | Persistent local execution for project work |
-| claude.ai cloud microVM | Clone the repository into a separate cloud environment for agent work |
-| ChatGPT Chat, Astra 6 Pro | Tough mathematical proof search, experiment brainstorming and reasoning; possibly writeup |
+| claude.ai Chat/Cowork | Cloud research and human interaction; Jörn describes these as one experience |
+| ChatGPT Chat | Conversational research, including Pro reasoning |
+| ChatGPT Work | Cloud agent work and human interaction |
+| Claude Code and Codex on a chosen machine/microVM | CLI/TUI execution, including remote clients/control |
+| Claude Code cloud and Codex Cloud | Hosted coding/repository work |
 
-Jörn wants Pro for reasoning that would consume too much quota with weaker
-models. This is his task-allocation preference, not a measured comparison of
-model quality or cost. The project already has a
-[human-mediated Pro handoff workflow](../../.agents/skills/chatgpt-pro/SKILL.md).
+Jörn's main reasons are better input, fewer typos, visible alerts when agents
+need something, native rendered files, and fewer undocumented surprises.
+He also values Chat's separate quota and observes less tendency to run away
+into unwanted execution. Those observations do not establish feature parity,
+a reliability guarantee, or a measured quota/cost comparison.
 
-Jörn reported that cold builds in the Claude microVM took under five minutes
-when he last measured them. The command, revision, dependencies and machine
-details were not specified here; do not extend this observation to Sage setup,
-thesis builds, dataset downloads or full experiment runs.
+Preparation must derive shared repository/setup needs and surface-specific
+access, configuration, review, decision delivery, continuation and return
+routes. Chat recipients may have repository or execution access through
+connected tools: do not restrict them to supplied ZIP packets by assumption.
+Recover technical product facts independently; ask Jörn for preferences,
+account-specific observations or authority only when actually needed.
+
+Filesystem/process lifetime, Git, caches/snapshots, product file stores
+(Library/artifacts), Pages/Spaces, Memory, skills/plugins and configuration are
+separate persistence/distribution layers. A saved file is not automatically
+available or loaded on another surface. Use each layer's actual access and
+recovery contract. Source-qualified capability findings and remaining gaps
+are retained in [the surface clarification](../agent-workflow/research-enablement-20261010/surface-clarification.md).
+
+Jörn’s 30 September preference was to use Pro for reasoning that would consume too much quota with weaker models. This remains a task-allocation preference, not a measured model-quality or cost comparison.
+
+The existing [human-mediated Pro handoff workflow](../../.agents/skills/chatgpt-pro/SKILL.md)
+is an available route, not the mandatory interface for all Chat tasks. Jörn's
+30 September report that cold Claude microVM builds took under five minutes
+lacked command/revision/dependency details; do not extend it to Sage, datasets
+or full experiment runs.
 
 ### Codex inside a Claude cloud microVM
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenAI Sources"
+  short_description: "Find relevant OpenAI docs and Codex source with bounded triage"
+  default_prompt: "Use $openai-sources to find the relevant authoritative sources for this OpenAI or Codex question."

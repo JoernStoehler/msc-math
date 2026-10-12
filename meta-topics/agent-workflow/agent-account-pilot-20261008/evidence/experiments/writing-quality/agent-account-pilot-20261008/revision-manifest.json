@@ -1,0 +1,11 @@
+{
+  "recorded_at": "2026-10-08T13:45:23.864966+00:00",
+  "note": "Revision/source identities after targeted feedback; initial comparison manifest remains frozen.",
+  "sha256": {
+    "experiments/writing-quality/agent-account-pilot-20261008/full-account-v2.md": "1858b185014409e1f3df313fd828babc4f076d7c68f46cf8bae7c0d81b69660b",
+    "experiments/writing-quality/agent-account-pilot-20261008/consumer-full-v2-targeted.md": "87d041c27956f35d6d0a62924d785769044ec8c12e3e1b5d02c1b039257c65af",
+    "experiments/writing-quality/agent-account-pilot-20261008/PROPOSAL.md": "4a22193674e256b7fda2a4c738caca65efed1b1b643401932d8982f21c88911d",
+    "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/README.md": "6e5409bee1fc9ca2f72ede7de24c825e258f818f3197d8d7f3724390313a01a1",
+    "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/evaluator.py": "717b2c7d04233dc978f997af5efabdfcbdf650cb6943064ce2624baca3753dd6"
+  }
+}

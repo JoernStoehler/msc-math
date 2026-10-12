@@ -1,0 +1,7 @@
+{
+  "installed": "/home/joern/.codex/skills/openai-sources",
+  "backup_directory": "/home/joern/.codex/skill-backups/openai-docs-20261009T112314Z",
+  "disabled_path": "/home/joern/.codex/skills/.system/openai-docs/SKILL.md",
+  "skill_sha256": "1d4e310595db828c83cb0ee96984a0363e0ddcb6e18d9c268494353397cac851",
+  "trimmed_words": 123
+}

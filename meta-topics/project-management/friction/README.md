@@ -25,6 +25,7 @@ Each ID has one canonical file. Read only relevant records; preserve IDs and his
 - [F14 Concurrent updates to the friction table](F14.md)
 - [F15 Duplicated session reports and unassigned follow-up](F15.md)
 - [F16 Human navigation and mixed audiences](F16.md)
+- [F17 Automatic context reset removes the discussion](F17.md) — dated source-qualified diagnosis; mitigation and current runtime behavior unverified.
 
 [Trial evidence and open capability questions](trial.md) retains the trial results, procedures and decision criteria imported from the Page.
 

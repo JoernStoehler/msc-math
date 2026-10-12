@@ -1,5 +1,20 @@
 # Current handoff
 
+## 12 October: older branches and worktrees cleaned up
+
+Jörn expanded scope at13:19:50 UTC to clean up the old branches. Three old
+worktrees (`337f`, `fde8`, `b58e`) and six redundant local branches are removed.
+Only main and the f7e0 migration worktree remain. Original working files and all
+old Git refs are preserved in the verified
+[recovery archive](../repository-organization/inventory/migration-results-2026-10-12.md#old-worktree-cleanup-and-recovery);
+the bundle was cloned into an isolated mirror and connectivity/branch tips checked.
+Useful sibling findings are integrated with current topic owners; expired plans
+and rejected patches remain historical. F17’s Page source link is reconciled.
+Main remains185155fe; merge with the migration branch is a later step.
+Integration and bounded independent review are complete; current source/graph
+checks pass. [current.json](current.json) records the completed cleanup.
+
+
 ## 12 October: checkpoint wrap-up complete
 
 Jörn confirmed no other sessions are active and approved up to sixty minutes of
@@ -10,9 +25,9 @@ later steps, not part of this execution.
 
 The [wrap-up and integration map](../repository-organization/inventory/migration-results-2026-10-12.md#checkpoint-wrap-up-and-later-integration)
 owns the narrow fixes, checks and remaining main/sibling reconciliation.
-Worktrees `337f` and `fde8` still contain uncommitted versions not preserved by
-the main checkpoint. Preserve their deltas before any later cleanup; no session
-liveness investigation is needed under Jörn's explicit inactivity statement.
+The earlier sibling-preservation obligation is closed by the later cleanup
+above: complete originals are archived and useful material integrated. No
+session liveness investigation was needed under Jörn's inactivity statement.
 Focused checks and independent assembled review passed; execution is complete.
 Current status belongs to [current.json](current.json).
 Existing thesis acceptance/coverage gaps do not restart thesis work.

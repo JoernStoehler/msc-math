@@ -24,3 +24,7 @@ their host owners.
 installed outcome, verification observations and earlier proposal. Host
 maintenance belongs to the linked dotfiles owner; dated telemetry counts and
 resource readings are not current service or capacity observations.
+
+[9 October Codex lookup history](codex-lookup-latency-20261009/README.md)
+retains the failed latency trial, withdrawn guidance and reduced personal-skill
+acceptance, with exact historical inputs and current limits.

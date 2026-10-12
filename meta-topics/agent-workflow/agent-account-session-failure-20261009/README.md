@@ -8,4 +8,14 @@ The archive retains two bounded source-discovery notes, the exact failed message
 
 The 12 October 2026 ownership migration preserves the manifest and all retained evidence bytes unchanged. The manifest binds exact retained bytes and original fde8 paths. Paths and links inside frozen evidence are original provenance: some still name the old worktree and are not main reproduction commands. No raw conversation logs or private reasoning are copied. Native logs independently show the approximately 30-second initial review and 9-second inventory turn; that does not validate the whole workflow or measure total session/human cost.
 
-All session assignments are released. No follow-on research, workflow redesign, repeated test, cleanup, spending extension or automatic resumption is selected. A future owner must recover actual user scope/resource choices rather than resume the historical proposal. Existing selected manuscript and retained science remain with their owners.
+All session assignments were released at the 9 October closure. No follow-on research, workflow redesign, repeated test, cleanup, spending extension or automatic resumption was selected then. The separately authorized 12 October worktree cleanup does not resume the historical proposal. A future research owner must recover actual user scope/resource choices. Existing selected manuscript and retained science remain with their owners.
+
+## Related material recovered during worktree cleanup
+
+The 12 October cleanup also retained the earlier
+[bounded account pilot](../agent-account-pilot-20261008/README.md), including its
+frozen inputs and consumer responses, and the separate
+[Codex lookup/source-routing history](../../development-environment/codex-lookup-latency-20261009/README.md).
+These packages recover useful unique evidence from fde8; they do not alter this
+session's FAIL verdict or activate its historical handoff and execution plans.
+The 17 files already bound by this archive's original manifest remain unchanged.

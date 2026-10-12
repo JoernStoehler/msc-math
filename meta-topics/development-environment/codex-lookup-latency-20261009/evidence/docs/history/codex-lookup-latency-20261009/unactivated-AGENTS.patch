@@ -1,0 +1,42 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index 53bc1517..f9621394 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -54,8 +54,15 @@ Start from the task, then retrieve only the context it needs:
+   interpretation. `docs/history/` owns historical evidence, not current assignments.
+ - `INSTALL.md` owns tool setup. Topic READMEs own reproduction commands and local caveats;
+   `papers/` owns source literature and `submit/` release/admin.
+-- `docs/codex.md` routes Codex configuration, daemon restart/thread recovery,
+-  subagent persistence and official documentation or release-matched source lookup.
++- For Codex CLI command or output behavior, search the existing official source
++  at `~/.cache/codex-source/codex-rs/tui/src` using `rg -n -C 6` before loading
++  project guides. Search this subtree recursively before guessing filenames;
++  for slash commands, include `SlashCommand::<Variant>` to find the consumer
++  rather than matches for generic words. Check the revision when the answer
++  depends on the installed version; source inspection alone does not verify
++  live behavior.
++  `docs/codex.md` routes configuration, daemon restart/thread recovery,
++  subagent persistence and source-cache setup or official documentation gaps.
+ 
+ Search claims, symbols, artifact paths and likely synonyms with `rg` before concluding that
+ work is absent. Follow summaries to their sources. Legacy and generated trees are poor
+@@ -102,12 +109,19 @@ change. Continue the work rather than ending with a courtesy-only reply and
+ requiring Jörn to restart it. Finish when the requested work is complete, Jörn
+ explicitly stops it, or a required decision/input is clearly presented as pending;
+ do not invent additional work after completion.
++When diagnosing workflow friction, deliver an already-supported correction
++before expanding the investigation. Run another diagnostic check only when its
++possible results would change the next action. A failed acceptance test remains
++failed; repeating trials to obtain a passing sample is not a fix.
+ 
+ Within selected work, use bounded subagent assignments and independent sessions
+ when they help discovery, planning or execution. Respect the actual tool's
+ authorization requirements. A delegation names its owned output, scope,
+ resource allowance, stopping/review point and receiving owner. Review ownership
+ does not imply implementing fixes; agree who integrates, commits and cleans up.
++For a short lookup, deliver the completed answer in the final return. Send an
++interim private message only for a consequential blocker or decision; a separate
++readiness message or offer to deliver the answer adds no useful handoff.
+ 
+ The coordinator owns workload supervision: check pending messages/reviews,
+ ownership and dependencies alongside available usage telemetry. During ongoing

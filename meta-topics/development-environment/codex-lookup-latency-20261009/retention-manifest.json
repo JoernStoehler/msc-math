@@ -1,0 +1,97 @@
+{
+  "retained_at": "2026-10-12T13:21:39.709530+00:00",
+  "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+  "status": "Historical evidence only; not active instructions or launch permission. Original relative links can refer outside this bounded snapshot. Use package README for current source routes.",
+  "files": [
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/README.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/README.md",
+      "sha256": "cf18da969b8917d5bdb321fddbf5f96263034f5059e87aea61c1b08e87be9bb3",
+      "bytes": 2831
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/comparison.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/comparison.md",
+      "sha256": "0fd63cf7f0b3b3d7d2b520524a5b7902bf3dc60a9d60ff38f1955bd59299dcd2",
+      "bytes": 7624
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/diagnosis.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/diagnosis.md",
+      "sha256": "61345f15d37b3f5e34b26a72daee5a1c824cd9f15d714b2bd2854065c3f96001",
+      "bytes": 5043
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/replacement/README.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/replacement/README.md",
+      "sha256": "3aafbbc8a432ae83ce6138a4f14dcfecfe0ff853076e39f650e756ccbf6ce5f4",
+      "bytes": 4842
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/replacement/installation.json",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/replacement/installation.json",
+      "sha256": "89fcf760fef416739ab90570bce5d7019b8ad28166ff23fc7fb9c360a8114b54",
+      "bytes": 336
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/replacement/openai-sources/SKILL.before-trim.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/replacement/openai-sources/SKILL.before-trim.md",
+      "sha256": "7f9d7eee5f5bde7e9f4e800168df09da6354d144f46a1e0ff234b7c9f0eb8628",
+      "bytes": 4059
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/replacement/openai-sources/SKILL.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/replacement/openai-sources/SKILL.md",
+      "sha256": "1d4e310595db828c83cb0ee96984a0363e0ddcb6e18d9c268494353397cac851",
+      "bytes": 1204
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/replacement/openai-sources/agents/openai.yaml",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/replacement/openai-sources/agents/openai.yaml",
+      "sha256": "80b4a71d6a68bc71272baef0f33a957fa8883bdab262a52ab861a644bb5ef72e",
+      "bytes": 248
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/review-proposal.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/review-proposal.md",
+      "sha256": "2153b04d9eb077b7b73e1ca04be3c1ea25feb2de24db2fae61dd853f2618e3c3",
+      "bytes": 241
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/source-route-candidate/SKILL.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/source-route-candidate/SKILL.md",
+      "sha256": "f2192284907887bd9955a78354611318a2d72be9cbdc72c282ace57f87e03be1",
+      "bytes": 6070
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/source-route-candidate/baseline-sha256.json",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/source-route-candidate/baseline-sha256.json",
+      "sha256": "dd6c6e75fca7640c5ef5d13811c81a0ccd32d2426700d9b7931b759e4880a25f",
+      "bytes": 193
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/source-route-candidate/candidate.patch",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/source-route-candidate/candidate.patch",
+      "sha256": "dbb9b673e3505e3e7e2cbadeb877d94c13f1fccc02ef973a93326c86508bca07",
+      "bytes": 6264
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/source-route-candidate/references/codex-self-knowledge.md",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/source-route-candidate/references/codex-self-knowledge.md",
+      "sha256": "87757325797d00699df3a4e80eea7cc733db41636e50942d24b1ff02f5656bae",
+      "bytes": 7525
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/tests.json",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/tests.json",
+      "sha256": "77e3e8cf6a51d2c033637f529f256c76b3e7e461424727a9088ee74e750455f0",
+      "bytes": 22491
+    },
+    {
+      "origin_path": "docs/history/codex-lookup-latency-20261009/unactivated-AGENTS.patch",
+      "retained_path": "evidence/docs/history/codex-lookup-latency-20261009/unactivated-AGENTS.patch",
+      "sha256": "f4af9f7a74d6274520146c210bf0f9971e21343f5496587e2bf93ab2d5407f3f",
+      "bytes": 2816
+    }
+  ]
+}

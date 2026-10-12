@@ -1,0 +1,39 @@
+{
+  "archive_root": "/workspaces/archived/msc-math-worktree-cleanup-20261012",
+  "verified": {
+    "337f": {
+      "entries": 4375,
+      "archive_bytes": 122820401,
+      "archive_sha256": "2f3e6dd17b8b14da39a331d2fbd4a65d976a7af313a6d678c2b95bb933c1d476",
+      "verified": true
+    },
+    "fde8": {
+      "entries": 4430,
+      "archive_bytes": 122894891,
+      "archive_sha256": "973244cba9281d7c856fb37ae53922623982a87f8b30f491d0f5dd24f48b3da5",
+      "verified": true
+    },
+    "b58e": {
+      "entries": 4299,
+      "archive_bytes": 122796792,
+      "archive_sha256": "7679eff3f0460c8496c29b99687fb95941632cd137700626f5cb4e365fa45d72",
+      "verified": true
+    },
+    "git": {
+      "bundle_sha256": "c299b7a54c5787b19bb070b43be23756dc3fd6767ba8916fedba22058f2395fa",
+      "mirror_restore_connectivity_checked": true,
+      "old_branch_tips_verified": [
+        "archive/failed-communication-inventory-20261009-b58e",
+        "archive/unaccepted-claim-repair-20261010",
+        "codex/session-postmortem-2026-10-04",
+        "consolidation/workflow-20261004",
+        "preserve/fde8-session-20261009",
+        "thesis/2026-10-04-candidate"
+      ]
+    }
+  },
+  "retained_worktrees": [
+    "/workspaces/msc-math",
+    "/home/joern/.codex/worktrees/f7e0/msc-math"
+  ]
+}

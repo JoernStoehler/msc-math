@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-12T12:06:18Z",
+  "updated_at": "2026-10-12T13:29:50Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "12 October migration and narrow checkpoint wrap-up are complete on codex/topic-migration-20261012. Main existing work is preserved in185155fe and main is clean. Setup diagnostic, inventory count semantics and expired live decision records are repaired; focused checks and independent assembled review passed. Jörn left the branch merge and main resumption for later. Sibling337f/fde8 uncommitted versions are mapped and must be preserved before later cleanup. Existing thesis coverage/full-review gaps remain unchanged.",
+  "summary": "Old-worktree cleanup complete: three obsolete worktrees and six local branches removed after verified full-file archives, complete Git bundle and mirror-restore checks. Useful337f/fde8 evidence and support preferences integrated with bounded independent review; F17 Page link reconciled. Only main and f7e0 remain. Main/migration merge remains deferred; thesis and runtime acceptance unchanged.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2633,7 +2633,117 @@
       ],
       "updated_at": "2026-10-12T12:06:18Z",
       "blocker": null,
-      "next_step": "Later merge/main resumption remains deferred by Jörn. Preserve sibling337f/fde8 deltas before cleanup and use retained integration map."
+      "next_step": "Old sibling cleanup is now handled by old-worktree-cleanup-20261012. Later main/migration merge remains deferred."
+    },
+    {
+      "id": "old-worktree-cleanup-20261012",
+      "title": "Consolidate and remove old branches and worktrees",
+      "status": "done",
+      "owner": null,
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "depends_on": [
+        "checkpoint-wrapup-execution-20261012"
+      ],
+      "outcome": "Removed337f/fde8/b58e worktrees and six old local branches after full-file archive verification and self-contained Git mirror restoration. Integrated useful context-recovery/support preferences, account-pilot and lookup evidence with independent bounded approval. F17 Page link reconciled. Dashboard/projection/source-routing checks pass.",
+      "authorization": "Direct user scope extension13:19:50 UTC: add old branches and clean them up. Previous user statement confirms no other active sessions. No new research or merge of main selected.",
+      "sources": [
+        "meta-topics/repository-organization/inventory/migration-results-2026-10-12.md"
+      ],
+      "updated_at": "2026-10-12T13:29:50Z",
+      "blocker": null,
+      "next_step": "Later merge migration branch into preserved main; old checkout/branch cleanup is complete. Recovery is documented in migration ledger."
+    },
+    {
+      "id": "catch22-diagnosis-20261010",
+      "title": "Coupled instruction, knowledge and portability diagnosis",
+      "kind": "task",
+      "selection": "parked",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "depends_on": [],
+      "outcome": "Bounded diagnosis retained; no repair or fresh-cloud acceptance implied.",
+      "authorization": "Historical bounded10October work recovered from337f;12October cleanup authorizes retention/integration only, not activation or research execution.",
+      "sources": [
+        "meta-topics/agent-workflow/research-enablement-20261010/README.md"
+      ],
+      "updated_at": "2026-10-12T13:25:00Z",
+      "next_step": "Use retained findings if a later programme is selected; no old launch window or prompt is active.",
+      "blocker": null
+    },
+    {
+      "id": "research-backchain-approaches-20261010",
+      "title": "Research preparation approach comparison",
+      "kind": "task",
+      "selection": "parked",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "depends_on": [],
+      "outcome": "Dated alternatives retained; no current programme selected.",
+      "authorization": "Historical bounded10October work recovered from337f;12October cleanup authorizes retention/integration only, not activation or research execution.",
+      "sources": [
+        "meta-topics/agent-workflow/research-enablement-20261010/README.md"
+      ],
+      "updated_at": "2026-10-12T13:25:00Z",
+      "next_step": "Use retained findings if a later programme is selected; no old launch window or prompt is active.",
+      "blocker": null
+    },
+    {
+      "id": "research-agenda-comparison-20261010",
+      "title": "Research agenda comparison",
+      "kind": "task",
+      "selection": "parked",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "depends_on": [],
+      "outcome": "Scientific comparisons retained; one-question-first sequencing recommendation withdrawn.",
+      "authorization": "Historical bounded10October work recovered from337f;12October cleanup authorizes retention/integration only, not activation or research execution.",
+      "sources": [
+        "meta-topics/agent-workflow/research-enablement-20261010/README.md"
+      ],
+      "updated_at": "2026-10-12T13:25:00Z",
+      "next_step": "Use retained findings if a later programme is selected; no old launch window or prompt is active.",
+      "blocker": null
+    },
+    {
+      "id": "preparation-choice-recovery-20261010",
+      "title": "Incomplete research preparation proposal",
+      "kind": "task",
+      "selection": "parked",
+      "project": "workflows",
+      "status": "parked",
+      "owner": null,
+      "depends_on": [],
+      "outcome": "Preparation remains incomplete; premature ninety-minute launch request withdrawn, not pending approval. Named surfaces removed invented cloud-target/access blocker.",
+      "authorization": "Historical bounded10October work recovered from337f;12October cleanup authorizes retention/integration only, not activation or research execution.",
+      "sources": [
+        "meta-topics/agent-workflow/research-enablement-20261010/README.md"
+      ],
+      "updated_at": "2026-10-12T13:25:00Z",
+      "next_step": "Use retained findings if a later programme is selected; no old launch window or prompt is active.",
+      "blocker": null
+    },
+    {
+      "id": "context-reset-cause-20261010",
+      "title": "Historical automatic context-reset cause audit",
+      "kind": "task",
+      "selection": "parked",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "depends_on": [],
+      "outcome": "Source-qualified10October runtime diagnosis retained with inactive patch. No present configuration or behavior acceptance.",
+      "authorization": "Historical bounded10October work recovered from337f;12October cleanup authorizes retention/integration only, not activation or research execution.",
+      "sources": [
+        "meta-topics/agent-workflow/research-enablement-20261010/README.md"
+      ],
+      "updated_at": "2026-10-12T13:25:00Z",
+      "next_step": "Use retained findings if a later programme is selected; no old launch window or prompt is active.",
+      "blocker": null
     }
   ],
   "decisions": [
@@ -3000,6 +3110,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-12T13:29:50Z",
+      "text": "Closed old-branch cleanup: verified recoverability, integrated useful evidence, reconciled F17 Page link and removed three worktrees/six branches. Only main and migration checkout remain."
+    },
     {
       "at": "2026-10-12T12:06:18Z",
       "text": "Completed main preservation and reviewed narrow wrap-up; released execution owner. Later merge and sibling retention are documented; no push, merge or thesis restart."

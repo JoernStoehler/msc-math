@@ -1,0 +1,121 @@
+{
+  "retained_at": "2026-10-12T13:21:39.703534+00:00",
+  "origin_checkout": "/home/joern/.codex/worktrees/fde8/msc-math",
+  "status": "Historical evidence only; not active instructions or launch permission. Original relative links can refer outside this bounded snapshot. Use package README for current source routes.",
+  "files": [
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/PROPOSAL.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/PROPOSAL.md",
+      "sha256": "4a22193674e256b7fda2a4c738caca65efed1b1b643401932d8982f21c88911d",
+      "bytes": 8936
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/README.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/README.md",
+      "sha256": "e2538afbee35cd0e70843a0ef9bbadb72442a226e31844e799eed6061e9f902b",
+      "bytes": 5217
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/consumer-existing.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/consumer-existing.md",
+      "sha256": "7eeae893a34ca6d32e8d148e358143c11c79b0334a3c3a4e590a8c45e5713089",
+      "bytes": 5373
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/consumer-full-v2-targeted.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/consumer-full-v2-targeted.md",
+      "sha256": "87d041c27956f35d6d0a62924d785769044ec8c12e3e1b5d02c1b039257c65af",
+      "bytes": 2768
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/consumer-full.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/consumer-full.md",
+      "sha256": "d0b9ba29d95bc2257c42fedacc4546b45c2609d681cf4e137fca97180b05c0f3",
+      "bytes": 5595
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/consumer-supplement.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/consumer-supplement.md",
+      "sha256": "a3cc769c7743bc246a6a68101f7b783104f90d88be4732a8f544192604f56a04",
+      "bytes": 5423
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/consumer-task.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/consumer-task.md",
+      "sha256": "fabf427ed70d4e3f11f8f8f4e867d882b0c361a4f2a5cfa9f31b2511d0007be6",
+      "bytes": 2423
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/full-account-v2.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/full-account-v2.md",
+      "sha256": "1858b185014409e1f3df313fd828babc4f076d7c68f46cf8bae7c0d81b69660b",
+      "bytes": 10450
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/full-account.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/full-account.md",
+      "sha256": "b6765647e159a1eeea9a5f9baad367230f2b3265b975f0b9e855dcef3f50e77c",
+      "bytes": 8405
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/input-manifest.json",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/input-manifest.json",
+      "sha256": "e9bfa8e9e885a8b700c36c42f7128bb7d5ba9ab240964449cf9680483bcfec4a",
+      "bytes": 1699
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/reference-summary.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/reference-summary.md",
+      "sha256": "726f4f25a5e08c55e45b0fe8a83a6985e5827a943d19c9bbc3896967b367708e",
+      "bytes": 3725
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/revision-manifest.json",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/revision-manifest.json",
+      "sha256": "82b4b0281399d16bbdd7ff7daf6e7d5014c528d131816e8408fe4d27c85947be",
+      "bytes": 936
+    },
+    {
+      "origin_path": "experiments/writing-quality/agent-account-pilot-20261008/supplement.md",
+      "retained_path": "evidence/experiments/writing-quality/agent-account-pilot-20261008/supplement.md",
+      "sha256": "3e9569395bd730f13e1a8ce0844b995644c5b39e0ac073d60a9946e082ea267f",
+      "bytes": 3109
+    },
+    {
+      "origin_path": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/README.md",
+      "retained_path": "evidence/docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/README.md",
+      "sha256": "6e5409bee1fc9ca2f72ede7de24c825e258f818f3197d8d7f3724390313a01a1",
+      "bytes": 14173
+    },
+    {
+      "origin_path": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/evaluator.py",
+      "retained_path": "evidence/docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/evaluator.py",
+      "sha256": "717b2c7d04233dc978f997af5efabdfcbdf650cb6943064ce2624baca3753dd6",
+      "bytes": 6465
+    },
+    {
+      "origin_path": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/source-check.md",
+      "retained_path": "evidence/docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/source-check.md",
+      "sha256": "3177ce60572007c3acf726f6a42b4bce16dd2744dc4eed15791088f8580cd248",
+      "bytes": 4303
+    },
+    {
+      "origin_path": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md",
+      "retained_path": "evidence/docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md",
+      "sha256": "ec5f4cdb73fd870582aea8b1e12248dd3dbacf76b962deb9b00b8d9addb3a944",
+      "bytes": 6502
+    },
+    {
+      "origin_path": "docs/history/symmetric-partner-candidate-2026-10-03/README.md",
+      "retained_path": "evidence/docs/history/symmetric-partner-candidate-2026-10-03/README.md",
+      "sha256": "68f3400ee67d65b9fb69f55464f1a6e36ff9e2edd947ad47f6a89c887caad950",
+      "bytes": 3797
+    },
+    {
+      "origin_path": "docs/history/symmetric-partner-candidate-2026-10-03/section.tex",
+      "retained_path": "evidence/docs/history/symmetric-partner-candidate-2026-10-03/section.tex",
+      "sha256": "e9e77c2ee2bbfbc983ba42be042a2215ee9c678011da0329012e3b1b7a0a91fa",
+      "bytes": 5835
+    }
+  ]
+}
