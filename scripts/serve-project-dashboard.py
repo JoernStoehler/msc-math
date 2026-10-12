@@ -19,6 +19,7 @@ STATE = "meta-topics/project-management/current.json"
 BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
+    "meta-topics/repository-organization/f7e0-vs-main-review-2026-10-12.md",
     "meta-topics/agent-workflow/research-enablement-20261010/README.md",
     ".agents/skills/codex-app-server/SKILL.md",
     ".agents/skills/codex-app-server/references/design-notes.md",
