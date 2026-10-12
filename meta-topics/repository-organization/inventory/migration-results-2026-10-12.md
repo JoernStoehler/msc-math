@@ -75,3 +75,73 @@ implying that every producer was executed during this migration.
 The approved execution had a wall-time and account-wide quota ceiling. Those
 resource limits bound this cleanup, not the scientific validity or later thesis
 work.
+
+
+## Proposed checkpoint wrap-up, 12 October
+
+**Planning only; execution awaits Jörn's selection.** At 11:30 UTC Jörn
+requested a planning/questions phase of up to fifteen minutes and said a later
+execution phase could receive up to sixty minutes. This does not extend the
+expired migration window or restart thesis production.
+
+The migration is committed on `codex/topic-migration-20261012` as `2f1fc5e2`,
+followed by storage-guidance clarification `88240a2d`. The small recommended
+follow-up is:
+
+1. Reconcile live completion/decision records with the checkpoint and expired
+   windows. Keep unresolved substantive obligations, but remove obsolete launch
+   language from current next steps. Inspect the still-open
+   `oct03-resource-scope` and `oct04-workflow-fix-window` decisions against their
+   source dispositions; their old windows are not current questions for Jörn.
+2. Repair the missing-Pandoc diagnostic in `scripts/serve-files.py`, which still
+   points to the removed `INSTALL.md` instead of the maintained installation
+   workflow.
+3. Clarify the inventory's coverage arithmetic. Its generator intersects
+   current semantic source paths with the frozen 10 October physical census;
+   the resulting count is unchanged-path overlap, not current repository
+   coverage. Label that precise meaning or omit the misleading counts. Preserve
+   the dated census rather than rerunning it for cosmetic freshness.
+4. Retain a concise integration map for the occupied worktrees, identifying
+   moved-path counterparts and confirmed or unknown ownership. Do not apply
+   their changes or alter those worktrees during this wrap-up. Bound ownership
+   lookup to ten minutes; unresolved owners become an explicit handoff limit.
+
+Read-only Git observations at 11:32–11:34 UTC: `main` is `844fc5be`, an exact
+ancestor of this branch, with zero commits of divergence and two migration
+commits ahead. Main nevertheless has 100 dirty/untracked status entries and
+18 tracked changed paths that overlap migration changes, including moves and
+deletions. Worktrees `337f` and `fde8` have nine and fifteen status entries,
+with six and seven overlaps respectively. These counts are dated observations,
+not file ownership or proof of running sessions. A direct update of occupied
+main is therefore not the selected route. Broader consolidation would include
+independent cloud/harness/research work and needs its own disposition.
+
+**Execution proposal:** allow up to sixty minutes from an explicit launch,
+with roughly fifteen to thirty minutes expected for this narrow package;
+that estimate is judgment, not a measured runtime. Root owns current-state
+reconciliation, integration map, final commit and delivery. A bounded worker
+can own the two script/presentation corrections; a separate reviewer checks
+the assembled diff and completion claim. No paid API calls, scientific
+producer/certificate reruns, storage-backend comparison, thesis rewrite,
+push, main merge or unrelated session consolidation is included. No new
+quota allowance is inferred from the expired two-hour programme.
+
+**Completion evidence:** the two corrected interfaces point to existing owners
+and describe their counts accurately; generated inventory, coordination and
+graph checks pass; the integration map records preservation and unknowns;
+independent review finds no consequential objection; the follow-up is committed
+on this branch. Stop once those outputs are complete. If integration ownership
+cannot be established, leave it explicitly unknown instead of broadening the
+work or representing main as consolidated. Thesis and human acceptance gaps
+remain at their existing owners.
+
+**Alternatives:** stop with the current committed migration and retain the
+small defects; run the recommended wrap-up; or separately select consolidation
+of other sessions' work. The bounded inspection supports the middle option;
+it does not justify another hour of general migration or research cleanup.
+
+Independent bounded plan review by `/root/wrapup_gaps` approved this proposal
+on 12 October: the demonstrated fixes, ten-minute ownership limit, preservation
+boundary and focused completion checks fit the planning request and proposed
+execution ceiling. This is agent review of a proposal, not Jörn's execution
+approval or a claim that the fixes have been made.

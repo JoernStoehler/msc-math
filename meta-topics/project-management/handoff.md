@@ -1,5 +1,17 @@
 # Current handoff
 
+## 12 October: checkpoint wrap-up planning
+
+Migration checkpoints `2f1fc5e2` and `88240a2d` are committed on
+`codex/topic-migration-20261012`. Jörn requested up to fifteen minutes of
+planning/questions at 11:30 UTC; execution remains to be selected, with a
+possible later sixty-minute ceiling. The [migration ledger](../repository-organization/inventory/migration-results-2026-10-12.md#proposed-checkpoint-wrap-up-12-october)
+owns the concrete residual fixes, integration boundary and proposed checks.
+Occupied main and sibling worktrees contain independent uncommitted changes;
+no merge, push or broader consolidation is selected. Existing thesis gaps do
+not restart thesis work. Current planning/delivery status belongs to
+[current.json](current.json).
+
 ## 12 October: organization migration complete in f7e0
 
 Jörn approved the [bounded migration plan](../repository-organization/inventory/parallel-plan.md)
