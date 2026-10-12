@@ -1,0 +1,9 @@
+PASS independent geometry and all 35 edge orbits
+PASS 65 seed sections and 2600 direct derivative entries
+PASS vertex-resolved ridge 0 6 0
+PASS vertex-resolved ridge 0 6 1
+PASS vertex-resolved ridge 0 7 0
+PASS vertex-resolved ridge 0 7 1
+PASS nine flat contacts and independent half-edge expansions
+PASS 26 facet sections, aggregate coupling, independent Fubini integral and uniform margin
+ALL CHECKS PASSED in 6.614 s

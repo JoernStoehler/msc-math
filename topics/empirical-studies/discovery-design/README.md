@@ -1,6 +1,8 @@
 # Empirical research design for probing Viterbo's conjecture
 
-> Retained September 2026 scientific record, relocated 12 October 2026.
+> Retained September design with the October research packet, relocated 12 October 2026.
+> The [October acceptance synthesis](night-20261005/comparison/research-acceptance-synthesis.md)
+> records executed results; the initial proposal below is not the current frontier.
 > Proposals, owner labels and next-step recommendations below are historical,
 > not current assignments or execution authorization. The
 > [discovery synthesis](../discovery.md) routes surviving results and limitations.

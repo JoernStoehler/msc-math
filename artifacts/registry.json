@@ -84,10 +84,10 @@
     "pentagon-kkt-branch-landscape": {
       "description": "Frozen canonical sampled KKT branch landscape for rotated pentagons.",
       "links": {
-        "kkt-branch-landscape.jsonl": "experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl"
+        "kkt-branch-landscape.jsonl": "topics/products/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl"
       },
       "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
-      "producer": "experiments/regular-products/pentagon-rotation-empirics/README.md",
+      "producer": "topics/products/regular-products/pentagon-rotation-empirics/README.md",
       "release": true,
       "snapshot": "d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae"
     },

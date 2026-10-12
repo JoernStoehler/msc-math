@@ -1,0 +1,17 @@
+PASS 257 entire touching-weight paths
+PASS twenty complete polynomial cancellation policies
+exact arrangement 0 planes 14 vertices 14 cells 8 roots 44 seconds 0.3746498859982239
+Traceback (most recent call last):
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py", line 96, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py", line 93, in main
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--out',type=Path,required=True);p.add_argument('--negative-control',choices=['negative_weight','false_bound']);q=p.parse_args();a.require(not q.out.exists(),'fresh output path');tic=time.perf_counter();pol=verify_policies(HERE/'data',q.negative_control);ine=verify_inequalities(HERE/'data',q.negative_control)
+                                                                                                                                                                                                                                                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py", line 74, in verify_inequalities
+    leaves.add(n);cs=ch.coefficients(X);sg=list(map(ip.sign,cs));a.require(min(sg)>=0,'nonnegative exact homogeneous coefficients');coefficient_count+=len(cs);zeros+=sum(s==0 for s in sg)
+                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/core/code/exact_core.py", line 19, in require
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: nonnegative exact homogeneous coefficients

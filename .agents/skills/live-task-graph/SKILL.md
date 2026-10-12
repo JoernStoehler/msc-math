@@ -32,12 +32,16 @@ view; DOT/SVG is an optional export.
 When one graph would hide important outcomes or become awkward in a terminal,
 an explicitly selected manual component can use ordered sources
 such as `10-thesis.dot` and `20-software.dot`; do not make the overview
-a duplicate of every detail. Render each source beside it as `.svg`. These
+a duplicate of every detail. Render each source beside it as `.svg`. Selected retained
 files belong to the project and follow its normal version-control workflow;
 different worktrees do not implicitly share updates. Recover existing graphs;
 never replace them merely because a new agent session started. When a completed
 execution window leaves stale assignments or deadlines, preserve its components
 under a dated `history/` directory and update the live overview and overlay.
+
+New exploratory graph inputs, outputs and metadata start in the shared
+`/tmp/msc-math/<task>/<run>/` workspace; promote selected coordination artifacts
+deliberately.
 
 If a multi-hour execution window needs an additional manual overlay, use
 `00-now.dot` as a small disposable
@@ -109,7 +113,7 @@ that no longer affects the graph.
 
 ## Update points
 
-Update `current.json` after a material state change: work starts or finishes, a
+Update `current.json` after a material portfolio state change: work starts or finishes, a
 dependency is discovered or removed, evidence changes a decision branch, a
 branch becomes reviewable, or work is explicitly dropped. Do not churn the
 file for routine progress messages.
@@ -123,15 +127,11 @@ python3 scripts/render-workflow-graph.py --check
 
 The check compares the generated DOT and the SVG's embedded state hash; it
 establishes projection freshness, not mathematical validity or owner liveness.
-If separately owned manual components exist, validate and render those sources
-without overwriting the generated portfolio overview:
-
-```bash
-for source in "$graph_dir"/*.dot; do
-  [ "${source##*/}" = tasks.dot ] && continue
-  dot -Tsvg "$source" -o "${source%.dot}.svg"
-done
-```
+The SVG contains the state hash used by the freshness check. Generic Graphviz
+rendering would discard that marker. Separately owned optional components
+such as `00-now.dot` remain editable DOT sources; after changing one, render
+only that component with `dot -Tsvg component.dot -o component.svg`. Their
+local outcome/branch detail must agree with the registry's selected work.
 
 Treat a failed render as a broken task map and repair it immediately.
 
@@ -198,3 +198,5 @@ is shown to be a real burden and the environment owning the listener is known.
 DOT plus Graphviz and the existing narrow Tailscale review server are the
 smallest predictable stack. The DOT source remains readable in Micro when a
 terminal-only view is preferable.
+
+When maintaining this skill, read [design notes](references/design-notes.md) for evidence, scope and unresolved choices. These are maintenance context, not another execution-policy owner.

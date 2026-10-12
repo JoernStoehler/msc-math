@@ -1,4 +1,36 @@
-# Project skill migration proposal
+# Historical project skill migration proposal, 30 September 2026
+
+**Disposition, 5 October 2026:** The full nine-skill migration below remains
+historical and unselected. Its proposed ports, Claude adapters, bootstrap work
+and acceptance programme are not current assignments or activation requirements.
+Jörn has separately authorized the following replacement set:
+
+- `.agents/skills/problem-structuring/` replaces the locally applicable
+  `agent-skills:problem-structuring` guidance.
+- `.agents/skills/external-agent-communication/` combines and replaces the project
+  `cross-session-messaging` and `chatgpt-pro` packages and the overlapping
+  `agent-skills:chatgpt-pro` entry.
+- `.agents/skills/harness-engineering/` uses a stable invocation name, with version
+  information in metadata, replacing the local use of
+  `agent-skills:harness-engineering-v2`.
+
+The old `agent-skills` plugin is disabled only in this project's Codex and
+Claude settings, not uninstalled globally. Partial suppression is insufficient
+across both surfaces: Claude's documented `skillOverrides` does not suppress
+plugin skills. To preserve unrelated capabilities, `codex-usage`, `incident-log`
+and `lesswrong-fetch` are copied unchanged into the project discovery tree.
+Unrelated project workflows also remain.
+
+These operationally unchanged preservation copies do not select the September semantic
+adaptations, bootstrap changes or acceptance programme below. See the
+[5 October design and evidence limits](../knowledge/collaboration-guidance-design-2026-10-05.md)
+and [project skill ownership and source provenance](../../.agents/skills/README.md)
+for the installed replacement work. [Validation](skill-replacement-validation-20261005.md)
+records structural checks and successful fresh Codex root/`thesis/` and Claude
+root discovery. Behavioral benefit remains untested; the older acceptance
+programme below was not activated.
+
+## Original unselected proposal
 
 **Recommendation:** Keep `.agents/skills` as the project-owned source, retain the
 four existing workflows, and port the five additional upstream workflows with
@@ -6,7 +38,7 @@ the adaptations below. Expose the resulting nine skills to Claude through
 relative links inside this checkout. Fresh clones should need neither a second
 repository nor a plugin install to discover project guidance.
 
-**Status:** Reviewable plan only. No skills, discovery paths, global settings,
+**Status at preparation, 30 September:** Reviewable plan only. No skills, discovery paths, global settings,
 plugins, credentials or environment setup have been changed. Implementation and
 activation remain outside this planning assignment. Prepared for Jörn and the
 coordinator of thread `01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a` on
@@ -26,7 +58,7 @@ coordinator of thread `01a0f18c-14b4-78e2-a7ef-91e0d7b23f0a` on
    credentials, a host bridge or Hypothesis access.
 4. Adapt upstream `codex-usage` so status inspection is separate from installation
    and session relocation. Do not bootstrap automatically on discovery or startup.
-   This is an intentional semantic change, not a byte-identical port.
+   This is an intentional semantic change, not a operationally unchanged port.
 5. Omit upstream canary deployment machinery and plugin distribution tools.
    Validate the repository's actual discovery paths instead. Do not change or
    disable the separately installed upstream plugins as part of this migration.

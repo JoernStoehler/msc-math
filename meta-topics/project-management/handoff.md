@@ -1,5 +1,18 @@
 # Current handoff
 
+## 12 October: main checkpoint reconciled into f7e0
+
+The later 14:44 UTC request supersedes the earlier deferred-integration status
+below. Main `185155fe` is reconciled into the migration branch, preserving its
+research evidence and client/review-sharing outcomes within the topic layout.
+Main itself remains unchanged; no push or thesis/research restart is selected.
+The [outcome comparison](../repository-organization/main-reconciliation-2026-10-12.md)
+owns current differences, bounded verification and maintenance obligations.
+The original comparison review remains byte-identical as a frozen pre-integration
+assessment. The 102-page working PDF still lacks reconciled review/page coverage;
+the dashboard explicitly retains the 101-page candidate map and stale baseline.
+
+
 ## 12 October: older branches and worktrees cleaned up
 
 Jörn expanded scope at13:19:50 UTC to clean up the old branches. Three old

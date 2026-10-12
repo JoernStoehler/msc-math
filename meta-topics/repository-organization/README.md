@@ -68,3 +68,5 @@ than requiring every topic to adopt identical proof/code/data folders.
 [The scoped meta migration review](meta-migration-review-2026-10-12.md) records
 independent source/routing/retention approval and focused checks, with the
 assembled-repository and scientific acceptance boundaries explicit.
+
+- [Main checkpoint reconciliation](main-reconciliation-2026-10-12.md): combined research/client outcomes, remaining differences and bounded checks.

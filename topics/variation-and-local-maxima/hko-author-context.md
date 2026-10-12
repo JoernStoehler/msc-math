@@ -1,3 +1,5 @@
+> Current research scope: the [accepted F≤11 theorem](hko-local-maximum/f11-acceptance-20261005.md) supersedes the ten-facet-only research frontier in this historical pilot; the selected manuscript still states F10.
+
 > Retained source-interpretation knowledge, not a current assignment or fresh audit.
 > Original text: `ee282e065004adc1ccd64e51140edccd075845de:docs/history/memories/hko-author-context.md`. Original source routes below describe the September 5 source state; current selected source is `thesis/chapters/07-hko.tex` (HKO) or `thesis/chapters/08-data-science.tex` (DS).
 

@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-10-06T20:02:55.136248+00:00",
+  "results": [
+    {
+      "site": "https://www.lesswrong.com",
+      "query": "{ comment(input: { selector: { _id: \"ubKa6zdwMLSGgwBRq\" } }) { result { _id postId parentCommentId postedAt baseScore user { displayName slug shortformFeedId } contents { markdown } } } }",
+      "status": 200,
+      "response": {
+        "data": {
+          "comment": {
+            "result": {
+              "_id": "ubKa6zdwMLSGgwBRq",
+              "postId": "TxcRbCYHaeL59aY7E",
+              "parentCommentId": null,
+              "postedAt": "2020-12-15T21:14:48.378Z",
+              "baseScore": 19,
+              "user": {
+                "displayName": "Niki Dupuis",
+                "slug": "niki-dupuis",
+                "shortformFeedId": "dy2Jad3pwEWX8kaz7"
+              },
+              "contents": {
+                "markdown": {
+                  "characters": 1427,
+                  "sha256": "a05e286f3a3958bef10cf4a65a70a9b59c1892358e00caeda042bc5efd421243"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "site": "https://forum.effectivealtruism.org",
+      "query": "{ comments(input: { terms: { postId: \"XibsnDt44qQnWSs3r\", view: \"postCommentsTop\", limit: 1 } }) { results { _id postId parentCommentId postedAt baseScore user { displayName } contents { markdown } } } }",
+      "status": 200,
+      "response": {
+        "data": {
+          "comments": {
+            "results": []
+          }
+        }
+      }
+    }
+  ]
+}

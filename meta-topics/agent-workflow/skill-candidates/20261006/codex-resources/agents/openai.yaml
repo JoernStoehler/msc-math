@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Resources"
+  short_description: "Quota, scoped usage and authorized reset recovery"
+  default_prompt: "Use $codex-resources for this Codex resource question or explicitly selected reset action."

@@ -67,6 +67,8 @@ CHECK_PATHS=(
 ORIENTATION_PATHS=(
   'AGENTS.md'
   'meta-topics/repository-organization/**'
+  'meta-topics/project-management/**'
+  'meta-topics/agent-workflow/**'
   'README.md'
   'meta-topics/development-environment/installation-workflow.md'
   '.gitignore'

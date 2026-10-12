@@ -1,0 +1,39 @@
+{
+  "status": "passed",
+  "first_root": {
+    "kind": "quadratic_event_root",
+    "monic_coefficients": [
+      [
+        "-1/5",
+        "0"
+      ],
+      [
+        "2/5",
+        "2/5"
+      ],
+      [
+        "1",
+        "0"
+      ]
+    ],
+    "branch": 1,
+    "left": [
+      "0",
+      "39/640"
+    ],
+    "right": [
+      "0",
+      "1/16"
+    ]
+  },
+  "tests": [
+    "event polynomial reduces to zero",
+    "inverse",
+    "positive real embedding",
+    "exact comparison with 13/100 and 15/100",
+    "same-root equality/hash",
+    "ordering two different quadratic fields by isolating intervals",
+    "field multiplication and division identities"
+  ],
+  "source_sha256": "628464638b7651362ae419da45d5fdee5904e97edd3b90935804273574d64417"
+}

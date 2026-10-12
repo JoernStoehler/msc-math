@@ -17,7 +17,7 @@ ranking on its matched starts is not a certified local-maximality result.
 
 **HKO:** for the regular pentagon `P` of circumradius one,
 `K0 = P × R(-π/2)P` has ratio `(3 + sqrt(5))/5 > 1`. The counterexample and
-its capacity value are due to Haim–Kislev and Ostrover. The project result is
+its capacity value are due to Haim–Kislev and Ostrover. The selected manuscript proves
 local maximality among convex four-polytopes with exactly ten facets, with
 local equality precisely along translation, positive dilation and linear
 symplectic images. Strictness is on a transverse slice, not in the raw
@@ -26,7 +26,17 @@ ratio. The statement and proof appear in
 [the selected thesis chapter](../../thesis/chapters/07-hko.tex), theorem
 `thm:hko-ten-facet-local-maximum`, and its three `hko-lemma-*.tex` inputs.
 
-The supporting mathematical route is
+The later [accepted F≤11 research theorem](hko-local-maximum/f11-acceptance-20261005.md)
+extends local maximality to all convex four-polytopes with **at most eleven
+genuine facets** in an existential Hausdorff neighborhood, including arbitrary
+moving normals and coupled approach sequences. Its 4 October acceptance
+combines a complete seven-stage finite replay with independent analytic and
+crossed implication reviews, taking the sharp ten-facet theorem and local
+symmetry slice as inputs. It does not classify eleven-facet equality or give
+an explicit radius. The selected manuscript and PDF still state ten facets;
+the F≤11 result has no selected thesis location yet.
+
+The supporting mathematical route for the ten-facet input is
 [the feasible-section argument](../../formal/hko-feasible-section-upper-branches.tex).
 For each selected HK word, solve closure and normalization with an invertible
 minor, hold the complementary beta coordinates fixed, and obtain a positive
@@ -80,6 +90,7 @@ questions, sampling measures and trust roles:
 
 | Packet | Finding and boundary |
 | --- | --- |
+| [Accepted F≤11 research](hko-local-maximum/f11-acceptance-20261005.md) | Immutable proof return, exact finite replay and analytic acceptance; manuscript integration pending. Finite checks alone do not imply the neighborhood theorem. |
 | [Theorem certificate](hko-local-maximum/theorem/README.md) | Exact 26-section first-order predicate over the ordered field `Q(t)`, `t = tan(π/5)`. Rust proposes finite choices; Sage reconstructs and accepts exact objects. |
 | [Smooth-only rank defect](hko-local-maximum/smooth-only-rank-defect/README.md) | In the retained f64 diagnostic, 44 nonsingular positive-beta branches have projected rank 23 in the 25-dimensional quotient. This route did not close; it does not prove that every nonsingular-only repair is impossible. |
 | [First order](hko-local-maximum/empirical/first-order/README.md) | Near-optimal orbit bookkeeping and a rejected/no-change ascent step. A single branch gradient is not a nonsmooth critical-point test. |
@@ -99,8 +110,10 @@ proof.
 
 ## Scope, reproduction and remaining limits
 
-Both local theorems fix ten genuine facets. Neither proves local maximality
-when facets are added, uniqueness of ten-facet maxima, or a global optimum.
+The selected manuscript states both local theorems for ten genuine facets.
+The accepted HKO research theorem covers at most eleven; the non-HKO theorem
+remains fixed-ten-facet. Neither proves uniqueness of ten-facet maxima, a global
+optimum, or local maximality for unrestricted facet count.
 The non-HKO example has ratio one and supplies no new violation of Viterbo's
 inequality. No explicit numerical Hausdorff neighborhood radius is claimed.
 The HKO finite certificate is not a complete catalogue of nearby capacity
@@ -131,4 +144,6 @@ and release-facing prose remain distinct review obligations.
 
 [Dated eleven-facet extension hypotheses](eleven-facet-extension-hypotheses.md)
 retain conditional cuts-additivity and representation/uniformity clues from an
-unlaunched October proposal; they are unverified and do not extend the selected theorem.
+unlaunched October proposal. That proposal is historical: the accepted F≤11
+packet closes the extension through its own proof and evidence, without
+asserting that each earlier suggested route was verified.

@@ -15,14 +15,15 @@ fixed-regular-factor partner study. The selected thesis is a separate consumer.
 | What survives independent factor deformations? | [Affine proof packet](pentagon-affine-products/README.md): for nonsingular `G,H`, `c(GP5 ×_L HP5)=w²/max|n_i^T G^-1 H^-T n_j|`, `w=1+cos(pi/5)`. The sharp ratio is `(3+sqrt(5))/5`, with its stated equality class. | Agent-reviewed theorem included in [Chapter 10](../../thesis/chapters/10-affine-pentagons.tex). This covers affinely regular pentagons, not arbitrary pentagons or every ten-facet body. It does not import the HKO endpoint value. Human proof acceptance and novelty are unestablished. |
 | What if only the pentagon factor is fixed? | [Symmetric-partner proof](pentagon-arbitrary-partner/symmetric-partner-lemma.md): every centrally symmetric full-dimensional planar convex partner has capacity equal to the difference-body width value. The sharp ratio is `(10+6sqrt(5))/25`, attained exactly by the prescribed decagon up to translation and positive dilation. | Agent-checked analytic theorem, covering smooth bodies as well as polygons. Jörn selected the pentagon instance for thesis inclusion; it is still absent from the selected manuscript, a pre-existing promotion gap. |
 | Does that symmetric-partner theorem extend beyond pentagons? | [Odd-regular theorem](pentagon-arbitrary-partner/odd-regular-symmetric-partner.md): all odd `n>=5` have the width formula with centrally symmetric partners, a sharp constant `kappa_n<1`, and affine-image transfer. | Agent-checked analytic theorem, dated 3 October. Human acceptance, thesis selection of the generalization and publication novelty are open. It is not merely a proposed extension. |
+| What is known for asymmetric partners? | [Restricted partner theorems](pentagon-arbitrary-partner/README.md#restricted-asymmetric-partner-theorems-5-october): the fixed-axis `diag(x,1)R_theta` normal family with arbitrary supports has sharp HKO bound and regular-only HKO-angle equality; equiangular and aligned/nonconformal slices have separate exact results. | Independently agent-reviewed on 5 October. No arbitrary GL(2), arbitrary-partner global theorem, human acceptance or manuscript promotion. The general-matrix cone reduction leaves positivity open. |
 | What is the exact two-bounce class? | [Two-bounce proof](product-two-bounce-class.tex): the strong two-bounce minimum and complete mathematical `k=2` QP optimum give the same difference-body inradius. | Agent-reviewed, awaiting Jörn. Universal equality with the transition-pruned, f64-seeded implementation remains conditional on retaining and exactly resolving an equality candidate. |
 | What is special about triangles? | [Triangle classification](product-triangle-bounce-classification.tex) proves strict directed triangle-cycle realization and the two-/three-bounce capacity comparison under its upstream hypotheses. | Agent-reviewed, awaiting Jörn. Its placement argument does not establish physicality for general locally admissible words. |
 | Can rotating a symplectic product improve its ratio? | [Product-position chapter](../../thesis/chapters/11-product-position.tex) and [convention/endpoint packet](product-rotation/README.md) give the universal initial regime and a triangle example with a worse Lagrangian endpoint. | Exact argument with bounded rational/matrix check. The sufficient interval need not be maximal; no novelty or human prose acceptance is asserted. |
 
 The fixed-pentagon symmetric-partner theorem, the independent affine-pentagon
-bound and the [local ten-facet maximum](../variation-and-local-maxima/README.md)
+bound and the [local at-most-eleven-facet maximum](../variation-and-local-maxima/README.md)
 have different domains. Arbitrary symmetric partners need not be pentagons;
-independent linear pentagon factors retain product structure; nearby ten-facet
+independent linear pentagon factors retain product structure; nearby at-most-eleven-facet
 perturbations can break it. None of these results proves a global maximum over
 all convex bodies or all ten-facet polytopes.
 
@@ -111,8 +112,8 @@ meaning.
 
 The separate [variation topic](../variation-and-local-maxima/README.md) owns HKO
 feasible upper sections, exact local-maximality evidence, empirical perturbations
-and the failed smooth-envelope route. Its certificate does not cover new facets
-or prove global maximality.
+and the failed smooth-envelope route. Its integrated F≤11 argument includes one facet birth, relative to the inherited
+F10 certificate; it supplies neither a ≥12-facet theorem nor global maximality.
 
 Producer and certificate commands live with their packets and may replace
 retained outputs. This consolidation moves existing evidence and repairs its

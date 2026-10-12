@@ -27,6 +27,22 @@ documents its lifecycle commands and shutdown grace. Distinguish documented
 API behavior, release-specific source findings and locally exercised behavior;
 do not substitute general restart advice for the relevant mechanism.
 
+## Cheap current quota check
+
+Run `python3 scripts/codex-quota-status.py` from the checkout root; add `--json`
+for allowlisted metadata or `--codex /path/to/codex` to select the executable.
+It uses existing Codex sign-in and the documented read-only
+[`account/rateLimits/read`](https://learn.chatgpt.com/docs/app-server#6-rate-limits-chatgpt)
+contract, checked against CLI 0.160.0 on 4 October 2026. It prints the observation
+time, each returned window's duration, server-reported used/remaining percentage,
+reset time, and available reset credits with expiry details when returned.
+Weekly means 10,080 minutes, regardless of whether it is the primary or secondary
+window. Percentages are rounded by app-server; missing fields remain unknown,
+and a failed check exits nonzero. Reset eligibility remains unknown from this
+read. This account-wide quota is distinct from local thread token counts.
+The helper sends no model or reset-consumption request and requires no setup
+beyond Python 3.11+ and an installed, signed-in Codex CLI.
+
 ## Daemon restart and subagent recovery
 
 Source inspection on 3 October 2026 at the release pinned above establishes:
@@ -328,7 +344,7 @@ about this feature. Ordinary sessions already have passive count-up reports:
 with independent session trees kept separate from the root's workers. They require
 neither goals nor budget-limit flags. See the
 [usage accounting contract](../../scripts/subtree-usage.md) and
-[coordination command](../../docs/coordination/README.md#workload-supervision).
+[coordination command](../../meta-topics/project-management/coordination.md#workload-supervision).
 Earlier chat wording that an ordinary-session count-up meter was wholly unresolved
 overstated the gap. Agent-visible prompt delivery and reliable translation into
 subscription quota remain unresolved; dated shadow prices are not quota/billing.

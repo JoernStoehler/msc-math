@@ -4,8 +4,9 @@ The September discovery desk investigated whether complementary measurements,
 controlled families and mathematical reasoning reveal structure that one
 invariant-feature table misses. Its surviving output is a collection of
 geometric constraints, explicit separating examples and rejected explanations.
-It is not a new capacity result, a universal Viterbo bound, or a selected current
-research programme.
+The October continuation also produced restricted capacity theorems and local
+facet-birth results, summarized below. Neither wave proves a universal Viterbo
+bound or authorizes a new research programme.
 
 The [initial design](discovery-design/README.md) and its adaptive-discovery,
 mathematical-discovery and method-portfolio reports preserve proposed routes.
@@ -68,6 +69,52 @@ The desk also produced results now retained under [products](../products/README.
 The [root synthesis](discovery-design/desk/root-review/README.md) checks the
 relationships among these results. It is an agent research review, not a human
 proof/prose PASS or a publication-level novelty determination.
+
+## October continuation: mechanisms, restricted theorems and facet birth
+
+The [5 October acceptance synthesis](discovery-design/night-20261005/comparison/research-acceptance-synthesis.md)
+and [final disposition](discovery-design/night-20261005/comparison/final-research-disposition.md)
+own the later agent-audited results and unresolved obligations. They supersede
+earlier exploratory frontiers, without establishing human acceptance, novelty
+or manuscript promotion. The dated run's dispatches, deadlines and budget
+observations are historical; this integration selects no further execution.
+
+- [Fixed-factor partner geometry](../products/pentagon-arbitrary-partner/README.md#restricted-asymmetric-partner-theorems-5-october)
+  now has sharp global bounds and equality classifications in the equiangular
+  and fixed-axis orientation-wide normal families, plus nonconformal slices.
+  Arbitrary partners and general GL(2) remain open; the seven-variable,
+  610-row general-matrix cone is a reduction with unproved positivity.
+- [HKO local maximality](../variation-and-local-maxima/hko-local-maximum/f11-acceptance-20261005.md)
+  now covers a Hausdorff neighborhood among polytopes with at most eleven genuine
+  facets, including arbitrary old-normal motion and relative facet-birth scales.
+  It inherits the F10 certificate and gives no numerical radius, F12 theorem
+  or unrestricted local/global bound.
+- P* has [fixed-cut geometry](discovery-design/night-20261005/extremality-discovery/pstar-f11/fixed-cut-strata.md)
+  and accepted [open-direction](discovery-design/night-20261005/extremality-discovery/pstar-f11/moving-old-bridge.md),
+  [moving-endpoint](discovery-design/night-20261005/comparison/pstar-endpoint-final-acceptance.md)
+  and [new generic-direction ambient](discovery-design/night-20261005/comparison/pstar-new-direction-ambient-final-acceptance.md)
+  patches. The latter permits full old-normal and family motion about
+  `D=(1,-1,0,1)` with arbitrary coupled scales for the specified transported
+  facet-0 birth. It is an existential patch, not a numerical radius or all-facet,
+  all-direction F11 theorem. Full P* F11 remains open.
+- The [fixed-Q support-chart criterion](discovery-design/night-20261005/geometry-discovery/fixed-q-rank/independent-proof-check.md)
+  identifies strict local ratio maxima modulo translation/dilation by interior
+  membership of the normalized area gradient in the complete active fitting-dual
+  hull. Rank `N−2` is necessary; `N≤12` additionally needs unique duals per ten
+  templates. The [decagon separator](discovery-design/night-20261005/geometry-discovery/fixed-q-rank/separating-control.md)
+  is covered and balanced but rank-deficient and improvable. Neither result is
+  an unconditional facet ceiling or changing-normal theorem.
+- The synthesis also retains complete sparse active-hull/product-envelope
+  mechanisms, an exact covariance-and-volume/capacity separation, cotangent
+  rigidity under its normal-direction hypothesis, a failed scalar global shortcut
+  and a bounded direct-cover escape result. These have different mathematical
+  domains; none closes arbitrary fixed-Q globality or broader equality classification.
+
+All 235 research-night source/evidence files from main's checkpoint are retained
+in the moved packet. Raw evidence bytes remain unchanged; current script inputs
+and Markdown routes are adjusted to their new owners. Historical hashes identify
+the original main versions, not the path-adjusted scripts. No certificate or
+producer was rerun during this integration.
 
 ## Producer, evidence and current execution boundaries
 

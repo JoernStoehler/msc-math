@@ -1,4 +1,4 @@
-# Project Codex overrides; see docs/codex.md for scope, source navigation and
+# Project Codex overrides; see meta-topics/development-environment/codex-reference.md for scope, source navigation and
 # the dated configuration assessment. Values may intentionally equal the host:
 # project behavior should survive a later change to host defaults.
 # Approval rule (Jörn, 2026-10-03): obtain his explicit approval before applying
@@ -17,7 +17,7 @@
 # workload or spending: AGENTS.md owns bounded assignments and Jörn's budget gate.
 [agents]
 enabled = true
-# V1 nesting only; V2 ignores this setting (docs/codex.md).
+# V1 nesting only; V2 ignores this setting (meta-topics/development-environment/codex-reference.md).
 max_depth = 99
 max_concurrent_threads_per_session = 99
 # Do not copy job_max_runtime_seconds: it is a legacy no-op in CLI 0.160.0.
@@ -40,12 +40,12 @@ runtime_metrics = false
 rollout_budget = false
 context_management = false
 # Match the existing host choice; its original rationale is unknown. Recheck
-# shell initialization behavior before changing this override (docs/codex.md).
+# shell initialization behavior before changing this override (meta-topics/development-environment/codex-reference.md).
 shell_snapshot = false
 
 # Capability limit checked at CLI 0.160.0: no supported config switch to disable
 # V2 message encryption. Production support for a plaintext-forcing client patch
-# is unverified; do not claim client patches are proved ineffective (docs/codex.md).
+# is unverified; do not claim client patches are proved ineffective (meta-topics/development-environment/codex-reference.md).
 
 # PROVISIONAL TRIAL: approved by Jörn on 2026-10-03, assessed at CLI 0.160.0.
 # Codex injects UTC timestamps automatically for elapsed-time awareness. The 60s
@@ -66,7 +66,7 @@ sleep_tool = true
 # window below 20,000 tokens before auto-compaction; this starting threshold is
 # speculative, not a measured optimum or a spending allowance. Recheck useful
 # warnings, model compatibility and continuity across compaction; revise/disable
-# if unhelpful. See docs/codex.md and docs/codex-config-proposals.md.
+# if unhelpful. See meta-topics/development-environment/codex-reference.md and docs/codex-config-proposals.md.
 [features.token_budget]
 enabled = true
 reminder_threshold_tokens = 20000
@@ -121,4 +121,10 @@ enabled = false
 
 [[skills.config]]
 path = "/home/agent/.agents/skills/subagent-prompting/SKILL.md"
+enabled = false
+
+# Jörn authorized replacement of the relevant skill set on 2026-10-05.
+# Disable the old plugin in this project to avoid competing owners; preserve
+# unrelated capabilities as unchanged local copies. Global installation remains.
+[plugins."agent-skills@agent-skills"]
 enabled = false

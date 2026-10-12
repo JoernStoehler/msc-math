@@ -7,9 +7,12 @@ description: Create expiring browser links for Jörn to review specific Markdown
 
 Use this skill as a delivery surface: present the requested artifacts for review,
 collect feedback in the current conversation, and keep review distinct from any
-later repository change. Use `share-files` instead when Jörn wants a retained
-copy on another device and the current agent is running on `joern-pc`; from a
-sandbox, ask a host agent to perform that transfer.
+later repository change. For a retained copy on another device, use the
+project's environment/transfer route instead: see
+[working environments](../../../meta-topics/development-environment/development-environments.md) and
+`external-agent-communication` for a host handoff when needed. This temporary
+viewer is not retained device delivery; an available skill name alone does not
+establish transfer capability.
 
 ## From a configured Docker sandbox
 
@@ -23,12 +26,14 @@ The helper reads the external base URL and sandbox port from the repository's
 local Git configuration. It starts ordinary Python's HTTP server over a
 temporary directory containing random-named links to the requested files and
 prints one URL per file. Return those URLs to Jörn. The server stops after eight
-hours; a new request replaces the previous sandbox review session.
+hours; a new request replaces the previous sandbox review session. Check whether
+someone is still reviewing the previous share before replacing it; preserve that
+review or coordinate the replacement rather than silently invalidating its links.
 
 The temporary directory exposes only the named files, not their source
 directories. A review request authorizes presenting those artifacts, not other
 readable sandbox content. If setup is missing, return the helper's concrete
-error; a host agent can use the setup in dotfiles `INSTALL.md`. Do not give the
+error and route host setup through [working environments](../../../meta-topics/development-environment/development-environments.md). Do not give the
 sandbox Taildrop credentials or mount the host Tailscale socket.
 
 ## From joern-pc
@@ -63,11 +68,12 @@ The server binds to `joern-pc`'s Tailscale IPv4 address when available and other
 to `127.0.0.1`. The root URL has no access token; access is limited by the network
 binding and tailnet permissions. Pass `--local` to restrict it to `127.0.0.1`.
 
-When Chrome control is available or explicitly named, open the returned index
-URL in Chrome as the review deliverable. When Jörn is reviewing on another
-tailnet device, return the URL in the conversation instead. Otherwise omit
-`--print-only`; the script asks the systemd user manager to open the index in
-the host's desktop Chrome session.
+Return the index URL in chat by default, including when Jörn's current device
+is unknown. Availability of Chrome control does not identify the browser he
+is using. When he requests opening it in a controlled browser, use that route;
+for an explicitly requested host desktop tab, use `--open-browser`. The helper
+prints URLs without opening a browser by default; `--print-only` remains an
+explicit compatible spelling.
 
 Markdown opens rendered at a 16 px body size. Its **Raw source** link switches
 the same tab to the exact source representation; use it when YAML frontmatter,
@@ -86,3 +92,5 @@ effort. Ordinary feedback belongs in the conversation. When detailed Markdown
 changes are easier in Micro, let Jörn edit the actual source and read it only
 after he says the edit is saved or complete; the browser is not an editor or a
 comment store.
+
+When maintaining this skill, read [design notes](references/design-notes.md) for evidence, scope and unresolved choices. These are maintenance context, not another execution-policy owner.

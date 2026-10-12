@@ -1,0 +1,377 @@
+{
+  "status": "PASS exact optimizer capacity1/alltenfits/area/actual5sides",
+  "x": [
+    "1"
+  ],
+  "angle": "pi/10, positive covector rotation",
+  "normal_convention": "G_x C_u N with cos angle absorbed into supports",
+  "detC": [
+    "-2/5",
+    "2"
+  ],
+  "canonical_quotient_supports": [
+    [
+      "3/5",
+      "-1"
+    ],
+    [
+      "-1/5",
+      "1"
+    ],
+    [
+      "3/5",
+      "-1"
+    ],
+    [],
+    []
+  ],
+  "actual_sides": 5,
+  "computational_K_vertices": [
+    [
+      [
+        "3/10",
+        "-1/2"
+      ],
+      [
+        "1/10",
+        "1/2"
+      ]
+    ],
+    [
+      [
+        "-3/10",
+        "1/2"
+      ],
+      [
+        "1/10",
+        "1/2"
+      ]
+    ],
+    [
+      [
+        "1/10",
+        "-1/2"
+      ],
+      [
+        "-1/10",
+        "1/2"
+      ]
+    ],
+    [
+      [],
+      []
+    ],
+    [
+      [
+        "-1/10",
+        "1/2"
+      ],
+      [
+        "-1/10",
+        "1/2"
+      ]
+    ]
+  ],
+  "computational_K_area": [
+    "-1/10",
+    "1/2"
+  ],
+  "edge_numerators": [
+    [
+      "3/5",
+      "-1"
+    ],
+    [
+      "3/5",
+      "-1"
+    ],
+    [
+      "3/5",
+      "-1"
+    ],
+    [
+      "3/5",
+      "-1"
+    ],
+    [
+      "3/5",
+      "-1"
+    ]
+  ],
+  "circuit_denominators": [
+    [
+      "1/5",
+      "-1/5"
+    ],
+    [
+      "1/5",
+      "-1/5"
+    ],
+    [
+      "1/5",
+      "-1/5"
+    ],
+    [
+      "1/5",
+      "-1/5"
+    ],
+    [
+      "1/5",
+      "-1/5"
+    ]
+  ],
+  "capacity": "exactly1: ten primal fits + active maximal circuit dual",
+  "placements": [
+    {
+      "template": 0,
+      "translation": [
+        [],
+        [
+          "-1/10",
+          "1/2"
+        ]
+      ],
+      "slacks": [
+        [],
+        [
+          "7/5",
+          "-3"
+        ],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "template": 1,
+      "translation": [
+        [
+          "1/5",
+          "-1/2"
+        ],
+        [
+          "1/2"
+        ]
+      ],
+      "slacks": [
+        [],
+        [],
+        [],
+        [],
+        [
+          "3/5",
+          "-1"
+        ]
+      ]
+    },
+    {
+      "template": 2,
+      "translation": [
+        [
+          "3/20",
+          "-1/4"
+        ],
+        [
+          "1/20",
+          "1/4"
+        ]
+      ],
+      "slacks": [
+        [],
+        [],
+        [
+          "7/5",
+          "-3"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "template": 3,
+      "translation": [
+        [
+          "-3/20",
+          "1/4"
+        ],
+        [
+          "1/20",
+          "1/4"
+        ]
+      ],
+      "slacks": [
+        [
+          "3/5",
+          "-1"
+        ],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "template": 4,
+      "translation": [
+        [
+          "-1/5",
+          "1/2"
+        ],
+        [
+          "1/2"
+        ]
+      ],
+      "slacks": [
+        [],
+        [],
+        [],
+        [
+          "7/5",
+          "-3"
+        ],
+        []
+      ]
+    },
+    {
+      "template": 5,
+      "translation": [
+        [],
+        [
+          "-1/10",
+          "1/2"
+        ]
+      ],
+      "slacks": [
+        [],
+        [
+          "3/5",
+          "-1"
+        ],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "template": 6,
+      "translation": [
+        [
+          "1/5",
+          "-1/2"
+        ],
+        [
+          "1/2"
+        ]
+      ],
+      "slacks": [
+        [],
+        [],
+        [],
+        [],
+        [
+          "7/5",
+          "-3"
+        ]
+      ]
+    },
+    {
+      "template": 7,
+      "translation": [
+        [
+          "3/20",
+          "-1/4"
+        ],
+        [
+          "1/20",
+          "1/4"
+        ]
+      ],
+      "slacks": [
+        [],
+        [],
+        [
+          "3/5",
+          "-1"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "template": 8,
+      "translation": [
+        [
+          "-3/20",
+          "1/4"
+        ],
+        [
+          "1/20",
+          "1/4"
+        ]
+      ],
+      "slacks": [
+        [
+          "7/5",
+          "-3"
+        ],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "template": 9,
+      "translation": [
+        [
+          "-1/5",
+          "1/2"
+        ],
+        [
+          "1/2"
+        ]
+      ],
+      "slacks": [
+        [],
+        [],
+        [],
+        [
+          "3/5",
+          "-1"
+        ],
+        []
+      ]
+    }
+  ],
+  "sharp_ratio": [
+    "1/5",
+    "3/5"
+  ],
+  "sharp_ratio_numeric": 1.047213595499958,
+  "regular_Y_translation": [
+    [
+      "2/5",
+      "-4/5"
+    ],
+    [
+      "2/5"
+    ]
+  ],
+  "physical_side_squared": [
+    "-6/5",
+    "14/5"
+  ],
+  "physical_circumradius_squared": [
+    "-8/25",
+    "4/5"
+  ],
+  "physical_regular_geometry": "equal five Euclidean sides and circumradii; canonical Y support equals translated constant D",
+  "direct_Q_computational_area": [
+    "5/8",
+    "15/8"
+  ],
+  "direct_product_ratio": [
+    "1/5",
+    "3/5"
+  ]
+}

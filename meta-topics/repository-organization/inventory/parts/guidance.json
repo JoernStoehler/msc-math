@@ -57,14 +57,14 @@
       "kind": "workflow",
       "title": "Human-mediated ChatGPT Pro dossier exchange",
       "summary": "Focused GOAL.md ZIP, Chromebook Taildrop delivery, inbound inbox handling and independent integration. Distinct from native subagent delegation.",
-      "state": "Local reusable skill; dated successful pentagon handoff reported.",
+      "state": "Retained Pro workflow in the selected external-agent-communication replacement; dated successful pentagon handoff reported.",
       "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
       "human_readability": "Unknown; no new human readability or acceptance evidence.",
       "runtime": "Skill reports Jörn observed Astra Pro latency of 40–90 minutes; historical observation, no runtime guarantee.",
       "code_quality": "No executable package resources; procedure only.",
       "sources": [
         {
-          "path": ".agents/skills/chatgpt-pro/SKILL.md",
+          "path": ".agents/skills/external-agent-communication/SKILL.md",
           "supports": "Outbound/inbound procedures and September 18 user experience"
         },
         {
@@ -126,14 +126,14 @@
       "kind": "workflow",
       "title": "Cross-session delivery and handoff semantics",
       "summary": "Requires actual transport and clear recipient/action/reply route; distinguishes saved files, delivered messages, receipts, acceptance and authorization.",
-      "state": "Active local protocol linked by coordination README.",
+      "state": "Selected local external-agent-communication replacement; historical discovery checks do not establish reliable behavior.",
       "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
       "human_readability": "Unknown; no new human readability or acceptance evidence.",
       "runtime": "unknown; not executed in this survey",
       "code_quality": "not applicable",
       "sources": [
         {
-          "path": ".agents/skills/cross-session-messaging/SKILL.md",
+          "path": ".agents/skills/external-agent-communication/SKILL.md",
           "supports": "Reusable transport and authority distinctions"
         },
         {
@@ -186,7 +186,7 @@
       "id": "guidance-view-only-review",
       "kind": "workflow",
       "title": "Expiring artifact review links",
-      "summary": "Host index and configured sandbox route serve only explicitly selected files; eight-hour lifetime, append/replace behavior and file-format display conventions.",
+      "summary": "Host index and configured sandbox route serve only explicitly selected files; eight-hour lifetime, append/replace behavior and file-format display conventions. Returns a URL by default; desktop opening is opt-in, and only Markdown requires Pandoc.",
       "state": "Local capability; maintained live-task-graph consumer.",
       "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
       "human_readability": "Unknown; no new human readability or acceptance evidence.",
@@ -218,8 +218,7 @@
       "action": "keep",
       "rationale": "Narrow expiring publication has a different capability/security lifetime from broad workstation serve-files and Hypothesis review.",
       "uncertainties": [
-        "Skill mentions share-files, which is absent from seven local packages; conditional external/host availability not established.",
-        "Configured sandbox mapping and host service state not tested."
+        "Configured sandbox mapping and live host service state were not tested in this reconciliation; offline helper tests do not establish fresh-client portability."
       ]
     },
     {

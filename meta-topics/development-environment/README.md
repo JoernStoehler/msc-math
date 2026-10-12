@@ -28,3 +28,14 @@ resource readings are not current service or capacity observations.
 [9 October Codex lookup history](codex-lookup-latency-20261009/README.md)
 retains the failed latency trial, withdrawn guidance and reduced personal-skill
 acceptance, with exact historical inputs and current limits.
+
+[8 October cloud-readiness assessment](cloud-readiness-20261008/assessment.md)
+completed the initial A inspection and proposed a bounded acceptance route.
+[Its earlier audit and build receipt](cloud-harness-audit-20261008/README.md)
+retain the rejected delivery's investigation evidence, including a source-only
+thesis build on host TeX. [The 9 October portability report](cloud-readiness-20261008/portability-report-20261009.md)
+adds a dated dependency inventory. The subsequent main checkpoint committed the
+then-local skill/configuration package; this resolves that reported Git delivery
+gap, not fresh-cloud execution, authenticated data access or result delivery.
+The [10 October withdrawal](../../docs/history/cloud-skills-withdrawal-20261010.md)
+records a later rejected proposal and recovery request, not current authorization.

@@ -52,6 +52,26 @@ labelled-polygon neighborhood for each fixed odd regular factor. It uses exact
 boundary-contact identities and strict-interior margins, not a quantified
 perturbation radius or a statement about all convex-body neighborhoods.
 
+## Restricted asymmetric-partner theorems (5 October)
+
+The [research acceptance synthesis](../../empirical-studies/discovery-design/night-20261005/comparison/research-acceptance-synthesis.md)
+records later independently agent-reviewed results, integrated here on 12 October.
+Their acceptance is relative to the named mathematical inputs; it is neither
+Jörn/Kai acceptance, external novelty closure nor selected-manuscript promotion.
+
+| Family or reduction | Supported conclusion and boundary |
+| --- | --- |
+| [All-angle equiangular fan](equiangular-partner-global-20261005.md) | Arbitrary supports on a regular five-normal fan have capacity equal to the largest contained regular-pentagon scale times the regular capacity. The regular partner uniquely maximizes ratio in each fan; across angles the sharp bound is `(3+sqrt(5))/5`, with HKO-angle regular equality. Edge-loss bodies are included. |
+| [Fixed-axis orientation-wide family](orientation-wide-global-20261005.md) | Normals `diag(x,1) R_theta n_i`, arbitrary supports, all `x>0` and angles have sharp HKO bound. Equality requires `x=1`, `theta=pi/10 mod pi/5` and a regular partner up to translation/dilation. This includes non-affinely-regular partners but fixes the distortion axes relative to Q. |
+| [Aligned nonconformal family](aligned-nonconformal-global-20261005.md) | Normals `diag(x,1)n_i` have sharp ratio `3(1+sqrt(5))/10`, uniquely at `x=sqrt(5)/3` with the certified non-affinely-regular support class. The [HKO-angle slice](hko-angle-nonconformal-global-20261005.md) instead has the HKO benchmark, uniquely at `x=1` regular. |
+| [General-matrix cone reduction](general-matrix-cone-reduction-20261005.md) | The inherited all-matrix fitting model reduces to a seven-variable homogeneous cone with 610 distinct rows and the stated quadratic target. The target's positivity remains open: this is a reduction, not an arbitrary-GL(2) bound. |
+
+Complete cell/boundary/tail and equality checks support the restricted theorems;
+a sampled angle grid would not. Arbitrary asymmetric partners, outer-axis
+rotation/general GL(2), and arbitrary non-affine pentagon pairs remain outside
+the proved global bounds. The [final disposition](../../empirical-studies/discovery-design/night-20261005/comparison/final-research-disposition.md)
+parks further execution rather than declaring those questions solved.
+
 ## Fitting representation and empirical evidence
 
 The [evaluator](evaluator.py) implements the BMP normal-triangle translation
@@ -94,7 +114,8 @@ signed-polygon estimate has not been independently formalized. The
 [generic-cell contact reduction](smooth-cell-reduction.md) are scoped analytic
 research routes. None is a global fixed-partner theorem or an active thesis
 proof. The minimum-area cover among arbitrary asymmetric partners remains
-unresolved; independent-affine-pentagon optimization settles only a subclass.
+unresolved; the independent-affine and fixed-axis orientation-wide theorems
+settle distinct restricted classes.
 
 Reproduction commands live with the individual records and write owned outputs.
 No producer, collection or certificate was rerun for this relocation. Scripts

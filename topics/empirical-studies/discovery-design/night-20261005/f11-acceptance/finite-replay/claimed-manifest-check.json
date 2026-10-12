@@ -1,0 +1,7 @@
+{
+  "claimed_manifest_entries": 37,
+  "claimed_manifest_mismatches": [],
+  "run_checks_sha256": "73aab664d4a307c5e6a8687531bb9ea5659a20e481af3f07686502bcdc94b0a0",
+  "core_verify_sha256": "1ac68d95a82b83b85253b02f188220c4cf640f50405daa948f9fa050df069e46",
+  "collar_verify_sha256": "5e998d02cdc230bc7de33335d4ecef548eef10f67746d0d9a63c36a1684d9423"
+}

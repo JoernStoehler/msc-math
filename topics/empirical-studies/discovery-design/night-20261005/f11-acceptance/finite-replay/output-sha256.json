@@ -1,0 +1,20 @@
+{
+  "SUMMARY.json": "fb215f5de537e44368fdc73d9a804e0f01c1948bc2d373a33e071a875bfbeb76",
+  "claimed-manifest-check.json": "77db56e4ae476689e9653b2db4b77dc9ac7e0b5fecb717a8763f31b3fc6ddd45",
+  "collar.json": "db7948fb4fb74fa60f1650967f843548b1a345d723004fc58691ce1ba02fb853",
+  "collar.log": "a136031435d84bd0ffef023e3402358319ac17ef8d69b893a0243f7c16e6ca75",
+  "core.json": "ff2265440651a3f24735860adeb20d14ddd2255d365e9e3db8274b684ff7e3a4",
+  "core.log": "8f78dae93bd28e25ceca97fd3430d2f85740c070e836122d8ca1b4e043f65f46",
+  "environment.json": "d9e910b525cf5f3ac8ea0e71e790f5968eb977b09ce881cf5efb918c73224e13",
+  "inherited_endpoints.json": "f31e4f54868202b0e760993ddd34ca17fa098726a724e39bc878a3383646a2c8",
+  "inherited_endpoints.log": "b396a2ebf6f7b582273e33f9343ee02bbb6d5dad765dc1637e27c65e3db0f304",
+  "inherited_ridges.json": "de6a98a1080aee389a7e968d5433c22bb48daaad4c2b4e690b86bf8f438f0f64",
+  "inherited_ridges.log": "92b8ba1bff0c2dd20b50cbd3fa92ed9aa4fa7d4e51d1d0f9295a64ed815f18d2",
+  "integrity.json": "6baeeea1c82921df9e4f6ce970b97ed4dd667cb8ab23a28ed139e5929ffbd0d0",
+  "master.log": "fa6e6726bb2c62335d176450be09f4e07441c79c0deeae1f618b0322fccf9c12",
+  "reject_false_polynomial_bound.log": "c3d44241fbdfcba5ab5d0e0d5683366bdc5d80c34d14ae90f1be7ec1a5ff5f74",
+  "reject_missing_core_leaf.log": "9fe5462a1d4e508270447002b6e2698e7af373d74d4d9ab4d8f2aaa93d2da819",
+  "reject_negative_policy_weight.log": "c25cb0d01f4a77ac9afc0d2e1a8d18e140c07f8fcbb2fc1a375e87eaf83c9a18",
+  "source-sha256.json": "9d7a43c2e6acab50dedac368aebcf0b9bc738212d5b88c54ad80d44e38b69b05",
+  "static-domain.json": "032fc2ea0698aab0185298742468611136649b29e58a3d4ae222a6b63769a12a"
+}

@@ -1,0 +1,7 @@
+PASS wrapper: positive/invalid timeouts, live-search argv, exit propagation, temporary cleanup
+PASS bootstrap: absent/empty directory linking; populated directory, regular file and symlink preservation
+PASS review delivery: PDF without Pandoc; URL-only default; Markdown dependency; missing sandbox setup route
+PASS annotation mechanics: 0/199/200/201 rows, scoped query, duplicate-ID refusal without snapshot
+
+Final integration, 6 October 2026 20:05 UTC: ten package frontmatters validate; shell syntax passes; offline helper matrix passes after cloud-package rename; 87 local Markdown targets and ten Claude discovery links resolve; git diff --check passes. These are source/filesystem checks, not fresh client discovery or behavioral acceptance.
+Coordination structure/served sources and generated graph freshness pass. Dashboard reports the pre-existing scientific baseline discrepancy in docs/project-facts.md; this skill review makes no scientific-reconciliation claim. Tracked diff and integrated text whitespace checks pass.

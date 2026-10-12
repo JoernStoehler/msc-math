@@ -1,0 +1,4349 @@
+{
+  "field": "Q(sqrt(5))",
+  "field_encoding": "[a,b] = a+b*sqrt(5); rational strings",
+  "variable": "x=1+s>0",
+  "endpoint_policy": "Continuous; adjacent formulas agree at finite boundaries.",
+  "normals": [
+    [
+      [
+        "1",
+        "0"
+      ],
+      [
+        "0",
+        "0"
+      ]
+    ],
+    [
+      [
+        "-1/4",
+        "1/4"
+      ],
+      [
+        "5/4",
+        "-1/4"
+      ]
+    ],
+    [
+      [
+        "-1/4",
+        "-1/4"
+      ],
+      [
+        "-5/4",
+        "3/4"
+      ]
+    ],
+    [
+      [
+        "-1/4",
+        "-1/4"
+      ],
+      [
+        "5/4",
+        "-3/4"
+      ]
+    ],
+    [
+      [
+        "-1/4",
+        "1/4"
+      ],
+      [
+        "-5/4",
+        "1/4"
+      ]
+    ]
+  ],
+  "triangles": [
+    [
+      [
+        [
+          "-1/2",
+          "1/10"
+        ],
+        [
+          "0",
+          "0"
+        ]
+      ],
+      [
+        [
+          "1/2",
+          "-1/10"
+        ],
+        [
+          "0",
+          "0"
+        ]
+      ],
+      [
+        [
+          "0",
+          "0"
+        ],
+        [
+          "1/2",
+          "-1/10"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "0",
+          "-1/10"
+        ],
+        [
+          "0",
+          "-1/10"
+        ]
+      ],
+      [
+        [
+          "0",
+          "1/10"
+        ],
+        [
+          "0",
+          "1/10"
+        ]
+      ],
+      [
+        [
+          "1",
+          "-1/2"
+        ],
+        [
+          "0",
+          "1/10"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "1/4",
+          "-3/20"
+        ],
+        [
+          "-1/4",
+          "-1/20"
+        ]
+      ],
+      [
+        [
+          "-1/4",
+          "3/20"
+        ],
+        [
+          "1/4",
+          "1/20"
+        ]
+      ],
+      [
+        [
+          "-3/4",
+          "1/4"
+        ],
+        [
+          "-1/4",
+          "3/20"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "-1/4",
+          "3/20"
+        ],
+        [
+          "-1/4",
+          "-1/20"
+        ]
+      ],
+      [
+        [
+          "1/4",
+          "-3/20"
+        ],
+        [
+          "1/4",
+          "1/20"
+        ]
+      ],
+      [
+        [
+          "-3/4",
+          "1/4"
+        ],
+        [
+          "1/4",
+          "-3/20"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "0",
+          "1/10"
+        ],
+        [
+          "0",
+          "-1/10"
+        ]
+      ],
+      [
+        [
+          "0",
+          "-1/10"
+        ],
+        [
+          "0",
+          "1/10"
+        ]
+      ],
+      [
+        [
+          "1",
+          "-1/2"
+        ],
+        [
+          "0",
+          "-1/10"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "1/2",
+          "-1/10"
+        ],
+        [
+          "0",
+          "0"
+        ]
+      ],
+      [
+        [
+          "-1/2",
+          "1/10"
+        ],
+        [
+          "0",
+          "0"
+        ]
+      ],
+      [
+        [
+          "0",
+          "0"
+        ],
+        [
+          "-1/2",
+          "1/10"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "0",
+          "1/10"
+        ],
+        [
+          "0",
+          "1/10"
+        ]
+      ],
+      [
+        [
+          "0",
+          "-1/10"
+        ],
+        [
+          "0",
+          "-1/10"
+        ]
+      ],
+      [
+        [
+          "-1",
+          "1/2"
+        ],
+        [
+          "0",
+          "-1/10"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "-1/4",
+          "3/20"
+        ],
+        [
+          "1/4",
+          "1/20"
+        ]
+      ],
+      [
+        [
+          "1/4",
+          "-3/20"
+        ],
+        [
+          "-1/4",
+          "-1/20"
+        ]
+      ],
+      [
+        [
+          "3/4",
+          "-1/4"
+        ],
+        [
+          "1/4",
+          "-3/20"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "1/4",
+          "-3/20"
+        ],
+        [
+          "1/4",
+          "1/20"
+        ]
+      ],
+      [
+        [
+          "-1/4",
+          "3/20"
+        ],
+        [
+          "-1/4",
+          "-1/20"
+        ]
+      ],
+      [
+        [
+          "3/4",
+          "-1/4"
+        ],
+        [
+          "-1/4",
+          "3/20"
+        ]
+      ]
+    ],
+    [
+      [
+        [
+          "0",
+          "-1/10"
+        ],
+        [
+          "0",
+          "1/10"
+        ]
+      ],
+      [
+        [
+          "0",
+          "1/10"
+        ],
+        [
+          "0",
+          "-1/10"
+        ]
+      ],
+      [
+        [
+          "-1",
+          "1/2"
+        ],
+        [
+          "0",
+          "1/10"
+        ]
+      ]
+    ]
+  ],
+  "circuits": [
+    [
+      [
+        "1/2",
+        "-1/10"
+      ],
+      [
+        "1/2",
+        "-1/10"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1/5"
+      ],
+      [
+        "0",
+        "0"
+      ]
+    ],
+    [
+      [
+        "0",
+        "0"
+      ],
+      [
+        "1/2",
+        "-1/10"
+      ],
+      [
+        "1/2",
+        "-1/10"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1/5"
+      ]
+    ],
+    [
+      [
+        "0",
+        "1/5"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "1/2",
+        "-1/10"
+      ],
+      [
+        "1/2",
+        "-1/10"
+      ],
+      [
+        "0",
+        "0"
+      ]
+    ],
+    [
+      [
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1/5"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "1/2",
+        "-1/10"
+      ],
+      [
+        "1/2",
+        "-1/10"
+      ]
+    ],
+    [
+      [
+        "1/2",
+        "-1/10"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "0",
+        "1/5"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "1/2",
+        "-1/10"
+      ]
+    ]
+  ],
+  "denominators": [
+    {
+      "circuit": 0,
+      "raw_affine_candidates": 270,
+      "unique_affine_candidates": 71,
+      "cells": [
+        {
+          "left": [
+            "0",
+            "0"
+          ],
+          "right": [
+            "0",
+            "1/3"
+          ],
+          "slope": [
+            "13/20",
+            "-1/4"
+          ],
+          "intercept": [
+            "1/4",
+            "-1/20"
+          ],
+          "attaining_template_support_choices": [
+            [
+              7,
+              2,
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "left": [
+            "0",
+            "1/3"
+          ],
+          "right": [
+            "0",
+            "1"
+          ],
+          "slope": [
+            "1/20",
+            "1/20"
+          ],
+          "intercept": [
+            "-1/4",
+            "3/20"
+          ],
+          "attaining_template_support_choices": [
+            [
+              1,
+              1,
+              1,
+              0
+            ],
+            [
+              6,
+              0,
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "left": [
+            "0",
+            "1"
+          ],
+          "right": null,
+          "slope": [
+            "1/5",
+            "0"
+          ],
+          "intercept": [
+            "0",
+            "0"
+          ],
+          "attaining_template_support_choices": [
+            [
+              0,
+              1,
+              1,
+              0
+            ],
+            [
+              5,
+              0,
+              0,
+              1
+            ]
+          ]
+        }
+      ],
+      "templates": [
+        {
+          "template": 0,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "2/5",
+                "-1/10"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/5",
+                "0"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 1,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": null,
+              "slope": [
+                "1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 2,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  1,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 3,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "-7/20",
+                "3/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "-1/2",
+                "1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  0,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 4,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  0,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 5,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  0,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": null,
+              "slope": [
+                "1/5",
+                "0"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 6,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": null,
+              "slope": [
+                "1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 7,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "13/20",
+                "-1/4"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  2,
+                  2,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 8,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "7/20",
+                "-3/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "-1/2",
+                "1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  2,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 9,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "11/20",
+                "-1/4"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  1,
+                  2,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "3/5",
+                "-1/5"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        }
+      ],
+      "value_at_one": [
+        "-1/5",
+        "1/5"
+      ]
+    },
+    {
+      "circuit": 1,
+      "raw_affine_candidates": 270,
+      "unique_affine_candidates": 69,
+      "cells": [
+        {
+          "left": [
+            "0",
+            "0"
+          ],
+          "right": [
+            "5/11",
+            "4/11"
+          ],
+          "slope": [
+            "-1/5",
+            "1/10"
+          ],
+          "intercept": [
+            "0",
+            "1/10"
+          ],
+          "attaining_template_support_choices": [
+            [
+              3,
+              1,
+              1,
+              0
+            ],
+            [
+              8,
+              0,
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "left": [
+            "5/11",
+            "4/11"
+          ],
+          "right": [
+            "2",
+            "1"
+          ],
+          "slope": [
+            "13/20",
+            "-1/4"
+          ],
+          "intercept": [
+            "1/4",
+            "-1/20"
+          ],
+          "attaining_template_support_choices": [
+            [
+              9,
+              2,
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "left": [
+            "2",
+            "1"
+          ],
+          "right": null,
+          "slope": [
+            "-1/10",
+            "1/10"
+          ],
+          "intercept": [
+            "0",
+            "0"
+          ],
+          "attaining_template_support_choices": [
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              5,
+              0,
+              1,
+              0
+            ]
+          ]
+        }
+      ],
+      "templates": [
+        {
+          "template": 0,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "3/20",
+                "-1/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  2,
+                  2,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "-1/10",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 1,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "7/20",
+                "-3/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "-1/2",
+                "1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 2,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "1/5",
+                "-1/10"
+              ],
+              "intercept": [
+                "0",
+                "1/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "3/20",
+                "-1/20"
+              ],
+              "intercept": [
+                "3/4",
+                "-1/4"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "3/4",
+                "-7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  2,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 3,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/5",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "1/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "-2/5",
+                "1/5"
+              ],
+              "intercept": [
+                "-1/2",
+                "3/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "-3/4",
+                "7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  2,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 4,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 5,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "-1/10",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 6,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "-7/20",
+                "3/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  0,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "-1/2",
+                "1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 7,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "1/5",
+                "-1/10"
+              ],
+              "intercept": [
+                "0",
+                "1/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  0,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "1/2",
+                "-1/5"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "3/4",
+                "-7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  2,
+                  1,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 8,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/5",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "1/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  0,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "-2/5",
+                "1/5"
+              ],
+              "intercept": [
+                "-1/2",
+                "3/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "-3/4",
+                "7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 9,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "13/20",
+                "-1/4"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        }
+      ],
+      "value_at_one": [
+        "-1/5",
+        "1/5"
+      ]
+    },
+    {
+      "circuit": 2,
+      "raw_affine_candidates": 270,
+      "unique_affine_candidates": 49,
+      "cells": [
+        {
+          "left": [
+            "0",
+            "0"
+          ],
+          "right": [
+            "-5/11",
+            "4/11"
+          ],
+          "slope": [
+            "-1/4",
+            "3/20"
+          ],
+          "intercept": [
+            "-1/4",
+            "3/20"
+          ],
+          "attaining_template_support_choices": [
+            [
+              7,
+              2,
+              0,
+              1
+            ],
+            [
+              8,
+              2,
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "left": [
+            "-5/11",
+            "4/11"
+          ],
+          "right": [
+            "0",
+            "1/3"
+          ],
+          "slope": [
+            "2/5",
+            "-1/10"
+          ],
+          "intercept": [
+            "1/2",
+            "-1/5"
+          ],
+          "attaining_template_support_choices": [
+            [
+              1,
+              1,
+              2,
+              0
+            ],
+            [
+              4,
+              0,
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "left": [
+            "0",
+            "1/3"
+          ],
+          "right": null,
+          "slope": [
+            "-1/5",
+            "1/5"
+          ],
+          "intercept": [
+            "0",
+            "0"
+          ],
+          "attaining_template_support_choices": [
+            [
+              0,
+              1,
+              0,
+              0
+            ],
+            [
+              5,
+              0,
+              1,
+              1
+            ]
+          ]
+        }
+      ],
+      "templates": [
+        {
+          "template": 0,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "-3/20",
+                "3/20"
+              ],
+              "intercept": [
+                "-3/4",
+                "7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/5",
+                "1/5"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  1,
+                  0,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 1,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "2/5",
+                "-1/10"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/5",
+                "0"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  0,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 2,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "3/20",
+                "-1/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "-1/10",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  2,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 3,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "3/20",
+                "-1/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "-1/10",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  2,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 4,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "2/5",
+                "-1/10"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/5",
+                "0"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  0,
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 5,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "-3/20",
+                "3/20"
+              ],
+              "intercept": [
+                "-3/4",
+                "7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/5",
+                "1/5"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 6,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": null,
+              "slope": [
+                "1/5",
+                "0"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 7,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "-1/10",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  2,
+                  1,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 8,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "-1/10",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 9,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": null,
+              "slope": [
+                "1/5",
+                "0"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  1,
+                  0,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        }
+      ],
+      "value_at_one": [
+        "-1/5",
+        "1/5"
+      ]
+    },
+    {
+      "circuit": 3,
+      "raw_affine_candidates": 270,
+      "unique_affine_candidates": 69,
+      "cells": [
+        {
+          "left": [
+            "0",
+            "0"
+          ],
+          "right": [
+            "5/11",
+            "4/11"
+          ],
+          "slope": [
+            "-1/5",
+            "1/10"
+          ],
+          "intercept": [
+            "0",
+            "1/10"
+          ],
+          "attaining_template_support_choices": [
+            [
+              2,
+              1,
+              0,
+              0
+            ],
+            [
+              7,
+              0,
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "left": [
+            "5/11",
+            "4/11"
+          ],
+          "right": [
+            "2",
+            "1"
+          ],
+          "slope": [
+            "13/20",
+            "-1/4"
+          ],
+          "intercept": [
+            "1/4",
+            "-1/20"
+          ],
+          "attaining_template_support_choices": [
+            [
+              6,
+              0,
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "left": [
+            "2",
+            "1"
+          ],
+          "right": null,
+          "slope": [
+            "-1/10",
+            "1/10"
+          ],
+          "intercept": [
+            "0",
+            "0"
+          ],
+          "attaining_template_support_choices": [
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              5,
+              0,
+              1,
+              0
+            ]
+          ]
+        }
+      ],
+      "templates": [
+        {
+          "template": 0,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "-1/10",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 1,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  0,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 2,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/5",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "1/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  0,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "-2/5",
+                "1/5"
+              ],
+              "intercept": [
+                "-1/2",
+                "3/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "-3/4",
+                "7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  2,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 3,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "1/5",
+                "-1/10"
+              ],
+              "intercept": [
+                "0",
+                "1/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  1,
+                  0,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "3/20",
+                "-1/20"
+              ],
+              "intercept": [
+                "3/4",
+                "-1/4"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "3/4",
+                "-7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  2,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 4,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "7/20",
+                "-3/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "-1/2",
+                "1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 5,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "3/20",
+                "-1/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  2,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "-1/10",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 6,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "13/20",
+                "-1/4"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 7,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/5",
+                "1/10"
+              ],
+              "intercept": [
+                "0",
+                "1/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  0,
+                  1,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "-2/5",
+                "1/5"
+              ],
+              "intercept": [
+                "-1/2",
+                "3/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "-3/4",
+                "7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  2,
+                  1,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 8,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "1/5",
+                "-1/10"
+              ],
+              "intercept": [
+                "0",
+                "1/10"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  0,
+                  1,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "1/2",
+                "-1/5"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "3/4",
+                "-7/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 9,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "-7/20",
+                "3/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  2,
+                  1,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "-1/2",
+                "1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        }
+      ],
+      "value_at_one": [
+        "-1/5",
+        "1/5"
+      ]
+    },
+    {
+      "circuit": 4,
+      "raw_affine_candidates": 270,
+      "unique_affine_candidates": 71,
+      "cells": [
+        {
+          "left": [
+            "0",
+            "0"
+          ],
+          "right": [
+            "0",
+            "1/3"
+          ],
+          "slope": [
+            "13/20",
+            "-1/4"
+          ],
+          "intercept": [
+            "1/4",
+            "-1/20"
+          ],
+          "attaining_template_support_choices": [
+            [
+              8,
+              2,
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "left": [
+            "0",
+            "1/3"
+          ],
+          "right": [
+            "0",
+            "1"
+          ],
+          "slope": [
+            "1/20",
+            "1/20"
+          ],
+          "intercept": [
+            "-1/4",
+            "3/20"
+          ],
+          "attaining_template_support_choices": [
+            [
+              4,
+              0,
+              1,
+              0
+            ],
+            [
+              9,
+              1,
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "left": [
+            "0",
+            "1"
+          ],
+          "right": null,
+          "slope": [
+            "1/5",
+            "0"
+          ],
+          "intercept": [
+            "0",
+            "0"
+          ],
+          "attaining_template_support_choices": [
+            [
+              0,
+              1,
+              0,
+              1
+            ],
+            [
+              5,
+              0,
+              1,
+              0
+            ]
+          ]
+        }
+      ],
+      "templates": [
+        {
+          "template": 0,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  1,
+                  2,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": null,
+              "slope": [
+                "1/5",
+                "0"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  0,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 1,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  1,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 2,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "-7/20",
+                "3/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "-1/4",
+                "3/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  2,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "-1/2",
+                "1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  2,
+                  1,
+                  2,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/2",
+            "3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 3,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "-1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  3,
+                  0,
+                  2,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "1/5",
+            "0"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 4,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": null,
+              "slope": [
+                "1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  4,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 5,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "2/5",
+                "-1/10"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/5",
+                "0"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  5,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 6,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "-2"
+              ],
+              "slope": [
+                "11/20",
+                "-1/4"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  0,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "-2"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "3/5",
+                "-1/5"
+              ],
+              "intercept": [
+                "0",
+                "0"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  1,
+                  2
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  6,
+                  0,
+                  1,
+                  0
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 7,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "0",
+                "1"
+              ],
+              "slope": [
+                "7/20",
+                "-3/20"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "0",
+                "1"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "-1/2",
+                "1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  7,
+                  2,
+                  1,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "3/5",
+            "-1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 8,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": [
+                "5",
+                "2"
+              ],
+              "slope": [
+                "13/20",
+                "-1/4"
+              ],
+              "intercept": [
+                "1/4",
+                "-1/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  1
+                ]
+              ]
+            },
+            {
+              "left": [
+                "5",
+                "2"
+              ],
+              "right": null,
+              "slope": [
+                "1/10",
+                "0"
+              ],
+              "intercept": [
+                "1/2",
+                "-1/5"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  8,
+                  2,
+                  0,
+                  2
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "9/10",
+            "-3/10"
+          ],
+          "positive_for_x_ge_zero": true
+        },
+        {
+          "template": 9,
+          "cells": [
+            {
+              "left": [
+                "0",
+                "0"
+              ],
+              "right": null,
+              "slope": [
+                "1/20",
+                "1/20"
+              ],
+              "intercept": [
+                "-1/4",
+                "3/20"
+              ],
+              "attaining_template_support_choices": [
+                [
+                  9,
+                  1,
+                  0,
+                  1
+                ]
+              ]
+            }
+          ],
+          "value_at_one": [
+            "-1/5",
+            "1/5"
+          ],
+          "positive_for_x_ge_zero": true
+        }
+      ],
+      "value_at_one": [
+        "-1/5",
+        "1/5"
+      ]
+    }
+  ],
+  "common_refinement_breakpoints": [
+    [
+      "0",
+      "0"
+    ],
+    [
+      "-5/11",
+      "4/11"
+    ],
+    [
+      "0",
+      "1/3"
+    ],
+    [
+      "5/11",
+      "4/11"
+    ],
+    [
+      "0",
+      "1"
+    ],
+    [
+      "2",
+      "1"
+    ]
+  ],
+  "common_refinement_cell_count": 6,
+  "counts": {
+    "circuits": 5,
+    "templates": 10,
+    "positive_template_denominators": 50,
+    "raw_candidates": 1350,
+    "raw_candidates_per_circuit": 270,
+    "complete_denominator_cells": 15
+  }
+}

@@ -158,3 +158,40 @@ The primary result remains authoritative for redemption success. Claude stdout a
 At 2026-10-03T22:30:37.610429Z, Normal Claude subscription login (claude auth login --claudeai) has now been started; it is waiting for user sign-in/code completion. No successful authentication or model call has been established. The browser inspection call did not return and was terminated. The primary reset timer is independent of this pending login. The normal interactive login is in exec session 92002. No authentication secrets are copied or login grant assumed.
 
 At 2026-10-03T22:39:17.035172Z, Claude subscription login completed successfully after the user supplied the normal one-time authorization code. An actual-systemd read-only fallback check now reports claude_logged_in=true and exit 0. This resolves the earlier login blocker; both timers are still active for 4 October 04:00 Berlin. No Claude model call or reset consumption was made during authentication verification. No authorization code/token is retained in this note.
+
+
+## 5 October: explicitly authorized new dated job
+
+At 21:08:55UTC on 4 October, Jörn authorized scheduling with the known working
+primary/Claude-fallback pattern, more than 30 minutes before credit expiry.
+Chosen trigger: **5 October 05:00 Europe/Berlin (03:00 UTC)**. Fresh read-only
+`account/rateLimits/read` at 21:10:45 UTC and pinned preflight at 21:11:01 UTC
+reported weekly 0% used (100% remaining), three available credits; the earliest
+expires at**06:20:15 Berlin**, giving 80 minutes 15 seconds margin. His reported
+06:00 expiry was conservative; scheduling remains a full hour before it.
+These observations are dated and do not promise the future balance.
+
+New private state directory: `/home/joern/.local/state/codex/reset-20261005/`.
+The working `redeem.py` and `claude-fallback.py` pattern is reused with a new
+dated request, the earliest currently available credit and a fresh idempotency
+key. The old redeemed credit is not selected. Auth/IDs/key are not copied here.
+
+New enabled user units:
+
+- `codex-reset-0500-20261005.timer` / `.service`
+- `codex-reset-0500-20261005-claude.timer` / `.service`
+
+Both timers are active/waiting with next elapse 5 October 05:00 CEST; both services
+are inactive without a start timestamp. Root independently inspected these
+properties after the installer return. The fallback starts at the same timer
+time and waits/checks the primary as in the working pattern; it shares the
+pinned operation and idempotency key. Claude reports logged in. No immediate
+redemption or model call was made. Old 4 October units/evidence are preserved.
+
+Read-only pinned preflight passed. Available/unexpired credit is established,
+future redemption acceptance is not; a semantic refusal remains possible.
+Systemd triggering does not require a Codex inference turn or remaining inference
+quota. As before, the workstation must be awake/online and authenticated before
+expiry; this does not add wake-from-suspend. Inspect via `systemctl --user status`
+for the exact timer names above and `journalctl --user -u` for the services.
+Result paths in the new state directory: `result.json`,`claude-result.json`.

@@ -1,0 +1,30 @@
+PASS entire subdivision tree: 1968 leaf tetrahedra
+PASS exact old anchor
+PASS positive touching rows 500 / 3258
+PASS positive touching rows 1000 / 3258
+PASS positive touching rows 1500 / 3258
+PASS positive touching rows 2000 / 3258
+PASS positive touching rows 2500 / 3258
+PASS positive touching rows 3000 / 3258
+PASS all 824 relations exactly
+PASS tetrahedra 500 / 1968
+PASS tetrahedra 1000 / 1968
+PASS tetrahedra 1500 / 1968
+{
+  "passed": true,
+  "scope": "All normalized split directions 1/10 <= mu <= 9/10. NOT the full F<=11 theorem.",
+  "eta": "1/10",
+  "uniform_margin": "1/1000000",
+  "minimum_gap_nominal": 1.039106033025555e-06,
+  "positive_touching_rows": 3258,
+  "relations": 824,
+  "leaf_tetrahedra": 1968,
+  "exact_volume_points": 704,
+  "literal_gradient_crosschecks": 13,
+  "minimum_beta_nominal": 1.7274631464864187e-10,
+  "maximum_anchor_mix_nominal": 9.301857425147997e-07,
+  "seconds": 261.42563686599897,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "dependencies": "Python standard library only"
+}

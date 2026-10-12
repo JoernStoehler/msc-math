@@ -22,6 +22,13 @@ pre { overflow:auto; padding:1rem; background:light-dark(#f5f5f5,#292a2d); }
 img { max-width:100%; } table { border-collapse:collapse; }
 td,th { border:1px solid #aaa; padding:.4rem; }
 </style>"""
+FAVICON_LINK = b'<link rel="icon" type="image/svg+xml" href="/files/favicon.svg?v=1">'
+FAVICON = b'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<rect width="32" height="32" rx="6" fill="#374151"/>
+<path d="M9 5h9l6 6v16H9z" fill="#f9fafb"/>
+<path d="M18 5v6h6" fill="#9ca3af"/>
+<path d="M12 16h9M12 20h9M12 24h6" fill="none" stroke="#6b7280" stroke-width="2"/>
+</svg>'''
 TEXT_SUFFIXES = {
     '.json', '.toml', '.yaml', '.yml', '.rs', '.py', '.sh', '.tex', '.log',
     '.txt', '.csv', '.ini', '.conf', '.js', '.css', '.ts', '.dot',
@@ -67,14 +74,44 @@ class FileViewer(SimpleHTTPRequestHandler):
         return super().guess_type(path)
 
     def html_response(self, body):
+        if b'</head>' in body:
+            body = body.replace(b'</head>', FAVICON_LINK + b'</head>', 1)
+        elif body.startswith(b'<!doctype html>'):
+            body = body.replace(b'<!doctype html>', b'<!doctype html>' + FAVICON_LINK, 1)
+        else:
+            body = FAVICON_LINK + body
         self.send_response(200)
         self.send_header('Content-Type', 'text/html; charset=utf-8')
         self.send_header('Content-Length', str(len(body)))
         self.end_headers()
         return io.BytesIO(body)
 
+    def list_directory(self, path):
+        """Use the viewer's head, including its own icon, for directory pages."""
+        try:
+            entries = sorted(pathlib.Path(path).iterdir(), key=lambda entry: entry.name.lower())
+        except OSError:
+            self.send_error(404, 'No permission to list directory')
+            return None
+        title = html.escape('Directory listing for ' + unquote(urlsplit(self.path).path))
+        links = []
+        for entry in entries:
+            linkname = entry.name + ('/' if entry.is_dir() else '')
+            displayname = entry.name + ('@' if entry.is_symlink() else '/' if entry.is_dir() else '')
+            links.append(f'<li><a href="{quote(linkname, errors="surrogatepass")}">'
+                         f'{html.escape(displayname)}</a></li>')
+        body = (f'<!doctype html><html><head><meta charset="utf-8"><title>{title}</title>'
+                f'{STYLE}</head><body><h1>{title}</h1><ul>{"".join(links)}</ul></body></html>')
+        return self.html_response(body.encode('utf-8', 'surrogateescape'))
+
     def send_head(self):
         route = urlsplit(self.path).path
+        if route == '/files/favicon.svg':
+            self.send_response(200)
+            self.send_header('Content-Type', 'image/svg+xml')
+            self.send_header('Content-Length', str(len(FAVICON)))
+            self.end_headers()
+            return io.BytesIO(FAVICON)
         if route == '/':
             self.send_response(302)
             self.send_header('Location', '/files/')

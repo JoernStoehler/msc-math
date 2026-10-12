@@ -278,6 +278,18 @@ verification.
 
 ## Scientific scope disposition
 
+**Later research checkpoint, reconciled 12 October:** the
+[accepted HKO F≤11 theorem](../../topics/variation-and-local-maxima/hko-local-maximum/f11-acceptance-20261005.md)
+closes the earlier one-facet extension frontier through retained finite replay
+and analytic/crossed reviews, inheriting sharp F10. The selected Chapter 7 and
+PDF still state F10; F≤11 has no selected manuscript location. The
+[restricted asymmetric-partner theorems](../../topics/products/pentagon-arbitrary-partner/README.md#restricted-asymmetric-partner-theorems-5-october)
+settle all-angle equiangular and fixed-axis orientation-wide families, while
+general-matrix/arbitrary-partner bounds remain open. These imported research
+outcomes do not establish new thesis selection or approve further execution;
+the [research synthesis](../../topics/empirical-studies/discovery-design/night-20261005/comparison/research-acceptance-synthesis.md)
+owns the additional scoped results and acceptance boundaries.
+
 - **Selected and already integrated:** the product-position initial-regime
   theorem, the triangle example where the Lagrangian endpoint has smaller
   capacity than the symplectic endpoint, and the resulting interior-maximum

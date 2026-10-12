@@ -117,10 +117,19 @@ state every 15 seconds. The listener remains local unless explicitly configured.
 
 ## Messaging protocol
 
-The [cross-session-messaging skill](../../.agents/skills/cross-session-messaging/SKILL.md)
-owns guidance for sending or receiving cross-session agent messages and handoffs,
-including messages relayed by Jörn. Its catalog description supplies the trigger;
-the protocol is not duplicated in AGENTS.md or here.
+The [external-agent-communication skill](../../.agents/skills/external-agent-communication/SKILL.md)
+owns recipient/channel comparison and exchanges across independent agent contexts,
+including messages relayed by Jörn and the human-mediated ChatGPT Pro round trip.
+Standard native subagent-tree transport is outside its scope. Its catalog description
+supplies the trigger; the protocol is not duplicated in AGENTS.md or here.
+
+The [problem-structuring skill](../../.agents/skills/problem-structuring/SKILL.md)
+covers development of problems, goals and consequential decisions when that is needed for reliable autonomous progress. Investigate independently where possible;
+use joint interaction where user knowledge or judgment is needed. Useful, efficient
+interaction is part of that development; a clear task does not require an additional
+scoping interview. Installed packages and fresh-client discovery observations
+are recorded in [replacement validation](../agent-workflow/skill-replacement-validation-20261005.md);
+those checks do not establish behavioral benefit.
 
 ## Workload supervision
 

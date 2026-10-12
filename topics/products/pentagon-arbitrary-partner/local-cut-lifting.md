@@ -1,8 +1,10 @@
 # Coupled one-cut stability when the exposed primal face has dimension <=1
 
-Status: a deduction from the accepted F=10 sharpness input and the supplied
-vertex-insertion construction, not a complete F=11 theorem. It reduces the
-remaining task to exposed primal facets and two-faces.
+Historical partial deduction from the accepted F=10 sharpness input and the
+supplied vertex-insertion construction. This note alone is not a complete
+F=11 theorem; its then-remaining exposed-facet/two-face frontier is superseded
+by the later [F≤11 acceptance](../../variation-and-local-maxima/hko-local-maximum/f11-acceptance-20261005.md).
+The partial argument is retained as development evidence.
 
 ## Inputs
 

@@ -47,11 +47,24 @@ Current assignments and resource observations remain in
 [development environment](../development-environment/README.md).
 
 [Historical cloud/harness requests](historical-continuation-requests-2026-10-08.md)
-preserve the questions behind retired dispatches without assuming current owners
-or completed assessments.
+preserve the questions and scoped assessment outcomes behind retired dispatches
+without assuming current owners or broader readiness.
 
 [10 October research enablement and context recovery](research-enablement-20261010/README.md)
 retains support requirements, the source-qualified F17 audit and dated,
 unselected research comparisons. [The 8 October account pilot](agent-account-pilot-20261008/README.md)
 retains its matched sources, consumer returns and bounded writing-method result;
 it does not activate the later failed account programme.
+
+[Selected collaboration-guidance design](collaboration-guidance-design-2026-10-05.md)
+and [skill-replacement validation](skill-replacement-validation-20261005.md)
+retain the rationale, dated Codex/Claude discovery responses and later evaluation
+limits. [Historical candidates](skill-candidates/README.md) preserve alternatives
+without becoming active skill packages. [B’s harness assessment](harness-assessment-20261008/assessment.md)
+completed its bounded investigation; its original user inputs and independent
+returns distinguish source coverage, demonstrated decision failures and still
+unmeasured reliability. It did not select a broad evaluation or repair programme.
+
+[Main-checkpoint retention](main-checkpoint-retention-20261012.md) records how the
+12 October reconciliation retained these source accounts, moved expired dispatches
+to history and retired disposable delivery iterations to recoverable Git paths.

@@ -1,0 +1,559 @@
+{
+  "main": "185155feb116b108abf46a72980cb411dfab8378",
+  "research_path_changes": [
+    {
+      "main": "docs/empirical-viterbo-design/desk/pstar-facet-birth-20261005.md",
+      "current": "topics/empirical-studies/discovery-design/desk/pstar-facet-birth-20261005.md",
+      "original_sha256": "203ca1ff441e0d0479055a0431ecc72c3c4f582853735a37b0936516f05f3e1a",
+      "current_sha256": "4fb32dadb9a65f8ba84975968c5aa2f5288976efbae5eb56ae40e856d879e755"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/comparison/direct-cover-hedge.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/comparison/direct-cover-hedge.md",
+      "original_sha256": "da6f1c5ab6e59d7e21ecb47925838b976988392ac95dd601b74be9029079e966",
+      "current_sha256": "b24f4a51b0b187ec2546fbb060e86a3592d4176dd0cc2f5a5f7c35cff3cefe5c"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/comparison/f11-cross-review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/comparison/f11-cross-review.md",
+      "original_sha256": "caea8fb6f522aee59587913c54e6fb94f962ba0a1bc8e3f2176244e16cbecc8c",
+      "current_sha256": "46274ab707ee2b666049abf49cccd4acb742f2a7f8b7add657961efae76e5b3a"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/comparison/fan-baseline-check.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/comparison/fan-baseline-check.md",
+      "original_sha256": "57b77c05b68e2b43365803fd126b89ebd160bf69edbc5a143cfdb2d390d4a0ce",
+      "current_sha256": "0c451240a13aca1dc619d6ae716f6fd2d63029ac5d059191fc6ca64b719d335e"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/comparison/outer-matrix-preflight-final-acceptance.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/comparison/outer-matrix-preflight-final-acceptance.md",
+      "original_sha256": "5029a3a8f353609dfb70027579fcfa9e93541e008bfcef8b35736edb349888b5",
+      "current_sha256": "75da5e7cca218d7d7b762751fd641acb3226063226bfdc8e11cc231332ef39d1"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/comparison/pre-return-contract.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/comparison/pre-return-contract.md",
+      "original_sha256": "1e935eb65e41c6a283c104c63fc97e5e4f351e91787914a39c46c3bb3e153da4",
+      "current_sha256": "2e92e42fa9d4299a26210fc3c5a1f4f6773244e413b5fe72a1c760540fd2747e"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/comparison/pstar-base-discriminator-final-acceptance.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/comparison/pstar-base-discriminator-final-acceptance.md",
+      "original_sha256": "383c26988f45f9c88863499a3e4c7af317004c9c8d94378d6e5995ab3c91b8e1",
+      "current_sha256": "10dee2e1cbc659dc92c64d935d065b09c6e6c592fdb953f337215856cc374c3d"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/comparison/research-obligation-map.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/comparison/research-obligation-map.md",
+      "original_sha256": "629d731e47c882262177bc0b0e3cfbb92b950ba7983fe3e4635adf67603a9330",
+      "current_sha256": "4e3e5467b127f0736c5642b1ffd77e10c672e85d2c5b5aad31ae817123c8129f"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/direct-cover/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/direct-cover/report.md",
+      "original_sha256": "fe1572bd57215cf6ee45415167e4c617794918a3fb8f8f1fd4a98395bbaa2908",
+      "current_sha256": "3549a9f8a1b3b44e0d46b5661bcdfaf17b3ed9d8de291a89a7b6bbc61041bb44"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/direct-cover/review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/direct-cover/review.md",
+      "original_sha256": "94749c4434bd4d8f74825a49185d255b477ccb3f89f11a2fb6e9bef6c2be0fd9",
+      "current_sha256": "96c5db4fec073deedcc40c9a90af483130d939296220457f74eb0512881461ba"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/direct-cover/verify_stratum.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/direct-cover/verify_stratum.py",
+      "original_sha256": "859e3da5db70b0459c08f77b3a6319215821a98c175938d988b3f8a9b797c798",
+      "current_sha256": "2efebbe19e16d7a1af8c9557e9d0e641b16c8fe57dcb84a448ba54a11af2672c"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/asymmetry-counterexample.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/asymmetry-counterexample.md",
+      "original_sha256": "415e4b1d0b26821e03a61957daaad109a24e2272b4fe94857c5d9fd296e25261",
+      "current_sha256": "656f221386325af8ea82da8eaafe4c13597d492b94b73022c61e3b5d8dccae2f"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/nonproduct-mechanisms.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/nonproduct-mechanisms.md",
+      "original_sha256": "6d0969568299e095050af650b4349f683fa5c32165c5d2093928f98f1d62d6d7",
+      "current_sha256": "faf174632e9af7653f24cda2d8e309c1ea18a17fc252d6ed3758636dbeb2490e"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/README.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/README.md",
+      "original_sha256": "9192c4f7a8ced5adee4c1661afe1f3c779041ca0c06672befb00d4ec6a6c80f9",
+      "current_sha256": "9bce16fa6acea300555f057ab14563aba6fcc045d8c53eb3e6bcabc71caf895d"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/cut-strata/verify-family.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/cut-strata/verify-family.py",
+      "original_sha256": "c9ce725dcb9f3e553bc04c120cb4d34598e63667c7835de3a4b7809083fea1e8",
+      "current_sha256": "0255d54c226085ab6c4f0c83b730775b20a0e0c1aed5a9147a6a73f4c9b8cc42"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/endpoint-bridge.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/endpoint-bridge.md",
+      "original_sha256": "bca36ae3896f77b4c9e5fed58591b98c8cbefe16b67217a898963e151d4a70ab",
+      "current_sha256": "61e8021d01e1b511d73b6adccf76b484d5ccc75283e8b20ee79c61131f3b7d9d"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/endpoint-moving-normal/README.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/endpoint-moving-normal/README.md",
+      "original_sha256": "8b2746200ec8e7f11dce7af8a27656fe2986a49e422d843ad0c990da26ef3ff0",
+      "current_sha256": "40d7173e35ed0679052d72eac1c42c22a51c40913763abcd2c9d2cab17b7578c"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/endpoint-next-operation.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/endpoint-next-operation.md",
+      "original_sha256": "5b760399667e3611ad61bb2783753dea43e193827b4f350683bdc4b7313a6875",
+      "current_sha256": "0091edd7aee6b0a20b3659578cb037a5c9d818f068e4d61a5c2187ea06f96245"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/facet-fraction/README.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/facet-fraction/README.md",
+      "original_sha256": "b7f9485c8598c4df0336fb15a5c011266014c8b8397f6c3f76fa14a6f01df70e",
+      "current_sha256": "6a60e0d77b367095dff5d7aa22ebffaf3f8bfa5a1ae3bd8e20594cc6057de565"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/facet-split/README.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/facet-split/README.md",
+      "original_sha256": "cda2c4e248cbe19a35a6b3ea607ff1cc4eaefb20cd31480077c372d0962e71e8",
+      "current_sha256": "af632a80e561dd0ee3c1cb572a4a4e0e6c5d1f5cf7ddfd08e7cf66f53d480c93"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/facet-split/moving-old/README.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/facet-split/moving-old/README.md",
+      "original_sha256": "00f0fc07de5d7bf29b3e342704436ea64835555304839c08abbb711c5175a364",
+      "current_sha256": "6e07a469306af7907be0f8112d8d5d486f9b7b971857827d1dc7fba958b2f216"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/facet-split/moving-old/verify.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/facet-split/moving-old/verify.py",
+      "original_sha256": "0e089648038ff02ead81df24629a0b62789708c0f226381838964e028769593d",
+      "current_sha256": "ba03c2680b242bd0ee236363af4a9b028751b0290271677260de6dfdb7034c0d"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/facet-split/verify.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/facet-split/verify.py",
+      "original_sha256": "88a2319b307836c0290111cbfd1ef922a16b220a89546e319aa90377e0eb6361",
+      "current_sha256": "3d437992c297e2a9f805947fb02418ba5185b54c82ac7e698923403e0683312b"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/definitions.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/definitions.md",
+      "original_sha256": "eefa0e5ec15d27b7fa5dcbefbefa03201ec9f2139382d3fd83fdf7dfb5e10e61",
+      "current_sha256": "8f29b2a507e522aa79a7337255b9b5472393576278b1667b4218bd1372bbf974"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/independent-primal-audit.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/independent-primal-audit.py",
+      "original_sha256": "65cfa71aff2a477a4586f8b4994c4ab071da6b228b5d9a81cc0ccef5a4b590b6",
+      "current_sha256": "0ff410d01b64f65debf8f91b49abde81eb3297919a063024c55a0f13d5d6965e"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/independent-slot-audit.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/independent-slot-audit.py",
+      "original_sha256": "7deeb056410a7edb26ea1844ac83d8cfbfd5669ead19f320612676ce70c41c54",
+      "current_sha256": "09f79699ce9898557d1c19d1aeccc4e6fed2f51f14f13d1cc55039d22663c26f"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/replay.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/replay.py",
+      "original_sha256": "6b07e70361d13fa8570a8b78e4e79d4b479cf4f4e1f4b67f7653ebc678ee60a1",
+      "current_sha256": "ac6c40936f8751589a6f7ac96a1c5f1fea9603b3c93d4948ca93653c71156fb4"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/report.md",
+      "original_sha256": "5ca27fa0b05e7b662e372d6d7c53c2e93d3205e7e820f9c2456a0bb71407aefb",
+      "current_sha256": "3ddd6bbb873115e3edaea89775fcfa956ee3d11445a82a87b8bc5a55b5d163a6"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/discriminator/review.md",
+      "original_sha256": "91ebd0762ec9990748887ec5374a919df99fccecc40a415bb7cad454035c754e",
+      "current_sha256": "91d3fb02132bcc1e354a09c6a57d9767a0ed438e71a14bcc1b5851655e53d4d3"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/definitions.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/definitions.md",
+      "original_sha256": "b7b94098e8947e4f05738aca864bb44b7467f3790b169502bcdbdc1300679e8f",
+      "current_sha256": "0f004c69a5ea5fce7e0f9409c320ff04c9fd7e5ae2f97be58937abf20b6e27b2"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/independent-cap-audit.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/independent-cap-audit.py",
+      "original_sha256": "74ecf62011b7a787bfc4cce5c72af274701494db24a9438a1c5056014d226d83",
+      "current_sha256": "7a15117a909f8d2f0666bec840e7002c89bf5ca162302ab90d8906cf7d47e843"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/independent-family-audit.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/independent-family-audit.py",
+      "original_sha256": "a87c8a57224cd615e529b39e6206ea477d52b8e4cbf5f2aae6b646c0a7b011ac",
+      "current_sha256": "471a2518ebdc20bb2df02fa0ddabddecc66fe4267693aecb9aecf1faaf305b3a"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/replay.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/replay.py",
+      "original_sha256": "1ef3df3f00cc50025f81d480524b3850e069aded80f372207b4a07da01d5a9e4",
+      "current_sha256": "624dfb98900ea939e543d1a138c38cd93428db48bbf84f81f783ce57dadc0772"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/report.md",
+      "original_sha256": "3ff63feea07ef62f312f2f10ab54e7be7436e6db93ef0b93dff5fff3f91c36c7",
+      "current_sha256": "8ae0902d635763a96aa81fde3733688873d9dac684f02a524e71e187973cf3a1"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/new-direction-ambient/review.md",
+      "original_sha256": "3763414878b4f4bfb70c580b5329b7d839b28b6eae951d8dc1d73467aeb4c5e2",
+      "current_sha256": "d940ff594b319b1e3c045db8f1a87d03202322528ab7a81e188b4d0da307973a"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/preflight/contact_census.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/preflight/contact_census.py",
+      "original_sha256": "d34219a1a0dfcca718c504da56823ec7f60ac1dc143330c2f8b891ee6ac6e00e",
+      "current_sha256": "7ac9913bc0af526e4599e4ceb0e6c9f808aa81db932021a1902ab621ebfd75a8"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/preflight/independent-readiness-audit.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/preflight/independent-readiness-audit.py",
+      "original_sha256": "054e7a2788535e069cb077e0bf0e486e5acc9e768cc30c4ee5aec18fbf36f78a",
+      "current_sha256": "b142de81a39932d2ec64af3cff589e2bf6bea048580557502e0e3a6736804491"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/preflight/readiness-report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/preflight/readiness-report.md",
+      "original_sha256": "c486ed0dcd5f5c9b6ec4f80f2f27e03f3218a246accee9a31bd81f0006768d4b",
+      "current_sha256": "cefe4af844ce3eb7243ec13996704e1d2b0f81608a4f69693bbcbbb646e1d733"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/preflight/readiness-review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/preflight/readiness-review.md",
+      "original_sha256": "05a128cf36bf197a462929b6836b8c5a909a6624a88072fcef746546aa2c5365",
+      "current_sha256": "a3a40a74625e9fabb70a0a4d2b2c28c8c16a76f6782a5aa282cc0b1eaf78c396"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/definitions.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/definitions.md",
+      "original_sha256": "0f538ab64df0b6fc870790379b77dfe45b7c39ed0a628926d248de4260475924",
+      "current_sha256": "3873848789b24be41046733c64561719e6df098191914f32222965902c56c1d7"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/independent-audit.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/independent-audit.py",
+      "original_sha256": "1d0d3c2cc67a812a22eea0d47bc52b6e24cfc77883f6ff459103ca66c9f36598",
+      "current_sha256": "a06b3c8c698c392fb4b7d3964b87d4b990ef32c573e6e25868652ed8c96a46be"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/replay.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/replay.py",
+      "original_sha256": "bbc1ed47a485b61d39a422a70d184067da95fd1471090d760ba5c771d1966b96",
+      "current_sha256": "f00e9810223b2c42b5a62e6849cad44ad43e0649c3793d2da55415cf5f21d8c0"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/report.md",
+      "original_sha256": "d268c7ad0d7f3b1629abf0fe8c7234fb74d9d80f8c324dca3d16cc8be29342ac",
+      "current_sha256": "0460e966b084afb53fb434c04a40c228ab918768a4f1ccfea9fd2c2ca12774ff"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/general-facet-response/weighted-w-gate/review.md",
+      "original_sha256": "a2192061868cadd0bfb5b98fc49453b6f2c51056770da122f6b2738801e3d369",
+      "current_sha256": "9dc2dfabc99a4910b6a2cfb6154342ddec0f44e1d0aa9d367afbbaab72904f9f"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/independent-endpoint-moving-normal-audit.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/independent-endpoint-moving-normal-audit.py",
+      "original_sha256": "df5e1b73b9370dd3bc36bb4794980b5501cb4ab0ea9b4db88b9fd982738e1f64",
+      "current_sha256": "75eb18f11f11c97a00abc7255f4abba331c7a51205a41ee1fcc6744c3925f3ec"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/independent-endpoint-moving-normal-review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/independent-endpoint-moving-normal-review.md",
+      "original_sha256": "996d45e9cae74a2eba463079d0a5c8468add05176ed118c9c6c54aa6d1e7e444",
+      "current_sha256": "b06caf76c7d94b49f6e99445d01082caf2d8ba46274dc12609d6739bb7551cf7"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/independent-moving-old-audit.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/independent-moving-old-audit.py",
+      "original_sha256": "8dbe60ec013b849ce7e4b741bb542241ea4b97b889799c605cd381986d209a8a",
+      "current_sha256": "03e37e47a491bfeb05cc23bb92186f11c04fcbfdab0149a3593ef8715641dab0"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/independent-moving-old-review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/independent-moving-old-review.md",
+      "original_sha256": "1520d3f7d8de10d05c1766a57c74f78e5af9317eb741638d90a4a7d1a9ea53c7",
+      "current_sha256": "f25d4a0626035842d3dfe4a0692649fe2c2f9f74dad93ea28d4e0b10a22935f2"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/moving-old-bridge.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/moving-old-bridge.md",
+      "original_sha256": "384462b489ea0c71d3dc29fe17b9784aaf44772389769ecadcaa1df15a199161",
+      "current_sha256": "3f926f215a1c858073f2591e3ade0dbba82586654bff5a9d1778588ad4c93732"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/vertex-cones/README.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/vertex-cones/README.md",
+      "original_sha256": "b5f14cb0260190fe6c8a23a4c1a6afb2cf88fa53caf56782034137d131d1b491",
+      "current_sha256": "70017bbd01b1bc20435977873a26db4e6d87a4212430692d5f6b46359531aa1a"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/pstar-f11/vertex-cones/verify-family.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/pstar-f11/vertex-cones/verify-family.py",
+      "original_sha256": "fffb022ee06d9682373ec9fe43200b5b78c664c19d6bac2ccfb4877e4ec4f7be",
+      "current_sha256": "dd60806e99f98ac101b9326679de89b09269702a3ee4db8b326035f5e1c18941"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/report.md",
+      "original_sha256": "d185aadc085d6bbd569ed577e14c970febd5a57ca50f973ab3d29c820787023a",
+      "current_sha256": "583b9c4fd1227ac0ee00fbc9882b52400684ef42a4a48212abc0ddb9641f1d01"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/extremality-discovery/verify_asymmetry_counterexample.py",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/extremality-discovery/verify_asymmetry_counterexample.py",
+      "original_sha256": "d0e26a5214d35d9621250b7002bac5aad0e2b145d942375e8e79c91be17aa33f",
+      "current_sha256": "59b1547024878faafaf2f63ac3e37058e930a91991993f6b908085747cd88860"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/f11-acceptance/finite-replay.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/f11-acceptance/finite-replay.md",
+      "original_sha256": "bf451f8cceb85654c98f90088de4620e878043baacc74d09d904fa5266531e7f",
+      "current_sha256": "1713951fd5e84a6809512139036cec7c77acca506838ba48a911be2d3248b446"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/f11-acceptance/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/f11-acceptance/report.md",
+      "original_sha256": "9d4fae299d709c4f2ad1bbe6f748f8dde5ee70345c24b6171fb49f5e3ff7f894",
+      "current_sha256": "583fbee60b913c36d98db5586738a850a04467602751a88a1f84a48f1610aca7"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/geometry-discovery/fixed-q-rank/equiangular-capacity-core.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/geometry-discovery/fixed-q-rank/equiangular-capacity-core.md",
+      "original_sha256": "068d1517f98a1c3d7b050cc39cf91ce4a6d95865d9874a58d0a35692cb907ee4",
+      "current_sha256": "0140d57e384e0662561d07cda81bddbb6fe41059f70c642398090201fd129b22"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/geometry-discovery/fixed-q-rank/equiangular-global-review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/geometry-discovery/fixed-q-rank/equiangular-global-review.md",
+      "original_sha256": "ea2ae700f4af1ff2f02fc5afe3764fff88ac85f07881ac65805721893747fc51",
+      "current_sha256": "013d327b836ff9a1523bc2c82e49a295b8b95d9c4dfa0c66fbfac374b3c92415"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/geometry-discovery/fixed-q-rank/separating-control.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/geometry-discovery/fixed-q-rank/separating-control.md",
+      "original_sha256": "7f9f103422027ba2a58321bcae594ad769408e9928be271ce141bb4683ee1c86",
+      "current_sha256": "e33fa599943b293480d9b9b0a6620ecad20f6741156fb55a1b98424167c2fb3e"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/hko-angle-nonconformal/denominators.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/hko-angle-nonconformal/denominators.md",
+      "original_sha256": "50b988341b186647865f4a6196497a0c92ee00bc46e0a0597799a0a6228bf0fd",
+      "current_sha256": "5bed33c73d67e4b287148e7c676a217175d03de535119e8064ebf568d9b62824"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/hko-angle-nonconformal/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/hko-angle-nonconformal/report.md",
+      "original_sha256": "41ba89b8bb6f93ffdbd8047f0816a355dea73e31a5eb6bd26cc2a54b116b3801",
+      "current_sha256": "121898d020a9ee7b7d13d0e599892e0dad6f3a3e39f504874fa376e502613e81"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/hko-angle-nonconformal/review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/hko-angle-nonconformal/review.md",
+      "original_sha256": "fa98d6ae1d0daae7a7ecfd56df1961754c91ca3947f4c3a70be470cc8f05e9fd",
+      "current_sha256": "32a3502a3e10df8af80c507b639b288f182c950bc795cd3d7422b3f456902dcc"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/nonconformal-fan/angle-preflight.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/nonconformal-fan/angle-preflight.md",
+      "original_sha256": "716888e452ce239f9bd4e7e179ad561db77d1ed49fb60f577e111f88cbdbdac6",
+      "current_sha256": "1adb10e1b94db90ccbd0b9ebcba668639d901e8b70add714622469f488e6ebbe"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/nonconformal-fan/denominators.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/nonconformal-fan/denominators.md",
+      "original_sha256": "84300b24598f0571ce2371869f054298425932399089e184b86db10e902e2253",
+      "current_sha256": "23d521a9807cc04e5edabb4576ca0312d7d03e3bdbe35e97bbb06868532ff2dd"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/nonconformal-fan/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/nonconformal-fan/report.md",
+      "original_sha256": "8d66a716ec56d55226aa58e5a0b2f6953ca651c9828c6bf9943068c96e1331c7",
+      "current_sha256": "cee793b2b30b52f671603ca283de65986ef58d0ee71d8cf794abd5d835a06e72"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/nonconformal-fan/vertex-premise-review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/nonconformal-fan/vertex-premise-review.md",
+      "original_sha256": "adf1e7a7bca3ab8605c46b98fee44b85104a46fc7808687b408e81f2a77cdfbb",
+      "current_sha256": "b04a8ae2fd84707542ec278d1f5286240f92fb526f0134df78ac41d45c049ad2"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/class-proof/retention.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/class-proof/retention.md",
+      "original_sha256": "260f969e933ce122d63e24b67e97b69935db3b1d142376f19a662b6025ca917d",
+      "current_sha256": "7ef863c1490daa3f366fda0fed3461a3d4525a5b4ad8a3e092ee6ae71554b8a3"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/class-proof/review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/class-proof/review.md",
+      "original_sha256": "c64a5ca710b4bd55e72701a5d00990e6a4ab02f41c8fc30a8f0c2e3881dd903a",
+      "current_sha256": "906c38cceb8584e883754366b176a44a10516ae1f95356d55463ae4a35d8cffa"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/joint-denominators/extraction.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/joint-denominators/extraction.md",
+      "original_sha256": "5688a9332b4dff68914a03deb43f88a55196d06b2a0e8e69e4c7b8391641e24f",
+      "current_sha256": "98f1621e3f774bc6b4b736e192225ee946d29dbd994fd9690883295500bdd380"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/joint-denominators/review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/joint-denominators/review.md",
+      "original_sha256": "b6c73700e304be7f076ba5aeb080a0f72c29a41e57a8b49e014a09594dfb30c3",
+      "current_sha256": "b5e7e6de20ffcc762de16c0a69399cf2615f10cb1f126197fda76270acd5684a"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/outer-matrix-preflight/extraction.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/outer-matrix-preflight/extraction.md",
+      "original_sha256": "3d24c0704a68facde60413411c5cbf0b751b412bcc34c656365fa52706446d98",
+      "current_sha256": "c545ac4af5a39bac8625b97c9a1b2f3f824bf34c6c3de5636f121441357b32bc"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/outer-matrix-preflight/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/outer-matrix-preflight/report.md",
+      "original_sha256": "3691f3d324761cedb7d0fb29f8af258caecd776a00ecb3ab8b1388c339c159f9",
+      "current_sha256": "07702e70aa1c6971273c7db6eb83fc1a162b41c3c9a748b5673e0ad1c40001a7"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/outer-matrix-preflight/review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/outer-matrix-preflight/review.md",
+      "original_sha256": "d477a37a28c0895db30a6fa3644d7dd54fcfacf166c33ae6e23870572f50f5c9",
+      "current_sha256": "01dba9dc97e6e91317f9b17b10281f0feaaa610f1121353dbe930a355cb70102"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/preflight/active-events.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/preflight/active-events.md",
+      "original_sha256": "4e9ef91a3c5fd313e27ef50ec0bd6129a91051b45ddfde042b2bde0bab531de8",
+      "current_sha256": "81a6d5062c8cf5c44066330df9166cebd2b3114b6450e4c6d5afc87d42ff9864"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/preflight/pruning-review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/preflight/pruning-review.md",
+      "original_sha256": "f69fb832426f94856f1c5e28a1b5999e1623c29ec787120daa48551b178ae743",
+      "current_sha256": "5f33e9502f8e150de80ff592aaa9f1f11b8251cad128ca73bca57407b79391c9"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/preflight/report.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/preflight/report.md",
+      "original_sha256": "73081063ef82f200575afbc129d5a177dd29c595a17e7c2190760dfaa0ddfde2",
+      "current_sha256": "2478d42dbe38115e094b7bd16478d9c28785b4e5b98c7077fece78fc2e54bb55"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/orientation-wide/preflight/screening-event-review.md",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/orientation-wide/preflight/screening-event-review.md",
+      "original_sha256": "f66a127af11b48eb85b3c66dfebb973f5ee030ae89656789a19c379d4f823556",
+      "current_sha256": "80b371680ca9207294d3c0e6012fa624ec20ab3f4976eda243925301b6c60d97"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/night-20261005/what-happened.html",
+      "current": "topics/empirical-studies/discovery-design/night-20261005/what-happened.html",
+      "original_sha256": "f06ea4800a506cead76237b6a8120b0c2fc9b48cddf33e66db46c244b594d70e",
+      "current_sha256": "6f65ec7fe51d489d907e0613f7582d20a78490c70d230e0851118c525e832507"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/research-batch-20261004.md",
+      "current": "topics/empirical-studies/discovery-design/research-batch-20261004.md",
+      "original_sha256": "e9d79b18c7960c5711754651081fa6a11c2c46df7ea9c66c54b2819e1cfa6773",
+      "current_sha256": "19bac65b29e49bcdfd97d766ab2cdbcbfa3e2e7ff353d72db4f8520c350f42be"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/research-batch-readiness-20261004.md",
+      "current": "topics/empirical-studies/discovery-design/research-batch-readiness-20261004.md",
+      "original_sha256": "04ee4e32e08775b885e46bd4e691d3f5898bb8a0d60788077be8b9e55b0e1a79",
+      "current_sha256": "5c16b5566b9ed2e435802254c3f710e28ba81c643bf3a36423d4e6d04be8b844"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/research-night-worked-mock-20261005.md",
+      "current": "topics/empirical-studies/discovery-design/research-night-worked-mock-20261005.md",
+      "original_sha256": "63464a8c6370fb9266d6836baad6f33ec387f4b2aec31e3d8d6f73770b4ce959",
+      "current_sha256": "b2da605853b05024e71b4ea16546b92049dfa75c05228fb79640bd9f68ac5d67"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/research-outcomes-20261005.md",
+      "current": "topics/empirical-studies/discovery-design/research-outcomes-20261005.md",
+      "original_sha256": "5567e971226282828b876a168941a471058a4324e1b1df301693316e4a9eacdb",
+      "current_sha256": "b62e9460b3e1afa067b4f918734c4e58255eaf3c505a9c9593b1c5a71ce5652e"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/aligned-nonconformal-global-20261005.md",
+      "current": "topics/products/pentagon-arbitrary-partner/aligned-nonconformal-global-20261005.md",
+      "original_sha256": "e62138f8c4d2f74fc99a5780ff0b6d7f47b479f4b8e2f75272eb83ad42b08ec5",
+      "current_sha256": "d5f349ad5d9201004a88be9f7c4ac34142f4a2e12306963edf01a79183341c0b"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/equiangular-partner-global-20261005.md",
+      "current": "topics/products/pentagon-arbitrary-partner/equiangular-partner-global-20261005.md",
+      "original_sha256": "614778ac41a42c3b2e2d5cfec33a75e5f0f79a75a9440439503c57a62de232ad",
+      "current_sha256": "0856ca336620636e4c6f4d1158eaa21dd1d3bc42ec83c9f95d625a7541477449"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/general-matrix-cone-reduction-20261005.md",
+      "current": "topics/products/pentagon-arbitrary-partner/general-matrix-cone-reduction-20261005.md",
+      "original_sha256": "b6d2f9636dbe65826d456dcec6787cbd3a6ee873e630a97d5f7ba58beb17a98d",
+      "current_sha256": "f4992d2ecbd4b4fbcd4c9b4878dd6f565e23d60f74f4f1a19e6c2972d1f6a5c5"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/hko-angle-nonconformal-global-20261005.md",
+      "current": "topics/products/pentagon-arbitrary-partner/hko-angle-nonconformal-global-20261005.md",
+      "original_sha256": "380aedca916ce8765e80629e01da6ac80776a43d6efbc54c8dae933da0445ad3",
+      "current_sha256": "0eec074b2363dd338cee747e498bb2ec7fba2ca41cc88d15c3a32ecda7d0dfad"
+    },
+    {
+      "main": "docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/orientation-wide-global-20261005.md",
+      "current": "topics/products/pentagon-arbitrary-partner/orientation-wide-global-20261005.md",
+      "original_sha256": "bbcc503997514480697f83d21ec2186e4fb60056c762a566f15c991372a2f6a5",
+      "current_sha256": "b3b59219ce14b7b25317b5531e1069abda2831dcb3dded74441ed17bdb86dd8c"
+    }
+  ],
+  "metadata_path_map": {
+    "docs/coordination/skill-candidates/20261006/resource-workflow-review.md": "meta-topics/agent-workflow/skill-candidates/20261006/resource-workflow-review.md",
+    "docs/coordination/skill-candidates/20261005/external-agent-communication/SKILL.commentary.md": "meta-topics/agent-workflow/skill-candidates/20261005/external-agent-communication/SKILL.commentary.md",
+    "docs/coordination/skill-candidates/20261005/external-agent-communication/SKILL.md": "meta-topics/agent-workflow/skill-candidates/20261005/external-agent-communication/SKILL.md",
+    "docs/coordination/skill-candidates/20261005/work-with-user/SKILL.commentary.md": "meta-topics/agent-workflow/skill-candidates/20261005/work-with-user/SKILL.commentary.md",
+    "docs/coordination/skill-candidates/20261005/work-with-user/SKILL.md": "meta-topics/agent-workflow/skill-candidates/20261005/work-with-user/SKILL.md",
+    "docs/coordination/skill-candidates/20261005/external-agent-communication/agents/openai.yaml": "meta-topics/agent-workflow/skill-candidates/20261005/external-agent-communication/agents/openai.yaml",
+    "docs/coordination/skill-candidates/20261005/work-with-user/agents/openai.yaml": "meta-topics/agent-workflow/skill-candidates/20261005/work-with-user/agents/openai.yaml",
+    "docs/coordination/skill-candidates/20261006/codex-resources/SKILL.md": "meta-topics/agent-workflow/skill-candidates/20261006/codex-resources/SKILL.md",
+    "docs/coordination/skill-candidates/20261006/codex-resources/agents/openai.yaml": "meta-topics/agent-workflow/skill-candidates/20261006/codex-resources/agents/openai.yaml",
+    "docs/coordination/skill-candidates/20261006/codex-resources/references/design-notes.md": "meta-topics/agent-workflow/skill-candidates/20261006/codex-resources/references/design-notes.md",
+    "docs/coordination/skill-replacement-validation-20261005/codex-discovery.json": "meta-topics/agent-workflow/skill-replacement-validation-20261005/codex-discovery.json",
+    "docs/coordination/skill-replacement-validation-20261005/claude-discovery-final.json": "meta-topics/agent-workflow/skill-replacement-validation-20261005/claude-discovery-final.json",
+    "docs/coordination/skill-replacement-validation-20261005/claude-discovery.json": "meta-topics/agent-workflow/skill-replacement-validation-20261005/claude-discovery.json",
+    "docs/coordination/skill-replacement-validation-20261005.md": "meta-topics/agent-workflow/skill-replacement-validation-20261005.md",
+    "docs/knowledge/collaboration-guidance-design-2026-10-05.md": "meta-topics/agent-workflow/collaboration-guidance-design-2026-10-05.md",
+    "docs/coordination/cloud-harness-audit-20261008/README.md": "meta-topics/development-environment/cloud-harness-audit-20261008/README.md",
+    "docs/coordination/cloud-harness-audit-20261008/clean-thesis-build.json": "meta-topics/development-environment/cloud-harness-audit-20261008/clean-thesis-build.json",
+    "docs/coordination/cloud-readiness-20261008/inspection.json": "meta-topics/development-environment/cloud-readiness-20261008/inspection.json",
+    "docs/coordination/cloud-readiness-20261008/assessment.md": "meta-topics/development-environment/cloud-readiness-20261008/assessment.md",
+    "docs/coordination/handoffs/20261008-ab-split/B-assessment.md": "meta-topics/agent-workflow/harness-assessment-20261008/assessment.md",
+    "docs/coordination/message-reviews/2026-10-08/B-harness/parent-user-turns.md": "meta-topics/agent-workflow/harness-assessment-20261008/parent-user-turns.md",
+    "docs/coordination/message-reviews/2026-10-08/B-harness/independent-returns.md": "meta-topics/agent-workflow/harness-assessment-20261008/independent-returns.md",
+    "docs/coordination/message-reviews/2026-10-09/cloud-portability-report/v1.md": "meta-topics/development-environment/cloud-readiness-20261008/portability-report-20261009.md",
+    "docs/coordination/message-reviews/2026-10-10/recovery-handoff/candidate-v1.md": "docs/history/cloud-skills-withdrawal-20261010.md",
+    "docs/coordination/night-supervision-20261005.md": "docs/history/research-night-20261005/coordination/night-supervision-20261005.md",
+    "docs/coordination/night-running-brief-20261005.md": "docs/history/research-night-20261005/coordination/night-running-brief-20261005.md",
+    "docs/coordination/research-window-20261005.md": "docs/history/research-night-20261005/coordination/research-window-20261005.md",
+    "docs/coordination/research-orchestration-premortem-20261005.md": "docs/history/research-night-20261005/coordination/research-orchestration-premortem-20261005.md",
+    "docs/coordination/research-session-recovery-20261005.md": "docs/history/research-night-20261005/coordination/research-session-recovery-20261005.md",
+    "docs/coordination/graphs/00-now.dot": "docs/history/research-night-20261005/coordination/graphs/00-now.dot",
+    "docs/coordination/graphs/00-now.svg": "docs/history/research-night-20261005/coordination/graphs/00-now.svg",
+    "docs/coordination/graphs/history/research-night-20261005-initial/00-now.dot": "docs/history/research-night-20261005/coordination/graphs/history/research-night-20261005-initial/00-now.dot",
+    "docs/coordination/graphs/history/research-night-20261005-initial/00-now.svg": "docs/history/research-night-20261005/coordination/graphs/history/research-night-20261005-initial/00-now.svg",
+    "docs/coordination/graphs/research-night-mock.dot": "docs/history/research-night-20261005/coordination/graphs/research-night-mock.dot",
+    "docs/coordination/graphs/research-night-mock.md": "docs/history/research-night-20261005/coordination/graphs/research-night-mock.md",
+    "docs/coordination/graphs/research-night-mock.png": "docs/history/research-night-20261005/coordination/graphs/research-night-mock.png"
+  }
+}

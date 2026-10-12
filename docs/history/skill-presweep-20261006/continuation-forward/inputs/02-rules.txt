@@ -1,0 +1,4 @@
+SYNTHETIC FIXTURE
+Source instruction: During unfinished authorized work, continue the useful next action; stop when complete or when a real required decision is pending.
+Source instruction: Assess useful results against time, token and user-attention costs.
+Proposed report claim: We already have an explicit rule against spending nine minutes on a stopping message that contains no useful request.

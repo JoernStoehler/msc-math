@@ -1,0 +1,389 @@
+{
+  "status": "Finite exact identities checked; analytic statements are in math/.",
+  "all_checks_passed": true,
+  "endpoint_charts": {
+    "neighbors": [
+      1,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "facet_vertex_contacts": {
+      "5": {
+        "seed": 0,
+        "rotation": 0,
+        "swap": 0,
+        "branch": {
+          "seed": 0,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 0
+        }
+      },
+      "6": {
+        "seed": 0,
+        "rotation": 0,
+        "swap": 0,
+        "branch": {
+          "seed": 0,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 1
+        }
+      },
+      "7": {
+        "seed": 0,
+        "rotation": 0,
+        "swap": 0,
+        "branch": {
+          "seed": 0,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 2
+        }
+      },
+      "8": {
+        "seed": 45,
+        "rotation": 0,
+        "swap": 0,
+        "branch": {
+          "seed": 45,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 1
+        }
+      },
+      "9": {
+        "seed": 10,
+        "rotation": 0,
+        "swap": 0,
+        "branch": {
+          "seed": 10,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 0
+        }
+      },
+      "4": {
+        "seed": 0,
+        "rotation": 4,
+        "swap": 0,
+        "branch": {
+          "seed": 0,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 0
+        }
+      },
+      "0": {
+        "seed": 0,
+        "rotation": 4,
+        "swap": 0,
+        "branch": {
+          "seed": 0,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 1
+        }
+      },
+      "1": {
+        "seed": 0,
+        "rotation": 4,
+        "swap": 0,
+        "branch": {
+          "seed": 0,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 2
+        }
+      },
+      "2": {
+        "seed": 45,
+        "rotation": 4,
+        "swap": 0,
+        "branch": {
+          "seed": 45,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 1
+        }
+      },
+      "3": {
+        "seed": 10,
+        "rotation": 4,
+        "swap": 0,
+        "branch": {
+          "seed": 10,
+          "pivot": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "pos": 0
+        }
+      }
+    },
+    "zero_pairing": [
+      {
+        "neighbor": 1,
+        "vertices": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "rotation": 0,
+        "swap": 0
+      },
+      {
+        "neighbor": 4,
+        "vertices": [
+          4,
+          0,
+          1,
+          2,
+          3
+        ],
+        "rotation": 4,
+        "swap": 0
+      },
+      {
+        "neighbor": 5,
+        "vertices": [
+          0,
+          1,
+          5,
+          6
+        ],
+        "rotation": 0,
+        "swap": 0
+      }
+    ],
+    "nonzero_pairing": [
+      {
+        "neighbor": 6,
+        "vertices": [
+          1,
+          2,
+          6,
+          7
+        ],
+        "terms": 26,
+        "insertions": 17,
+        "theta": [
+          "24/175"
+        ],
+        "coefficient_gap": [
+          "2/35"
+        ],
+        "rotation": 0,
+        "swap": 0,
+        "source_half": 0
+      },
+      {
+        "neighbor": 7,
+        "vertices": [
+          2,
+          3,
+          7,
+          8
+        ],
+        "terms": 24,
+        "insertions": 9,
+        "theta": [
+          "18/14795",
+          "0",
+          "1218/14795"
+        ],
+        "coefficient_gap": [
+          "18/14795",
+          "0",
+          "172/73975"
+        ],
+        "rotation": 0,
+        "swap": 0,
+        "source_half": 0
+      },
+      {
+        "neighbor": 8,
+        "vertices": [
+          3,
+          8,
+          4,
+          9
+        ],
+        "terms": 24,
+        "insertions": 9,
+        "theta": [
+          "18/14795",
+          "0",
+          "1218/14795"
+        ],
+        "coefficient_gap": [
+          "18/14795",
+          "0",
+          "172/73975"
+        ],
+        "rotation": 3,
+        "swap": 1,
+        "source_half": 1
+      },
+      {
+        "neighbor": 9,
+        "vertices": [
+          4,
+          9,
+          0,
+          5
+        ],
+        "terms": 26,
+        "insertions": 17,
+        "theta": [
+          "24/175"
+        ],
+        "coefficient_gap": [
+          "2/35"
+        ],
+        "rotation": 4,
+        "swap": 1,
+        "source_half": 1
+      }
+    ],
+    "seconds": 5.971102554998652
+  },
+  "finite_bank_obstruction": {
+    "sections": 147,
+    "used_duplicate": 60,
+    "unused_duplicate": 87,
+    "exposed_vertex": 3,
+    "D0": [
+      [
+        "-2"
+      ],
+      [
+        "-4",
+        "0"
+      ],
+      [
+        "1/4",
+        "0",
+        "-7/4",
+        "0"
+      ],
+      [
+        "-1/4",
+        "0",
+        "7/4"
+      ]
+    ],
+    "epsilon": [
+      "1/10"
+    ],
+    "D": [
+      [
+        "-19/10"
+      ],
+      [
+        "-39/10",
+        "0"
+      ],
+      [
+        "1/4",
+        "0",
+        "-7/4",
+        "0"
+      ],
+      [
+        "-1/4",
+        "0",
+        "7/4"
+      ]
+    ],
+    "minimum_activation_threshold": [
+      "1/16",
+      "0",
+      "5/16"
+    ],
+    "minimum_activation_threshold_nominal": 0.3454915028125263,
+    "largest_active_c_dot_D": [
+      "-23/800",
+      "0",
+      "-3/160"
+    ],
+    "volume_response_exact": [
+      "-1/30000000",
+      "0",
+      "11/30000000"
+    ],
+    "volume_response_nominal": 3.4907119849998597e-07,
+    "oscillation_exact": [
+      "5"
+    ],
+    "normalized_mu": [
+      "1/50"
+    ],
+    "support_upper_bound": 0,
+    "seconds": 5.795347908002441
+  },
+  "input_sha256": {
+    "continuous_families.json": "4998d82990e0fb9b6ae8535df1ca78317e4947217df3a91ceb1b6737d650d838",
+    "continuous_family_origins.json": "7ce85b6758710b470a3a5d7f97477f4ff80605250e1b28391a2532b00b07a906",
+    "facet_cone_certificate.json": "3f9531b7441367d8bdd75ac0e8a001a8a303c50c4e6ac6b9264e4d0b62627201",
+    "numerical_bank_rows.json": "1458b7a018e5bf16f0897968aaa12637631c4ab7834e55de99e46fac806db907",
+    "ridge_certificates.json": "397c208a652657fd26db9be062a5c15fcbcf57bd13efcf915b7e1c239b5cbe8f",
+    "seeds.json": "8a55eff8204420189f1a8c09107734f19386d5cf5d0f36074efb078c2bdaedf7",
+    "zero_ridges.json": "0d840c53b25f98ca9aba4f978a434d8001bfca22278241f6663779194be58706"
+  },
+  "total_seconds": 11.770938830995874
+}

@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "tests": [
+    "simple interior root",
+    "both excluded endpoints",
+    "repeated-root distinct count",
+    "squarefree odd multiplicity",
+    "three cubic roots",
+    "two double quartic roots",
+    "quadratic-extension endpoint exclusion",
+    "gcd/shared roots"
+  ],
+  "quadratic_endpoint": {
+    "kind": "quadratic_event_root",
+    "monic_coefficients": [
+      [
+        "-1/10",
+        "0"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "1",
+        "0"
+      ]
+    ],
+    "branch": 1,
+    "left": [
+      "0",
+      "1/8"
+    ],
+    "right": [
+      "0",
+      "3/20"
+    ]
+  },
+  "source_sha256": "13d44bb2fdeffa990e9cd45ad7fd8974014ec45ee1bd42a75fa48cccaa46c391"
+}

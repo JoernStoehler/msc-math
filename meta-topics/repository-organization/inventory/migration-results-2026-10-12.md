@@ -289,3 +289,14 @@ The new retained research-enablement account has an explicit dashboard serving
 entry. The new current account links resolve; frozen evidence keeps original
 path spelling and its documented provenance limits. The cleanup is complete;
 main and the migration branch remain unmerged as requested.
+
+## Main checkpoint reconciliation
+
+The later 12 October 14:44 UTC request selected integration of main `185155fe`
+into f7e0, superseding the earlier deferred-integration status above. Main's
+later research, scientific-value preferences, client discovery and review-sharing
+fixes now coexist with the topic layout. Main itself remains unchanged.
+[The outcome comparison](../main-reconciliation-2026-10-12.md) records preserved
+evidence, repaired retrieval/freshness routes and remaining maintenance costs.
+The frozen pre-integration comparison is retained byte-for-byte. No scientific
+producer was rerun and no manuscript claim was promoted.

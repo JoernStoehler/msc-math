@@ -24,6 +24,15 @@ He also values Chat's separate quota and observes less tendency to run away
 into unwanted execution. Those observations do not establish feature parity,
 a reliability guarantee, or a measured quota/cost comparison.
 
+The project has an
+[external-agent communication workflow](../../.agents/skills/external-agent-communication/SKILL.md),
+which includes the complete human-mediated Pro route. Channel discovery does not
+establish host transfer capability. The [problem-structuring guidance](../../.agents/skills/problem-structuring/SKILL.md)
+helps develop a workable problem before autonomous execution, investigating
+independently and using joint interaction where needed. The project packages
+passed [fresh local client discovery checks](../agent-workflow/skill-replacement-validation-20261005.md);
+this does not establish fresh-cloud execution or behavioral benefit.
+
 Preparation must derive shared repository/setup needs and surface-specific
 access, configuration, review, decision delivery, continuation and return
 routes. Chat recipients may have repository or execution access through
@@ -40,7 +49,7 @@ are retained in [the surface clarification](../agent-workflow/research-enablemen
 
 Jörn’s 30 September preference was to use Pro for reasoning that would consume too much quota with weaker models. This remains a task-allocation preference, not a measured model-quality or cost comparison.
 
-The existing [human-mediated Pro handoff workflow](../../.agents/skills/chatgpt-pro/SKILL.md)
+The existing [human-mediated Pro handoff workflow](../../.agents/skills/external-agent-communication/SKILL.md)
 is an available route, not the mandatory interface for all Chat tasks. Jörn's
 30 September report that cold Claude microVM builds took under five minutes
 lacked command/revision/dependency details; do not extend it to Sage, datasets
@@ -48,7 +57,7 @@ or full experiment runs.
 
 ### Codex inside a Claude cloud microVM
 
-The repository-local [codex-app-server skill](../../.agents/skills/codex-app-server/SKILL.md) supplies explicit installer/dependency setup, per-grant device-code login and a shell client for persistent local Codex threads. Jörn completes the displayed grant URL/code within 15 minutes. It needs neither the OpenAI Claude Code plugin nor `codex_tui.*` tools. The workstation 0.161.0 checks cover create/disconnect/read/follow-up/fork/archive; fresh cloud installation, network, login and process lifetime are unverified. A cloud VM has its own daemon and credentials; the wrapper does not connect it to workstation sessions or promise recovery after VM deletion.
+The repository-local [codex-app-server skill](../../.agents/skills/codex-app-server/SKILL.md) supplies explicit installer/dependency setup, per-grant device-code login and a shell client for persistent local Codex threads. Jörn completes the displayed grant URL/code within 15 minutes. It needs neither the OpenAI Claude Code plugin nor `codex_tui.*` tools. The workstation 0.161.0 checks cover create/disconnect/read/follow-up/fork/archive; fresh cloud installation, network, login and process lifetime are unverified. A cloud VM has its own daemon and credentials; the wrapper does not connect it to workstation sessions or promise recovery after VM deletion. The existing [one-shot cloud CLI skill](../../.agents/skills/codex-cli-claude-cloud/SKILL.md) remains an alternative for bounded `codex exec` work.
 
 ### Jörn's terminal and browser access
 
@@ -259,7 +268,7 @@ PATH), `/home/agent/.config/micro/`, and `/home/agent/.codex/config.toml`.
 They are persistent sandbox state, not files supplied by the Git checkout.
 
 Codex skills are project-owned software under `.agents/skills`. The repository
-contains its own byte-identical copy of the host-tested Herdr skill, so VM agents
+contains its own operationally unchanged copy of the host-tested Herdr skill, so VM agents
 can discover the CLI workflow without a global or cross-sandbox skills store.
 Global memory remains a separate VM-local clone at `~/.agents/memories`.
 

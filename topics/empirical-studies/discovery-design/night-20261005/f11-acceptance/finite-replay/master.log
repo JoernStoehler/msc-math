@@ -1,0 +1,8 @@
+inherited_ridges PASS 6.701 seconds
+inherited_endpoints PASS 11.866 seconds
+core PASS 262.052 seconds
+collar PASS 66.362 seconds
+reject_missing_core_leaf PASS 0.498 seconds
+reject_negative_policy_weight PASS 0.195 seconds
+reject_false_polynomial_bound PASS 39.363 seconds
+ALL STAGES PASSED 387.03891085299983 seconds

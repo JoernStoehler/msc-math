@@ -8,7 +8,8 @@ support different claims.
 
 - [Geometric discovery](discovery.md) follows the broader research desk through
   ridge circulation, moment counterexamples, complementary representations and
-  zonotope partial results, with historical proposals kept separate.
+  zonotope partial results and the October restricted partner/facet-birth results,
+  with historical proposals kept separate.
 - [Producers and schemas](producers-and-schema.md) follows random/product
   populations through geometry identity, numerical targets, retained snapshots,
   preparation and method consumption. It distinguishes the June historical

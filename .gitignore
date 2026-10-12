@@ -89,6 +89,7 @@ experiments/qp-error-bounds/artifacts/broad/raw_rows.jsonl
 experiments/qp-error-bounds/artifacts/soundness-v2/formula_evaluations.jsonl
 experiments/qp-error-bounds/artifacts/soundness-v2/raw_rows.jsonl
 experiments/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl
+topics/products/regular-products/pentagon-rotation-empirics/kkt-branch-landscape.jsonl
 topics/empirical-studies/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/source.jsonl
 topics/empirical-studies/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-pairs.jsonl
 topics/empirical-studies/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-rows.jsonl

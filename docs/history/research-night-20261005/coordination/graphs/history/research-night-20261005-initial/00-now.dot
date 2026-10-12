@@ -1,0 +1,38 @@
+digraph night {
+ rankdir=LR; node [shape=box,style="rounded,filled",fillcolor="#eef4fb",fontname="Helvetica",fontsize=11];
+ label="Approved research · 5 October 2026 · actual returns and selected continuations
+Root goal: FINISH RESEARCH. Hard stop before05:00Berlin; enforcement04:59.
+Canonical ownership/authorization: ../current.json";labelloc=t;
+ f [label="RUNNING F11acceptance
+finite + endpoint + sequence
+lead +2children | fan-in01:30"];
+ e [label="RUNNING extremalitydiscovery
+new statement/witness/obstruction
+lead +≤2children | return01:18"];
+ g [label="RUNNING geometrydiscovery
+distinct mechanism + adversecontrol
+lead +≤2children | return01:18"];
+ c [shape=diamond,label="Scientificcomparison
+actual supported returns
+Crossed F11by01:25\nComparative continuation reports"];
+ r [label="ACTIVE /goal root
+mostly wait; allocation/resources
+no specialist prompt fan-in"];
+ p [label="Candidate proof / construction / review
+conditional on actual useful return
+owned bounded renewal"];
+ q [label="Useful partial reduction
+name remaining lemma + rival"];
+ x [label="Route invalid / tautological
+retain adverse evidence; replace"];
+ t [label="Timeout
+checkpoint exact crux; compare rival"];
+ w [label="Independent supervisor
+4minute observed passes
+watch expires01:30; rootrenewal"];
+ k [label="04:30integration/checkpoint
+04:59pause/interrupt sweep
+no refreshedquota use"];
+ f->c;e->c;g->c;c->r;r->p[label="supported result"];r->q[label="useful partial"];r->x[label="invalid route"];r->t[label="timeout"];
+ w->r[style=dashed,label="actual exception/resource/queue"];w->c[style=dashed,label="value/scope/receipt"];p->c[style=dashed,label="next return"];q->c[style=dashed];x->c[style=dashed,label="new competing probe"];r->k;
+}

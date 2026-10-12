@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-12T14:45:30Z",
+  "updated_at": "2026-10-12T14:57:42Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Jörn requested via review thread01a1306f-6ead-7700-9062-4edddb664484 at14:44:05 UTC: reconcile main185155fe into f7e0, preserving research/evidence, scientific-value guidance, Claude/skill discovery and review-sharing fixes; repair review-identified artifact and freshness defects. Root owns integration. Main stays unchanged, no push/new research/substantial unapproved spending. Frozen comparison review is retained.",
+  "summary": "Main185155fe reconciled into the topic branch: later research/evidence, scientific-value preferences, client discovery and review-sharing outcomes retained; landscape retrieval/freshness defects repaired. Focused checks and bounded independent review passed. Main unchanged; no push or new research.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2751,19 +2751,20 @@
       "kind": "task",
       "selection": "selected",
       "project": "workflows",
-      "status": "running",
-      "owner": "01a12679-8534-7d83-96a4-81abb73de51c",
+      "status": "done",
+      "owner": null,
       "depends_on": [
         "old-worktree-cleanup-20261012"
       ],
-      "outcome": "Combine main research/evidence/client work with migrated ownership, repair retrieval/freshness defects, regenerate/check consumers, report remaining outcome/evidence/maintenance differences.",
+      "outcome": "Main research/evidence, scientific-value preferences and client/review-sharing work integrated under migrated owners. Retrieval/freshness defects repaired; frozen comparison preserved. Bounded independent assembled audit approved. No new research, producer run or main update.",
       "authorization": "Jörn request relayed by review thread01a1306f-6ead-7700-9062-4edddb664484 at14:44:05 UTC. Keep main185155fe unchanged, preserve supplied review document, no push/new research/substantial unapproved expenditure.",
       "sources": [
-        "meta-topics/repository-organization/f7e0-vs-main-review-2026-10-12.md"
+        "meta-topics/repository-organization/f7e0-vs-main-review-2026-10-12.md",
+        "meta-topics/repository-organization/main-reconciliation-2026-10-12.md"
       ],
-      "updated_at": "2026-10-12T14:45:30Z",
+      "updated_at": "2026-10-12T14:56:09Z",
       "blocker": null,
-      "next_step": "Root integrates and returns concise outcome comparison to requesting review thread."
+      "next_step": "Return completed comparison to review thread. Adoption into main remains deferred; no pending integration worker."
     }
   ],
   "decisions": [

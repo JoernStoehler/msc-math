@@ -202,6 +202,20 @@ and does not settle the other data-science gaps.
       Maintained proof: `topics/products/pentagon-arbitrary-partner/symmetric-partner-lemma.md`.
       The 2026-10-03 selection and wording above retain their original thread attribution.
 
+13.3. On 4 October evening, Jörn gave scientific-value examples for the new
+      research-selection discussion: HKO global extremality is ambitious but
+      important; meaningful partial maximality results, classifications of local
+      maxima and geometric mechanisms can be valuable. Strong conditional
+      relations or monotonicity connecting cheap symplectic measurements to
+      capacity/ratio are potential data-science payoffs. Weak correlations and
+      extensive search without patterns are not interchangeable with these
+      outcomes; unsuccessful search may be incidental evidence. These are taste
+      examples, not verified theorem statuses, a ranking of all candidate ideas,
+      or execution obligations. His recollection of failed extremal conditioning
+      for symplectic2face-area correlations still needs source retrieval.
+      Source: direct steering in thread
+      `01a1089f-b4f6-7031-9e98-b648dabb1770`, 21:17 UTC.
+
 ## HKO Proof Support
 
 20. The instruction that the needed HKO form "must close" recorded the

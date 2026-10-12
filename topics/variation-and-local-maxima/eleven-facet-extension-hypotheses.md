@@ -1,10 +1,16 @@
 # Dated hypotheses for an eleven-facet HKO extension
 
-**Status:** extracted on 12 October 2026 from the unlaunched 3 October
+**Historical status:** extracted on 12 October 2026 from the unlaunched 3 October
 `docs/coordination/five-hour-hko-extension-prompt.md` (Git source
 `844fc5be3884c12a93dabd795d0a0d12a92b2815`). These are unverified candidate routes,
 not a theorem, selected research programme or renewed five-hour allowance.
 No source verification or computation was rerun during extraction.
+
+The [accepted F≤11 result](hko-local-maximum/f11-acceptance-20261005.md),
+accepted on 4 October and integrated here on 12 October, supersedes the open
+extension frontier described below. The returned proof and finite/analytic
+acceptance own that closure; these candidate routes are retained as history,
+not current blockers. The selected manuscript still states F10.
 
 The existing [coupled one-cut note](../products/pentagon-arbitrary-partner/local-cut-lifting.md)
 explains the vertex/edge cases and remaining two-face/facet cases. The retired

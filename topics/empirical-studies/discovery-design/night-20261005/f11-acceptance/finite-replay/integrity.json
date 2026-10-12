@@ -1,0 +1,31 @@
+{
+  "completed_utc": "2026-10-04T22:59:57.231513+00:00",
+  "original_snapshot_files_unchanged": 140,
+  "scratch_snapshot_files_unchanged": 140,
+  "original_changed_paths": [],
+  "scratch_changed_snapshot_paths": [],
+  "scratch_added_paths": [
+    "collar/code/__pycache__/geometry.cpython-312.pyc",
+    "collar/code/__pycache__/integer_bernstein.cpython-312.pyc",
+    "collar/code/__pycache__/polynomial.cpython-312.pyc",
+    "core/code/__pycache__/duplicate_workspace.cpython-312.pyc",
+    "core/code/__pycache__/exact_core.cpython-312.pyc",
+    "core/code/__pycache__/exact_tools.cpython-312.pyc",
+    "inherited/code/__pycache__/duplicate_workspace.cpython-312.pyc",
+    "inherited/code/__pycache__/exact_core.cpython-312.pyc"
+  ],
+  "historical_mathematical_payloads_identical": {
+    "inherited_ridges": true,
+    "inherited_endpoints": true,
+    "core": true,
+    "collar": true
+  },
+  "excluded_comparison_fields": [
+    "seconds",
+    "total_seconds",
+    "python",
+    "platform",
+    "command"
+  ],
+  "negative_control_success_outputs_absent": true
+}

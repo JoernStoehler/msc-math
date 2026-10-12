@@ -6,6 +6,7 @@ current task queues, proof certificates or replacements for user instructions.
 | Decision | Maintained account | Boundary |
 | --- | --- | --- |
 | How to carry selected work through communication, delegation and review | [Agent workflow](../../meta-topics/agent-workflow/README.md) | Active authority remains in AGENTS.md and user instructions; retained trials do not establish reliable behavior |
+| What the selected collaboration skills cover and what their checks establish | [Collaboration guidance design](../../meta-topics/agent-workflow/collaboration-guidance-design-2026-10-05.md) | Project replacements, client discovery and bounded evaluations are distinct from reliable behavioral benefit |
 | What completion, pending decisions and coordination obligations mean | [Project management](../../meta-topics/project-management/README.md) | Dated plans are not current assignments |
 | Where results, evidence and disposable packets belong | [Repository organization](../../meta-topics/repository-organization/README.md) | The inventory owns the current migration map and coverage ledger |
 | Which workstation/environment or Codex setting can do the work | [Development environment](../../meta-topics/development-environment/README.md) | Release-specific captures require rechecking after tool changes |

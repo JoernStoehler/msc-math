@@ -1,0 +1,31 @@
+[
+  {
+    "site": "https://www.lesswrong.com",
+    "query": "{ comments(input: { terms: { postId: \"TxcRbCYHaeL59aY7E\", view: \"postCommentsTop\", limit: 1 } }) { results { _id postId parentCommentId postedAt baseScore user { displayName } } } }",
+    "status": 200,
+    "response": {
+      "data": {
+        "comments": {
+          "results": [
+            {
+              "_id": "ubKa6zdwMLSGgwBRq",
+              "postId": "TxcRbCYHaeL59aY7E",
+              "parentCommentId": null,
+              "postedAt": "2020-12-15T21:14:48.378Z",
+              "baseScore": 19,
+              "user": {
+                "displayName": "Niki Dupuis"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "site": "https://forum.effectivealtruism.org",
+    "query": "{ comments(input: { terms: { postId: \"TxcRbCYHaeL59aY7E\", view: \"postCommentsTop\", limit: 1 } }) { results { _id postId parentCommentId postedAt baseScore user { displayName } } } }",
+    "status": null,
+    "error": "HTTPError: HTTP Error 403: Forbidden"
+  }
+]

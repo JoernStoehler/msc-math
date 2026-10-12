@@ -1,13 +1,13 @@
 {
   "scope": "HKO local maxima; regular/affine polygon products; fixed-pentagon arbitrary-partner and odd-regular symmetric-partner work; selected thesis chapters 7/9/10/11 and immediate product-position desk follow-ups.",
-  "coverage": "Read inventory contract, topic READMEs, current chapter11 in full, chapter7/9/10 statement/proof routing, main affine research statements and selected proof sections, HKO formal route headers/setup, finite summaries/transcripts, and fixed-partner proof/status notes. Inspected production capacity adapter and HKO verifier reconstruction/check interface. Did not rerun producers or exact verifiers, build PDFs, inspect every Rust/Sage/Python line, read every data row, extract immutable ZIPs, or audit all archived review evidence. General review-evidence paths were located; historical acceptance claims are attributed to current owner sources rather than newly inferred from archives. Uninspected collections are marked explicitly. Human readability status records source evidence, not this agent's invented acceptance. Read archived HKO human-feedback status, pentagon replacement provenance, bounded 4 October acceptance sources, and current thesis-work scope disposition. Read only the cached landscape final run_summary to quote timing; no download, symlink materialization or producer execution. Bounded follow-up checked Sage certificate git history and historical/current byte/AST identity, without rerunning Sage; source-hash mismatch is exactly shebang deletion in 53d55689.",
+  "coverage": "Read inventory contract, topic READMEs, current chapter11 in full, chapter7/9/10 statement/proof routing, main affine research statements and selected proof sections, HKO formal route headers/setup, finite summaries/transcripts, and fixed-partner proof/status notes. Inspected production capacity adapter and HKO verifier reconstruction/check interface. Did not rerun producers or exact verifiers, build PDFs, inspect every Rust/Sage/Python line, read every data row, extract immutable ZIPs, or audit all archived review evidence. General review-evidence paths were located; historical acceptance claims are attributed to current owner sources rather than newly inferred from archives. Uninspected collections are marked explicitly. Human readability status records source evidence, not this agent's invented acceptance. Read archived HKO human-feedback status, pentagon replacement provenance, bounded 4 October acceptance sources, and current thesis-work scope disposition. Read only the cached landscape final run_summary to quote timing; no download, symlink materialization or producer execution. Bounded follow-up checked Sage certificate git history and historical/current byte/AST identity, without rerunning Sage; source-hash mismatch is exactly shebang deletion in 53d55689. Main-checkpoint reconciliation on 12 October adds source-qualified F≤11 acceptance and later restricted-partner frontier pointers; it does not rerun or newly audit their proofs or expand the inventory into a complete research-night catalogue.",
   "items": [
     {
       "id": "hko-products-hko-local-max",
       "kind": "result",
       "title": "HKO local maximum among ten-facet four-polytopes",
-      "summary": "Local maximality at the published HKO pentagon product, including perturbations breaking product structure; strict first-order decrease on the 25-dimensional quotient slice. Not an unrestricted facet-count theorem.",
-      "state": "Computer-assisted theorem: analytic feasible-upper-section implication plus exact 26-row algebraic certificate.",
+      "summary": "Local maximality at the published HKO pentagon product, including perturbations breaking product structure; strict first-order decrease on the 25-dimensional quotient slice. Not an unrestricted facet-count theorem. The later accepted research theorem extends local maximality to at most eleven genuine facets with arbitrary moving normals and coupled approach sequences; the selected manuscript/PDF remains F10.",
+      "state": "Computer-assisted theorem: analytic feasible-upper-section implication plus exact 26-row algebraic certificate. F≤11 research acceptance (4 October) combines the retained seven-stage exact replay and analytic/crossed reviews, inheriting sharp F10 as input; no manuscript promotion.",
       "agent_readability": "Formal source reports agent line-check against verifier propositions; verifier has an explained listing. Current chapter inspected for routing, not independently re-audited. Retained 4 October bounded source/PDF acceptance also checks finite-predicate-to-neighborhood framing, not exhaustive verification.",
       "human_readability": "Formal header records Jörn route acceptance 2026-06-04 and quick formal-PDF review 2026-06-05. Historical hko-reading-feedback.md records a finished September 14 HKO preview reading judged already PASS, with specific further presentation requests. That frozen draft judgment is not current integrated-thesis PASS.",
       "runtime": "Unknown: retained verification-summary.json has no elapsed time; no rerun.",
@@ -36,6 +36,10 @@
         {
           "path": "docs/history/thesis-restart-2026-10-04/acceptance-pdf.md",
           "supports": "Identified 100-page candidate, physical-page review depth and explicit absence of Jörn/Kai whole-thesis PASS."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/f11-acceptance-20261005.md",
+          "supports": "Accepted F≤11 statement, finite/analytic evidence, reproduction and manuscript gap; no fresh replay in this inventory update."
         }
       ],
       "relationships": [
@@ -55,7 +59,8 @@
       "action": "keep",
       "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
       "uncertainties": [
-        "Final current-thesis human proof/prose acceptance not established by the historical quick review."
+        "Final current-thesis human proof/prose acceptance not established by the historical quick review.",
+        "F≤11 supplies no explicit radius, equality classification, ≥12-facet or global/unrestricted-body result; no selected thesis location yet."
       ]
     },
     {
@@ -753,9 +758,9 @@
     {
       "id": "hko-products-one-cut-partial",
       "kind": "result",
-      "title": "Partial extension to one added facet at HKO",
-      "summary": "Combines ten-facet sharpness, feasible vertex insertion and cap-volume O(δ^(4−k)) estimate. Proves coupled local maximality for cuts whose limiting exposed primal face has dimension k≤1; k=2 and k=3 remain unresolved.",
-      "state": "Conditional/partial analytic deduction, explicitly not a full F=11 theorem.",
+      "title": "Historical partial extension to one added facet at HKO",
+      "summary": "Combines ten-facet sharpness, feasible vertex insertion and cap-volume O(δ^(4−k)) estimate to control cuts whose limiting exposed primal face has dimension k≤1. This note left k=2 and k=3 open; the later accepted F≤11 packet closes the full extension by its own finite/analytic argument.",
+      "state": "Retained partial analytic route, superseded as the live extension frontier by the accepted F≤11 research theorem. This note alone is not its proof.",
       "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
       "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
       "runtime": "Not applicable to the analytic statement; no producer rerun.",
@@ -764,14 +769,18 @@
         {
           "path": "topics/products/pentagon-arbitrary-partner/local-cut-lifting.md",
           "supports": "Inputs, coupling argument and missing two-face/facet cases."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/f11-acceptance-20261005.md",
+          "supports": "Later full extension and independent acceptance, superseding the partial note’s open-frontier status."
         }
       ],
       "relationships": [],
-      "action": "keep + investigate",
-      "rationale": "Retain achieved cases and exact outstanding cases rather than treating partial extension as absent or complete.",
+      "action": "keep as history",
+      "rationale": "Retain the achieved partial route and its original limitations as development evidence; later F≤11 acceptance owns the current extension frontier.",
       "uncertainties": [
-        "Depends on accepted F=10 sharpness and supplied exact insertion input; this survey did not reverify those inputs.",
-        "No complete eleven-facet local theorem."
+        "The partial note depends on accepted F10 sharpness and supplied exact insertion input; neither was rerun here.",
+        "F≤11 is accepted research, not selected-manuscript/PDF promotion."
       ]
     },
     {
@@ -788,13 +797,17 @@
         {
           "path": "topics/products/pentagon-arbitrary-partner/smooth-cell-reduction.md",
           "supports": "Proof and limits on iteration over coupled boundary strata."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/README.md",
+          "supports": "Later restricted-family theorem frontier and remaining arbitrary-partner/general-matrix limits."
         }
       ],
       "relationships": [],
       "action": "keep",
       "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
       "uncertainties": [
-        "Boundary-stratum reduction and global minimum-area cover remain open."
+        "Boundary-stratum reduction and global minimum-area cover for arbitrary asymmetric partners remain open. Later all-angle equiangular and fixed-axis orientation-wide theorems settle restricted families, not the arbitrary-partner problem."
       ]
     },
     {
@@ -1256,7 +1269,7 @@
       "kind": "result",
       "title": "Twenty added-facet cut-and-ascent trials do not improve HKO",
       "summary": "All 20 completed seeded F=11 placements retain the new facet; none beats HKO at the producer improvement threshold after its specific ascent/overshoot/random-escape policy.",
-      "state": "Finite negative search result; no all-F11 local theorem.",
+      "state": "Finite negative search result; this panel does not prove the separately accepted F≤11 theorem.",
       "agent_readability": "Local README identifies question, retained observations, command/write contract and limitations; full source proof audit not performed.",
       "human_readability": "Unknown: experiment documentation is not evidence of human acceptance or publication readability.",
       "runtime": "Unknown; no producer rerun.",
@@ -1275,6 +1288,10 @@
         {
           "relation": "included in",
           "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/README.md"
+        },
+        {
+          "relation": "distinct from",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/f11-acceptance-20261005.md"
         }
       ],
       "action": "keep",
