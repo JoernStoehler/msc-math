@@ -1,0 +1,25 @@
+{
+  "observed_at": "2026-10-08T11:10:55.178466+00:00",
+  "commit": "8d4863111685823c1a11b28bb3ba969c38d1089f",
+  "input": "git archive HEAD thesis, extracted into otherwise empty /tmp directory",
+  "command": "sh thesis/build.sh",
+  "exit_code": 0,
+  "pdf_bytes": 1768254,
+  "pdf_info": "Title:           Probing Viterbo's Conjecture\nSubject:         \nKeywords:        \nAuthor:          Jörn Stöhler\nCreator:         LaTeX with hyperref\nProducer:        pdfTeX-1.40.25\nCreationDate:    Thu Oct  8 13:08:40 2026 CEST\nModDate:         Thu Oct  8 13:08:40 2026 CEST\nCustom Metadata: yes\nMetadata Stream: no\nTagged:          no\nUserProperties:  no\nSuspects:        no\nForm:            none\nJavaScript:      no\nPages:           101\nEncrypted:       no\nPage size:       595.276 x 841.89 pts (A4)\nPage rot:        0\nFile size:       1768254 bytes\nOptimized:       no\nPDF version:     1.5\n",
+  "log_tail": [
+    "Latexmk: Getting log file 'build/main.log'",
+    "Latexmk: Examining 'build/main.fls'",
+    "Latexmk: Examining 'build/main.log'",
+    "Latexmk: Found input bbl file 'build/main.bbl'",
+    "Latexmk: Log file says output to 'build/main.pdf'",
+    "Latexmk: Bibliography file(s) from .bcf file:",
+    "  references/additional.bib",
+    "  references/ai.bib",
+    "  references/data-science.bib",
+    "  references/main.bib",
+    "Latexmk: All targets (build/main.pdf) are up-to-date",
+    ""
+  ],
+  "log_has_overfull_or_undefined": false,
+  "boundary": "Uses installed host TeX. Does not test fresh tool installation, cloud execution, scientific correctness, figure regeneration or human acceptance."
+}

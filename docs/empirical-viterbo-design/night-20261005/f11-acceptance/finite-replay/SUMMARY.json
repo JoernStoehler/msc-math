@@ -1,0 +1,108 @@
+{
+  "all_passed": true,
+  "seconds": 387.03891085299983,
+  "stages": [
+    {
+      "name": "inherited_ridges",
+      "passed": true,
+      "seconds": 6.701007933996152,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/msc-math/night-20261005/f11/replay/packet/inherited/code/exact_core.py",
+        "--data",
+        "/tmp/msc-math/night-20261005/f11/replay/packet/inherited/data",
+        "--out",
+        "/tmp/msc-math/night-20261005/f11/replay/results/inherited_ridges.json"
+      ],
+      "returncode": 0,
+      "expected_failure": null
+    },
+    {
+      "name": "inherited_endpoints",
+      "passed": true,
+      "seconds": 11.866331334000279,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/msc-math/night-20261005/f11/replay/packet/inherited/code/check_new.py",
+        "--out",
+        "/tmp/msc-math/night-20261005/f11/replay/results/inherited_endpoints.json"
+      ],
+      "returncode": 0,
+      "expected_failure": null
+    },
+    {
+      "name": "core",
+      "passed": true,
+      "seconds": 262.05152468799497,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/msc-math/night-20261005/f11/replay/packet/core/verify.py",
+        "--out",
+        "/tmp/msc-math/night-20261005/f11/replay/results/core.json"
+      ],
+      "returncode": 0,
+      "expected_failure": null
+    },
+    {
+      "name": "collar",
+      "passed": true,
+      "seconds": 66.3621340200043,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py",
+        "--out",
+        "/tmp/msc-math/night-20261005/f11/replay/results/collar.json"
+      ],
+      "returncode": 0,
+      "expected_failure": null
+    },
+    {
+      "name": "reject_missing_core_leaf",
+      "passed": true,
+      "seconds": 0.49760196499846643,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/msc-math/night-20261005/f11/replay/packet/core/verify.py",
+        "--out",
+        "/tmp/msc-math/night-20261005/f11/replay/results/SHOULD_NOT_EXIST_1.json",
+        "--negative-control",
+        "leaf"
+      ],
+      "returncode": 1,
+      "expected_failure": "every leaf certified exactly once"
+    },
+    {
+      "name": "reject_negative_policy_weight",
+      "passed": true,
+      "seconds": 0.19527428499714006,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py",
+        "--out",
+        "/tmp/msc-math/night-20261005/f11/replay/results/SHOULD_NOT_EXIST_2.json",
+        "--negative-control",
+        "negative_weight"
+      ],
+      "returncode": 1,
+      "expected_failure": "nonnegative path weight"
+    },
+    {
+      "name": "reject_false_polynomial_bound",
+      "passed": true,
+      "seconds": 39.363191814001766,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py",
+        "--out",
+        "/tmp/msc-math/night-20261005/f11/replay/results/SHOULD_NOT_EXIST_3.json",
+        "--negative-control",
+        "false_bound"
+      ],
+      "returncode": 1,
+      "expected_failure": "nonnegative exact homogeneous coefficients"
+    }
+  ],
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "scope": "Finite predicates for the complete proof; read PROOF.md for the mathematical implication and accepted F=10 input."
+}

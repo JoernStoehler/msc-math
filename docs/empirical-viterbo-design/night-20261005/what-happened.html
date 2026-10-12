@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What changed in the overnight research?</title>
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#faf9f5,#171b20);--fg:light-dark(#202b34,#e4e8ec);--sub:light-dark(#4e5b66,#b6c0ca);--line:light-dark(#c6ced3,#54616c);--blue:light-dark(#245c97,#86bbef);--green:light-dark(#236948,#8cd4ab);--orange:light-dark(#955a16,#edbd7d);--soft:light-dark(#e6eee9,#21372c)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:18px/1.6 system-ui,sans-serif}main{max-width:980px;margin:auto;padding:40px 28px 80px}h1{font:600 clamp(32px,5vw,52px)/1.12 system-ui;max-width:800px;margin:12px 0 22px}h2{font-size:29px;line-height:1.25;margin:0 0 20px}h3{font-size:20px;margin:0 0 8px}p{max-width:750px;margin:14px 0}a{color:var(--blue);text-underline-offset:3px}section{margin-top:64px;border-top:1px solid var(--line);padding-top:30px}.eyebrow,.caption{color:var(--sub);font-size:15px}.lead{font-size:23px;line-height:1.5}.two{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:start}.figure{margin:24px 0}.figure svg{width:100%;height:auto;display:block}.figure svg text{fill:var(--fg);font:16px system-ui}.figure svg .small{font-size:14px}.figure svg .line{stroke:var(--line);fill:none;stroke-width:1.5}.figure svg .blue{stroke:var(--blue);fill:none;stroke-width:3}.figure svg .green{stroke:var(--green);fill:none;stroke-width:3}.figure svg .orange{stroke:var(--orange);fill:none;stroke-width:3}.tag{font-size:14px;color:var(--green);font-weight:650}.open{color:var(--orange)}.sequence{padding-left:24px;border-left:3px solid var(--line);margin:26px 0}.sequence article{position:relative;margin:0 0 28px}.sequence article:before{content:'';position:absolute;left:-33px;top:7px;width:15px;height:15px;border-radius:50%;background:var(--blue)}.sequence p{margin:4px 0}.controls{display:grid;gap:12px}.controls label{display:block;font-size:16px}.controls input{width:100%;accent-color:var(--blue);min-height:30px}button{font:inherit;color:var(--fg);border:1px solid var(--line);border-radius:5px;padding:8px 14px;background:var(--bg)}button:focus-visible,input:focus-visible{outline:3px solid var(--blue)}.status{background:var(--soft);padding:12px 16px;font-size:16px;min-height:72px}.branch{padding:14px 0 14px 22px;border-left:3px solid var(--line);margin:14px 0}.branch.proved{border-color:var(--green)}.branch.unproved{border-color:var(--orange)}.branch p{margin:4px 0}.arrow{text-align:center;color:var(--sub);font-size:26px;line-height:1.2}.step{padding:14px 0;text-align:center}.step strong{display:block}details{margin:18px 0}summary{color:var(--blue);cursor:pointer}.formula{font-family:Georgia,serif;font-size:24px}.sources{font-size:16px}.sources li{margin:8px 0}footer{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;font-size:15px;color:var(--sub)}@media(max-width:650px){main{padding:24px 18px 55px}.two{grid-template-columns:1fr;gap:12px}section{margin-top:44px}body{font-size:17px}.lead{font-size:21px}}@media print{body{font-size:12pt}.controls,button{display:none}section{break-inside:avoid}main{padding:0}a{color:inherit}}
+</style>
+<main>
+<header>
+<div class="eyebrow">Research night · 4–5 October 2026 · Account for Jörn, revised 5 October</div>
+<h1>We strengthened HKO's case.<br>We did not finish the research.</h1>
+<p class="lead">The night produced a reviewed local theorem and a new global theorem for a restricted family of pentagon products. The attempts to reach broader global statements stopped at identifiable mathematical gaps.</p>
+<p>The strongest completed results concern HKO, the product of two regular pentagons. A second body, P*, gained some protection against new-facet perturbations, but its corresponding eleven-facet theorem is still incomplete. The manuscript and its retained PDF were not changed.</p>
+</header>
+
+<section>
+<h2>What were we trying to find out?</h2>
+<p>Can a convex body beat HKO's ratio of symplectic capacity to volume? There are two very different ways to attack that question: deform HKO slightly, or compare it with distant shapes. Success in the first problem does not settle the second.</p>
+<div class="two">
+<figure class="figure" style="margin-left:0;margin-right:0">
+<svg viewBox="0 0 340 260" role="img" aria-label="Schematic of local comparison: only a neighborhood of HKO is controlled.">
+<ellipse cx="170" cy="125" rx="112" ry="94" fill="var(--soft)" stroke="var(--green)" stroke-dasharray="6 5"/>
+<circle cx="170" cy="125" r="7" fill="var(--green)"/>
+<text x="184" y="131">HKO</text>
+<circle cx="100" cy="85" r="4" fill="var(--green)"/><circle cx="222" cy="68" r="4" fill="var(--green)"/><circle cx="138" cy="180" r="4" fill="var(--green)"/>
+<circle cx="302" cy="215" r="5" fill="var(--orange)"/>
+<text x="170" y="247" text-anchor="middle">Local: all sufficiently close shapes</text>
+</svg>
+<figcaption class="caption">A schematic neighborhood, not a measured radius. The HKO result covers nearby four-polytopes with at most eleven genuine facets.</figcaption>
+</figure>
+<figure class="figure" style="margin-left:0;margin-right:0">
+<svg viewBox="0 0 340 260" role="img" aria-label="Schematic of global comparison: a whole restricted family is controlled, including distant shapes.">
+<path d="M27 53 Q115 15 178 42 Q270 20 315 90 L289 210 Q199 239 108 210 L30 180 Z" fill="var(--soft)" stroke="var(--green)" stroke-width="2"/>
+<circle cx="90" cy="112" r="6" fill="var(--green)"/><text x="104" y="118">HKO</text>
+<path d="M189 82 L215 103 L202 133 L175 111 Z M250 157 L283 170 L267 196 L238 184 Z" class="green"/>
+<text x="170" y="247" text-anchor="middle">Global: every shape in a stated family</text>
+</svg>
+<figcaption class="caption">The green region represents a family, not a distance ball. The new global theorem covers the pentagon family drawn below, rather than all convex bodies.</figcaption>
+</figure>
+</div>
+<p class="formula">sys(C) = c<sub>EHZ</sub>(C)² / (2 vol<sub>4</sub>(C))</p>
+<p>HKO has <strong>sys = (3 + √5)/5 ≈ 1.04721</strong>. P* has ratio 1. So proving another body locally maximal at 1 would reveal another local maximum, without making it a competitor at HKO's higher value.</p>
+</section>
+
+<section>
+<h2>How the night unfolded</h2>
+<p>The work followed three scientific strands, with independent checks of their returns. This is the order of the main mathematical developments, not a minute-by-minute activity log.</p>
+<div class="sequence">
+<article><h3>First: test the existing HKO proof</h3><p>A returned proof packet already claimed local maximality with up to eleven facets. The night checked its finite certificates in a fresh copy and separately reviewed the endpoint and limiting-sequence arguments. Those checks supported accepting the stated theorem.</p></article>
+<article><h3>Then: enlarge the global pentagon family</h3><p>With one regular pentagon fixed, the other factor was first allowed arbitrary side offsets and rotation, then a fixed-axis distortion as well. Complete parameter and boundary checks supported the sharp HKO bound throughout that family, with only regular HKO equality.</p></article>
+<article><h3>Meanwhile: try new-facet perturbations of P*</h3><p>The work established strict loss for shallow cuts in fixed directions, and controlled some open direction patches even while the old facets move. It did not assemble all directions into one full neighborhood theorem.</p></article>
+<article><h3>Finally: expose the next global obstacle</h3><p>Allowing a general invertible matrix on the partner's normal directions led to an exact seven-variable cone with 610 linear constraints. The remaining quadratic inequality was not proved. The broader continuation was parked, and execution ended at the requested 04:55 Berlin release, before the 05:00 cutoff.</p></article>
+</div>
+<p><strong>The local theorem was reviewed, a restricted global theorem was extended, and the broad problems remained open.</strong> That is why completed assignments did not amount to “research finished.”</p>
+</section>
+
+<section>
+<div class="tag">NEW GLOBAL RESULT · RESTRICTED FAMILY</div>
+<h2>Which pentagons are now covered?</h2>
+<p>Keep the regular pentagon Q fixed. Build the partner K by choosing five normal directions, rotating them, stretching their horizontal components, and moving their supporting lines. The theorem covers <em>every</em> valid choice in that family, including limits where a side disappears.</p>
+<div class="two">
+<div>
+<figure class="figure" style="margin:0">
+<svg id="partner" viewBox="0 0 340 340" role="img" aria-label="Planar factors of the four-dimensional product: fixed regular Q and adjustable partner K.">
+<title>Fixed regular pentagon and adjustable partner</title>
+<g id="shapes"></g>
+<text x="15" y="24">Q: fixed regular factor</text>
+<text x="15" y="320">K: adjustable partner</text>
+</svg>
+<figcaption class="caption">Blue: Q. Green: K. Gray dashed lines: K's support lines. These are the two planar factors of a four-dimensional Lagrangian product, drawn separately on one plane for comparison.</figcaption>
+</figure>
+</div>
+<div>
+<div class="controls">
+<label for="angle">Rotate normal directions: <output id="angle-value">18°</output><input id="angle" type="range" min="0" max="72" value="18" step="1"></label>
+<label for="stretch">Stretch horizontal normal components: <output id="stretch-value">1.00</output><input id="stretch" type="range" min="0.4" max="2.5" value="1" step="0.01"></label>
+<label for="offset">Move one support line: <output id="offset-value">1.00</output><input id="offset" type="range" min="0.35" max="1.8" value="1" step="0.01"></label>
+<button id="reset" type="button">Return to regular HKO</button>
+</div>
+<p id="shape-status" class="status" aria-live="polite">Regular HKO: the equality case in this family.</p>
+<p class="caption">The drawing computes intersections of the displayed half-planes. It does not compute capacity or certify the theorem. Only one of the five offsets is exposed here; the theorem allows all five.</p>
+</div>
+</div>
+<p>Throughout this family, <strong>sys(K ×<sub>L</sub> Q) ≤ 1.04721…</strong>. Equality occurs exactly at a regular partner, with the HKO relative angles, up to translation and positive dilation.</p>
+<p>The axes of distortion stay fixed relative to Q. A general transformation of the normal directions has another freedom that these controls do not include. The theorem also does not cover arbitrary five-direction fans or arbitrary pentagon pairs.</p>
+<h3>Why moving the sides cannot beat HKO in the regular-direction case</h3>
+<div class="two">
+<figure class="figure" style="margin-left:0;margin-right:0">
+<svg viewBox="0 0 340 275" role="img" aria-label="A pentagon with one side moved outward contains the original regular pentagon. The added area does not increase capacity in this example.">
+<g id="core-shapes"></g>
+<text x="170" y="247" text-anchor="middle">Extra area ≠ extra capacity</text>
+</svg>
+<figcaption class="caption">Green: one support line moved outward. Blue: a largest contained regular pentagon with the same normal directions. This example keeps the inner size, and hence capacity, unchanged.</figcaption>
+</figure>
+<div><p>For regular normal directions, the proof identifies capacity with the size of the <strong>largest translated regular pentagon inside K</strong>, times a factor depending on the relative angle.</p><p>Once that inner size is fixed, extra area around it only increases the denominator of the ratio. The regular inner pentagon is therefore the best partner at that angle. Optimizing the angle gives HKO.</p><p class="caption">This explains the regular-direction theorem. Stretching the normal directions breaks that simple capacity identity; the larger family needs the separate complete-minimizer argument.</p></div>
+</div>
+<details><summary>Why this is more than a grid of successful examples</summary><p>The proof reduces the area minimum at capacity one to a complete finite list of candidate support configurations. Exact sign arguments then cover the continuous rotation/stretch parameters, their boundary ties, and unbounded tails. Independent review also checks the physical area/capacity normalization and equality cases. The passage from every support vector to that finite list is a mathematical argument; finite arithmetic alone would not supply it.</p><p class="sources"><a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/orientation-wide-global-20261005.md">Exact family, proof and evidence</a></p></details>
+</section>
+
+<section>
+<div class="tag">REVIEWED LOCAL RESULT · HKO</div>
+<h2>What does “up to eleven facets” add?</h2>
+<p>HKO starts with ten facets. Moving those ten bounding hyperplanes tests the existing shape. A small truncation can create an eleventh facet, introducing a kind of perturbation the ten-facet theorem did not cover.</p>
+<div class="two">
+<figure class="figure" style="margin-left:0;margin-right:0">
+<svg viewBox="0 0 340 225" role="img" aria-label="Planar analogy for facet birth: cutting off a square's corner creates a fifth side.">
+<path d="M45 40 H285 V185 H45 Z" class="line" stroke-dasharray="5 4"/>
+<path d="M45 40 H220 L285 105 V185 H45 Z" class="blue"/>
+<path d="M220 40 L285 105" class="orange"/>
+<text x="48" y="213">Old sides move; a new side can appear.</text>
+</svg>
+<figcaption class="caption">A two-dimensional analogy for a new facet, not a section or projection of HKO. In the actual theorem the body is four-dimensional and the new face is three-dimensional.</figcaption>
+</figure>
+<div><p><strong>Accepted statement:</strong> some Hausdorff neighborhood of HKO contains no convex four-polytope with at most eleven genuine facets and a larger ratio.</p><p>Old normals may move. The new facet may appear at a scale different from those motions. The review covered the finite predicates and the arguments needed to handle these coupled limits.</p><p class="open">The result gives no explicit neighborhood radius. Twelve or more facets and arbitrary smooth perturbations remain outside it.</p></div>
+</div>
+<p>For <strong>P*</strong>, the result is narrower. Some direction patches resist new facets even with old-facet motion, and every fixed codimension-at-least-two cut direction loses ratio when the cut is sufficiently shallow. But “each fixed direction eventually works” does not establish one uniform neighborhood covering every varying direction. That assembly is still missing.</p>
+<p class="sources"><a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/experiments/hko-local-maximum/f11-acceptance-20261005.md">HKO review and exact theorem</a> · <a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/empirical-viterbo-design/desk/pstar-facet-birth-20261005.md">P* results and uncovered directions</a></p>
+</section>
+
+<section>
+<div class="tag open">GLOBAL EXTENSION · STILL OPEN</div>
+<h2>The next problem is concrete, but unsolved</h2>
+<p>Instead of only rotating and stretching the normal directions with the fixed axes, allow a general invertible 2 × 2 matrix. The night reduced this larger family to the following exact problem:</p>
+<div class="two">
+<div aria-label="Reduction from geometry to the unresolved inequality">
+<div class="step"><strong>A physical pentagon partner</strong><span>Normals from a general invertible matrix</span></div>
+<div class="arrow" aria-hidden="true">↓</div>
+<div class="step"><strong>Capacity normalized to at least one</strong><span>All fitting constraints included</span></div>
+<div class="arrow" aria-hidden="true">↓</div>
+<div class="step"><strong>7 variables · 610 linear constraints</strong><span>An exact homogeneous feasible cone</span></div>
+<div class="arrow" aria-hidden="true">↓</div>
+<div class="step open"><strong>Prove the quadratic gap is ≥ 0</strong><span>On the physical positive-determinant sector</span></div>
+</div>
+<div><p>The coordinate reduction and constraint list were independently checked. <strong>The final arrow is the unresolved inequality, not another passed check.</strong></p><p>A simple proposed proof by global positive semidefiniteness failed: the quadratic form has four negative directions in the surrounding space. That does not refute its positivity on the constrained cone.</p><p>A feasible negative-gap point could become a counterexample only after reconstructing a genuine body and checking its capacity. No such counterexample was accepted.</p><p class="sources"><a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/general-matrix-cone-reduction-20261005.md">Exact reduction and failed proof route</a></p></div>
+</div>
+</section>
+
+<section>
+<h2>Where the proved scope ends</h2>
+<p>For the global branch, each larger class below adds shapes the preceding result does not settle. The arrows express inclusion, not an implication that the bound holds in the larger class.</p>
+<div class="branch proved"><strong>PROVED · Fixed regular Q + fixed-axis distorted five-normal partner</strong><p>Arbitrary supports, rotations and positive stretch; sharp HKO bound and equality.</p></div>
+<div class="arrow" aria-hidden="true">↓ larger class</div>
+<div class="branch unproved"><strong>OPEN · Fixed regular Q + general-matrix five-normal partner</strong><p>Exact cone reduction completed; sharp inequality unfinished.</p></div>
+<div class="arrow" aria-hidden="true">↓ larger class</div>
+<div class="branch unproved"><strong>OPEN · Fixed regular Q + arbitrary convex partner</strong><p>Other normal fans and any number of sides remain possible.</p></div>
+<div class="arrow" aria-hidden="true">↓ larger class</div>
+<div class="branch unproved"><strong>OPEN · All convex four-dimensional bodies</strong><p>This includes nonproducts. Arbitrary pentagon pairs are another unresolved subfamily here.</p></div>
+<p>The HKO eleven-facet theorem is a separate local result. It covers sufficiently close nonproduct polytopes too; it does not bridge the global gaps drawn above.</p>
+</section>
+
+<section>
+<h2>Other things we learned—and what they change</h2>
+<div class="two">
+<div><h3>Balance does not certify a maximum</h3><p>A regular decagon partner satisfies the relevant coverage and balance checks, yet an exact deformation keeps its capacity and reduces area. Its ratio therefore improves. This gives a concrete warning against using those checks as a sufficient maximality test.</p><h3>A scalar shortcut failed</h3><p>An exact quadrilateral violated a proposed inequality intended to simplify the arbitrary-partner problem. This eliminated that proof route; it did not refute the HKO bound.</p></div>
+<div><h3>Bulk measurements do not determine capacity</h3><p>Two bodies have the same covariance and volume but different capacities. Those summaries alone cannot determine capacity. This leaves possible one-sided bounds and useful statistical predictors as separate questions.</p><h3>One nonlinear equality construction is blocked</h3><p>For the specified convex cotangent images of products, the base map must be affine under the stated normal-direction hypothesis. That restricts this construction method; it does not classify all equality bodies.</p></div>
+</div>
+<details><summary>Sources for these four lessons</summary><ul class="sources"><li><a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/empirical-viterbo-design/night-20261005/comparison/fixed-q-decagon-interface-check.md">Exact balanced-decagon nonmaximum</a></li><li><a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/empirical-viterbo-design/night-20261005/extremality-discovery/asymmetry-counterexample.md">Scalar-inequality counterexample</a></li><li><a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/empirical-viterbo-design/night-20261005/geometry-discovery/covariance-volume-collision.md">Same covariance and volume, different capacity</a></li><li><a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/empirical-viterbo-design/night-20261005/extremality-discovery/cotangent-rigidity.md">Cotangent rigidity and its hypothesis</a></li></ul></details>
+</section>
+
+<section>
+<h2>What did “accepted” mean here?</h2>
+<p>These are mathematical acceptances by the project's agents, relative to named inherited results. They are stronger than “a script exited successfully,” and they are not human thesis approval or an external novelty assessment.</p>
+<div class="sequence"><article><h3>Finite evidence</h3><p>Exact certificates and fresh or independent arithmetic checks support the finite assertions.</p></article><article><h3>Mathematical bridges</h3><p>Separate proof reviews support the transitions from those assertions to continuous parameter families and limiting perturbations.</p></article><article><h3>Reader-facing thesis</h3><p>This transition has not been made. The selected manuscript and retained 101-page PDF were unchanged; human/Kai PASS and the existing coverage/reproduction gaps remain unresolved.</p></article></div>
+<p>The larger cone problem and the all-direction P* continuation were parked without a completed proof or a priced programme for finishing them. The cutoff ended execution; it did not close the mathematical questions. This revised account adds explanation, not new research.</p>
+<p class="sources"><a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/empirical-viterbo-design/night-20261005/comparison/final-research-disposition.md">Technical disposition and complete evidence links</a> · <a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/coordination/night-running-brief-20261005.md">Cutoff, retained work and resumption boundary</a></p>
+</section>
+<footer>Next: <a href="https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/docs/history/research-night-20261005/task-cost-review/orchestration-explained.html">the separate orchestration account: labor, allocation and alternatives</a>.<p>This account uses the retained acceptance sources from the 4–5 October research night. Shape drawings are explanatory; none is a new capacity calculation or proof certificate. Scientific status is unchanged by this revision.</p></footer>
+</main>
+<script>
+const el=id=>document.getElementById(id);
+const fmt=p=>p.map(v=>v.toFixed(2)).join(',');
+function renderPartner(){
+ const angle=Number(el('angle').value),x=Number(el('stretch').value),offset=Number(el('offset').value),theta=angle*Math.PI/180;
+ el('angle-value').textContent=angle+'°';el('stretch-value').textContent=x.toFixed(2);el('offset-value').textContent=offset.toFixed(2);
+ const n=Array.from({length:5},(_,i)=>[x*Math.cos(2*Math.PI*i/5+theta),Math.sin(2*Math.PI*i/5+theta)]),h=[offset,1,1,1,1],verts=[];
+ for(let i=0;i<5;i++)for(let j=i+1;j<5;j++){
+  const d=n[i][0]*n[j][1]-n[i][1]*n[j][0];if(Math.abs(d)<1e-10)continue;
+  const p=[(h[i]*n[j][1]-n[i][1]*h[j])/d,(n[i][0]*h[j]-h[i]*n[j][0])/d];
+  if(n.every((v,k)=>v[0]*p[0]+v[1]*p[1]<=h[k]+1e-8)&&!verts.some(v=>Math.hypot(v[0]-p[0],v[1]-p[1])<1e-7))verts.push(p);
+ }
+ const center=verts.reduce((a,p)=>[a[0]+p[0]/verts.length,a[1]+p[1]/verts.length],[0,0]);verts.sort((a,b)=>Math.atan2(a[1]-center[1],a[0]-center[0])-Math.atan2(b[1]-center[1],b[0]-center[0]));
+ const q=Array.from({length:5},(_,i)=>[Math.cos(2*Math.PI*i/5+Math.PI/5)/Math.cos(Math.PI/5),Math.sin(2*Math.PI*i/5+Math.PI/5)/Math.cos(Math.PI/5)]);
+ const extent=Math.max(1.5,...verts.flatMap(p=>p.map(Math.abs))),s=112/extent,map=p=>[170+s*p[0],164-s*p[1]];
+ let html='<path d="M18 164 H322 M170 38 V290" class="line"/>';
+ n.forEach((v,i)=>{const norm2=v[0]**2+v[1]**2,c=v.map(z=>z*h[i]/norm2),length=extent*4/Math.sqrt(norm2),t=[-v[1]*length,v[0]*length];html+='<line x1="'+map([c[0]-t[0],c[1]-t[1]])[0]+'" y1="'+map([c[0]-t[0],c[1]-t[1]])[1]+'" x2="'+map([c[0]+t[0],c[1]+t[1]])[0]+'" y2="'+map([c[0]+t[0],c[1]+t[1]])[1]+'" class="line" stroke-dasharray="4 4"/>';});
+ html='<defs><clipPath id="shape-clip"><rect x="18" y="38" width="304" height="252"/></clipPath></defs><g clip-path="url(#shape-clip)">'+html+'<polygon points="'+q.map(p=>fmt(map(p))).join(' ')+'" class="blue"/><polygon points="'+verts.map(p=>fmt(map(p))).join(' ')+'" class="green"/></g>';
+ el('shapes').innerHTML=html;
+ const equality=x===1&&offset===1&&(angle===18||angle===54);
+ el('shape-status').textContent=equality?'Regular HKO: the equality case in this family.':verts.length+' genuine sides in the drawing. The theorem bounds the ratio throughout this family; this picture supplies no numerical ratio.';
+ el('partner').setAttribute('data-sides',verts.length);
+}
+['angle','stretch','offset'].forEach(id=>el(id).addEventListener('input',renderPartner));
+el('reset').addEventListener('click',()=>{el('angle').value=18;el('stretch').value=1;el('offset').value=1;renderPartner()});
+renderPartner();
+// Illustrative regular fan: h=(1.5,1,1,1,1). A closure circuit omitting
+// index zero keeps the maximal translated regular-pentagon support scale at one.
+{
+const normals=Array.from({length:5},(_,i)=>[Math.cos(2*Math.PI*i/5),Math.sin(2*Math.PI*i/5)]);
+function polygon(h){const vertices=[];for(let i=0;i<5;i++)for(let j=i+1;j<5;j++){const a=normals[i],b=normals[j],d=a[0]*b[1]-a[1]*b[0],p=[(h[i]*b[1]-a[1]*h[j])/d,(a[0]*h[j]-h[i]*b[0])/d];if(normals.every((v,k)=>v[0]*p[0]+v[1]*p[1]<=h[k]+1e-9))vertices.push(p)}vertices.sort((a,b)=>Math.atan2(a[1],a[0])-Math.atan2(b[1],b[0]));return vertices.map(p=>fmt([160+85*p[0],123-85*p[1]])).join(' ')}
+el('core-shapes').innerHTML='<polygon points="'+polygon([1.5,1,1,1,1])+'" fill="var(--soft)" stroke="var(--green)" stroke-width="3"/><polygon points="'+polygon([1,1,1,1,1])+'" class="blue"/>';
+}
+</script>
+</html>

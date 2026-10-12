@@ -1,0 +1,4 @@
+interface:
+  display_name: "Incident Log"
+  short_description: "Capture bounded, evidence-based workflow incidents"
+  default_prompt: "Use $incident-log to record a requested conversational or workflow incident."

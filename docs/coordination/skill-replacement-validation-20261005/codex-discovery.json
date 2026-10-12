@@ -1,0 +1,785 @@
+{
+  "id": 2,
+  "result": {
+    "data": [
+      {
+        "cwd": "/workspaces/msc-math",
+        "skills": [
+          {
+            "name": "codex-usage",
+            "description": "Set up and use OpenAI Codex CLI (`codex exec`) from a Claude cloud session \u2014 install/login status in one script, then delegate research/review/log-reading tasks and read the result back, avoiding known hangs and sandbox failures.",
+            "path": "/workspaces/msc-math/.agents/skills/codex-usage/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "external-agent-communication",
+            "description": "Use for communication and work handoffs across independent agent contexts. Examples include exchanges between Codex, Claude Code and ChatGPT/Pro, user-relayed messages and returned work packages. Choose routes, preserve sufficient context and integrate replies. Standard native subagent-tree transport needs no additional protocol.",
+            "interface": {
+              "displayName": "External Agent Communication",
+              "shortDescription": "Exchange work across independent agent contexts",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": null
+            },
+            "path": "/workspaces/msc-math/.agents/skills/external-agent-communication/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "harness-engineering",
+            "description": "Design, revise, supersede, and evaluate Codex harness guidance. Use for AGENTS.md files, skills, prompts, agent definitions, or other maintained interventions intended to change future agent behavior; do not use for ordinary domain writing or application implementation.",
+            "interface": {
+              "displayName": "Harness Engineering",
+              "shortDescription": "Design and maintain Codex harness guidance",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $harness-engineering to create or repair this Codex harness guidance."
+            },
+            "path": "/workspaces/msc-math/.agents/skills/harness-engineering/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "human-prose-review",
+            "description": "Present PDF, HTML or Markdown for J\u00f6rn to annotate in Hypothesis, then retrieve his feedback through the API when he says done.",
+            "path": "/workspaces/msc-math/.agents/skills/human-prose-review/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "incident-log",
+            "description": "Capture a user-identified consequential conversational or workflow incident as low-friction evidence intake. Preserve bounded evidence and uncertainty for later triage; do not diagnose, generalize, change prompts, or run a postmortem as part of intake.",
+            "interface": {
+              "displayName": "Incident Log",
+              "shortDescription": "Capture bounded, evidence-based workflow incidents",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $agent-skills:incident-log to record a requested conversational or workflow incident."
+            },
+            "path": "/workspaces/msc-math/.agents/skills/incident-log/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "lesswrong-fetch",
+            "description": "Fetch LessWrong posts and comments cleanly via the GraphQL API instead of web_fetch. Use this skill whenever the user shares a lesswrong.com URL or asks about a LessWrong post or comment \u2014 including EA Forum content at forum.effectivealtruism.org. The GraphQL API returns only the requested content as clean markdown, avoiding the HTML soup and unrelated comment noise that web_fetch produces. Trigger for any mention of \"lesswrong\", \"LW post\", \"LW comment\", \"EA Forum\", or any lesswrong.com / forum.effectivealtruism.org URL \u2014 including URLs that appear inside web search results or linked text.",
+            "path": "/workspaces/msc-math/.agents/skills/lesswrong-fetch/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "live-task-graph",
+            "description": "Maintain a shared, rendered dependency graph for long-running or multi-agent project work, including blockers, decision cruxes, owners, branches, and completed outcomes. Do not use for a short linear todo list.",
+            "path": "/workspaces/msc-math/.agents/skills/live-task-graph/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "problem-structuring",
+            "description": "Use when making work ready for reliable autonomous progress requires developing the problem, goals or consequential decisions. Examples include exploratory discussions, unclear or changing goals, unknown decomposition and repeated corrections to the framing. Investigate independently and involve the user where their knowledge, judgment or authority is needed; clear routine tasks need no full structuring process.",
+            "interface": {
+              "displayName": "Problem Structuring",
+              "shortDescription": "Develop problems and decisions for useful autonomous work",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": null
+            },
+            "path": "/workspaces/msc-math/.agents/skills/problem-structuring/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "review-files",
+            "description": "Create expiring browser links for J\u00f6rn to review specific Markdown, PDF, image, text, or standalone HTML files from the host or a configured Docker sandbox. Use for quick view-only feedback without making J\u00f6rn locate the artifact. Do not use when he needs a retained device copy or collaborative editing.",
+            "interface": {
+              "displayName": "Review Files",
+              "shortDescription": "Open files for J\u00f6rn's browser review",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $review-files to open the requested files for my review."
+            },
+            "path": "/workspaces/msc-math/.agents/skills/review-files/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "browser:control-in-app-browser",
+            "description": "Control the in-app Browser for opening, navigating, inspecting visible or interactive page state, clicking, typing, screenshots, and local web testing. It can have existing signed-in sessions. For semantic operations on linked resources, prefer a purpose-built connector, API, or CLI when available.",
+            "interface": {
+              "displayName": "Browser",
+              "shortDescription": "Browser lets ChatGPT open and control the in-app browser, mainly for local development pages and files. Use it to navigate, inspect, click, type, and take screenshots while testing pages inside ChatGPT.",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Inspect the current in-app browser tab or open a local app in the in-app browser and verify it."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-bundled/browser/26.928.20755/skills/control-in-app-browser/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "browser@openai-bundled"
+          },
+          {
+            "name": "canary:canary",
+            "description": "Deployment canary for J\u00f6rn's agent-skills repo. Use only when the user says \"canary check\" or \"canary diff\", or asks which agent-skills canary version is loaded or whether our assumptions about a surface still hold.",
+            "path": "/home/joern/.codex/plugins/cache/agent-skills/canary/0.1.0+canary.16/skills/canary/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "canary@agent-skills"
+          },
+          {
+            "name": "chrome:control-chrome",
+            "description": "Control the user's Chrome browser for tasks that depend on existing Chrome state: tabs, logged-in sessions, or extensions. Prefer purpose-built connectors, APIs, or CLIs when available.",
+            "path": "/home/joern/.codex/plugins/cache/openai-bundled/chrome/26.928.20755/skills/control-chrome/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "chrome@openai-bundled"
+          },
+          {
+            "name": "documents:documents",
+            "description": "Create, edit, redline, and comment on `.docx`, Word, and Google Docs-targeted document artifacts inside the container, with a strict render-and-verify workflow. Use `render_docx.py` to generate page PNGs (and optional PDF) for visual QA, then iterate until layout is flawless before delivering the final document.",
+            "interface": {
+              "displayName": "Documents",
+              "shortDescription": "Create and edit Word and Google Docs files",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/documents/26.905.11957/skills/documents/assets/file-document.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/documents/26.905.11957/skills/documents/assets/file-document.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#2563EB",
+              "defaultPrompt": "Use $documents to create, edit, redline, or review a Word file or Google Doc."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/documents/26.905.11957/skills/documents/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "documents@openai-primary-runtime"
+          },
+          {
+            "name": "message-evidence-gate",
+            "description": "Experimental review of user-visible Codex messages, especially answers to why questions, for unsupported causes and hidden uncertainty. Use only when explicitly invoked for evaluation; a live trial failed. Do not treat this as an enforced output gate.",
+            "path": "/home/joern/.codex/skills/message-evidence-gate/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "pdf:pdf",
+            "description": "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction.",
+            "interface": {
+              "displayName": "PDF",
+              "shortDescription": "Read, create, render, and verify PDF files",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/pdf/26.905.11957/skills/pdf/assets/file-document.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/pdf/26.905.11957/skills/pdf/assets/file-document.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#DC2626",
+              "defaultPrompt": "Use $pdf to read, create, render, or visually verify a PDF file."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/pdf/26.905.11957/skills/pdf/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "pdf@openai-primary-runtime"
+          },
+          {
+            "name": "presentations:Presentations",
+            "description": "Read, create or edit PowerPoint or Google Slides decks. Use for presentation, slide deck, PowerPoint, PPT, PPTX, or Google Slides requests.",
+            "interface": {
+              "displayName": "Presentations",
+              "shortDescription": "Create polished PowerPoint and Google Slides decks",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/assets/file-presentation.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/assets/file-presentation.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#C43E1C",
+              "defaultPrompt": "Create a presentation slide deck with $Presentations."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "presentations@openai-primary-runtime"
+          },
+          {
+            "name": "spreadsheets:Spreadsheets",
+            "description": "Use skill when user requests to create, modify, analyze, visualize, or work with spreadsheet files (`.xlsx`, `.xls`, `.csv`, `.tsv`) or Google Sheets with formulas, formatting, charts, tables, and recalculation. Do not use for live controlling Microsoft Excel app or a live Excel session.",
+            "interface": {
+              "displayName": "Spreadsheets",
+              "shortDescription": "Create and edit spreadsheet or Google Sheets-ready files",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.905.11957/skills/spreadsheets/assets/file-spreadsheet.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.905.11957/skills/spreadsheets/assets/file-spreadsheet.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#107C41",
+              "defaultPrompt": "Use $Spreadsheets to build or update a spreadsheet artifact with formulas, formatting, and verification."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.905.11957/skills/spreadsheets/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "spreadsheets@openai-primary-runtime"
+          },
+          {
+            "name": "spreadsheets:excel-live-control",
+            "description": "Control an open or active Microsoft Excel workbook through the ChatGPT add-in or connected session. Use when the user tags the Microsoft Excel app in Codex or follows up on an established live Excel task. Do not use for standalone spreadsheet files or Google Sheets.",
+            "interface": {
+              "displayName": "Excel Live Control",
+              "shortDescription": "Control an open Microsoft Excel workbook using Microsoft Excel desktop app live control",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#107C41",
+              "defaultPrompt": "Use $excel-live-control to update and verify my open Microsoft Excel workbook."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.905.11957/skills/excel-live-control/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "spreadsheets@openai-primary-runtime"
+          },
+          {
+            "name": "template-creator:template-creator",
+            "description": "Create or update a reusable personal Codex artifact-template skill. Use when the user invokes $template-creator or asks in natural language to create a reusable template from a reference document, presentation, spreadsheet, Google Docs, Slides, or Sheets link, ImageGen or Product Design image, email, Slack message, or Site project, or explicitly asks to edit or update a passed artifact-template skill. Do not use for one-off creation from an existing template.",
+            "interface": {
+              "displayName": "Template Creator",
+              "shortDescription": "Create or update personal reference-backed templates",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/template-creator/26.905.11957/assets/icon.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/template-creator/26.905.11957/assets/logo.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $template-creator to create a template from my documents, presentations, spreadsheets, Google Docs, Slides, or Sheets links, ImageGen or Product Design images, emails, Slack messages, and Site projects or update the artifact template skill I pass."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/template-creator/26.905.11957/skills/template-creator/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "template-creator@openai-primary-runtime"
+          },
+          {
+            "name": "visualize:visualize",
+            "description": "Create visualizations and interactive tools directly in conversation. Proactively use to show how something works; explore 'what happens when', 'what changes', or 'help me understand'; compare or inspect; create simulations, maps, charts, graphs, and mockups. Use standard tools for static scientific figures.",
+            "interface": {
+              "displayName": "Visualize",
+              "shortDescription": "Turn ideas and data into interactive visuals",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $visualize to create an interactive visual when a chart, map, diagram, simulation, 3D model, data explorer, or UI preview would make the result easier to understand or adjust."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-bundled/visualize/1.0.45/skills/visualize/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "visualize@openai-bundled"
+          },
+          {
+            "name": "imagegen",
+            "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.",
+            "interface": {
+              "displayName": "Image Gen",
+              "shortDescription": "Generate or edit images for websites, games, and more",
+              "iconSmall": "/home/joern/.codex/skills/.system/imagegen/assets/imagegen-small.svg",
+              "iconLarge": "/home/joern/.codex/skills/.system/imagegen/assets/imagegen.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $imagegen to make or edit an image for this project."
+            },
+            "path": "/home/joern/.codex/skills/.system/imagegen/SKILL.md",
+            "scope": "system",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "openai-docs",
+            "description": "Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge\u2014including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex\u2014and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex.",
+            "shortDescription": "Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, and self-knowledge; OpenAI APIs and ChatGPT Work. 'You'/'this app' means Codex only.",
+            "interface": {
+              "displayName": "OpenAI Docs",
+              "shortDescription": "OpenAI and Codex docs for models, skills, tasks, and setup",
+              "iconSmall": "/home/joern/.codex/skills/.system/openai-docs/assets/openai-small.svg",
+              "iconLarge": "/home/joern/.codex/skills/.system/openai-docs/assets/openai.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use OpenAI Docs for official docs lookup, questions about Codex itself or Codex surfaces, model selection, model migration, and prompt-upgrade work."
+            },
+            "path": "/home/joern/.codex/skills/.system/openai-docs/SKILL.md",
+            "scope": "system",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "review-agent",
+            "description": "Perform a read-only, defect-first review of a specified code change and return every actionable finding. Use when another agent delegates review of uncommitted changes, a base-branch diff, a commit, or custom review instructions.",
+            "interface": {
+              "displayName": "Review Agent",
+              "shortDescription": "Find actionable bugs in code changes",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $review-agent to review the requested code changes and return actionable findings."
+            },
+            "path": "/home/joern/.codex/skills/.system/review-agent/SKILL.md",
+            "scope": "system",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "skill-creator",
+            "description": "Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources.",
+            "shortDescription": "Create or update a skill",
+            "interface": {
+              "displayName": "Skill Creator",
+              "shortDescription": "Create or update a skill",
+              "iconSmall": "/home/joern/.codex/skills/.system/skill-creator/assets/skill-creator-small.svg",
+              "iconLarge": "/home/joern/.codex/skills/.system/skill-creator/assets/skill-creator.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": null
+            },
+            "path": "/home/joern/.codex/skills/.system/skill-creator/SKILL.md",
+            "scope": "system",
+            "enabled": false,
+            "pluginId": null
+          },
+          {
+            "name": "skill-installer",
+            "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+            "shortDescription": "Install curated skills from openai/skills or other repos",
+            "interface": {
+              "displayName": "Skill Installer",
+              "shortDescription": "Install curated skills from openai/skills or other repos",
+              "iconSmall": "/home/joern/.codex/skills/.system/skill-installer/assets/skill-installer-small.svg",
+              "iconLarge": "/home/joern/.codex/skills/.system/skill-installer/assets/skill-installer.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": null
+            },
+            "path": "/home/joern/.codex/skills/.system/skill-installer/SKILL.md",
+            "scope": "system",
+            "enabled": true,
+            "pluginId": null
+          }
+        ],
+        "errors": []
+      },
+      {
+        "cwd": "/workspaces/msc-math/thesis",
+        "skills": [
+          {
+            "name": "codex-usage",
+            "description": "Set up and use OpenAI Codex CLI (`codex exec`) from a Claude cloud session \u2014 install/login status in one script, then delegate research/review/log-reading tasks and read the result back, avoiding known hangs and sandbox failures.",
+            "path": "/workspaces/msc-math/.agents/skills/codex-usage/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "external-agent-communication",
+            "description": "Use for communication and work handoffs across independent agent contexts. Examples include exchanges between Codex, Claude Code and ChatGPT/Pro, user-relayed messages and returned work packages. Choose routes, preserve sufficient context and integrate replies. Standard native subagent-tree transport needs no additional protocol.",
+            "interface": {
+              "displayName": "External Agent Communication",
+              "shortDescription": "Exchange work across independent agent contexts",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": null
+            },
+            "path": "/workspaces/msc-math/.agents/skills/external-agent-communication/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "harness-engineering",
+            "description": "Design, revise, supersede, and evaluate Codex harness guidance. Use for AGENTS.md files, skills, prompts, agent definitions, or other maintained interventions intended to change future agent behavior; do not use for ordinary domain writing or application implementation.",
+            "interface": {
+              "displayName": "Harness Engineering",
+              "shortDescription": "Design and maintain Codex harness guidance",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $harness-engineering to create or repair this Codex harness guidance."
+            },
+            "path": "/workspaces/msc-math/.agents/skills/harness-engineering/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "human-prose-review",
+            "description": "Present PDF, HTML or Markdown for J\u00f6rn to annotate in Hypothesis, then retrieve his feedback through the API when he says done.",
+            "path": "/workspaces/msc-math/.agents/skills/human-prose-review/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "incident-log",
+            "description": "Capture a user-identified consequential conversational or workflow incident as low-friction evidence intake. Preserve bounded evidence and uncertainty for later triage; do not diagnose, generalize, change prompts, or run a postmortem as part of intake.",
+            "interface": {
+              "displayName": "Incident Log",
+              "shortDescription": "Capture bounded, evidence-based workflow incidents",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $agent-skills:incident-log to record a requested conversational or workflow incident."
+            },
+            "path": "/workspaces/msc-math/.agents/skills/incident-log/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "lesswrong-fetch",
+            "description": "Fetch LessWrong posts and comments cleanly via the GraphQL API instead of web_fetch. Use this skill whenever the user shares a lesswrong.com URL or asks about a LessWrong post or comment \u2014 including EA Forum content at forum.effectivealtruism.org. The GraphQL API returns only the requested content as clean markdown, avoiding the HTML soup and unrelated comment noise that web_fetch produces. Trigger for any mention of \"lesswrong\", \"LW post\", \"LW comment\", \"EA Forum\", or any lesswrong.com / forum.effectivealtruism.org URL \u2014 including URLs that appear inside web search results or linked text.",
+            "path": "/workspaces/msc-math/.agents/skills/lesswrong-fetch/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "live-task-graph",
+            "description": "Maintain a shared, rendered dependency graph for long-running or multi-agent project work, including blockers, decision cruxes, owners, branches, and completed outcomes. Do not use for a short linear todo list.",
+            "path": "/workspaces/msc-math/.agents/skills/live-task-graph/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "problem-structuring",
+            "description": "Use when making work ready for reliable autonomous progress requires developing the problem, goals or consequential decisions. Examples include exploratory discussions, unclear or changing goals, unknown decomposition and repeated corrections to the framing. Investigate independently and involve the user where their knowledge, judgment or authority is needed; clear routine tasks need no full structuring process.",
+            "interface": {
+              "displayName": "Problem Structuring",
+              "shortDescription": "Develop problems and decisions for useful autonomous work",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": null
+            },
+            "path": "/workspaces/msc-math/.agents/skills/problem-structuring/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "review-files",
+            "description": "Create expiring browser links for J\u00f6rn to review specific Markdown, PDF, image, text, or standalone HTML files from the host or a configured Docker sandbox. Use for quick view-only feedback without making J\u00f6rn locate the artifact. Do not use when he needs a retained device copy or collaborative editing.",
+            "interface": {
+              "displayName": "Review Files",
+              "shortDescription": "Open files for J\u00f6rn's browser review",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $review-files to open the requested files for my review."
+            },
+            "path": "/workspaces/msc-math/.agents/skills/review-files/SKILL.md",
+            "scope": "repo",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "browser:control-in-app-browser",
+            "description": "Control the in-app Browser for opening, navigating, inspecting visible or interactive page state, clicking, typing, screenshots, and local web testing. It can have existing signed-in sessions. For semantic operations on linked resources, prefer a purpose-built connector, API, or CLI when available.",
+            "interface": {
+              "displayName": "Browser",
+              "shortDescription": "Browser lets ChatGPT open and control the in-app browser, mainly for local development pages and files. Use it to navigate, inspect, click, type, and take screenshots while testing pages inside ChatGPT.",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Inspect the current in-app browser tab or open a local app in the in-app browser and verify it."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-bundled/browser/26.928.20755/skills/control-in-app-browser/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "browser@openai-bundled"
+          },
+          {
+            "name": "canary:canary",
+            "description": "Deployment canary for J\u00f6rn's agent-skills repo. Use only when the user says \"canary check\" or \"canary diff\", or asks which agent-skills canary version is loaded or whether our assumptions about a surface still hold.",
+            "path": "/home/joern/.codex/plugins/cache/agent-skills/canary/0.1.0+canary.16/skills/canary/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "canary@agent-skills"
+          },
+          {
+            "name": "chrome:control-chrome",
+            "description": "Control the user's Chrome browser for tasks that depend on existing Chrome state: tabs, logged-in sessions, or extensions. Prefer purpose-built connectors, APIs, or CLIs when available.",
+            "path": "/home/joern/.codex/plugins/cache/openai-bundled/chrome/26.928.20755/skills/control-chrome/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "chrome@openai-bundled"
+          },
+          {
+            "name": "documents:documents",
+            "description": "Create, edit, redline, and comment on `.docx`, Word, and Google Docs-targeted document artifacts inside the container, with a strict render-and-verify workflow. Use `render_docx.py` to generate page PNGs (and optional PDF) for visual QA, then iterate until layout is flawless before delivering the final document.",
+            "interface": {
+              "displayName": "Documents",
+              "shortDescription": "Create and edit Word and Google Docs files",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/documents/26.905.11957/skills/documents/assets/file-document.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/documents/26.905.11957/skills/documents/assets/file-document.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#2563EB",
+              "defaultPrompt": "Use $documents to create, edit, redline, or review a Word file or Google Doc."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/documents/26.905.11957/skills/documents/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "documents@openai-primary-runtime"
+          },
+          {
+            "name": "message-evidence-gate",
+            "description": "Experimental review of user-visible Codex messages, especially answers to why questions, for unsupported causes and hidden uncertainty. Use only when explicitly invoked for evaluation; a live trial failed. Do not treat this as an enforced output gate.",
+            "path": "/home/joern/.codex/skills/message-evidence-gate/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "pdf:pdf",
+            "description": "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction.",
+            "interface": {
+              "displayName": "PDF",
+              "shortDescription": "Read, create, render, and verify PDF files",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/pdf/26.905.11957/skills/pdf/assets/file-document.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/pdf/26.905.11957/skills/pdf/assets/file-document.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#DC2626",
+              "defaultPrompt": "Use $pdf to read, create, render, or visually verify a PDF file."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/pdf/26.905.11957/skills/pdf/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "pdf@openai-primary-runtime"
+          },
+          {
+            "name": "presentations:Presentations",
+            "description": "Read, create or edit PowerPoint or Google Slides decks. Use for presentation, slide deck, PowerPoint, PPT, PPTX, or Google Slides requests.",
+            "interface": {
+              "displayName": "Presentations",
+              "shortDescription": "Create polished PowerPoint and Google Slides decks",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/assets/file-presentation.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/assets/file-presentation.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#C43E1C",
+              "defaultPrompt": "Create a presentation slide deck with $Presentations."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/presentations/26.905.11957/skills/presentations/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "presentations@openai-primary-runtime"
+          },
+          {
+            "name": "spreadsheets:Spreadsheets",
+            "description": "Use skill when user requests to create, modify, analyze, visualize, or work with spreadsheet files (`.xlsx`, `.xls`, `.csv`, `.tsv`) or Google Sheets with formulas, formatting, charts, tables, and recalculation. Do not use for live controlling Microsoft Excel app or a live Excel session.",
+            "interface": {
+              "displayName": "Spreadsheets",
+              "shortDescription": "Create and edit spreadsheet or Google Sheets-ready files",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.905.11957/skills/spreadsheets/assets/file-spreadsheet.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.905.11957/skills/spreadsheets/assets/file-spreadsheet.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#107C41",
+              "defaultPrompt": "Use $Spreadsheets to build or update a spreadsheet artifact with formulas, formatting, and verification."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.905.11957/skills/spreadsheets/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "spreadsheets@openai-primary-runtime"
+          },
+          {
+            "name": "spreadsheets:excel-live-control",
+            "description": "Control an open or active Microsoft Excel workbook through the ChatGPT add-in or connected session. Use when the user tags the Microsoft Excel app in Codex or follows up on an established live Excel task. Do not use for standalone spreadsheet files or Google Sheets.",
+            "interface": {
+              "displayName": "Excel Live Control",
+              "shortDescription": "Control an open Microsoft Excel workbook using Microsoft Excel desktop app live control",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": "#107C41",
+              "defaultPrompt": "Use $excel-live-control to update and verify my open Microsoft Excel workbook."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.905.11957/skills/excel-live-control/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "spreadsheets@openai-primary-runtime"
+          },
+          {
+            "name": "template-creator:template-creator",
+            "description": "Create or update a reusable personal Codex artifact-template skill. Use when the user invokes $template-creator or asks in natural language to create a reusable template from a reference document, presentation, spreadsheet, Google Docs, Slides, or Sheets link, ImageGen or Product Design image, email, Slack message, or Site project, or explicitly asks to edit or update a passed artifact-template skill. Do not use for one-off creation from an existing template.",
+            "interface": {
+              "displayName": "Template Creator",
+              "shortDescription": "Create or update personal reference-backed templates",
+              "iconSmall": "/home/joern/.codex/plugins/cache/openai-primary-runtime/template-creator/26.905.11957/assets/icon.png",
+              "iconLarge": "/home/joern/.codex/plugins/cache/openai-primary-runtime/template-creator/26.905.11957/assets/logo.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $template-creator to create a template from my documents, presentations, spreadsheets, Google Docs, Slides, or Sheets links, ImageGen or Product Design images, emails, Slack messages, and Site projects or update the artifact template skill I pass."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-primary-runtime/template-creator/26.905.11957/skills/template-creator/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "template-creator@openai-primary-runtime"
+          },
+          {
+            "name": "visualize:visualize",
+            "description": "Create visualizations and interactive tools directly in conversation. Proactively use to show how something works; explore 'what happens when', 'what changes', or 'help me understand'; compare or inspect; create simulations, maps, charts, graphs, and mockups. Use standard tools for static scientific figures.",
+            "interface": {
+              "displayName": "Visualize",
+              "shortDescription": "Turn ideas and data into interactive visuals",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $visualize to create an interactive visual when a chart, map, diagram, simulation, 3D model, data explorer, or UI preview would make the result easier to understand or adjust."
+            },
+            "path": "/home/joern/.codex/plugins/cache/openai-bundled/visualize/1.0.45/skills/visualize/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "visualize@openai-bundled"
+          },
+          {
+            "name": "imagegen",
+            "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.",
+            "interface": {
+              "displayName": "Image Gen",
+              "shortDescription": "Generate or edit images for websites, games, and more",
+              "iconSmall": "/home/joern/.codex/skills/.system/imagegen/assets/imagegen-small.svg",
+              "iconLarge": "/home/joern/.codex/skills/.system/imagegen/assets/imagegen.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $imagegen to make or edit an image for this project."
+            },
+            "path": "/home/joern/.codex/skills/.system/imagegen/SKILL.md",
+            "scope": "system",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "openai-docs",
+            "description": "Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge\u2014including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex\u2014and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex.",
+            "shortDescription": "Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, and self-knowledge; OpenAI APIs and ChatGPT Work. 'You'/'this app' means Codex only.",
+            "interface": {
+              "displayName": "OpenAI Docs",
+              "shortDescription": "OpenAI and Codex docs for models, skills, tasks, and setup",
+              "iconSmall": "/home/joern/.codex/skills/.system/openai-docs/assets/openai-small.svg",
+              "iconLarge": "/home/joern/.codex/skills/.system/openai-docs/assets/openai.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use OpenAI Docs for official docs lookup, questions about Codex itself or Codex surfaces, model selection, model migration, and prompt-upgrade work."
+            },
+            "path": "/home/joern/.codex/skills/.system/openai-docs/SKILL.md",
+            "scope": "system",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "review-agent",
+            "description": "Perform a read-only, defect-first review of a specified code change and return every actionable finding. Use when another agent delegates review of uncommitted changes, a base-branch diff, a commit, or custom review instructions.",
+            "interface": {
+              "displayName": "Review Agent",
+              "shortDescription": "Find actionable bugs in code changes",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "Use $review-agent to review the requested code changes and return actionable findings."
+            },
+            "path": "/home/joern/.codex/skills/.system/review-agent/SKILL.md",
+            "scope": "system",
+            "enabled": true,
+            "pluginId": null
+          },
+          {
+            "name": "skill-creator",
+            "description": "Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources.",
+            "shortDescription": "Create or update a skill",
+            "interface": {
+              "displayName": "Skill Creator",
+              "shortDescription": "Create or update a skill",
+              "iconSmall": "/home/joern/.codex/skills/.system/skill-creator/assets/skill-creator-small.svg",
+              "iconLarge": "/home/joern/.codex/skills/.system/skill-creator/assets/skill-creator.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": null
+            },
+            "path": "/home/joern/.codex/skills/.system/skill-creator/SKILL.md",
+            "scope": "system",
+            "enabled": false,
+            "pluginId": null
+          },
+          {
+            "name": "skill-installer",
+            "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+            "shortDescription": "Install curated skills from openai/skills or other repos",
+            "interface": {
+              "displayName": "Skill Installer",
+              "shortDescription": "Install curated skills from openai/skills or other repos",
+              "iconSmall": "/home/joern/.codex/skills/.system/skill-installer/assets/skill-installer-small.svg",
+              "iconLarge": "/home/joern/.codex/skills/.system/skill-installer/assets/skill-installer.png",
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": null
+            },
+            "path": "/home/joern/.codex/skills/.system/skill-installer/SKILL.md",
+            "scope": "system",
+            "enabled": true,
+            "pluginId": null
+          }
+        ],
+        "errors": []
+      }
+    ]
+  }
+}

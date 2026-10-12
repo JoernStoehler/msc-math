@@ -1,0 +1,6 @@
+Native reviewer: /root/b_message_review
+APPROVE final-v1
+
+The message covers continuation, integration, question preparation and parallelism without narrowing Jörn’s concern to stopping. The inspected sources support the distinctions and preserve uncertainty about causes, throughput and repair.
+
+The recommendation supplies a concrete next inquiry rather than asking Jörn to diagnose the failures. Completing this bounded assessment fits the supplied assignment; the message explicitly leaves live reliability and review cost unresolved.

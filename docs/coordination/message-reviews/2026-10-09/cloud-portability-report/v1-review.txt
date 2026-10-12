@@ -1,0 +1,6 @@
+Native reviewer: /root/cloud_report_review
+Candidate: v1.md
+
+APPROVE v1.
+
+The report answers the requested cloud portability question with concrete gaps, source links and appropriate qualifications. It distinguishes missing committed content, declared private data retrieval, host-specific services and unverified cloud execution. Targeted reads support the bootstrap and helper limitations; no consequential objection remains.

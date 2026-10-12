@@ -8,6 +8,34 @@ the proposed outlier inspection is no longer the recommended next task.
 Date: 2026-09-18. This desk owns scoped empirical discussion and experiments,
 not thesis prose. The production budget remains paused.
 
+## Checked research sources from the 5 October night
+
+The historical scout below is not the current scientific outcome. The desk now
+routes the [all-angle equiangular capacity-core theorem](pentagon-arbitrary-partner/equiangular-partner-global-20261005.md),
+[aligned nonconformal sharp bound and nonregular optimizer](pentagon-arbitrary-partner/aligned-nonconformal-global-20261005.md),
+and [P* cuts-extremizer and restricted facet-birth theorems](pstar-facet-birth-20261005.md),
+now including the 5 October 00:20 UTC accepted moving right-p1 endpoint with
+all old normals free and arbitrary coupled scales in its specified tilt family.
+The [orientation-wide fixed-axis sharp bound](pentagon-arbitrary-partner/orientation-wide-global-20261005.md)
+was accepted at 00:59 UTC; complete equality and fresh physical controls
+passed final acceptance at 01:03 UTC. Its all-angle claim concerns the explicit
+diag(x,1)R_theta family, not every GL(2) normal transform.
+The P* source also records the accepted seven-regular-contact readiness bank
+and a pointwise base response at D=(1,−1,0,1), with an exact positive balanced
+capacity/volume margin. Its specified mixed weighted-W second derivative and response margin passed
+a further exact premise gate at 01:49 UTC. The later family/analytic assembly passed independent acceptance at 02:11 UTC,
+proving a transported ambient open patch near D=(1,−1,0,1) with all old normals
+and both equality parameters free. Full all-direction F11 remains open.
+The [general-matrix regular-fan cone reduction](pentagon-arbitrary-partner/general-matrix-cone-reduction-20261005.md)
+is independently accepted as an exact transfer and finite inventory. Its sharp
+quadratic inequality and general-matrix equality remain open; positivity work
+is parked and unpriced.
+Each note identifies the exact class, accepted implications, imported inputs,
+retained evidence and reproduction write effects. These are independently checked
+research, absent from the selected manuscript/PDF; arbitrary partner and full
+P* all-direction F11 statements remain open. These source integrations do not
+change the historical production-budget status or select further experiments.
+
 ## Decision and result
 
 The first useful move was a zero-capacity, target-free relation scout on the

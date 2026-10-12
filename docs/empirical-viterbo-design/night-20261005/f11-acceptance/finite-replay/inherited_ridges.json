@@ -1,0 +1,144 @@
+{
+  "geometry": {
+    "vertices": 25,
+    "facets": 10,
+    "polar_edges": 35,
+    "volume_coefficients": [
+      "375/64",
+      "0",
+      "-25/64",
+      "0"
+    ]
+  },
+  "differentiated_seed_gradient_entries": 2600,
+  "ridges": [
+    {
+      "edge": [
+        0,
+        6
+      ],
+      "half": 0,
+      "terms": 26,
+      "theta_coefficients": [
+        "24/175",
+        "0",
+        "0",
+        "0"
+      ],
+      "theta_nominal": 0.13714285714285715,
+      "volume_coefficient": "2/25"
+    },
+    {
+      "edge": [
+        0,
+        6
+      ],
+      "half": 1,
+      "terms": 26,
+      "theta_coefficients": [
+        "24/175",
+        "0",
+        "0",
+        "0"
+      ],
+      "theta_nominal": 0.13714285714285715,
+      "volume_coefficient": "2/25"
+    },
+    {
+      "edge": [
+        0,
+        7
+      ],
+      "half": 0,
+      "terms": 24,
+      "theta_coefficients": [
+        "1218/14795",
+        "0",
+        "18/14795",
+        "0"
+      ],
+      "theta_nominal": 0.08296732361000389,
+      "volume_coefficient": "2/25"
+    },
+    {
+      "edge": [
+        0,
+        7
+      ],
+      "half": 1,
+      "terms": 24,
+      "theta_coefficients": [
+        "1218/14795",
+        "0",
+        "18/14795",
+        "0"
+      ],
+      "theta_nominal": 0.08296732361000389,
+      "volume_coefficient": "2/25"
+    }
+  ],
+  "zero_pairing_contacts": 9,
+  "affine_contact_checks": 61,
+  "facet": {
+    "sections": 26,
+    "direct_derivative_entries": 1144,
+    "response_coefficients": [
+      [
+        "334259/1545280",
+        "0",
+        "-339389/11589600",
+        "0"
+      ],
+      [
+        "0",
+        "2290649/9271680",
+        "0",
+        "-212209/9271680"
+      ],
+      [
+        "0",
+        "22323593/395591680",
+        "0",
+        "-47571593/5933875200"
+      ],
+      [
+        "-14277949/395591680",
+        "0",
+        "-6807089/1977958400",
+        "0"
+      ]
+    ],
+    "volume_slope_coefficients": [
+      "24073141/33385300",
+      "397269451/100155900",
+      "-204897/6677060",
+      "-8306239/20031180"
+    ],
+    "volume_slope_nominal": 3.427679681819973,
+    "margin_coefficients": [
+      "928729879411471/660347345715200",
+      "-3467927014499249/1981042037145600",
+      "-328315147594451/1981042037145600",
+      "342953825327423/1981042037145600"
+    ],
+    "margin_nominal": 0.11348350053254513,
+    "radius_l1": "1/100",
+    "safe_sector_margin": "43/500 > 1/20",
+    "integration_method": "Fubini in the q-edge coordinate, then exact clipped-pentagon quadratic moments"
+  },
+  "all_checks_passed": true,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "seconds": 6.6136571199967875,
+  "scope": "Independent finite certificate audit; mathematical neighborhood proof must also be read. No new F<=11 theorem and no completeness claim for the facet bank.",
+  "dependencies": "Python standard library only; reads submitted witness JSON but imports none of its code.",
+  "input_sha256": {
+    "continuous_families.json": "4998d82990e0fb9b6ae8535df1ca78317e4947217df3a91ceb1b6737d650d838",
+    "continuous_family_origins.json": "7ce85b6758710b470a3a5d7f97477f4ff80605250e1b28391a2532b00b07a906",
+    "facet_cone_certificate.json": "3f9531b7441367d8bdd75ac0e8a001a8a303c50c4e6ac6b9264e4d0b62627201",
+    "numerical_bank_rows.json": "1458b7a018e5bf16f0897968aaa12637631c4ab7834e55de99e46fac806db907",
+    "ridge_certificates.json": "397c208a652657fd26db9be062a5c15fcbcf57bd13efcf915b7e1c239b5cbe8f",
+    "seeds.json": "8a55eff8204420189f1a8c09107734f19386d5cf5d0f36074efb078c2bdaedf7",
+    "zero_ridges.json": "0d840c53b25f98ca9aba4f978a434d8001bfca22278241f6663779194be58706"
+  }
+}

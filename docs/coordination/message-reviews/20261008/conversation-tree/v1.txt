@@ -1,0 +1,24 @@
+We’ve settled one collaboration mechanism. The original cloud-readiness and broader harness-quality questions remain open.
+
+```text
+Make msc-math workable
+├─ A. Work in the cloud from the repo alone — OPEN
+│  └─ Dependency/storage investigation exists; no accepted readiness verdict
+└─ B. Agents handle collaboration without making you supervise them — OPEN
+   ├─ Communication failures in this conversation — OBSERVED
+   ├─ Exact-message peer review — AGREED, IMPLEMENTED, PUSHED
+   └─ Cause, reliability and review cost — UNRESOLVED
+```
+
+The agreed review mechanism is:
+
+- Sender and separate read-only reviewer use the same skill, with conversation context rather than an assumed settled request.
+- Prepared messages identify the reviewer who approved that exact candidate. Substantive changes require renewed review; direct synchronous discussion is exempt.
+- The reviewer returns approval or rejection with substantive findings. No mandatory schema, hashes, repeated message text or separate prompt template.
+- AGENTS.md carries the short rule; the skill carries the shared standard and procedure. These changes were pushed.
+
+That settles the design we’re currently using. It doesn’t establish that it reliably improves communication or that its cost is worthwhile.
+
+For A, the investigation found useful starting points and gaps, but you rejected my answer and its amendments. We still need a usable account of cloud dependencies and an actual clean-environment check. For B, we haven’t established a general explanation of agent failures or assessed the rest of the harness adequately.
+
+[review: /root/shared_review]

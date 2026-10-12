@@ -9,6 +9,49 @@ adaptive interpretation; start with [its results](first-window.md) and the
 The charter and kickoff proposal below preserve the initial reasoning; their
 future-tense collection plan is superseded by the executed first-window record. No thesis/formal files are owned here.
 
+
+The selected 5 October research night adds the
+[all-angle equiangular-partner global theorem](equiangular-partner-global-20261005.md):
+for arbitrary support offsets in a rotated regular five-normal fan, capacity is
+the regular partner's capacity times the largest translated inner regular-
+pentagon scale. The regular partner is the unique global ratio maximizer in
+that fan, including collapsed edges. Independent proof/interface review and
+all50 exact coefficient checks passed. This is research, absent from the selected
+manuscript/PDF; it is not an arbitrary-normal-fan or unrestricted-partner result.
+
+The same night adds the [aligned nonconformal sharp theorem](aligned-nonconformal-global-20261005.md):
+all positive distortions diag(x,1) and arbitrary supports, including edge loss,
+have ratio at most 3(1+sqrt(5))/10. Its unique equality class occurs at
+x=sqrt(5)/3 and has five genuine edges but is not affinely regular. Final
+independent integrating acceptance closes the full parameter/equality proof.
+This restricted aligned-family result is research, absent from the manuscript/PDF;
+relative-angle extensions remain separately owned.
+
+At 23:56 UTC, the separately selected [HKO-angle nonconformal slice](hko-angle-nonconformal-global-20261005.md)
+also passed final integrating acceptance. For normals diag(x,1)R_(pi/10)n_i,
+all x>0 and arbitrary supports, including zero-edge boundaries, satisfy the
+sharp HKO bound (3+sqrt(5))/5. Equality requires x=1 and a regular HKO partner.
+The family contains non-affinely-regular partners; all relative angles and
+unrestricted partners remain outside this theorem. It is research, absent from
+the selected manuscript/PDF.
+
+At 00:59 UTC on 5 October, the [orientation-wide fixed-axis bound](orientation-wide-global-20261005.md)
+passed integrating acceptance: arbitrary offsets on diag(x,1)R_theta n_i,
+all x>0 and all theta in this explicit family, satisfy the sharp HKO bound.
+Zero-edge boundaries are included. Final acceptance at 01:03 UTC also establishes complete equality: x=1 and
+theta≡π/10 modulo π/5, with a translated/dilated regular HKO partner. All-ten
+physical capacity/area controls passed. Arbitrary GL(2) normal transformations
+and unrestricted partners remain outside the theorem.
+The result is research, absent from the selected manuscript/PDF.
+
+The [general-matrix finite-cone reduction](general-matrix-cone-reduction-20261005.md)
+was independently accepted at 02:23 UTC. Arbitrary invertible physical matrices
+on the regular five-normal fan transfer to a complete seven-variable cone with
+610 exact normalized rows and the correct capacity-squared/determinant target.
+This accepts the reduction, not cone positivity, a GL(2)-family sharp theorem
+or equality. The unpriced positivity continuation is parked; singular cone
+points and ambient indefiniteness are retained as domain/argument caveats.
+
 Follow-up: [source/novelty boundary](source-check.md) and
 [equal-fit harmonic families with different geometry](harmonic-fibers.md).
 The latter resolves a representation ambiguity using seven controlled bodies,

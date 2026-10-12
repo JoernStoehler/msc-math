@@ -1,0 +1,7 @@
+PASS all 10 facet vertices have exact contact and R(a0)=0
+PASS rescaled nonzero-pairing chart (0,6), positive coefficient gap
+PASS rescaled nonzero-pairing chart (0,7), positive coefficient gap
+PASS rescaled nonzero-pairing chart (0,8), positive coefficient gap
+PASS rescaled nonzero-pairing chart (0,9), positive coefficient gap
+PASS exact finite-bank separation: every c.D <= 0 < volume_response(D)
+ALL NEW EXACT CHECKS PASSED in 11.771 s

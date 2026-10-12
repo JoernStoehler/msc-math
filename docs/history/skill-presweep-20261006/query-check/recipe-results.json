@@ -1,0 +1,185 @@
+{
+  "observed_at": "2026-10-06T19:58:41.871168+00:00",
+  "scope": "public single-record recipe checks; body contents replaced by count/hash; no credentials/mutations",
+  "results": [
+    {
+      "site": "https://www.lesswrong.com",
+      "query": "{ post(input: { selector: { _id: \"uvWhi8FrMD3bo7YRY\" } }) { result { _id title shortform postedAt baseScore commentCount user { displayName slug shortformFeedId } tags { name } contents { markdown } } } }",
+      "status": 200,
+      "response": {
+        "data": {
+          "post": {
+            "result": {
+              "_id": "uvWhi8FrMD3bo7YRY",
+              "title": "Why did we get warning shots?",
+              "shortform": false,
+              "postedAt": "2026-10-06T19:41:07.602Z",
+              "baseScore": 1,
+              "commentCount": 0,
+              "user": {
+                "displayName": "p(mike)",
+                "slug": "p-mike",
+                "shortformFeedId": null
+              },
+              "tags": [
+                {
+                  "name": "AI"
+                }
+              ],
+              "contents": {
+                "markdown": {
+                  "characters": 6430,
+                  "sha256": "4b758d1e06a8e75d986ca6323ad21b803d4aae0cf6d96008bb61fa0f349d6f50"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "site": "https://www.lesswrong.com",
+      "query": "{ user(input: { selector: { slug: \"p-mike\" } }) { result { displayName slug shortformFeedId } } }",
+      "status": 200,
+      "response": {
+        "data": {
+          "user": {
+            "result": {
+              "displayName": "p(mike)",
+              "slug": "p-mike",
+              "shortformFeedId": null
+            }
+          }
+        }
+      }
+    },
+    {
+      "site": "https://www.lesswrong.com",
+      "query": "{ comments(input: { terms: { view: \"postCommentsTop\", limit: 1 } }) { results { _id postId parentCommentId postedAt baseScore user { displayName } contents { markdown } } } }",
+      "status": null,
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "site": "https://forum.effectivealtruism.org",
+      "query": "{ post(input: { selector: { _id: \"XibsnDt44qQnWSs3r\" } }) { result { _id title shortform postedAt baseScore commentCount user { displayName slug shortformFeedId } tags { name } contents { markdown } } } }",
+      "status": 200,
+      "response": {
+        "data": {
+          "post": {
+            "result": {
+              "_id": "XibsnDt44qQnWSs3r",
+              "title": "Comparing AI Policy Courses",
+              "shortform": false,
+              "postedAt": "2026-10-06T19:15:05.336Z",
+              "baseScore": 1,
+              "commentCount": 0,
+              "user": {
+                "displayName": "Marta Kosmyna",
+                "slug": "marta-kosmyna",
+                "shortformFeedId": null
+              },
+              "tags": [
+                {
+                  "name": "AI safety"
+                },
+                {
+                  "name": "Career choice"
+                },
+                {
+                  "name": "Policy"
+                },
+                {
+                  "name": "AI governance"
+                },
+                {
+                  "name": "Career capital"
+                },
+                {
+                  "name": "Collections and resources"
+                }
+              ],
+              "contents": {
+                "markdown": {
+                  "characters": 9037,
+                  "sha256": "9729fb5db57a4452077cf62f7046899207e3f480a1862f447ac0b6bbc1a7c0ca"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "site": "https://forum.effectivealtruism.org",
+      "query": "{ user(input: { selector: { slug: \"marta-kosmyna\" } }) { result { displayName slug shortformFeedId } } }",
+      "status": 200,
+      "response": {
+        "data": {
+          "user": {
+            "result": {
+              "displayName": "Marta Kosmyna",
+              "slug": "marta-kosmyna",
+              "shortformFeedId": null
+            }
+          }
+        }
+      }
+    },
+    {
+      "site": "https://forum.effectivealtruism.org",
+      "query": "{ comments(input: { terms: { view: \"postCommentsTop\", limit: 1 } }) { results { _id postId parentCommentId postedAt baseScore user { displayName } contents { markdown } } } }",
+      "status": 200,
+      "response": {
+        "data": {
+          "comments": {
+            "results": [
+              {
+                "_id": "gFmhPZwQXvxnsC6Ap",
+                "postId": "99tnp7Jpts7Gssq7J",
+                "parentCommentId": null,
+                "postedAt": "2023-02-17T19:36:07.572Z",
+                "baseScore": 154,
+                "user": {
+                  "displayName": "Ben_West🔸"
+                },
+                "contents": {
+                  "markdown": {
+                    "characters": 524,
+                    "sha256": "08bf5dda7ae0c1b91d0692589fe44c34253baab86ff7f717f7f74af59a35f9fb"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "site": "https://forum.effectivealtruism.org",
+      "query": "{ comment(input: { selector: { _id: \"gFmhPZwQXvxnsC6Ap\" } }) { result { _id postId parentCommentId postedAt baseScore user { displayName } contents { markdown } } } }",
+      "status": 200,
+      "response": {
+        "data": {
+          "comment": {
+            "result": {
+              "_id": "gFmhPZwQXvxnsC6Ap",
+              "postId": "99tnp7Jpts7Gssq7J",
+              "parentCommentId": null,
+              "postedAt": "2023-02-17T19:36:07.572Z",
+              "baseScore": 154,
+              "user": {
+                "displayName": "Ben_West🔸"
+              },
+              "contents": {
+                "markdown": {
+                  "characters": 524,
+                  "sha256": "08bf5dda7ae0c1b91d0692589fe44c34253baab86ff7f717f7f74af59a35f9fb"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

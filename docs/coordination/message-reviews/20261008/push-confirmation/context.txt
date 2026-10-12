@@ -1,0 +1,2 @@
+User: thx! push pls
+Native push evidence: git push origin main exited0; To https://github.com/JoernStoehler/msc-math.git; 8d486311..1685011d main -> main. Other existing dirty changes were not committed/pushed.

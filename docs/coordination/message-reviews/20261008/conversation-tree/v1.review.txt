@@ -1,0 +1,3 @@
+APPROVE conversation-tree/v1
+
+It separates the accepted, pushed review design from unresolved reliability and cost, and distinguishes the cloud investigation from an accepted readiness verdict. It also keeps the broader harness-quality question open.

@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py", line 96, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py", line 93, in main
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--out',type=Path,required=True);p.add_argument('--negative-control',choices=['negative_weight','false_bound']);q=p.parse_args();a.require(not q.out.exists(),'fresh output path');tic=time.perf_counter();pol=verify_policies(HERE/'data',q.negative_control);ine=verify_inequalities(HERE/'data',q.negative_control)
+                                                                                                                                                                                                                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/collar/verify.py", line 20, in verify_policies
+    a.require(all(F(t['weight'])>=0 for t in p['paths']),'nonnegative path weight')
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/core/code/exact_core.py", line 19, in require
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: nonnegative path weight

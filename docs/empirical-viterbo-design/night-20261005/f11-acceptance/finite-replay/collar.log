@@ -1,0 +1,43 @@
+PASS 257 entire touching-weight paths
+PASS twenty complete polynomial cancellation policies
+exact arrangement 0 planes 14 vertices 14 cells 8 roots 44 seconds 0.3680368599962094
+PASS collar cone 0 : 47 tetrahedra
+exact arrangement 1 planes 14 vertices 14 cells 8 roots 44 seconds 0.34822188499674667
+PASS collar cone 1 : 44 tetrahedra
+exact arrangement 2 planes 14 vertices 14 cells 8 roots 44 seconds 0.3465638810012024
+PASS collar cone 2 : 44 tetrahedra
+exact arrangement 3 planes 14 vertices 14 cells 8 roots 44 seconds 0.34696415300277295
+PASS collar cone 3 : 44 tetrahedra
+exact arrangement 4 planes 14 vertices 14 cells 8 roots 44 seconds 0.35141458900034195
+PASS collar cone 4 : 44 tetrahedra
+exact arrangement 5 planes 14 vertices 14 cells 8 roots 44 seconds 0.3480898060006439
+PASS collar cone 5 : 44 tetrahedra
+exact arrangement 6 planes 14 vertices 14 cells 8 roots 44 seconds 0.35253253799601225
+PASS collar cone 6 : 44 tetrahedra
+exact arrangement 7 planes 14 vertices 14 cells 8 roots 44 seconds 0.34772844800318126
+PASS collar cone 7 : 44 tetrahedra
+exact arrangement 8 planes 14 vertices 14 cells 8 roots 44 seconds 0.34809602899622405
+PASS collar cone 8 : 44 tetrahedra
+exact arrangement 9 planes 14 vertices 14 cells 8 roots 44 seconds 0.35127327399823116
+PASS collar cone 9 : 44 tetrahedra
+exact arrangement 10 planes 14 vertices 14 cells 8 roots 44 seconds 0.35556746699876385
+PASS collar cone 10 : 44 tetrahedra
+exact arrangement 11 planes 14 vertices 14 cells 8 roots 44 seconds 0.3459453800023766
+PASS collar cone 11 : 48 tetrahedra
+exact arrangement 12 planes 14 vertices 14 cells 8 roots 44 seconds 0.3523437130061211
+PASS collar cone 12 : 44 tetrahedra
+exact arrangement 13 planes 14 vertices 14 cells 8 roots 44 seconds 0.34567188599612564
+PASS collar cone 13 : 44 tetrahedra
+exact arrangement 14 planes 14 vertices 14 cells 8 roots 44 seconds 0.35836151300463825
+PASS collar cone 14 : 44 tetrahedra
+exact arrangement 15 planes 14 vertices 14 cells 8 roots 44 seconds 0.35011927699815715
+PASS collar cone 15 : 44 tetrahedra
+exact arrangement 16 planes 14 vertices 14 cells 8 roots 44 seconds 0.3500017670012312
+PASS collar cone 16 : 44 tetrahedra
+exact arrangement 17 planes 14 vertices 14 cells 8 roots 44 seconds 0.34283760499965865
+PASS collar cone 17 : 44 tetrahedra
+exact arrangement 18 planes 14 vertices 14 cells 8 roots 44 seconds 0.341314876000979
+PASS collar cone 18 : 44 tetrahedra
+exact arrangement 19 planes 14 vertices 14 cells 8 roots 44 seconds 0.34363668500009226
+PASS collar cone 19 : 44 tetrahedra
+ALL COLLAR CHECKS PASSED 66.21929714299768 seconds

@@ -1,0 +1,10 @@
+Yes. They can proceed independently; A can test the current harness while B assesses its quality. They only need to coordinate changes to shared files.
+
+Both new sessions are started:
+
+- **msc-math A — Repo-only cloud readiness:** finish the cloud dependency and data-access assessment.
+- **msc-math B — Harness and collaboration:** assess the remaining behavior, reliability and cost questions, preserving the agreed message-review design.
+
+Each has its handoff and owns direct follow-through with you. A does not wait for B.
+
+[review: /root/shared_review]

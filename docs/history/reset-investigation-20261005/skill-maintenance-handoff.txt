@@ -1,0 +1,51 @@
+Skill-maintenance handoff — 6 October 2026
+
+From: Codex thread 01a10b0d-5865-75a3-a53e-e5b05996074e, /workspaces/msc-math
+To: skill-maintenance thread 01a10ce0-a74f-7983-8389-48ea2b29e4ae, same checkout
+Authority: Jörn explicitly requested informing you of these findings so this investigation session can close. This message supplies evidence and proposals; it does not authorize live reset redemption, timer/config changes, research resumption or a large new execution programme. Preserve your existing maintenance scope and other sessions' edits.
+Return: acknowledge receipt through codex_tui.send_message_to_thread to the sender UUID above. Integrate relevant findings into your maintained assessment; any further work follows your existing user authority. No substantive investigation reply is needed to close this sending session.
+
+What Jörn said / what is selected
+
+Jörn asked which current skill handles resource tracking, and said scheduling or immediately redeeming a reset belongs there or in another skill depending on trigger separation. On 6 October he said codex-usage is a bad name and asked for this handoff. He has not selected a particular replacement name, a one-versus-two-skill architecture, or deployment of the proposed reset replacement.
+
+Current ownership found
+
+No dedicated resource-tracking skill was found in the inspected installed catalog/global directories, dotfiles skills, or project skills. The current .agents/skills/codex-usage/SKILL.md describes setup and use of Codex from a Claude cloud session, not account quota tracking. It still has that description after your recent revisions. This naming mismatch is the concrete naming concern, not a claim that its existing workflow should be deleted.
+
+Resource capabilities are distributed across scripts/codex-quota-status.py (read-only account quota and reset inventory/expiry), scripts/usage-awareness.py, subtree-usage.py and coordination-load.py (session usage/workload observations), docs/codex.md and docs/coordination/README.md. The project supervision/coordination contract owns responsibilities. Local token counts are not account quota; dated shadow costs are not billing. Existing rejected automatic usage hooks must not be silently revived.
+
+Reset implementation found
+
+There was no dedicated reset skill. Dated private scripts under /home/joern/.local/state/codex/reset-20261004/ and reset-20261005/ plus systemd user timers implemented attempts. The 5 October request ran on time and returned nothingToReset. The wrapper deliberately skipped that result, so Claude never launched. Even if launched, its allowed tools/prompt permitted only rerunning the original pinned script, not diagnostics or the actual interactive recovery flow. The 80-minute expiry margin was not implemented as a recovery period. Production scripts/timers were not changed in this investigation.
+
+Important corrections to preserve
+
+I initially treated the response code as a causal explanation and promoted the 91%-success / 8%-refusal correlation into low-usage management advice. Jörn rejected this. Those recommendations are withdrawn. Do not infer a minimum-usage requirement, generate work/dummy usage to make a reset eligible, accept backend/docs correctness without evidence, or privilege automation over Jörn's successful manual experience. He uses Codex CLI /usage. The production refusal's underlying cause remains unknown; backend defect, client/context differences and undocumented policy have not been distinguished.
+
+Verified comparison / limits
+
+CLI /usage and the script use the same consume operation and request-body structure. A localhost mock captured differing User-Agent values for codex-tui versus the script's custom initialize identity; originator was absent in both captures. This difference is not an established cause: yesterday's custom-identity automation succeeded.
+
+An actual installed CLI 0.160.0 /usage test against a local HTTPS mock produced refusal, then reopening confirmation for the SAME fake credit produced a NEW operation key, followed by mock success and inventory refresh. No real credit was consumed and no model turn was requested. This verifies the UI sequence and new-attempt behavior, not production acceptance, refusal caching, or Claude execution. Use the original key for ambiguous transport recovery; do not conflate it with a later, explicitly new attempt after an unambiguous refusal.
+
+Account history retrieved 5 October recorded two uses (16 September and 4 October) and two grants (22 and 29 September) over its returned 30-day window. The 5 October target expired after refusal, explaining 4 -> 3 -> 2 available credits. Snapshot deadlines also changed without recorded redemptions; causes remain unresolved. Jörn does not remember whether additional manual uses occurred. A separate plan_limit_history response was stale as of 1 October, coverage_complete=false, and only covered seven days despite days=30. Neither endpoint establishes an exhaustive causal history. These are dated observations, NOT current 6 October account state.
+
+Proposals to assess, not accepted architecture
+
+I recommended resource-tracking for quota/usage/inventory/expiry and allocation questions, connected to codex-resets for explicit redeem-now/schedule requests, authorized job execution and recovery. Immediate and scheduled redemption share an operation; scheduling adds timing and persistence. A checking skill should expose an expiring credit needing action and route existing authorized action without introducing a redundant approval gate.
+
+That two-skill recommendation was not independently evaluated. Your current harness guidance now favors first establishing one complete sectioned workflow before splitting. Compare the actual trigger/discovery needs and complete content rather than treating my recommendation as an accepted taxonomy.
+
+The corrected reset design preserves the selected account/credit, uses the real CLI or a demonstrated equivalent, retains a recovery owner after any unconfirmed result, gives the fallback access to the CLI and diagnostics rather than only the failed script, reconciles ambiguous success, and keeps ownership through confirmed redemption or expiry. It introduces no workload manipulation, automatic alternate credit, or purchase. A persistent controller, real Claude execution and notifications have NOT been implemented or validated; there is no guarantee against a production backend defect.
+
+Evidence / ready access
+
+Retained evidence and proposed design: /home/joern/.codex/artifacts/msc-math/reset-history-20261005/
+  ledger-evidence.json; api-history.json; current-credit-inventory.json;
+  plan-limit-history.json; mock-request-comparison.json;
+  cli-ui-mock-result.json; cli-ui-probe.py; compare-requests.py;
+  corrected-fix-design.json.
+Primary dated reset records: /home/joern/.local/state/codex/reset-20261004/result.json and reset-20261005/result.json. Do not disclose authentication material or opaque account/credit/operation identifiers.
+Official protocol examined: https://learn.chatgpt.com/docs/app-server#8-earned-rate-limit-resets-chatgpt — documents returned outcomes and keys, but did not establish the production refusal's cause.
+The broader independent A/B/C report remains in this sending thread's transcript; its mathematical conclusions and research-allocation criticism are separate from this skill handoff.

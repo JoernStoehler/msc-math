@@ -1,0 +1,4 @@
+Native reviewer: /root/recovery_handoff_review
+APPROVE candidate-v1.
+
+The rollback statement matches the supplied evidence and clearly identifies retained work and recovery copies. The replacement handoff asks the consequential scope question first, delegates the assessment, bounds investigation and review time, and preserves explicit authorization limits. It treats the deadline and review as instructions rather than guarantees.

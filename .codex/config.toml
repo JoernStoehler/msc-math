@@ -122,3 +122,9 @@ enabled = false
 [[skills.config]]
 path = "/home/agent/.agents/skills/subagent-prompting/SKILL.md"
 enabled = false
+
+# Jörn authorized replacement of the relevant skill set on 2026-10-05.
+# Disable the old plugin in this project to avoid competing owners; preserve
+# unrelated capabilities as unchanged local copies. Global installation remains.
+[plugins."agent-skills@agent-skills"]
+enabled = false

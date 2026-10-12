@@ -1,0 +1,17 @@
+{
+  "start_utc": "2026-10-04T22:52:27.455157+00:00",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "executable": "/usr/bin/python3",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "python_optimize": null,
+  "debug": true,
+  "cpu_count": 12,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/msc-math/night-20261005/f11/replay/packet/run_checks.py",
+    "--out",
+    "/tmp/msc-math/night-20261005/f11/replay/results",
+    "--negative-controls"
+  ]
+}

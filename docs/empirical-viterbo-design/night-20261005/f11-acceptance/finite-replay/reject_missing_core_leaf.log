@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/core/verify.py", line 93, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/core/verify.py", line 92, in main
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--data',type=Path,default=HERE/'data');p.add_argument('--out',type=Path,required=True);p.add_argument('--negative-control',choices=['leaf','negative_weight','response']);q=p.parse_args();run(q.data,q.out,q.negative_control)
+                                                                                                                                                                                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/core/verify.py", line 39, in run
+    a.require(len(visited)==len(nodes),'every node reached');a.require(leafset==set(c['node'] for c in tree['leaves']) and len(leafset)==len(tree['leaves']),'every leaf certified exactly once')
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/msc-math/night-20261005/f11/replay/packet/core/code/exact_core.py", line 19, in require
+    if not ok: raise ValueError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: every leaf certified exactly once

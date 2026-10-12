@@ -1,0 +1,579 @@
+{
+  "received_at": "2026-10-04T21:25:35.996784+00:00",
+  "source": "J\u00f6rn Taildrop; reported latest F=11 local maximality proof",
+  "status": "received; independent theorem/proof review pending",
+  "originals": [
+    {
+      "file": "hko_f11_complete_proof.md",
+      "bytes": 15363,
+      "sha256": "66a1b0e52bbe1666205d9137f2cfa83777c1773f3f4c6b4fbb83c08cf2c99187"
+    },
+    {
+      "file": "hko_f11_complete_proof.zip",
+      "bytes": 3431392,
+      "sha256": "aea22ffd97fd4728eeedb4de4ab272626cf58501aca813c6de131a371fc39f6e"
+    }
+  ],
+  "zip_inventory": [
+    {
+      "name": "FINAL_VERIFICATION.md",
+      "bytes": 2015
+    },
+    {
+      "name": "INTEGRATION.md",
+      "bytes": 2010
+    },
+    {
+      "name": "MANIFEST.sha256",
+      "bytes": 13851
+    },
+    {
+      "name": "PROOF.md",
+      "bytes": 15363
+    },
+    {
+      "name": "README.md",
+      "bytes": 2952
+    },
+    {
+      "name": "RESEARCH_COSTS.md",
+      "bytes": 4691
+    },
+    {
+      "name": "RESULT.md",
+      "bytes": 2676
+    },
+    {
+      "name": "collar/code/geometry.py",
+      "bytes": 3713
+    },
+    {
+      "name": "collar/code/integer_bernstein.py",
+      "bytes": 1786
+    },
+    {
+      "name": "collar/code/polynomial.py",
+      "bytes": 3292
+    },
+    {
+      "name": "collar/data/policies.json",
+      "bytes": 2769512
+    },
+    {
+      "name": "collar/data/trees.json",
+      "bytes": 14060
+    },
+    {
+      "name": "collar/evidence/portable_run.json",
+      "bytes": 5287
+    },
+    {
+      "name": "collar/evidence/portable_run.log",
+      "bytes": 2595
+    },
+    {
+      "name": "collar/verify.py",
+      "bytes": 10264
+    },
+    {
+      "name": "core/code/duplicate_workspace.py",
+      "bytes": 9265
+    },
+    {
+      "name": "core/code/exact_core.py",
+      "bytes": 20113
+    },
+    {
+      "name": "core/code/exact_tools.py",
+      "bytes": 3021
+    },
+    {
+      "name": "core/data/anchor.json",
+      "bytes": 200633
+    },
+    {
+      "name": "core/data/families.json",
+      "bytes": 921682
+    },
+    {
+      "name": "core/data/old_seeds.json",
+      "bytes": 17543
+    },
+    {
+      "name": "core/data/relations.json",
+      "bytes": 3190376
+    },
+    {
+      "name": "core/data/rows.json",
+      "bytes": 399923
+    },
+    {
+      "name": "core/data/tree.json",
+      "bytes": 231621
+    },
+    {
+      "name": "core/evidence/portable_run.json",
+      "bytes": 1787
+    },
+    {
+      "name": "core/evidence/portable_run.log",
+      "bytes": 1094
+    },
+    {
+      "name": "core/verify.py",
+      "bytes": 7662
+    },
+    {
+      "name": "discovery/README.md",
+      "bytes": 1351
+    },
+    {
+      "name": "discovery/directions.py",
+      "bytes": 944
+    },
+    {
+      "name": "discovery/evidence/collar_adversarial.json",
+      "bytes": 87719
+    },
+    {
+      "name": "discovery/evidence/collar_adversarial.log",
+      "bytes": 2838
+    },
+    {
+      "name": "discovery/evidence/core_cover_tree_002.log",
+      "bytes": 439
+    },
+    {
+      "name": "discovery/evidence/core_cover_tree_002_summary.json",
+      "bytes": 368
+    },
+    {
+      "name": "discovery/evidence/exact_bernstein_all.json",
+      "bytes": 5060
+    },
+    {
+      "name": "discovery/evidence/exact_bernstein_all.log",
+      "bytes": 6538
+    },
+    {
+      "name": "discovery/evidence/hinge_percone.json",
+      "bytes": 729800
+    },
+    {
+      "name": "discovery/evidence/hinge_percone.log",
+      "bytes": 970
+    },
+    {
+      "name": "discovery/evidence/hinge_policy.json",
+      "bytes": 31833
+    },
+    {
+      "name": "discovery/evidence/hinge_policy.log",
+      "bytes": 201
+    },
+    {
+      "name": "discovery/evidence/hinge_policy_relaxed.json",
+      "bytes": 43350
+    },
+    {
+      "name": "discovery/evidence/hinge_policy_relaxed.log",
+      "bytes": 203
+    },
+    {
+      "name": "discovery/evidence/measure_direction_test.json",
+      "bytes": 3894
+    },
+    {
+      "name": "discovery/evidence/measure_lp.json",
+      "bytes": 6215
+    },
+    {
+      "name": "discovery/evidence/measure_lp.log",
+      "bytes": 950
+    },
+    {
+      "name": "discovery/evidence/portable/policies.json",
+      "bytes": 729800
+    },
+    {
+      "name": "discovery/evidence/portable/run.log",
+      "bytes": 970
+    },
+    {
+      "name": "discovery/evidence/second_derivative_test.json",
+      "bytes": 8367
+    },
+    {
+      "name": "discovery/evidence/second_derivative_test.log",
+      "bytes": 5686
+    },
+    {
+      "name": "discovery/evidence/symmetry_reduction.json",
+      "bytes": 3908
+    },
+    {
+      "name": "discovery/evidence/symmetry_reduction.log",
+      "bytes": 747
+    },
+    {
+      "name": "discovery/policy_paths.py",
+      "bytes": 992
+    },
+    {
+      "name": "discovery/requirements.txt",
+      "bytes": 41
+    },
+    {
+      "name": "discovery/search_policies.py",
+      "bytes": 3140
+    },
+    {
+      "name": "evidence/clean_replay/SUMMARY.json",
+      "bytes": 3214
+    },
+    {
+      "name": "evidence/clean_replay/collar.json",
+      "bytes": 5189
+    },
+    {
+      "name": "evidence/clean_replay/collar.log",
+      "bytes": 2599
+    },
+    {
+      "name": "evidence/clean_replay/core.json",
+      "bytes": 1701
+    },
+    {
+      "name": "evidence/clean_replay/core.log",
+      "bytes": 1094
+    },
+    {
+      "name": "evidence/clean_replay/inherited_endpoints.json",
+      "bytes": 6941
+    },
+    {
+      "name": "evidence/clean_replay/inherited_endpoints.log",
+      "bytes": 440
+    },
+    {
+      "name": "evidence/clean_replay/inherited_ridges.json",
+      "bytes": 3702
+    },
+    {
+      "name": "evidence/clean_replay/inherited_ridges.log",
+      "bytes": 419
+    },
+    {
+      "name": "evidence/clean_replay/master.log",
+      "bytes": 316
+    },
+    {
+      "name": "evidence/clean_replay/reject_false_polynomial_bound.log",
+      "bytes": 1840
+    },
+    {
+      "name": "evidence/clean_replay/reject_missing_core_leaf.log",
+      "bytes": 1526
+    },
+    {
+      "name": "evidence/clean_replay/reject_negative_policy_weight.log",
+      "bytes": 1430
+    },
+    {
+      "name": "evidence/core_exact_construction.json",
+      "bytes": 540
+    },
+    {
+      "name": "evidence/core_exact_construction.log",
+      "bytes": 1368
+    },
+    {
+      "name": "evidence/exact_policy_construction.log",
+      "bytes": 1453
+    },
+    {
+      "name": "evidence/exact_polynomial_discovery.json",
+      "bytes": 5060
+    },
+    {
+      "name": "evidence/exact_polynomial_discovery.log",
+      "bytes": 6538
+    },
+    {
+      "name": "evidence/verified_code_data_sha256.json",
+      "bytes": 3769
+    },
+    {
+      "name": "inherited/ENDPOINT_PRIOR_AUDIT.md",
+      "bytes": 10397
+    },
+    {
+      "name": "inherited/INTEGRATION.md",
+      "bytes": 1430
+    },
+    {
+      "name": "inherited/MANIFEST.sha256",
+      "bytes": 4990
+    },
+    {
+      "name": "inherited/PROVENANCE.json",
+      "bytes": 2198
+    },
+    {
+      "name": "inherited/README.md",
+      "bytes": 1145
+    },
+    {
+      "name": "inherited/REPRODUCE.md",
+      "bytes": 4018
+    },
+    {
+      "name": "inherited/RESULT.md",
+      "bytes": 6594
+    },
+    {
+      "name": "inherited/RIDGE_PRIOR_AUDIT.md",
+      "bytes": 13497
+    },
+    {
+      "name": "inherited/code/check_families.py",
+      "bytes": 5289
+    },
+    {
+      "name": "inherited/code/check_new.py",
+      "bytes": 8145
+    },
+    {
+      "name": "inherited/code/continuous.py",
+      "bytes": 5192
+    },
+    {
+      "name": "inherited/code/continuous_batch.py",
+      "bytes": 976
+    },
+    {
+      "name": "inherited/code/duplicate_workspace.py",
+      "bytes": 9265
+    },
+    {
+      "name": "inherited/code/enrich.py",
+      "bytes": 3603
+    },
+    {
+      "name": "inherited/code/exact_core.py",
+      "bytes": 20113
+    },
+    {
+      "name": "inherited/code/explore.py",
+      "bytes": 4279
+    },
+    {
+      "name": "inherited/code/fastbank.py",
+      "bytes": 1995
+    },
+    {
+      "name": "inherited/code/hull_probe.py",
+      "bytes": 1612
+    },
+    {
+      "name": "inherited/code/negative_controls.py",
+      "bytes": 1557
+    },
+    {
+      "name": "inherited/code/prepare_numeric.py",
+      "bytes": 666
+    },
+    {
+      "name": "inherited/data/continuous_families.json",
+      "bytes": 921682
+    },
+    {
+      "name": "inherited/data/continuous_family_origins.json",
+      "bytes": 300328
+    },
+    {
+      "name": "inherited/data/facet_cone_certificate.json",
+      "bytes": 20986
+    },
+    {
+      "name": "inherited/data/numerical_bank.npz",
+      "bytes": 367406
+    },
+    {
+      "name": "inherited/data/numerical_bank_rows.json",
+      "bytes": 1977137
+    },
+    {
+      "name": "inherited/data/ridge_certificates.json",
+      "bytes": 25809
+    },
+    {
+      "name": "inherited/data/seeds.json",
+      "bytes": 17543
+    },
+    {
+      "name": "inherited/data/zero_ridges.json",
+      "bytes": 1787
+    },
+    {
+      "name": "inherited/evidence/COSTS.json",
+      "bytes": 1929
+    },
+    {
+      "name": "inherited/evidence/baseline_exact_checks.json",
+      "bytes": 3396
+    },
+    {
+      "name": "inherited/evidence/baseline_exact_checks.log",
+      "bytes": 419
+    },
+    {
+      "name": "inherited/evidence/broad_scan.json",
+      "bytes": 96493
+    },
+    {
+      "name": "inherited/evidence/clean_baseline_check.log",
+      "bytes": 419
+    },
+    {
+      "name": "inherited/evidence/clean_family_check.log",
+      "bytes": 291
+    },
+    {
+      "name": "inherited/evidence/clean_new_check.log",
+      "bytes": 440
+    },
+    {
+      "name": "inherited/evidence/clean_verification.json",
+      "bytes": 457
+    },
+    {
+      "name": "inherited/evidence/continuous_batch.json",
+      "bytes": 40885
+    },
+    {
+      "name": "inherited/evidence/continuous_batch.log",
+      "bytes": 26863
+    },
+    {
+      "name": "inherited/evidence/continuous_replay.json",
+      "bytes": 1265652
+    },
+    {
+      "name": "inherited/evidence/continuous_replay.log",
+      "bytes": 34464
+    },
+    {
+      "name": "inherited/evidence/enrich.log",
+      "bytes": 352
+    },
+    {
+      "name": "inherited/evidence/enriched_scan.json",
+      "bytes": 60742
+    },
+    {
+      "name": "inherited/evidence/family_checks.json",
+      "bytes": 751
+    },
+    {
+      "name": "inherited/evidence/family_checks.log",
+      "bytes": 292
+    },
+    {
+      "name": "inherited/evidence/fastscan.log",
+      "bytes": 1028
+    },
+    {
+      "name": "inherited/evidence/hull_probe.log",
+      "bytes": 444
+    },
+    {
+      "name": "inherited/evidence/hull_state.json",
+      "bytes": 676117
+    },
+    {
+      "name": "inherited/evidence/negative_controls/bad_cancellation_weight.log",
+      "bytes": 719
+    },
+    {
+      "name": "inherited/evidence/negative_controls/bad_contact_vertex.log",
+      "bytes": 860
+    },
+    {
+      "name": "inherited/evidence/negative_controls/negative_controls.json",
+      "bytes": 248
+    },
+    {
+      "name": "inherited/evidence/new_exact_checks.json",
+      "bytes": 6634
+    },
+    {
+      "name": "inherited/evidence/new_exact_checks.log",
+      "bytes": 440
+    },
+    {
+      "name": "inherited/evidence/starting_scan.json",
+      "bytes": 394619
+    },
+    {
+      "name": "inherited/math/ENDPOINTS.md",
+      "bytes": 15766
+    },
+    {
+      "name": "inherited/math/FINITE_BANK_OBSTRUCTION.md",
+      "bytes": 5376
+    },
+    {
+      "name": "inherited/math/REMAINING_AND_HAUSDORFF.md",
+      "bytes": 8272
+    },
+    {
+      "name": "inherited/previous_math/BLOCKER.md",
+      "bytes": 7430
+    },
+    {
+      "name": "inherited/previous_math/FACET_SECTOR.md",
+      "bytes": 9255
+    },
+    {
+      "name": "inherited/previous_math/LOCAL_CUT_LIFTING.md",
+      "bytes": 3706
+    },
+    {
+      "name": "inherited/previous_math/RIDGE_NEIGHBORHOODS.md",
+      "bytes": 14046
+    },
+    {
+      "name": "inherited/previous_math/SETUP_AND_AUDIT.md",
+      "bytes": 9172
+    },
+    {
+      "name": "inherited/requirements-numeric.txt",
+      "bytes": 27
+    },
+    {
+      "name": "math/COLLAR_THEOREM.md",
+      "bytes": 3145
+    },
+    {
+      "name": "math/CORE_THEOREM.md",
+      "bytes": 2176
+    },
+    {
+      "name": "run_checks.py",
+      "bytes": 2665
+    },
+    {
+      "name": "source/SHA256.json",
+      "bytes": 185
+    },
+    {
+      "name": "source/endpoint_return.zip",
+      "bytes": 958442
+    },
+    {
+      "name": "source/ridge_return.zip",
+      "bytes": 104059
+    }
+  ]
+}

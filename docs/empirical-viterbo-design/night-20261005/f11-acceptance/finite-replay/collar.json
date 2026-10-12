@@ -1,0 +1,193 @@
+{
+  "passed": true,
+  "scope": "All normalized directions with 0<mu<=1/10. Response polynomials lie in the closure of the valid cancellation-response set. Strict domination implies genuine positive-section witnesses pointwise.",
+  "policies": {
+    "paths": 257,
+    "policies": 20,
+    "literal_gradient_crosschecks": 3,
+    "maximum_anchor_mix_nominal": 2.2966457902118265e-09,
+    "seconds": 37.637408103997586
+  },
+  "inequalities": {
+    "cones": [
+      {
+        "cone": 0,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 47,
+        "coefficients": 10340,
+        "zero_coefficients": 2951
+      },
+      {
+        "cone": 1,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      },
+      {
+        "cone": 2,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 3,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      },
+      {
+        "cone": 4,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 5,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      },
+      {
+        "cone": 6,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 7,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      },
+      {
+        "cone": 8,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 9,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      },
+      {
+        "cone": 10,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 11,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 48,
+        "coefficients": 10560,
+        "zero_coefficients": 2865
+      },
+      {
+        "cone": 12,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 13,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      },
+      {
+        "cone": 14,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 15,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      },
+      {
+        "cone": 16,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 17,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      },
+      {
+        "cone": 18,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2846
+      },
+      {
+        "cone": 19,
+        "sign_cells": 8,
+        "root_tetrahedra": 44,
+        "leaves": 44,
+        "coefficients": 9680,
+        "zero_coefficients": 2722
+      }
+    ],
+    "exact_fubini_polynomial_comparisons": 160,
+    "field_sign_crosschecks": 500,
+    "margin": "mu^2/1000",
+    "seconds": 28.566558412996528
+  },
+  "seconds": 66.21929714299768,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "dependencies": "Python standard library only",
+  "data_sha256": {
+    "collar/data/policies.json": "328177c08d51f64902c5b9e57245b5feac359805bf7ca31192ac41518aa373eb",
+    "collar/data/trees.json": "953b69a17b180501466957ff25398513fceb6cfc96e4af204b4014075b05548c",
+    "core/data/anchor.json": "2c0ccc1a446cee93782be4d23f353fa733f59757037ab7d0902c32505f8fc3f8",
+    "core/data/families.json": "4998d82990e0fb9b6ae8535df1ca78317e4947217df3a91ceb1b6737d650d838",
+    "core/data/old_seeds.json": "8a55eff8204420189f1a8c09107734f19386d5cf5d0f36074efb078c2bdaedf7",
+    "core/data/relations.json": "9b19182af2c7dec4a6326b7cfd6b951725d84d2d81e58c49b7a092de42f98562",
+    "core/data/rows.json": "884e9aa89b043a7fe71366a5e4ddba4108b33b1584eb6a6385cb3f690beeb52b",
+    "core/data/tree.json": "617fd46ed81484005404dcaede57c6e9e517bfaac34520d838f505407300925e"
+  }
+}

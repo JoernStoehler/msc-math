@@ -1,0 +1,4 @@
+Native reviewer: /root/shared_review
+APPROVE final-v1
+
+The message answers the split request, accurately reports both sessions as started, and makes ownership and independence clear without implying either assessment is complete.

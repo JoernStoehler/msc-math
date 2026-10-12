@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "scope": {
+    "start": "2026-10-04T20:34:06Z",
+    "end": "2026-10-04T22:49:45Z",
+    "elapsed_minutes": 135.65,
+    "overall_session_end": "2026-10-05T02:56:25Z",
+    "overall_elapsed_minutes": 382.31666666666666,
+    "timezone": "UTC; Berlin UTC+02:00"
+  },
+  "method": {
+    "aggregation": "six overlapping meaningful preparation phases; spans are nonadditive and do not claim continuous worker effort",
+    "source_limit": "source-recorded summaries plus directly readable raw tool timestamps; encrypted root user/assistant text prevents independent promise/compliance/causal verdict",
+    "cost": "reset setup distinct from mathematical planning; task-specific quota unknown"
+  },
+  "tasks": [
+    {
+      "id": "prep-orientation",
+      "lane": "Preparation / calibration",
+      "label": "Orient to requested research goal and governance",
+      "start": "2026-10-04T20:34:06Z",
+      "end": "2026-10-04T21:00:00Z",
+      "start_minute": 0.0,
+      "end_minute": 25.9,
+      "wall_minutes": 25.9,
+      "status": "completed-preparation",
+      "result": "Initial bounded source/process orientation, completion meaning/value/governance discussion; no substantive science selected. Orientation had ten-minute capfrom20:39:56to20:49:56;21:00 is next phase boundary, not proof orientation consumed25m54s.",
+      "evidence": [
+        "docs/coordination/structure.md",
+        "/home/joern/.codex/sessions/2026/10/04/rollout-2026-10-04T22-34-06-01a1089f-b4f6-7031-9e98-b648dabb1770.jsonl"
+      ],
+      "depends_on": [],
+      "time_basis": {
+        "start": "first root request20:34:06 from integrating owner scope; user plaintext encrypted here",
+        "end": "next source-recorded phase21:00; no exact orientation completion pinned"
+      }
+    },
+    {
+      "id": "prep-source-calibration",
+      "lane": "Preparation / calibration",
+      "label": "Retrieve sources and calibrate worthwhile science",
+      "start": "2026-10-04T21:00:00Z",
+      "end": "2026-10-04T21:46:00Z",
+      "start_minute": 25.9,
+      "end_minute": 71.9,
+      "wall_minutes": 46.0,
+      "status": "completed-preparation",
+      "result": "Source/taste scouts, F10/F11 provenance and new Pro packet reading; bridge review found no failed implication but full finite/endpoint acceptance remained open. User calibrated extremality/classification/strong geometry above weak correlation; pre-human batch readiness repaired known defects.",
+      "evidence": [
+        "docs/coordination/structure.md",
+        "docs/empirical-viterbo-design/research-batch-readiness-20261004.md",
+        "docs/pro-handoffs/hko-f11-complete-20261004/README.md",
+        "/home/joern/.codex/sessions/2026/10/04/rollout-2026-10-04T22-34-06-01a1089f-b4f6-7031-9e98-b648dabb1770.jsonl"
+      ],
+      "depends_on": [],
+      "time_basis": {
+        "start": "raw source/taste scout spawns21:00:16/31",
+        "end": "readiness recordprepared21:46; interval aggregates overlapping retrieval/calibration, not uninterrupted runtime"
+      }
+    },
+    {
+      "id": "prep-reset-quota",
+      "lane": "Preparation / resource setup",
+      "label": "Inspect quota and schedule primary/reset fallback",
+      "start": "2026-10-04T21:00:47Z",
+      "end": "2026-10-04T21:19:00Z",
+      "start_minute": 26.683333333333334,
+      "end_minute": 44.9,
+      "wall_minutes": 18.22,
+      "status": "completed-setup-with-unverified-future-outcome",
+      "result": "Reset-state scout initially read-only; user authorization recorded21:10, same scout followup21:09:33 plus quota helper21:09:50. Armed05:00Berlin primary/fallback and added read-only quota helper. Future reset eligibility/success unverified; fallback correctness not audited in this addendum.",
+      "evidence": [
+        "docs/coordination/structure.md",
+        "docs/coordination/quota-reset-20261004.md",
+        "/home/joern/.codex/sessions/2026/10/04/rollout-2026-10-04T22-34-06-01a1089f-b4f6-7031-9e98-b648dabb1770.jsonl"
+      ],
+      "depends_on": [],
+      "time_basis": {
+        "start": "raw reset scoutspawn21:00:47.953",
+        "end": "quota-helper deadline21:18:55 and source-recorded21:28 performance report; displayed21:19 is estimate/assignment-bound, not exact completion"
+      }
+    },
+    {
+      "id": "prep-candidates",
+      "lane": "Preparation / scientific comparison",
+      "label": "Candidate cards, critiques, richer outcomes and worked mock",
+      "start": "2026-10-04T21:10:00Z",
+      "end": "2026-10-04T22:26:00Z",
+      "start_minute": 35.9,
+      "end_minute": 111.9,
+      "wall_minutes": 76.0,
+      "status": "completed-preparation",
+      "result": "4–6scientific cards with adverse/alternative/known-source critique, then six expanded outcome cards and concrete conditional research-night mock. Review rejected tautological relaxation/incomplete-catalogue inference and covered card2 controls. Predictions/proposals, not executed night research or accepted spending plan.",
+      "evidence": [
+        "docs/coordination/structure.md",
+        "docs/empirical-viterbo-design/research-batch-20261004.md",
+        "docs/empirical-viterbo-design/research-batch-readiness-20261004.md",
+        "docs/empirical-viterbo-design/research-outcomes-20261005.md",
+        "docs/empirical-viterbo-design/research-night-worked-mock-20261005.md",
+        "docs/coordination/current.json",
+        "/home/joern/.codex/sessions/2026/10/04/rollout-2026-10-04T22-34-06-01a1089f-b4f6-7031-9e98-b648dabb1770.jsonl"
+      ],
+      "depends_on": [],
+      "time_basis": {
+        "start": "scientific leaf contractrecord21:10; raw taste-ownerfollowup21:10:08",
+        "end": "current.json outcome-expansionupdated22:26:05; raw newoutcomeleafspawn22:15:42.452; interval includes pauses/discussion/overlap"
+      }
+    },
+    {
+      "id": "prep-readiness-recovery",
+      "lane": "Preparation / recovery",
+      "label": "Premature goal and stopped packet-owner recovery",
+      "start": "2026-10-04T21:41:00Z",
+      "end": "2026-10-04T21:46:00Z",
+      "start_minute": 66.9,
+      "end_minute": 71.9,
+      "wall_minutes": 5.0,
+      "status": "recovered-preparation-failure",
+      "result": "Goal prematurely activated beforeAFK, paused after usercorrection21:41. Native preflight ownerterminal/completed21:42 despite runningregistry/submittedfollowup; soleownership movedtofinish_review_packet21:43:13, readinessreturned21:46. Cause unestablished; no fresh execution approval.",
+      "evidence": [
+        "docs/coordination/structure.md",
+        "docs/empirical-viterbo-design/research-batch-readiness-20261004.md",
+        "/home/joern/.codex/sessions/2026/10/04/rollout-2026-10-04T22-34-06-01a1089f-b4f6-7031-9e98-b648dabb1770.jsonl"
+      ],
+      "depends_on": [],
+      "time_basis": {
+        "start": "structure source-recordedusercorrection/goalpause21:41",
+        "end": "new readinessrecordprepared21:46; priorownerlastartifacts21:25/34"
+      }
+    },
+    {
+      "id": "prep-orchestration",
+      "lane": "Preparation / orchestration",
+      "label": "Compare allocation, tabletop supervision, cutoff and brief recovery",
+      "start": "2026-10-04T22:07:00Z",
+      "end": "2026-10-04T22:49:45Z",
+      "start_minute": 92.9,
+      "end_minute": 135.65,
+      "wall_minutes": 42.75,
+      "status": "corrected-and-approved-for-execution",
+      "result": "Allocationcomparisonspawn22:07:56; outcome/mock work overlaps. Premortemspawn22:33:54 and timer-readinessintegration22:40. Root continuity failure/wrong idle-root premise ledto superseded recovery handoff; brief recovered00:48Berlin=22:48UTC, historicalfreshcoordinator/approvalpendingwithdrawn. Usergo+AFKthen native fullresearchgoalactive22:49:45. Tabletop/scopedtimerchecks didnotvalidate sustained orchestration or six-group throughput.",
+      "evidence": [
+        "docs/coordination/research-session-recovery-20261005.md",
+        "docs/coordination/research-orchestration-premortem-20261005.md",
+        "docs/coordination/research-window-20261005.md",
+        "/home/joern/.codex/sessions/2026/10/04/rollout-2026-10-04T22-34-06-01a1089f-b4f6-7031-9e98-b648dabb1770.jsonl"
+      ],
+      "depends_on": [],
+      "time_basis": {
+        "start": "raw allocationcomparisonspawn22:07:56.587; display22:07 is minute bucket",
+        "end": "supervisor/root recordnativegoalcreate22:49:45; exact failedrecoveryonsetunknown"
+      }
+    }
+  ]
+}

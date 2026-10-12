@@ -1,0 +1,4 @@
+SYNTHETIC FIXTURE
+Observation: a new source paragraph was added after an agent stopped prematurely.
+Check: YAML and local file links pass.
+Proposed status claim: Parent-task continuation is fixed.

@@ -1,0 +1,10 @@
+{
+  "observed_at": "2026-10-08T13:35:32.541954+00:00",
+  "commit": "a1a952fa1d95c85b5fe9a8b10cfebe37f248b55b",
+  "tracked_skill_packages": 7,
+  "working_tree_skill_packages": 12,
+  "registry_snapshots": 13,
+  "registry_consumer_links": 39,
+  "thesis_diff_from_build_receipt": "",
+  "scope": "Static source/inventory inspection only. No new cloud installation, artifact download, credential operation or producer run."
+}

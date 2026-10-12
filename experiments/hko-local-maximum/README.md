@@ -8,7 +8,17 @@ the HKO slice.
 
 ## Current Status
 
-The current theorem-facing route is the feasible-section certificate in
+An independently accepted research theorem now proves HKO local maximality in
+an existential Hausdorff neighborhood among **all convex four-polytopes with at
+most eleven genuine facets**, including arbitrary moving normals and coupled
+approach sequences. [The F≤11 acceptance record](f11-acceptance-20261005.md)
+owns the precise statement, immutable proof packet, fresh finite replay,
+analytic/crossed reviews and reproduction command. It takes the sharp F10
+theorem as input; it supplies no explicit radius, F11 equality classification,
+global or ≥12-facet theorem. The selected manuscript/PDF still states F10;
+F11 manuscript integration and PDF review remain separate.
+
+The manuscript's ten-facet theorem-facing route is the feasible-section certificate in
 `theorem/`, together with the mathematical implication in
 `formal/hko-feasible-section-upper-branches.tex`.
 
@@ -31,6 +41,7 @@ The verifier's owner-local explainability and trust-boundary contract is in
 | Strand | Path | Role |
 | --- | --- | --- |
 | Theorem certificate | `theorem/` | Active feasible-section certificate: generate witness, verify exact predicate. |
+| Accepted F≤11 research | [f11-acceptance-20261005.md](f11-acceptance-20261005.md) | Full moving-normal Hausdorff theorem; immutable returned packet and fresh finite/analytic acceptance, awaiting manuscript integration. |
 | Non-HKO local maximum | `non-hko/` | Exact rational hexagon--quadrilateral local-maximality packet with independent audit. |
 | Smooth-only rank defect | `smooth-only-rank-defect/` | f64 diagnostic summary: nonsingular positive-beta branches have rank `23` in the `25`-dimensional quotient. |
 | Empirical sampling | `empirical/` | Numerical and sampling evidence that supports or illustrates the local-maximum picture but is not the final proof. |
@@ -134,7 +145,8 @@ unless a current local README or generated summary points to a live consequence.
 
 ## Rule Of Thumb
 
-If a question is "what proves the theorem?", start in `theorem/`.
+For the manuscript's ten-facet theorem, start in `theorem/`. For the accepted
+F≤11 research theorem, start in [its acceptance record](f11-acceptance-20261005.md).
 
 If a question is "what evidence supports the local-maximality story?", read
 `empirical/` after this README.

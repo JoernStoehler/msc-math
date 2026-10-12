@@ -1,0 +1,16 @@
+digraph night {
+ rankdir=LR; node [shape=box,style="rounded,filled",fillcolor="#eef4fb",fontname="Helvetica",fontsize=11];
+ label="Approved research · 5 October 2026 · final release 04:55 Berlin\nFull FINISH RESEARCH objective remains incomplete. Ownership: ../current.json";labelloc=t;
+ h [fillcolor="#dcefe0",label="DONE: HKO at most 11 facets\nIndependent finite + analytic acceptance\nNot in selected manuscript/PDF"];
+ g [fillcolor="#dcefe0",label="DONE: fixed-axis orientation-wide global class\nSharp HKO bound and equality\nGeneral outer matrix still open"];
+ p [fillcolor="#dcefe0",label="DONE: P* ambient direction patches\nAll old motions + coupled scales\nFull all-direction F11 OPEN"];
+ m [fillcolor="#dcefe0",label="DONE: proper-M reduction\n610-row / 7-variable exact cone\nSharp quadratic positivity OPEN"];
+ s [label="DONE: lasting cone source integration\nGeometry lead released 04:27 Berlin\nNo manuscript promotion"];
+ c [label="DONE: accepted outcomes + remaining cruxes\nFinal scientific disposition 04:26 Berlin"];
+ q [shape=diamond,fillcolor="#fff0cd",label="Global cone inequality\nNo constrained certificate priced"];
+ park [fillcolor="#f3e4dd",label="PARKED: cone positivity / full P* F11\nRetain exact next obligations\nNo rays / CAD / new science selected"];
+ r [label="PARKED: unfinished research\nRoot final action: native goal pause\nAll selected owners released"];
+ w [label="DONE: independent supervision\nFinal release 04:55 Berlin\nQuota 04:25: 92% remaining; billing unknown"];
+ k [fillcolor="#fff0cd",label="04:55 release + pause unfinished goal\n04:59 independent stop sweep\nNo research inference at / after 05:00"];
+ h->c;g->c;p->c;m->s;s->c;m->q;q->park[label="unpriced continuation"];park->c;c->r;w->r[style=dashed,label="exceptions / cutoff reminders"];r->k;
+}

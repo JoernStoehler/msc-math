@@ -23,7 +23,10 @@ graph_dir="$(git rev-parse --show-toplevel)/docs/coordination/graphs"
 mkdir -p "$graph_dir"
 ```
 
-Use `$graph_dir/tasks.dot` as the portfolio overview. When one graph would hide
+The portfolio overview `$graph_dir/tasks.dot` and `tasks.svg` are generated
+from `docs/coordination/current.json` by `scripts/render-workflow-graph.py`.
+Change portfolio assignments, dependencies and outcomes in that JSON owner;
+do not edit or render the generated files directly. When one graph would hide
 important outcomes or become awkward in a terminal, add ordered component
 sources such as `10-thesis.dot` and `20-software.dot`; do not make the overview
 a duplicate of every detail. Render each source beside it as `.svg`. These
@@ -102,18 +105,23 @@ that no longer affects the graph.
 
 ## Update points
 
-Patch `tasks.dot` after a material state change: work starts or finishes, a
+Update `current.json` after a material portfolio state change: work starts or finishes, a
 dependency is discovered or removed, evidence changes a decision branch, a
 branch becomes reviewable, or work is explicitly dropped. Do not churn the
 file for routine progress messages.
 
-After each patch, validate and render:
+After a registry change, regenerate and check the portfolio projection:
 
 ```bash
-for source in "$graph_dir"/*.dot; do
-  dot -Tsvg "$source" -o "${source%.dot}.svg"
-done
+python3 scripts/render-workflow-graph.py
+python3 scripts/render-workflow-graph.py --check
 ```
+
+The SVG contains the state hash used by the freshness check. Generic Graphviz
+rendering would discard that marker. Separately owned optional components
+such as `00-now.dot` remain editable DOT sources; after changing one, render
+only that component with `dot -Tsvg component.dot -o component.svg`. Their
+local outcome/branch detail must agree with the registry's selected work.
 
 Treat a failed render as a broken task map and repair it immediately.
 
@@ -180,3 +188,5 @@ is shown to be a real burden and the environment owning the listener is known.
 DOT plus Graphviz and the existing narrow Tailscale review server are the
 smallest predictable stack. The DOT source remains readable in Micro when a
 terminal-only view is preferable.
+
+When maintaining this skill, read [design notes](references/design-notes.md) for evidence, scope and unresolved choices. These are maintenance context, not another execution-policy owner.
