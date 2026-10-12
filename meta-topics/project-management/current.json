@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-12T16:00:08Z",
+  "updated_at": "2026-10-12T16:44:54Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Reviewed topic reorganization and main-checkpoint reconciliation adopted into main after Jörn approval. The readable review is retained and main-checkout inventory/source links and workflow graph are refreshed. Focused adoption checks passed. Existing thesis/evidence limits remain at their owners.",
+  "summary": "Reviewed topic branch adopted into main; f7e0 worktree and merged migration branch retired at Jörn’s request. Main is the only local branch and registered worktree. Review, evidence and maintenance obligations remain retained on main; this session’s selected work is complete.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2784,6 +2784,27 @@
       "updated_at": "2026-10-12T16:00:08Z",
       "blocker": null,
       "next_step": "Adoption complete. Use main for subsequent selected work; existing thesis/evidence obligations remain."
+    },
+    {
+      "id": "f7e0-retirement-20261012",
+      "title": "Retire merged f7e0 worktree and branch",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "depends_on": [
+        "main-adoption-20261012"
+      ],
+      "outcome": "Verified f09eeff5 is contained in main and both checkouts were clean. Inspected ignored paths: only reproducible build/TeX/Python outputs. Removed f7e0 worktree and deleted the merged migration branch; only main remains.",
+      "authorization": "Direct Jörn request at 2026-10-12 16:42 UTC to clean up this branch before he starts new work on main and archives the session.",
+      "sources": [
+        "meta-topics/project-management/handoff.md",
+        "meta-topics/repository-organization/main-reconciliation-2026-10-12.md"
+      ],
+      "updated_at": "2026-10-12T16:44:54Z",
+      "blocker": null,
+      "next_step": "Cleanup complete; new work starts from main under its own selected scope. Session archiving remains with Jörn."
     }
   ],
   "decisions": [
@@ -3150,6 +3171,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-12T16:44:54Z",
+      "text": "Retired the fully merged f7e0 worktree and migration branch after clean/ancestor/ignored-output checks. Only main remains; current session work is complete."
+    },
     {
       "at": "2026-10-12T16:00:08Z",
       "text": "Completed approved main adoption and main-checkout view regeneration. Readable comparison retained; old deferred-adoption next steps dispositioned. Existing scientific/PDF review limits remain unchanged."

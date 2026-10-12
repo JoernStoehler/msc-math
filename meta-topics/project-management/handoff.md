@@ -1,5 +1,17 @@
 # Current handoff
 
+## 12 October: cleanup complete; continue from main
+
+At 16:42 UTC Jörn requested retiring the merged f7e0 branch/worktree.
+Its complete committed history is included in main. Both checkouts were clean;
+the ignored files were reproducible build outputs. The f7e0 worktree and
+`codex/topic-migration-20261012` branch are removed. Only `/workspaces/msc-math`
+on main remains. Reviewed sources, evidence and the readable comparison are
+retained there. Current selected work is complete; Jörn will start new work
+on main and archive this session. Existing scientific/PDF acceptance limits
+remain unchanged.
+
+
 ## 12 October: reviewed branch adopted into main
 
 Jörn approved merging at 15:57 UTC after reviewing the rewritten comparison.
@@ -8,8 +20,8 @@ main checkpoint and readable adoption review. Main-checkout inventory links and
 workflow projections were regenerated; focused source/coordination checks passed.
 Twenty-six existing cached-artifact symlinks were relocated to the migrated
 producer paths, preserving their targets without downloads or payload changes.
-The former main snapshot `185155fe` remains in history. The f7e0 worktree remains
-available; no branch/worktree deletion or push was selected.
+The former main snapshot `185155fe` remains in history. The f7e0 worktree was retained at adoption and subsequently retired as
+recorded above. Nothing was pushed.
 
 Adoption is complete. Use main for subsequent selected work. The
 [comparison](../repository-organization/main-reconciliation-2026-10-12.md)
