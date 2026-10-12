@@ -1,48 +1,98 @@
-# Main checkpoint reconciliation, 12 October 2026
+# What adopting f7e0 would change
 
-This integrates main `185155fe` into the f7e0 topic branch after the frozen
-[comparison review](f7e0-vs-main-review-2026-10-12.md) of f7e0 `43d4f8db`.
-Jörn requested that the branch be updated while keeping the difference
-understandable; main remains unchanged. The comparison review's bytes are
-preserved. Its missing-work findings describe the earlier snapshots.
+**I recommend adopting f7e0 as the basis for the next work.** It now contains
+main’s research and evidence, with a more coherent organization and some
+repairs. The remaining thesis and scientific work is substantial, but most of
+that work was already required on main.
 
-## Outcomes and remaining differences
+This compares main’s preserved state with the updated f7e0 branch. The missing
+research and broken download path from the first review have been repaired.
 
-| Area | Reconciled outcome | Remaining obligation / owner |
-| --- | --- | --- |
-| Research | Main's F≤11 HKO return, all 235 research-night files, restricted partner bounds and P* facet-birth findings are retained under topic owners; summaries now show that frontier. | Mathematical scope, agent acceptance, human acceptance and manuscript promotion remain distinct. Scientific owners maintain the accounts after new evidence. |
-| Scientific priorities | Attributed project-facts item 13.3 is retained alongside the branch's newer support/preferences. | Research coordinator uses the recorded value judgments when proposing work; no programme launched here. |
-| Client workflows | Main's repository-owned skills, Claude discovery/configuration, opt-in desktop review opening and PDF/image sharing without Pandoc are retained. | Fresh-cloud execution and behavioral reliability remain unestablished; current sessions can retain old loaded skills. |
-| Retrieval | Landscape registry, producer destination and ignore rule agree at the migrated product topic. All 13 snapshot identities remain unchanged. | Remote R2 reachability and full reproduction were not tested. |
-| Freshness | Status helper recognizes moved project-management and agent-workflow owners. | Topic accounts, inventory and thesis view still need semantic upkeep after relevant changes; mechanical freshness is not acceptance. |
-| Thesis | Dashboard separates later research from promoted manuscript claims, preserving the F10 manuscript boundary and selected symmetric-partner coverage gap. | Working PDF is 102 pages; reviewed retained candidate is 101. Page map and source baseline remain visibly stale for the newer PDF. A thesis integrator owns reconciliation before calling that view current; human PASS stays open. |
-| Organization and implementation | f7e0 retains mixed-artifact topic ownership, canonical geometry/proof/data stages and the previously checked bounded implementation changes. | Savings in human maintenance time remain unmeasured; fresh data boundary changes require analyst attention. |
-| Historical state | Useful assessments and evaluations retained; expired dispatches/graphs explicitly archived, 33 delivery-packet iterations recoverable from main Git history. | Current registry is authoritative; no old launch/spending authority is reactivated. Local recovery archive has no newly established remote-backup promise. |
+## The main gain: less reconstruction at the start of work
 
-## Verification and limits
+Related explanations, proofs, experiments and evidence now live together by
+scientific topic. For example, the local-maxima account explains which HKO and
+non-HKO results exist, what supports them and which extensions remain open.
+An agent has a starting point for understanding the result, rather than only a
+list of files to investigate.
 
-Area checks preserved all 61 raw night evidence files, the five immutable F11
-originals and the 13 registered snapshot identities. Maintained source changes
-repair paths; 58 research Python sources parse, and the 18 changed source ASTs
-match after their declared path-resolution transformations. Frozen census
-input hashes remain unchanged. Historical originals remain accessible in main.
+Repeated geometry and data-processing work also has fewer separate
+implementations to keep consistent. The expected payoff is less repeated
+orientation and fewer duplicate repairs. We have not measured the time saved
+for you or for agents.
 
-Client checks cover twelve skill schemas, Claude symlinks/settings, Codex TOML,
-eight file-viewer tests and imported offline helpers. Research/metadata routing
-and staged whitespace checks passed. Assembled dashboard, graph, inventory and
-independent review also passed (eight dashboard HTTP tests; independent
-assembled scope/retention audit). The inventory generator validates schema,
-source paths and projections, not scientific completeness.
+## The tradeoff: clearer accounts need upkeep
 
-The [path and identity receipt](main-reconciliation-paths-2026-10-12.json)
-retains the research path-edit hashes and metadata destination map.
+The topic accounts, inventory and thesis dashboard summarize underlying work.
+When a result changes, an agent must update the affected summaries as well as
+the source. Otherwise the easier entry points become misleading. This is
+ongoing maintenance for the agents doing the work; you should not have to
+coordinate individual file updates.
 
-No scientific producer, full theorem replay, dataset download, full PDF visual
-review, cloud deployment or new research selection occurred. This reconciliation
-preserves attributed results; it does not recertify mathematics or establish
-human thesis acceptance.
+Sharing implementations also reduces the independence of some geometry
+cross-checks: two routes can agree because they use the same calculation.
+When stronger evidence is needed, the reviewing agent needs a separate check
+of those shared parts.
 
-[Metadata retention](../agent-workflow/main-checkpoint-retention-20261012.md)
-owns exact retired-path recovery. The [migration ledger](inventory/migration-results-2026-10-12.md)
-owns earlier moves and old-worktree recovery. Adoption into main remains a later
-step; this commit makes that branch comparison concrete.
+Some analysis rules are also stricter. A new run can reject inputs or fitting
+targets that the old version accepted. Existing result files were preserved,
+but rerunning affected analyses may produce different selections. The next
+analyst owns checking what changed before using a rerun as evidence.
+
+## What new review work comes with f7e0
+
+- **Changed mathematical arguments:** some existing geometry proofs were
+  corrected or given more precise assumptions. Agents reviewed the repairs;
+  your acceptance of the revised proofs is still outstanding. This matters
+  when relying on those arguments.
+- **Changed PDF layout:** moved paths affected the working thesis layout.
+  An agent needs to check the affected PDF and update its review references
+  before presenting it as reviewed. This adds layout checking, not a new
+  obligation for you to recheck the entire repository.
+- **Reopening old sessions:** an agent now restores archived work rather than
+  opening its old checkout. That recovery cost occurs only when the older work
+  is needed; the archives remain local.
+
+## What adoption would leave unfinished
+
+The thesis still omits the selected symmetric-partner result. Human PASS,
+settling the data-science scope, stronger validation of numerical volumes and
+historical results, and complete reproduction remain open. These gaps existed
+on main. The flow theorem and bounded checks also do not certify the search
+program for every input. Reorganization makes these limits easier to locate;
+it does not resolve them.
+
+The preservation checks, focused tests and independent reviews support adopting
+the reorganized repository. They do not establish the truth of every result or
+thesis acceptance. My recommendation concerns the working repository.
+
+## Supporting sources
+
+This review is of f7e0 `ad88f728` against main `185155fe`. Main is unchanged.
+The earlier technical reconciliation report is preserved in Git at
+`ad88f728:meta-topics/repository-organization/main-reconciliation-2026-10-12.md`.
+
+- [Research path and identity checks](main-reconciliation-paths-2026-10-12.json)
+  retain the main-evidence preservation and moved-source identities.
+- [Local-maxima account](../../topics/variation-and-local-maxima/README.md)
+  illustrates the new scientific entry points.
+- [Shared geometry and checking limits](inventory/pilots/2026-10-11/geometry.md)
+  explain which cross-checks now share calculations.
+- [Geometry changes and review limits](inventory/pilots/2026-10-11/foundations.md)
+  identify the changed arguments and outstanding human review.
+- [Analysis changes and checks](../../topics/empirical-studies/migration-review-2026-10-12.md)
+  distinguish stricter acceptance rules from retained historical evidence.
+- [Flow-search account](../../topics/flow-graphs/README.md) separates the
+  conditional theorem from the implementation’s supported behavior.
+- [Thesis work](../project-management/thesis-work.md) and
+  [PDF baseline](../../docs/dashboard/thesis-sources.json) own the remaining
+  manuscript and review obligations.
+- [Recovery record](inventory/old-worktree-recovery-2026-10-12.json) identifies
+  the local archives. Checksums and Git bundle verification passed; this review
+  does not add an off-machine recovery promise.
+
+No producers, full theorem replays, dataset downloads or full PDF visual review
+were performed for this rewrite. The original snapshot review remains a
+historical record; its repaired defects are not current adoption blockers.
+
+[review: /root/readability_reviewer]
