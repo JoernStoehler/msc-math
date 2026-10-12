@@ -26,10 +26,11 @@ Preserve project contracts while adapting assumptions:
   readiness; explicit install/session-link actions preserve existing state.
 - Retain the Pro dossier and human transfer workflow, review expiry and
   credential boundaries. Replace dotfiles/other-checkout dependencies with
-  local instructions in `INSTALL.md` and `docs/development-environments.md`.
+  local instructions in `meta-topics/development-environment/installation-workflow.md`
+  and `meta-topics/development-environment/development-environments.md`.
   Missing host access is reported, rather than inferred from skill discovery.
 
-The [environment contract](../development-environments.md) distinguishes one
+The [environment contract](../../meta-topics/development-environment/development-environments.md) distinguishes one
 Ubuntu workstation reached locally or through SSH, a separate Claude cloud
 clone, and human-mediated Astra Pro. Shared repository files make instructions
 portable; Tailscale transfer, review serving, credentials and persistent services
@@ -51,7 +52,7 @@ See the [coordination contract](README.md).
 Local `codex features list`, CLI **0.159.2**, checked 30 September:
 
 For the later release-matched feature/configuration assessment and source
-navigation, use [the Codex reference](../codex.md). The table here remains the
+navigation, use [the Codex reference](../../meta-topics/development-environment/codex-reference.md). The table here remains the
 dated observation underlying this proposal.
 
 | Features | Local stage/state | Consequence |

@@ -1,0 +1,574 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Parallel cleanup: tasks and delegation</title><style>
+*{box-sizing:border-box}body{margin:0;background:#edf2f4;color:#21333d;font:17px/1.5 system-ui,sans-serif}main{max-width:1250px;margin:auto;background:white;padding:28px}h1{font-size:2rem;line-height:1.2}h2{margin-top:2rem}a{color:#135c79}nav{display:flex;gap:20px;flex-wrap:wrap}.box{background:#edf6f8;padding:16px;border-left:4px solid #367083}.q{background:#f9f4d9;padding:16px;border-left:4px solid #9b7f22}.graph{overflow:auto;border:1px solid #c5d4da;padding:10px;margin:14px 0}.graph svg{display:block;width:auto;height:auto;min-width:1000px;max-width:none}.muted{color:#5d707b;font-size:.93rem}.swatch{display:inline-block;padding:3px 9px;margin:3px;border-radius:4px}table{border-collapse:collapse;width:100%;font-size:.95rem}td,th{padding:10px;text-align:left;vertical-align:top;border-bottom:1px solid #cbd6db}details{margin:10px 0;border:1px solid #cbd6db;padding:12px}summary{cursor:pointer;font-weight:600}li{margin:6px 0}code{font-size:.9em}blockquote{border-left:3px solid #91adb8;padding-left:15px}@media(max-width:650px){main{padding:17px}.graph svg{min-width:1050px}h1{font-size:1.65rem}}</style><main>
+<p class="muted">10 October 2026 · Proposed costly work, not a launched overnight run · About 4–6 minutes for the main view</p>
+<h1>Parallel cleanup: what changes, and who does it</h1>
+<p class="box"><b>11 October pilot complete:</b> The bounded run integrated shared geometry and data stages plus proof corrections, with independent Sol and Astra review. Writing/calibration trials produced a repaired contextual preview; human usability and content-preserving manuscript integration remain open. <a href="../../../../../meta-topics/repository-organization/inventory/pilots/2026-10-11/index.html">Pilot results and reading preview</a>. The larger graph below still describes proposed work, not completed packages or an overnight launch.</p>
+<nav><a href="#outcomes">Expected repository</a><a href="#work">Task graph</a><a href="#team">Delegation tree</a><a href="#early">Early checks</a><a href="#review">Review request</a><a href="#details">Source-backed task seeds</a></nav>
+<p>The bulk is ordinary consolidation, refactoring, migration, testing and structured technical writing. The project-specific judgments are isolated below. The inventory is a working map updated alongside execution; there is no “finish the inventory first” barrier.</p>
+<section id="outcomes"><h2>What should be easier afterward?</h2><table><tr><th>Use case</th><th>Concrete repository change</th><th>Evidence of usefulness</th></tr>
+<tr><td>Implement a computational method</td><td>One owner for ordinary exact geometry, explicit input/error contracts, supported adapters; meaningful tests and comparable benchmarks.</td><td>Representative current callers work through the consolidated API; exact incidence/error cases agree; measured cost has no unexplained regression.</td></tr>
+<tr><td>Understand or extend a mathematical result</td><td>Canonical foundational definitions/proofs and visible scope boundaries, connected to a nested research account.</td><td>A fresh reader recovers prerequisites, argument, existing extensions and actual open gaps from the account and its evidence links.</td></tr>
+<tr><td>Create data and investigate a method</td><td>One table-building stage, explicit input formats and simpler commands; sampling, capacity computation and provenance stay distinguishable.</td><td>Small same-input comparisons preserve targets/features/identity/provenance; missing metadata stays visibly missing.</td></tr>
+<tr><td>Plan and execute thesis writing</td><td>TOC/result graph → summary/reminders → math/method takeaways → reasoning → proofs/evidence. Topic accounts cover foundations, local maxima, products and empirical methods.</td><td>A fresh Sol agent produces an agent/Jörn writing plan: claims/order, reusable text, remaining explanations, evidence/figures, agent assignments and genuine human decisions. Record reconstruction still needed.</td></tr></table></section>
+<section id="work"><h2>1. Work dependencies</h2><p><span class="swatch" style="background:#e4f1f6">Blue: established workflow</span><span class="swatch" style="background:#ffedc9">Amber: project-specific decision</span><span class="swatch" style="background:#eee6fa">Purple: synthesis / downstream use</span><span class="swatch" style="background:#e6edee">Grey/green: integration / review</span></p>
+<p class="muted">Solid arrows: an input needed for acceptance. Dashed arrows: incremental information or coordination. Preparation and prompt expansion can start earlier. “Standard” describes the method, not guaranteed correctness or low effort. Diagrams retain readable text size; scroll horizontally as needed.</p><div class="graph"><svg width="3034pt" height="725pt"
+ viewBox="0.00 0.00 3033.80 724.80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(14.4 710.4)">
+<title>work</title>
+<g id="clust1" class="cluster">
+<title>cluster_g</title>
+<polygon fill="transparent" stroke="#b8ced8" points="8,-245 8,-446 631,-446 631,-245 8,-245"/>
+<text text-anchor="middle" x="319.5" y="-430.8" font-family="sans-serif" font-size="14.00">GEOMETRY · Sol manager</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_f</title>
+<polygon fill="transparent" stroke="#b8ced8" points="639,-327 639,-584 1264,-584 1264,-327 639,-327"/>
+<text text-anchor="middle" x="951.5" y="-568.8" font-family="sans-serif" font-size="14.00">FOUNDATIONS · Sol manager</text>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_d</title>
+<polygon fill="transparent" stroke="#b8ced8" points="1844,-245 1844,-446 2580,-446 2580,-245 1844,-245"/>
+<text text-anchor="middle" x="2212" y="-430.8" font-family="sans-serif" font-size="14.00">DATA · Sol manager</text>
+</g>
+<g id="clust4" class="cluster">
+<title>cluster_t</title>
+<polygon fill="transparent" stroke="#b8ced8" points="2588,-245 2588,-426 2997,-426 2997,-245 2588,-245"/>
+<text text-anchor="middle" x="2792.5" y="-410.8" font-family="sans-serif" font-size="14.00">TRUST · Sol manager</text>
+</g>
+<g id="clust5" class="cluster">
+<title>cluster_e</title>
+<polygon fill="transparent" stroke="#b8ced8" points="1272,-245 1272,-688 1836,-688 1836,-245 1272,-245"/>
+<text text-anchor="middle" x="1554" y="-672.8" font-family="sans-serif" font-size="14.00">RESEARCH ACCOUNT · Sol manager</text>
+</g>
+<!-- G0 -->
+<g id="node1" class="node">
+<title>G0</title>
+<path fill="#ffedc9" stroke="#387084" d="M383.18,-412.93C383.18,-412.93 178.82,-377.07 178.82,-377.07 172.91,-376.04 172.91,-373.96 178.82,-372.93 178.82,-372.93 383.18,-337.07 383.18,-337.07 389.09,-336.04 400.91,-336.04 406.82,-337.07 406.82,-337.07 611.18,-372.93 611.18,-372.93 617.09,-373.96 617.09,-376.04 611.18,-377.07 611.18,-377.07 406.82,-412.93 406.82,-412.93 400.91,-413.96 389.09,-413.96 383.18,-412.93"/>
+<text text-anchor="middle" x="395" y="-378.4" font-family="sans-serif" font-size="12.00">G2 · Input/error contract</text>
+<text text-anchor="middle" x="395" y="-365.4" font-family="sans-serif" font-size="12.00">Resolve or preserve differing policies</text>
+</g>
+<!-- G3 -->
+<g id="node3" class="node">
+<title>G3</title>
+<path fill="#e4f1f6" stroke="#387084" d="M488,-293C488,-293 302,-293 302,-293 296,-293 290,-287 290,-281 290,-281 290,-265 290,-265 290,-259 296,-253 302,-253 302,-253 488,-253 488,-253 494,-253 500,-259 500,-265 500,-265 500,-281 500,-281 500,-287 494,-293 488,-293"/>
+<text text-anchor="middle" x="395" y="-276.4" font-family="sans-serif" font-size="12.00">G3–4 · One exact geometry owner</text>
+<text text-anchor="middle" x="395" y="-263.4" font-family="sans-serif" font-size="12.00">Adapters + migrated callers</text>
+</g>
+<!-- G0&#45;&gt;G3 -->
+<g id="edge1" class="edge">
+<title>G0&#45;&gt;G3</title>
+<path fill="none" stroke="#70818b" d="M395,-334.76C395,-323 395,-310.41 395,-299.75"/>
+<polygon fill="#70818b" stroke="#70818b" points="397.28,-299.56 395,-293.06 392.73,-299.56 397.28,-299.56"/>
+</g>
+<!-- G1 -->
+<g id="node2" class="node">
+<title>G1</title>
+<path fill="#e4f1f6" stroke="#387084" d="M138,-395C138,-395 28,-395 28,-395 22,-395 16,-389 16,-383 16,-383 16,-367 16,-367 16,-361 22,-355 28,-355 28,-355 138,-355 138,-355 144,-355 150,-361 150,-367 150,-367 150,-383 150,-383 150,-389 144,-395 138,-395"/>
+<text text-anchor="middle" x="83" y="-378.4" font-family="sans-serif" font-size="12.00">G1 · Merge repeated</text>
+<text text-anchor="middle" x="83" y="-365.4" font-family="sans-serif" font-size="12.00">incidence helpers</text>
+</g>
+<!-- G1&#45;&gt;G3 -->
+<g id="edge2" class="edge">
+<title>G1&#45;&gt;G3</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M108.54,-354.94C122.52,-345.31 140.52,-334.18 158,-327 197.52,-310.76 242.88,-299.07 283.27,-290.88"/>
+<polygon fill="#70818b" stroke="#70818b" points="283.78,-293.1 289.71,-289.59 282.89,-288.64 283.78,-293.1"/>
+<text text-anchor="middle" x="256" y="-311" font-family="sans-serif" font-size="10.00">same&#45;file integration</text>
+</g>
+<!-- I -->
+<g id="node18" class="node">
+<title>I</title>
+<path fill="#e6edee" stroke="#387084" d="M1572,-221C1572,-221 1284,-221 1284,-221 1278,-221 1272,-215 1272,-209 1272,-209 1272,-180 1272,-180 1272,-174 1278,-168 1284,-168 1284,-168 1572,-168 1572,-168 1578,-168 1584,-174 1584,-180 1584,-180 1584,-209 1584,-209 1584,-215 1578,-221 1572,-221"/>
+<text text-anchor="middle" x="1428" y="-204.4" font-family="sans-serif" font-size="12.00">I · Sol integration + independent Sol reviews</text>
+<text text-anchor="middle" x="1428" y="-191.4" font-family="sans-serif" font-size="12.00">Working callers · coherent claims · targeted checks</text>
+<text text-anchor="middle" x="1428" y="-178.4" font-family="sans-serif" font-size="12.00">Update inventory / source links as each unit returns</text>
+</g>
+<!-- G3&#45;&gt;I -->
+<g id="edge13" class="edge">
+<title>G3&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" d="M500.21,-264.21C680.79,-250.84 1050.9,-223.43 1265.06,-207.57"/>
+<polygon fill="#70818b" stroke="#70818b" points="1265.35,-209.83 1271.67,-207.08 1265.02,-205.29 1265.35,-209.83"/>
+</g>
+<!-- F0 -->
+<g id="node4" class="node">
+<title>F0</title>
+<path fill="#e4f1f6" stroke="#387084" d="M1157,-553C1157,-553 965,-553 965,-553 959,-553 953,-547 953,-541 953,-541 953,-525 953,-525 953,-519 959,-513 965,-513 965,-513 1157,-513 1157,-513 1163,-513 1169,-519 1169,-525 1169,-525 1169,-541 1169,-541 1169,-547 1163,-553 1157,-553"/>
+<text text-anchor="middle" x="1061" y="-536.4" font-family="sans-serif" font-size="12.00">F1,2,5 · Parallel proof consolidation</text>
+<text text-anchor="middle" x="1061" y="-523.4" font-family="sans-serif" font-size="12.00">Polar geometry / KKT / flow graph</text>
+</g>
+<!-- F1 -->
+<g id="node5" class="node">
+<title>F1</title>
+<path fill="#e4f1f6" stroke="#387084" d="M837,-395C837,-395 659,-395 659,-395 653,-395 647,-389 647,-383 647,-383 647,-367 647,-367 647,-361 653,-355 659,-355 659,-355 837,-355 837,-355 843,-355 849,-361 849,-367 849,-367 849,-383 849,-383 849,-389 843,-395 837,-395"/>
+<text text-anchor="middle" x="748" y="-378.4" font-family="sans-serif" font-size="12.00">F3 · Separate current certificates</text>
+<text text-anchor="middle" x="748" y="-365.4" font-family="sans-serif" font-size="12.00">from obsolete derivations</text>
+</g>
+<!-- F0&#45;&gt;F1 -->
+<g id="edge3" class="edge">
+<title>F0&#45;&gt;F1</title>
+<path fill="none" stroke="#70818b" d="M1009.45,-512.9C967.76,-496.81 907.98,-472.26 858,-446 831.14,-431.89 802.26,-413.37 780.83,-398.92"/>
+<polygon fill="#70818b" stroke="#70818b" points="781.93,-396.92 775.27,-395.15 779.37,-400.68 781.93,-396.92"/>
+<text text-anchor="middle" x="933" y="-457" font-family="sans-serif" font-size="10.00">KKT conventions</text>
+</g>
+<!-- F2 -->
+<g id="node6" class="node">
+<title>F2</title>
+<path fill="#ffedc9" stroke="#387084" d="M1049.24,-412.59C1049.24,-412.59 877.76,-377.41 877.76,-377.41 871.88,-376.21 871.88,-373.79 877.76,-372.59 877.76,-372.59 1049.24,-337.41 1049.24,-337.41 1055.12,-336.21 1066.88,-336.21 1072.76,-337.41 1072.76,-337.41 1244.24,-372.59 1244.24,-372.59 1250.12,-373.79 1250.12,-376.21 1244.24,-377.41 1244.24,-377.41 1072.76,-412.59 1072.76,-412.59 1066.88,-413.79 1055.12,-413.79 1049.24,-412.59"/>
+<text text-anchor="middle" x="1061" y="-378.4" font-family="sans-serif" font-size="12.00">F4 · Resolve claim boundaries</text>
+<text text-anchor="middle" x="1061" y="-365.4" font-family="sans-serif" font-size="12.00">Pruning / recovery / derivatives</text>
+</g>
+<!-- F0&#45;&gt;F2 -->
+<g id="edge4" class="edge">
+<title>F0&#45;&gt;F2</title>
+<path fill="none" stroke="#70818b" d="M1061,-512.87C1061,-490.33 1061,-452.11 1061,-421.78"/>
+<polygon fill="#70818b" stroke="#70818b" points="1063.28,-421.54 1061,-415.04 1058.73,-421.54 1063.28,-421.54"/>
+<text text-anchor="middle" x="1099" y="-457" font-family="sans-serif" font-size="10.00">KKT conventions</text>
+</g>
+<!-- E1 -->
+<g id="node14" class="node">
+<title>E1</title>
+<path fill="#eee6fa" stroke="#387084" d="M1563.5,-395C1563.5,-395 1292.5,-395 1292.5,-395 1286.5,-395 1280.5,-389 1280.5,-383 1280.5,-383 1280.5,-367 1280.5,-367 1280.5,-361 1286.5,-355 1292.5,-355 1292.5,-355 1563.5,-355 1563.5,-355 1569.5,-355 1575.5,-361 1575.5,-367 1575.5,-367 1575.5,-383 1575.5,-383 1575.5,-389 1569.5,-395 1563.5,-395"/>
+<text text-anchor="middle" x="1428" y="-378.4" font-family="sans-serif" font-size="12.00">E2 · Parallel detailed topic accounts</text>
+<text text-anchor="middle" x="1428" y="-365.4" font-family="sans-serif" font-size="12.00">Foundations · local maxima · products · empirical</text>
+</g>
+<!-- F0&#45;&gt;E1 -->
+<g id="edge20" class="edge">
+<title>F0&#45;&gt;E1</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M1107.55,-512.95C1149.58,-495.68 1213.05,-469.43 1268,-446 1305.26,-430.11 1347.2,-411.74 1378.8,-397.81"/>
+<polygon fill="#70818b" stroke="#70818b" points="1379.94,-399.79 1384.97,-395.08 1378.11,-395.63 1379.94,-399.79"/>
+<text text-anchor="middle" x="1285.5" y="-457" font-family="sans-serif" font-size="10.00">per&#45;topic handoff</text>
+</g>
+<!-- F1&#45;&gt;I -->
+<g id="edge14" class="edge">
+<title>F1&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" d="M788.44,-354.99C808.98,-345.78 834.51,-335.01 858,-327 995.63,-280.1 1157.59,-244.53 1273.63,-222.28"/>
+<polygon fill="#70818b" stroke="#70818b" points="1274.2,-224.49 1280.16,-221.04 1273.35,-220.02 1274.2,-224.49"/>
+</g>
+<!-- F2&#45;&gt;I -->
+<g id="edge15" class="edge">
+<title>F2&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" d="M1102.8,-343.44C1143.38,-314.89 1207.53,-272.63 1268,-245 1286.02,-236.77 1305.78,-229.41 1325.07,-223.05"/>
+<polygon fill="#70818b" stroke="#70818b" points="1325.84,-225.19 1331.32,-221.01 1324.43,-220.86 1325.84,-225.19"/>
+</g>
+<!-- D0 -->
+<g id="node7" class="node">
+<title>D0</title>
+<path fill="#e4f1f6" stroke="#387084" d="M2560.5,-395C2560.5,-395 2361.5,-395 2361.5,-395 2355.5,-395 2349.5,-389 2349.5,-383 2349.5,-383 2349.5,-367 2349.5,-367 2349.5,-361 2355.5,-355 2361.5,-355 2361.5,-355 2560.5,-355 2560.5,-355 2566.5,-355 2572.5,-361 2572.5,-367 2572.5,-367 2572.5,-383 2572.5,-383 2572.5,-389 2566.5,-395 2560.5,-395"/>
+<text text-anchor="middle" x="2461" y="-378.4" font-family="sans-serif" font-size="12.00">D1 · One feature&#45;table builder</text>
+<text text-anchor="middle" x="2461" y="-365.4" font-family="sans-serif" font-size="12.00">Explicit retained / run&#45;local adapters</text>
+</g>
+<!-- D2 -->
+<g id="node9" class="node">
+<title>D2</title>
+<path fill="#e4f1f6" stroke="#387084" d="M2201,-293C2201,-293 1983,-293 1983,-293 1977,-293 1971,-287 1971,-281 1971,-281 1971,-265 1971,-265 1971,-259 1977,-253 1983,-253 1983,-253 2201,-253 2201,-253 2207,-253 2213,-259 2213,-265 2213,-265 2213,-281 2213,-281 2213,-287 2207,-293 2201,-293"/>
+<text text-anchor="middle" x="2092" y="-276.4" font-family="sans-serif" font-size="12.00">D3 · Simpler commands + consumers</text>
+<text text-anchor="middle" x="2092" y="-263.4" font-family="sans-serif" font-size="12.00">Same identities and honest provenance</text>
+</g>
+<!-- D0&#45;&gt;D2 -->
+<g id="edge5" class="edge">
+<title>D0&#45;&gt;D2</title>
+<path fill="none" stroke="#70818b" d="M2417.44,-354.95C2394.92,-345.62 2366.82,-334.75 2341,-327 2297.71,-314.01 2249.28,-302.94 2206.72,-294.33"/>
+<polygon fill="#70818b" stroke="#70818b" points="2207.04,-292.08 2200.21,-293.03 2206.14,-296.54 2207.04,-292.08"/>
+</g>
+<!-- D1 -->
+<g id="node8" class="node">
+<title>D1</title>
+<path fill="#ffedc9" stroke="#387084" d="M2080.16,-413.03C2080.16,-413.03 1863.84,-376.97 1863.84,-376.97 1857.92,-375.99 1857.92,-374.01 1863.84,-373.03 1863.84,-373.03 2080.16,-336.97 2080.16,-336.97 2086.08,-335.99 2097.92,-335.99 2103.84,-336.97 2103.84,-336.97 2320.16,-373.03 2320.16,-373.03 2326.08,-374.01 2326.08,-375.99 2320.16,-376.97 2320.16,-376.97 2103.84,-413.03 2103.84,-413.03 2097.92,-414.01 2086.08,-414.01 2080.16,-413.03"/>
+<text text-anchor="middle" x="2092" y="-378.4" font-family="sans-serif" font-size="12.00">D2 · Sampling / record IO</text>
+<text text-anchor="middle" x="2092" y="-365.4" font-family="sans-serif" font-size="12.00">Duplicates, save and provenance policy</text>
+</g>
+<!-- D1&#45;&gt;D2 -->
+<g id="edge6" class="edge">
+<title>D1&#45;&gt;D2</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M2092,-334.76C2092,-323 2092,-310.41 2092,-299.75"/>
+<polygon fill="#70818b" stroke="#70818b" points="2094.28,-299.56 2092,-293.06 2089.73,-299.56 2094.28,-299.56"/>
+<text text-anchor="middle" x="2164" y="-311" font-family="sans-serif" font-size="10.00">retain old schema if unresolved</text>
+</g>
+<!-- D2&#45;&gt;I -->
+<g id="edge16" class="edge">
+<title>D2&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" d="M1970.98,-258.06C1864.43,-245.78 1708.36,-227.8 1590.86,-214.26"/>
+<polygon fill="#70818b" stroke="#70818b" points="1590.95,-211.98 1584.24,-213.5 1590.43,-216.5 1590.95,-211.98"/>
+</g>
+<!-- T0 -->
+<g id="node10" class="node">
+<title>T0</title>
+<path fill="#e4f1f6" stroke="#387084" d="M2897.5,-395C2897.5,-395 2686.5,-395 2686.5,-395 2680.5,-395 2674.5,-389 2674.5,-383 2674.5,-383 2674.5,-367 2674.5,-367 2674.5,-361 2680.5,-355 2686.5,-355 2686.5,-355 2897.5,-355 2897.5,-355 2903.5,-355 2909.5,-361 2909.5,-367 2909.5,-367 2909.5,-383 2909.5,-383 2909.5,-389 2903.5,-395 2897.5,-395"/>
+<text text-anchor="middle" x="2792" y="-378.4" font-family="sans-serif" font-size="12.00">T1 · Capture fixtures + failures</text>
+<text text-anchor="middle" x="2792" y="-365.4" font-family="sans-serif" font-size="12.00">BEFORE changed behavior is accepted</text>
+</g>
+<!-- T1 -->
+<g id="node11" class="node">
+<title>T1</title>
+<path fill="#e4f1f6" stroke="#387084" d="M2775.5,-293C2775.5,-293 2608.5,-293 2608.5,-293 2602.5,-293 2596.5,-287 2596.5,-281 2596.5,-281 2596.5,-265 2596.5,-265 2596.5,-259 2602.5,-253 2608.5,-253 2608.5,-253 2775.5,-253 2775.5,-253 2781.5,-253 2787.5,-259 2787.5,-265 2787.5,-265 2787.5,-281 2787.5,-281 2787.5,-287 2781.5,-293 2775.5,-293"/>
+<text text-anchor="middle" x="2692" y="-276.4" font-family="sans-serif" font-size="12.00">T2 · Independent&#45;route checks</text>
+<text text-anchor="middle" x="2692" y="-263.4" font-family="sans-serif" font-size="12.00">Test actual failure modes</text>
+</g>
+<!-- T0&#45;&gt;T1 -->
+<g id="edge7" class="edge">
+<title>T0&#45;&gt;T1</title>
+<path fill="none" stroke="#70818b" d="M2772.72,-354.72C2756.53,-338.53 2733.33,-315.33 2715.96,-297.96"/>
+<polygon fill="#70818b" stroke="#70818b" points="2717.43,-296.21 2711.22,-293.22 2714.21,-299.43 2717.43,-296.21"/>
+</g>
+<!-- T2 -->
+<g id="node12" class="node">
+<title>T2</title>
+<path fill="#e4f1f6" stroke="#387084" d="M2977.5,-293C2977.5,-293 2816.5,-293 2816.5,-293 2810.5,-293 2804.5,-287 2804.5,-281 2804.5,-281 2804.5,-265 2804.5,-265 2804.5,-259 2810.5,-253 2816.5,-253 2816.5,-253 2977.5,-253 2977.5,-253 2983.5,-253 2989.5,-259 2989.5,-265 2989.5,-265 2989.5,-281 2989.5,-281 2989.5,-287 2983.5,-293 2977.5,-293"/>
+<text text-anchor="middle" x="2897" y="-276.4" font-family="sans-serif" font-size="12.00">T3 · Benchmarks</text>
+<text text-anchor="middle" x="2897" y="-263.4" font-family="sans-serif" font-size="12.00">Separate stages; same inputs</text>
+</g>
+<!-- T0&#45;&gt;T2 -->
+<g id="edge8" class="edge">
+<title>T0&#45;&gt;T2</title>
+<path fill="none" stroke="#70818b" d="M2812.25,-354.72C2829.24,-338.53 2853.6,-315.33 2871.84,-297.96"/>
+<polygon fill="#70818b" stroke="#70818b" points="2873.68,-299.35 2876.82,-293.22 2870.54,-296.06 2873.68,-299.35"/>
+</g>
+<!-- T1&#45;&gt;I -->
+<g id="edge17" class="edge">
+<title>T1&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" d="M2624.72,-252.96C2611.33,-249.8 2597.29,-246.93 2584,-245 2397.38,-217.96 1862.76,-203.96 1590.93,-198.41"/>
+<polygon fill="#70818b" stroke="#70818b" points="1590.7,-196.13 1584.16,-198.28 1590.61,-200.68 1590.7,-196.13"/>
+</g>
+<!-- T2&#45;&gt;I -->
+<g id="edge18" class="edge">
+<title>T2&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" d="M2834.42,-252.93C2821.81,-249.75 2808.57,-246.88 2796,-245 2568.3,-210.89 1901.62,-200.06 1590.9,-196.81"/>
+<polygon fill="#70818b" stroke="#70818b" points="1590.6,-194.53 1584.08,-196.74 1590.56,-199.08 1590.6,-194.53"/>
+</g>
+<!-- E0 -->
+<g id="node13" class="node">
+<title>E0</title>
+<path fill="#e4f1f6" stroke="#387084" d="M1637,-657C1637,-657 1415,-657 1415,-657 1409,-657 1403,-651 1403,-645 1403,-645 1403,-629 1403,-629 1403,-623 1409,-617 1415,-617 1415,-617 1637,-617 1637,-617 1643,-617 1649,-623 1649,-629 1649,-629 1649,-645 1649,-645 1649,-651 1643,-657 1637,-657"/>
+<text text-anchor="middle" x="1526" y="-640.4" font-family="sans-serif" font-size="12.00">E1 · Stable result IDs + content structure</text>
+<text text-anchor="middle" x="1526" y="-627.4" font-family="sans-serif" font-size="12.00">TOC / typed result graph</text>
+</g>
+<!-- EP -->
+<g id="node16" class="node">
+<title>EP</title>
+<path fill="#ffedc9" stroke="#387084" d="M1514.33,-583.19C1514.33,-583.19 1317.67,-535.81 1317.67,-535.81 1311.83,-534.41 1311.83,-531.59 1317.67,-530.19 1317.67,-530.19 1514.33,-482.81 1514.33,-482.81 1520.17,-481.41 1531.83,-481.41 1537.67,-482.81 1537.67,-482.81 1734.33,-530.19 1734.33,-530.19 1740.17,-531.59 1740.17,-534.41 1734.33,-535.81 1734.33,-535.81 1537.67,-583.19 1537.67,-583.19 1531.83,-584.59 1520.17,-584.59 1514.33,-583.19"/>
+<text text-anchor="middle" x="1526" y="-542.9" font-family="sans-serif" font-size="12.00">EARLY · One hard DS slice</text>
+<text text-anchor="middle" x="1526" y="-529.9" font-family="sans-serif" font-size="12.00">Account → plan → actual short draft</text>
+<text text-anchor="middle" x="1526" y="-516.9" font-family="sans-serif" font-size="12.00">Useful enough to expand?</text>
+</g>
+<!-- E0&#45;&gt;EP -->
+<g id="edge9" class="edge">
+<title>E0&#45;&gt;EP</title>
+<path fill="none" stroke="#70818b" d="M1526,-616.81C1526,-609.82 1526,-601.51 1526,-592.88"/>
+<polygon fill="#70818b" stroke="#70818b" points="1528.28,-592.74 1526,-586.24 1523.73,-592.74 1528.28,-592.74"/>
+</g>
+<!-- E2 -->
+<g id="node15" class="node">
+<title>E2</title>
+<path fill="#eee6fa" stroke="#387084" d="M1560,-293C1560,-293 1296,-293 1296,-293 1290,-293 1284,-287 1284,-281 1284,-281 1284,-265 1284,-265 1284,-259 1290,-253 1296,-253 1296,-253 1560,-253 1560,-253 1566,-253 1572,-259 1572,-265 1572,-265 1572,-281 1572,-281 1572,-287 1566,-293 1560,-293"/>
+<text text-anchor="middle" x="1428" y="-276.4" font-family="sans-serif" font-size="12.00">E3 · Assemble nested HTML</text>
+<text text-anchor="middle" x="1428" y="-263.4" font-family="sans-serif" font-size="12.00">Summary → takeaways → reasoning → evidence</text>
+</g>
+<!-- E1&#45;&gt;E2 -->
+<g id="edge12" class="edge">
+<title>E1&#45;&gt;E2</title>
+<path fill="none" stroke="#70818b" d="M1428,-354.72C1428,-339.09 1428,-316.91 1428,-299.76"/>
+<polygon fill="#70818b" stroke="#70818b" points="1430.28,-299.72 1428,-293.22 1425.73,-299.72 1430.28,-299.72"/>
+</g>
+<!-- E2&#45;&gt;I -->
+<g id="edge19" class="edge">
+<title>E2&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" d="M1428,-252.7C1428,-245.15 1428,-236.29 1428,-227.83"/>
+<polygon fill="#70818b" stroke="#70818b" points="1430.28,-227.66 1428,-221.16 1425.73,-227.66 1430.28,-227.66"/>
+</g>
+<!-- EP&#45;&gt;E1 -->
+<g id="edge10" class="edge">
+<title>EP&#45;&gt;E1</title>
+<path fill="none" stroke="#70818b" d="M1497.39,-486.46C1479.79,-458.44 1457.91,-423.61 1443.48,-400.64"/>
+<polygon fill="#70818b" stroke="#70818b" points="1445.36,-399.36 1439.98,-395.07 1441.51,-401.78 1445.36,-399.36"/>
+<text text-anchor="middle" x="1533" y="-457" font-family="sans-serif" font-size="10.00">bounded useful result</text>
+</g>
+<!-- EN -->
+<g id="node17" class="node">
+<title>EN</title>
+<path fill="#fff4df" stroke="#387084" d="M1815.5,-401.5C1815.5,-401.5 1604.5,-401.5 1604.5,-401.5 1598.5,-401.5 1592.5,-395.5 1592.5,-389.5 1592.5,-389.5 1592.5,-360.5 1592.5,-360.5 1592.5,-354.5 1598.5,-348.5 1604.5,-348.5 1604.5,-348.5 1815.5,-348.5 1815.5,-348.5 1821.5,-348.5 1827.5,-354.5 1827.5,-360.5 1827.5,-360.5 1827.5,-389.5 1827.5,-389.5 1827.5,-395.5 1821.5,-401.5 1815.5,-401.5"/>
+<text text-anchor="middle" x="1710" y="-384.9" font-family="sans-serif" font-size="12.00">If not: repair / narrow account</text>
+<text text-anchor="middle" x="1710" y="-371.9" font-family="sans-serif" font-size="12.00">or expose human writing dependency</text>
+<text text-anchor="middle" x="1710" y="-358.9" font-family="sans-serif" font-size="12.00">Independent cleanup continues</text>
+</g>
+<!-- EP&#45;&gt;EN -->
+<g id="edge11" class="edge">
+<title>EP&#45;&gt;EN</title>
+<path fill="none" stroke="#70818b" d="M1573.86,-491.42C1605.34,-464.73 1645.85,-430.39 1674.47,-406.12"/>
+<polygon fill="#70818b" stroke="#70818b" points="1676.18,-407.65 1679.67,-401.72 1673.24,-404.18 1676.18,-407.65"/>
+<text text-anchor="middle" x="1681" y="-457" font-family="sans-serif" font-size="10.00">failed value/meaning check</text>
+</g>
+<!-- P -->
+<g id="node19" class="node">
+<title>P</title>
+<path fill="#eee6fa" stroke="#387084" d="M1583,-137C1583,-137 1273,-137 1273,-137 1267,-137 1261,-131 1261,-125 1261,-125 1261,-96 1261,-96 1261,-90 1267,-84 1273,-84 1273,-84 1583,-84 1583,-84 1589,-84 1595,-90 1595,-96 1595,-96 1595,-125 1595,-125 1595,-131 1589,-137 1583,-137"/>
+<text text-anchor="middle" x="1428" y="-120.4" font-family="sans-serif" font-size="12.00">P · Fresh Sol: joint agent/Jörn writing plan</text>
+<text text-anchor="middle" x="1428" y="-107.4" font-family="sans-serif" font-size="12.00">Claims/order · reusable text · evidence · effort allocation</text>
+<text text-anchor="middle" x="1428" y="-94.4" font-family="sans-serif" font-size="12.00">Expose remaining reconstruction and human decisions</text>
+</g>
+<!-- I&#45;&gt;P -->
+<g id="edge21" class="edge">
+<title>I&#45;&gt;P</title>
+<path fill="none" stroke="#70818b" d="M1428,-167.55C1428,-160.15 1428,-151.99 1428,-144.24"/>
+<polygon fill="#70818b" stroke="#70818b" points="1430.28,-143.78 1428,-137.28 1425.73,-143.78 1430.28,-143.78"/>
+</g>
+<!-- A -->
+<g id="node20" class="node">
+<title>A</title>
+<path fill="#d8eadd" stroke="#387049" d="M1592.5,-53C1592.5,-53 1263.5,-53 1263.5,-53 1257.5,-53 1251.5,-47 1251.5,-41 1251.5,-41 1251.5,-12 1251.5,-12 1251.5,-6 1257.5,0 1263.5,0 1263.5,0 1592.5,0 1592.5,0 1598.5,0 1604.5,-6 1604.5,-12 1604.5,-12 1604.5,-41 1604.5,-41 1604.5,-47 1598.5,-53 1592.5,-53"/>
+<text text-anchor="middle" x="1428" y="-36.4" font-family="sans-serif" font-size="12.00">A · Astra final review</text>
+<text text-anchor="middle" x="1428" y="-23.4" font-family="sans-serif" font-size="12.00">One assembled candidate + source&#45;ordered reading packet</text>
+<text text-anchor="middle" x="1428" y="-10.4" font-family="sans-serif" font-size="12.00">Findings → Sol fixes → consolidated delta review</text>
+</g>
+<!-- P&#45;&gt;A -->
+<g id="edge22" class="edge">
+<title>P&#45;&gt;A</title>
+<path fill="none" stroke="#70818b" d="M1428,-83.55C1428,-76.15 1428,-67.99 1428,-60.24"/>
+<polygon fill="#70818b" stroke="#70818b" points="1430.28,-59.78 1428,-53.28 1425.73,-59.78 1430.28,-59.78"/>
+</g>
+</g>
+</svg>
+</div>
+<p><b>Amber decisions have useful fallback routes:</b> preserve different validation policies behind adapters; consolidate only the supported proof claims; preserve the existing single-writer/schema contract if a broader change is unresolved. These hold up only dependent changes. New mathematical research and long dataset/certificate reruns are not hidden inside routine cleanup.</p>
+<p><b>Cross-stream gates:</b> Baseline fixtures are captured before accepting geometry/data changes; the KKT comparison tests use the reconciled convention. These cross-stream gates are compressed in the overview.</p><p><b>Shared writers:</b> one geometry integrator controls the shared geometry files; the foundations manager integrates shared LaTeX imports/labels; the data manager controls schemas; the account manager assembles shared navigation. Parallel workers own distinct files or prepare patches for that owner. This prevents “parallel” from meaning concurrent edits to the same file.</p></section>
+<section id="team"><h2>2. Delegation and review</h2><div class="graph"><svg width="1292pt" height="512pt"
+ viewBox="0.00 0.00 1291.80 511.80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(14.4 497.4)">
+<title>team</title>
+<!-- R -->
+<g id="node1" class="node">
+<title>R</title>
+<path fill="#d8eadd" stroke="#387084" d="M781,-483C781,-483 583,-483 583,-483 577,-483 571,-477 571,-471 571,-471 571,-442 571,-442 571,-436 577,-430 583,-430 583,-430 781,-430 781,-430 787,-430 793,-436 793,-442 793,-442 793,-471 793,-471 793,-477 787,-483 781,-483"/>
+<text text-anchor="middle" x="682" y="-466.4" font-family="sans-serif" font-size="12.00">Sol root</text>
+<text text-anchor="middle" x="682" y="-453.4" font-family="sans-serif" font-size="12.00">5 compact branch seeds in parallel</text>
+<text text-anchor="middle" x="682" y="-440.4" font-family="sans-serif" font-size="12.00">Scope, slots, cross&#45;branch decisions</text>
+</g>
+<!-- G -->
+<g id="node2" class="node">
+<title>G</title>
+<path fill="#e4f1f6" stroke="#387084" d="M291.5,-390.5C291.5,-390.5 166.5,-390.5 166.5,-390.5 160.5,-390.5 154.5,-384.5 154.5,-378.5 154.5,-378.5 154.5,-366.5 154.5,-366.5 154.5,-360.5 160.5,-354.5 166.5,-354.5 166.5,-354.5 291.5,-354.5 291.5,-354.5 297.5,-354.5 303.5,-360.5 303.5,-366.5 303.5,-366.5 303.5,-378.5 303.5,-378.5 303.5,-384.5 297.5,-390.5 291.5,-390.5"/>
+<text text-anchor="middle" x="229" y="-369.4" font-family="sans-serif" font-size="12.00">Sol geometry manager</text>
+</g>
+<!-- R&#45;&gt;G -->
+<g id="edge1" class="edge">
+<title>R&#45;&gt;G</title>
+<path fill="none" stroke="#70818b" d="M570.63,-440.32C500.91,-430.17 409.38,-415.64 329,-399 319.21,-396.97 308.94,-394.62 298.87,-392.18"/>
+<polygon fill="#70818b" stroke="#70818b" points="299.13,-389.9 292.28,-390.56 298.05,-394.32 299.13,-389.9"/>
+</g>
+<!-- F -->
+<g id="node3" class="node">
+<title>F</title>
+<path fill="#e4f1f6" stroke="#387084" d="M488.5,-390.5C488.5,-390.5 349.5,-390.5 349.5,-390.5 343.5,-390.5 337.5,-384.5 337.5,-378.5 337.5,-378.5 337.5,-366.5 337.5,-366.5 337.5,-360.5 343.5,-354.5 349.5,-354.5 349.5,-354.5 488.5,-354.5 488.5,-354.5 494.5,-354.5 500.5,-360.5 500.5,-366.5 500.5,-366.5 500.5,-378.5 500.5,-378.5 500.5,-384.5 494.5,-390.5 488.5,-390.5"/>
+<text text-anchor="middle" x="419" y="-369.4" font-family="sans-serif" font-size="12.00">Sol foundations manager</text>
+</g>
+<!-- R&#45;&gt;F -->
+<g id="edge2" class="edge">
+<title>R&#45;&gt;F</title>
+<path fill="none" stroke="#70818b" d="M599.87,-429.89C561.13,-417.81 515.71,-403.65 480.08,-392.54"/>
+<polygon fill="#70818b" stroke="#70818b" points="480.42,-390.27 473.54,-390.51 479.07,-394.61 480.42,-390.27"/>
+</g>
+<!-- D -->
+<g id="node4" class="node">
+<title>D</title>
+<path fill="#e4f1f6" stroke="#387084" d="M644.5,-390.5C644.5,-390.5 549.5,-390.5 549.5,-390.5 543.5,-390.5 537.5,-384.5 537.5,-378.5 537.5,-378.5 537.5,-366.5 537.5,-366.5 537.5,-360.5 543.5,-354.5 549.5,-354.5 549.5,-354.5 644.5,-354.5 644.5,-354.5 650.5,-354.5 656.5,-360.5 656.5,-366.5 656.5,-366.5 656.5,-378.5 656.5,-378.5 656.5,-384.5 650.5,-390.5 644.5,-390.5"/>
+<text text-anchor="middle" x="597" y="-369.4" font-family="sans-serif" font-size="12.00">Sol data manager</text>
+</g>
+<!-- R&#45;&gt;D -->
+<g id="edge3" class="edge">
+<title>R&#45;&gt;D</title>
+<path fill="none" stroke="#70818b" d="M655.11,-429.55C643.72,-418.57 630.59,-405.91 619.7,-395.4"/>
+<polygon fill="#70818b" stroke="#70818b" points="621.13,-393.62 614.87,-390.74 617.97,-396.89 621.13,-393.62"/>
+</g>
+<!-- T -->
+<g id="node5" class="node">
+<title>T</title>
+<path fill="#e4f1f6" stroke="#387084" d="M782.5,-390.5C782.5,-390.5 685.5,-390.5 685.5,-390.5 679.5,-390.5 673.5,-384.5 673.5,-378.5 673.5,-378.5 673.5,-366.5 673.5,-366.5 673.5,-360.5 679.5,-354.5 685.5,-354.5 685.5,-354.5 782.5,-354.5 782.5,-354.5 788.5,-354.5 794.5,-360.5 794.5,-366.5 794.5,-366.5 794.5,-378.5 794.5,-378.5 794.5,-384.5 788.5,-390.5 782.5,-390.5"/>
+<text text-anchor="middle" x="734" y="-369.4" font-family="sans-serif" font-size="12.00">Sol trust manager</text>
+</g>
+<!-- R&#45;&gt;T -->
+<g id="edge4" class="edge">
+<title>R&#45;&gt;T</title>
+<path fill="none" stroke="#70818b" d="M698.45,-429.55C705.23,-418.87 713.02,-406.59 719.57,-396.26"/>
+<polygon fill="#70818b" stroke="#70818b" points="721.51,-397.45 723.07,-390.74 717.67,-395.01 721.51,-397.45"/>
+</g>
+<!-- E -->
+<g id="node6" class="node">
+<title>E</title>
+<path fill="#e4f1f6" stroke="#387084" d="M992,-390.5C992,-390.5 824,-390.5 824,-390.5 818,-390.5 812,-384.5 812,-378.5 812,-378.5 812,-366.5 812,-366.5 812,-360.5 818,-354.5 824,-354.5 824,-354.5 992,-354.5 992,-354.5 998,-354.5 1004,-360.5 1004,-366.5 1004,-366.5 1004,-378.5 1004,-378.5 1004,-384.5 998,-390.5 992,-390.5"/>
+<text text-anchor="middle" x="908" y="-369.4" font-family="sans-serif" font-size="12.00">Sol research&#45;account manager</text>
+</g>
+<!-- R&#45;&gt;E -->
+<g id="edge5" class="edge">
+<title>R&#45;&gt;E</title>
+<path fill="none" stroke="#70818b" d="M752.58,-429.89C785.59,-417.92 824.25,-403.89 854.75,-392.82"/>
+<polygon fill="#70818b" stroke="#70818b" points="855.8,-394.86 861.13,-390.51 854.25,-390.58 855.8,-394.86"/>
+</g>
+<!-- O -->
+<g id="node13" class="node">
+<title>O</title>
+<path fill="#e6edee" stroke="#387084" d="M1251,-399C1251,-399 1033,-399 1033,-399 1027,-399 1021,-393 1021,-387 1021,-387 1021,-358 1021,-358 1021,-352 1027,-346 1033,-346 1033,-346 1251,-346 1251,-346 1257,-346 1263,-352 1263,-358 1263,-358 1263,-387 1263,-387 1263,-393 1257,-399 1251,-399"/>
+<text text-anchor="middle" x="1142" y="-382.4" font-family="sans-serif" font-size="12.00">Luna bounded observer</text>
+<text text-anchor="middle" x="1142" y="-369.4" font-family="sans-serif" font-size="12.00">Usage, build contention, review queues</text>
+<text text-anchor="middle" x="1142" y="-356.4" font-family="sans-serif" font-size="12.00">Reports exceptions to root</text>
+</g>
+<!-- R&#45;&gt;O -->
+<g id="edge16" class="edge">
+<title>R&#45;&gt;O</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M793.25,-437.14C857.29,-426.4 939.25,-412.36 1012,-399 1012.83,-398.85 1013.66,-398.7 1014.49,-398.54"/>
+<polygon fill="#70818b" stroke="#70818b" points="1014.94,-400.77 1020.92,-397.35 1014.11,-396.3 1014.94,-400.77"/>
+</g>
+<!-- GW -->
+<g id="node7" class="node">
+<title>GW</title>
+<path fill="#e4f1f6" stroke="#387084" d="M226,-315C226,-315 12,-315 12,-315 6,-315 0,-309 0,-303 0,-303 0,-274 0,-274 0,-268 6,-262 12,-262 12,-262 226,-262 226,-262 232,-262 238,-268 238,-274 238,-274 238,-303 238,-303 238,-309 232,-315 226,-315"/>
+<text text-anchor="middle" x="119" y="-298.4" font-family="sans-serif" font-size="12.00">Sol implementation</text>
+<text text-anchor="middle" x="119" y="-285.4" font-family="sans-serif" font-size="12.00">Luna caller search / bounded refactors</text>
+<text text-anchor="middle" x="119" y="-272.4" font-family="sans-serif" font-size="12.00">Separate Sol review</text>
+</g>
+<!-- G&#45;&gt;GW -->
+<g id="edge6" class="edge">
+<title>G&#45;&gt;GW</title>
+<path fill="none" stroke="#70818b" d="M205.94,-354.31C192.24,-344.1 174.5,-330.87 158.62,-319.03"/>
+<polygon fill="#70818b" stroke="#70818b" points="159.88,-317.14 153.31,-315.08 157.17,-320.79 159.88,-317.14"/>
+</g>
+<!-- FW -->
+<g id="node8" class="node">
+<title>FW</title>
+<path fill="#e4f1f6" stroke="#387084" d="M453,-315C453,-315 267,-315 267,-315 261,-315 255,-309 255,-303 255,-303 255,-274 255,-274 255,-268 261,-262 267,-262 267,-262 453,-262 453,-262 459,-262 465,-268 465,-274 465,-274 465,-303 465,-303 465,-309 459,-315 453,-315"/>
+<text text-anchor="middle" x="360" y="-298.4" font-family="sans-serif" font-size="12.00">Parallel Sol proof editors</text>
+<text text-anchor="middle" x="360" y="-285.4" font-family="sans-serif" font-size="12.00">Luna comparison / references</text>
+<text text-anchor="middle" x="360" y="-272.4" font-family="sans-serif" font-size="12.00">Separate Sol mathematical review</text>
+</g>
+<!-- F&#45;&gt;FW -->
+<g id="edge7" class="edge">
+<title>F&#45;&gt;FW</title>
+<path fill="none" stroke="#70818b" d="M406.49,-354.11C399.51,-344.41 390.61,-332.04 382.47,-320.73"/>
+<polygon fill="#70818b" stroke="#70818b" points="384.19,-319.22 378.55,-315.28 380.5,-321.88 384.19,-319.22"/>
+</g>
+<!-- DW -->
+<g id="node9" class="node">
+<title>DW</title>
+<path fill="#e4f1f6" stroke="#387084" d="M699.5,-315C699.5,-315 494.5,-315 494.5,-315 488.5,-315 482.5,-309 482.5,-303 482.5,-303 482.5,-274 482.5,-274 482.5,-268 488.5,-262 494.5,-262 494.5,-262 699.5,-262 699.5,-262 705.5,-262 711.5,-268 711.5,-274 711.5,-274 711.5,-303 711.5,-303 711.5,-309 705.5,-315 699.5,-315"/>
+<text text-anchor="middle" x="597" y="-298.4" font-family="sans-serif" font-size="12.00">Sol producer / schema work</text>
+<text text-anchor="middle" x="597" y="-285.4" font-family="sans-serif" font-size="12.00">Luna fixtures / debugging / wrappers</text>
+<text text-anchor="middle" x="597" y="-272.4" font-family="sans-serif" font-size="12.00">Separate Sol review</text>
+</g>
+<!-- D&#45;&gt;DW -->
+<g id="edge8" class="edge">
+<title>D&#45;&gt;DW</title>
+<path fill="none" stroke="#70818b" d="M597,-354.11C597,-344.77 597,-332.94 597,-321.97"/>
+<polygon fill="#70818b" stroke="#70818b" points="599.28,-321.78 597,-315.28 594.73,-321.78 599.28,-321.78"/>
+</g>
+<!-- TW -->
+<g id="node10" class="node">
+<title>TW</title>
+<path fill="#e4f1f6" stroke="#387084" d="M895,-315C895,-315 741,-315 741,-315 735,-315 729,-309 729,-303 729,-303 729,-274 729,-274 729,-268 735,-262 741,-262 741,-262 895,-262 895,-262 901,-262 907,-268 907,-274 907,-274 907,-303 907,-303 907,-309 901,-315 895,-315"/>
+<text text-anchor="middle" x="818" y="-298.4" font-family="sans-serif" font-size="12.00">Sol test / benchmark design</text>
+<text text-anchor="middle" x="818" y="-285.4" font-family="sans-serif" font-size="12.00">Luna runs / failure isolation</text>
+<text text-anchor="middle" x="818" y="-272.4" font-family="sans-serif" font-size="12.00">Separate Sol review</text>
+</g>
+<!-- T&#45;&gt;TW -->
+<g id="edge9" class="edge">
+<title>T&#45;&gt;TW</title>
+<path fill="none" stroke="#70818b" d="M751.81,-354.11C761.93,-344.24 774.88,-331.59 786.64,-320.11"/>
+<polygon fill="#70818b" stroke="#70818b" points="788.53,-321.44 791.59,-315.28 785.35,-318.19 788.53,-321.44"/>
+</g>
+<!-- EW -->
+<g id="node11" class="node">
+<title>EW</title>
+<path fill="#e4f1f6" stroke="#387084" d="M1162,-315C1162,-315 936,-315 936,-315 930,-315 924,-309 924,-303 924,-303 924,-274 924,-274 924,-268 930,-262 936,-262 936,-262 1162,-262 1162,-262 1168,-262 1174,-268 1174,-274 1174,-274 1174,-303 1174,-303 1174,-309 1168,-315 1162,-315"/>
+<text text-anchor="middle" x="1049" y="-298.4" font-family="sans-serif" font-size="12.00">Parallel Sol topic authors</text>
+<text text-anchor="middle" x="1049" y="-285.4" font-family="sans-serif" font-size="12.00">Luna extraction / links / HTML mechanics</text>
+<text text-anchor="middle" x="1049" y="-272.4" font-family="sans-serif" font-size="12.00">Sol whole&#45;account review</text>
+</g>
+<!-- E&#45;&gt;EW -->
+<g id="edge10" class="edge">
+<title>E&#45;&gt;EW</title>
+<path fill="none" stroke="#70818b" d="M937.56,-354.31C955.42,-343.92 978.65,-330.41 999.27,-318.42"/>
+<polygon fill="#70818b" stroke="#70818b" points="1000.54,-320.31 1005.02,-315.08 998.25,-316.38 1000.54,-320.31"/>
+</g>
+<!-- I -->
+<g id="node12" class="node">
+<title>I</title>
+<path fill="#e6edee" stroke="#387084" d="M713.5,-221C713.5,-221 480.5,-221 480.5,-221 474.5,-221 468.5,-215 468.5,-209 468.5,-209 468.5,-180 468.5,-180 468.5,-174 474.5,-168 480.5,-168 480.5,-168 713.5,-168 713.5,-168 719.5,-168 725.5,-174 725.5,-180 725.5,-180 725.5,-209 725.5,-209 725.5,-215 719.5,-221 713.5,-221"/>
+<text text-anchor="middle" x="597" y="-204.4" font-family="sans-serif" font-size="12.00">Sol integrator</text>
+<text text-anchor="middle" x="597" y="-191.4" font-family="sans-serif" font-size="12.00">Shared files, interface changes, candidate</text>
+<text text-anchor="middle" x="597" y="-178.4" font-family="sans-serif" font-size="12.00">Assembles source&#45;ordered reading packet</text>
+</g>
+<!-- GW&#45;&gt;I -->
+<g id="edge11" class="edge">
+<title>GW&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M238.31,-263.51C240.9,-263 243.46,-262.5 246,-262 317.06,-248.13 396.31,-233.09 461.49,-220.82"/>
+<polygon fill="#70818b" stroke="#70818b" points="462.19,-223 468.16,-219.56 461.35,-218.53 462.19,-223"/>
+<text text-anchor="middle" x="415.5" y="-239" font-family="sans-serif" font-size="10.00">reviewed units</text>
+</g>
+<!-- FW&#45;&gt;I -->
+<g id="edge12" class="edge">
+<title>FW&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M425.7,-262C456.53,-250.03 493.34,-235.74 524.93,-223.48"/>
+<polygon fill="#70818b" stroke="#70818b" points="525.93,-225.53 531.17,-221.05 524.29,-221.29 525.93,-225.53"/>
+<text text-anchor="middle" x="519.5" y="-239" font-family="sans-serif" font-size="10.00">reviewed units</text>
+</g>
+<!-- DW&#45;&gt;I -->
+<g id="edge13" class="edge">
+<title>DW&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M597,-261.87C597,-251.39 597,-239.15 597,-228.05"/>
+<polygon fill="#70818b" stroke="#70818b" points="599.28,-227.81 597,-221.31 594.73,-227.81 599.28,-227.81"/>
+<text text-anchor="middle" x="630.5" y="-239" font-family="sans-serif" font-size="10.00">reviewed units</text>
+</g>
+<!-- TW&#45;&gt;I -->
+<g id="edge14" class="edge">
+<title>TW&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M756.73,-262C728.11,-250.08 693.95,-235.86 664.58,-223.63"/>
+<polygon fill="#70818b" stroke="#70818b" points="665.26,-221.45 658.39,-221.05 663.51,-225.65 665.26,-221.45"/>
+<text text-anchor="middle" x="748.5" y="-239" font-family="sans-serif" font-size="10.00">reviewed units</text>
+</g>
+<!-- EW&#45;&gt;I -->
+<g id="edge15" class="edge">
+<title>EW&#45;&gt;I</title>
+<path fill="none" stroke="#70818b" stroke-dasharray="5,2" d="M923.99,-262.06C863.36,-249.72 790.52,-234.89 729,-222.37"/>
+<polygon fill="#70818b" stroke="#70818b" points="729.14,-220.07 722.32,-221.01 728.23,-224.53 729.14,-220.07"/>
+<text text-anchor="middle" x="870.5" y="-239" font-family="sans-serif" font-size="10.00">reviewed units</text>
+</g>
+<!-- P -->
+<g id="node14" class="node">
+<title>P</title>
+<path fill="#eee6fa" stroke="#387084" d="M679.5,-137C679.5,-137 514.5,-137 514.5,-137 508.5,-137 502.5,-131 502.5,-125 502.5,-125 502.5,-96 502.5,-96 502.5,-90 508.5,-84 514.5,-84 514.5,-84 679.5,-84 679.5,-84 685.5,-84 691.5,-90 691.5,-96 691.5,-96 691.5,-125 691.5,-125 691.5,-131 685.5,-137 679.5,-137"/>
+<text text-anchor="middle" x="597" y="-120.4" font-family="sans-serif" font-size="12.00">Fresh Sol planner</text>
+<text text-anchor="middle" x="597" y="-107.4" font-family="sans-serif" font-size="12.00">Uses assembled account</text>
+<text text-anchor="middle" x="597" y="-94.4" font-family="sans-serif" font-size="12.00">Drafts agent/Jörn writing plan</text>
+</g>
+<!-- I&#45;&gt;P -->
+<g id="edge17" class="edge">
+<title>I&#45;&gt;P</title>
+<path fill="none" stroke="#70818b" d="M597,-167.55C597,-160.15 597,-151.99 597,-144.24"/>
+<polygon fill="#70818b" stroke="#70818b" points="599.28,-143.78 597,-137.28 594.73,-143.78 599.28,-143.78"/>
+</g>
+<!-- A -->
+<g id="node15" class="node">
+<title>A</title>
+<path fill="#d8eadd" stroke="#387084" d="M694,-53C694,-53 500,-53 500,-53 494,-53 488,-47 488,-41 488,-41 488,-12 488,-12 488,-6 494,0 500,0 500,0 694,0 694,0 700,0 706,-6 706,-12 706,-12 706,-41 706,-41 706,-47 700,-53 694,-53"/>
+<text text-anchor="middle" x="597" y="-36.4" font-family="sans-serif" font-size="12.00">Astra final reviewer</text>
+<text text-anchor="middle" x="597" y="-23.4" font-family="sans-serif" font-size="12.00">Candidate + plan + evidence packet</text>
+<text text-anchor="middle" x="597" y="-10.4" font-family="sans-serif" font-size="12.00">Targeted follow&#45;up after fixes</text>
+</g>
+<!-- P&#45;&gt;A -->
+<g id="edge18" class="edge">
+<title>P&#45;&gt;A</title>
+<path fill="none" stroke="#70818b" d="M597,-83.55C597,-76.15 597,-67.99 597,-60.24"/>
+<polygon fill="#70818b" stroke="#70818b" points="599.28,-59.78 597,-53.28 594.73,-59.78 599.28,-59.78"/>
+</g>
+</g>
+</svg>
+</div>
+<p><b>Root writes five compact seeds, not twenty long prompts.</b> Each Sol manager expands its own seed, source context and worker prompts concurrently. A seed specifies the outcome, boundaries, source owners, tests, stopping point and receiving owner. Managers can spawn further bounded help; Luna can perform real routine refactors/debugging as well as search and extraction, with Sol reviewing the result.</p>
+<p><b>Starting shape:</b> five managers, roughly two to four active producers/helpers per branch, plus integration/observation. Reviews start when inputs exist; the account branch can split further by topic. This is an initial scheduling proposal, not a fixed cap or measured optimum. The approximately 99 worker slots include managers and nested descendants. Root allocates slots across branches; managers redistribute locally. Growth requires independent work and review capacity, not just spare slots.</p>
+<p>CPU, memory, Cargo locks, artifact writers, benchmark isolation and integration queues also constrain concurrency. One build/benchmark owner schedules conflicting commands while reading, coding and prompt expansion continue. Numeric spending and runtime allowances remain launch inputs.</p>
+<p><b>Astra receives one assembled candidate and reading packet:</b> objective/coverage map; source-ordered changed-file list with reasons to read; contracts and proof assumptions; Sol review findings and dispositions; exact checks/fixtures; remaining gaps; and the fresh-agent writing-plan result. Astra can follow source trails or request missing context. Sol fixes findings, then returns one consolidated delta packet for targeted rereview. Summaries do not substitute for source inspection.</p></section>
+<section id="early"><h2>Early checks: when to stop or change course</h2><p><strong>11 October:</strong> Jörn considers the package worth running. Use early completed units to challenge the assumptions below before widening the dependent work.</p><table><tr><th>Uncertainty</th><th>First useful evidence</th><th>Failure response</th></tr>
+<tr><td>Account → usable writing</td><td>First hard DS slice, targeting the first execution hour: account → fresh-agent plan → actual short passage. Compare against the best existing account.</td><td>Bad reconstruction: repair before multiplying authors. Sound account but bad prose: stop scaling automatic prose production and expose the human judgment needed.</td></tr>
+<tr><td>Reviewer reliability</td><td>Before relying on approval to scale: blinded historical failure plus acceptable control; then the live passage and a short Jörn judgment when available.</td><td>False confidence or blanket rejection: retain meaning checks/flagging but remove autonomous usability approval.</td></tr>
+<tr><td>Geometry/data compatibility</td><td>Before bulk caller migration: edge cases plus a real small same-input data command, checking identity, provenance and failure behavior.</td><td>Keep distinct policies behind adapters; isolate schema/evidence gaps. Stop only affected migrations.</td></tr>
+<tr><td>Delegation → integration</td><td>Integrate the first reviewed return immediately. Observe queues, conflicts and build contention; check handover at the actual cold start.</td><td>Shift capacity to review/integration before adding producers; repair specific ownership/recovery failures.</td></tr></table><p>Independent useful work continues. Two local snapshots—the invariant table and held-out optimizer results—were verified offline today. That checks local bytes, not scientific interpretation or remote availability. <a href="early-checks.md">Detailed probes, fallback rules, evidence and limits</a>.</p><p>These tests can falsify or narrow a route early. They do not establish whole-thesis quality, broad code correctness or seven-day completion.</p></section><section id="review"><h2>Sanity-check request</h2><div class="q"><b>Q14 — Please check the four expected-use rows against the task graph.</b> The package is considered worth running; the early checks above refine when to widen or narrow dependent work. Does any row still amount to moving or summarizing the same mess, rather than making that use case easier? Which concrete outcome or dependency would make you reject the package?</div><p>Focus on the outcomes and amber decisions; the routine prompt details are the managers’ job. The writing trial checks information transfer and task allocation. It does not yet demonstrate the seven-day thesis finish or quantify Jörn’s eventual hours.</p>
+<p class="muted">Q10: parallel streams selected. Q11: old conceptual goal map retired, original bytes recoverable in Git. Q12: grouping accepted as good enough; agents own refinements. Q13: short guide expanded into nested explanation/evidence design and an agent-heavy joint writing plan.</p></section>
+<section id="details"><h2>Source-backed work seeds</h2><p>Managers expand these concurrently. They are proposed work units, not claims that implementation is complete.</p><details><summary>G1 · Shared incidence-only intersection</summary><p>One Euclidean incidence helper, compatibility adapters, migrated three duplicate scans</p><p><b>Sources/ownership:</b> crates/euclidean-polytopes/src/faces.rs; crates/symplectic/src/exact/polytope.rs: incidence helper; crates/symplectic/src/geom/vertex_enumeration/mod.rs: incidence helper</p><p><b>Check:</b> Compare facet intersection sets on nonsimple and redundant fixtures.</p><p><b>If blocked:</b> Ship the helper and adapters even if larger geometry migration stalls.</p></details><details><summary>G2 · Resolve normalized-geometry acceptance boundary</summary><p>Explicit input/errors/facet-identity contract and resolution or isolation of duplicate-inequality irredundancy issue</p><p><b>Sources/ownership:</b> geometry API contract decision; proof edits assigned through foundations manager, not a second writer</p><p><b>Check:</b> Compare named duplicate, redundant, zero-row, rank-deficient and unbounded cases against current APIs.</p><p><b>If blocked:</b> Preserve old validation adapters and state inequivalence; do not claim policies equivalent.</p></details><details><summary>G3 · Checked normalized exact H-geometry owner</summary><p>Euclidean owner for exact ordered normalized 4D rows, validation, vertices/incidence; symplectic compatibility boundary</p><p><b>Sources/ownership:</b> crates/euclidean-polytopes/src/polar.rs; crates/euclidean-polytopes/src/linalg.rs; crates/symplectic/src/exact/polytope.rs: checked geometry</p><p><b>Check:</b> Generic/algebraic and rational paired fixtures; preserved error distinctions and facet identities.</p><p><b>If blocked:</b> Keep checked adapter with established backend; leave unsupported legacy pipeline explicit.</p></details><details><summary>G4 · Geometry consumer migration</summary><p>All active callers move through supported interfaces with ordering/errors preserved</p><p><b>Sources/ownership:</b> crates/symplectic/src/algorithms; crates/symplectic/src/geom/lagrangian_product.rs; crates/symplectic/src/derivatives.rs; crates/symplectic/src/exact/derivatives.rs; experiments/qp-error-bounds/src/retained_exact.rs; experiments/dev-flow-graph/visualize-tube/main.rs; experiments/verification/ch2021-six-vertex/main.rs</p><p><b>Check:</b> Focused caller checks plus standalone build scopes, not only root workspace.</p><p><b>If blocked:</b> Add missed caller before closing; migrate subsets behind compatibility names.</p></details><details><summary>F1 · Exact polar proof packet</summary><p>Reusable formal exact-polar owner imported once, crate-to-proof links, labels and approval provenance preserved</p><p><b>Sources/ownership:</b> formal/exact-polar-geometry.tex (proposed); formal/symplectic-polytope-geometry.tex: ordinary geometry; formal/random-polytope-boundedness.tex: exact boundedness; formal/rational-integer-scaling.tex; formal/main.tex</p><p><b>Check:</b> Statement/equation/hypothesis comparison and formal build; independent Sol mathematical review.</p><p><b>If blocked:</b> Leave disputed lemma in old owner with explicit caveat; preserve rank, recession, nonsimple, denominator/LCM distinctions.</p></details><details><summary>F2 · KKT signs, scaling and word orientation</summary><p>Single reusable convention translation with downstream sign/factor references; stationary/scalar/global/orbit meanings distinguished</p><p><b>Sources/ownership:</b> formal/hk2017-qp-conventions.tex; formal/ehz-kkt-system.tex: conventions; formal/hk2017-qp-core.tex: convention references; formal/FINDINGS.md: convention references</p><p><b>Check:</b> Check Q, H, multiplier and action equations against source theorem and current solver contract.</p><p><b>If blocked:</b> Preserve differing historical conventions as explicitly mapped history rather than silently normalize.</p></details><details><summary>F3 · Current direct certificate versus historical proxy</summary><p>Split current inverse-defect certificate family and implementation assumptions from obsolete residual/proxy development</p><p><b>Sources/ownership:</b> formal/hk2017-qp-precision.tex; formal/ehz-kkt-system.tex: legacy error references; experiments/qp-error-bounds/interpretation.md: navigation</p><p><b>Check:</b> Preserve outward rounding, assembly error, defect bound, fallback and kernel environment; inspect current implementation references.</p><p><b>If blocked:</b> Retain source packet and expose clear current/historical sections if physical split causes label churn.</p></details><details><summary>F4 · Pruning, orbit recovery and branch assumptions</summary><p>Focused contract map separating approved adjacency pruning, conditional local transitions, placement, regular derivatives and unfinished envelope claims</p><p><b>Sources/ownership:</b> formal/search-pruning-correctness.tex; formal/reeb-orbit-recovery.tex; formal/finite-reeb-orbit-verification.tex; formal/capacity-derivatives.tex; formal/combinatorial-boundary-regularity.tex; formal/capacity-boundary-subdifferential.tex</p><p><b>Check:</b> Check repeated separated facet labels, derivative dimensions/signs, branch hypotheses and exact theorem strength.</p><p><b>If blocked:</b> Consolidate only established equations; retain weaker conditional statements and named missing implications.</p></details><details><summary>F5 · Flow-graph explanation and correctness layers</summary><p>One idealized theorem route, one abstract resolver contract, concise concrete unresolved-interface map</p><p><b>Sources/ownership:</b> formal/flow-graph-real-algorithm.tex; formal/flow-graph-capacity.tex; formal/flow-graph-proof-risk.tex; formal/flow-graph-ch2021-comparison.tex; crates/symplectic/src/algorithms/flow_graph/README.md</p><p><b>Check:</b> Trace accepted/discarded family obligations, regularity and exact-vs-floating/runtime assumptions.</p><p><b>If blocked:</b> Keep unresolved supported-input contract visible; do not launch expensive tube verification or assert production correctness.</p></details><details><summary>D1 · One invariant table builder, two input adapters</summary><p>Shared feature/provenance/write stage; explicit retained/run-local formats; wrappers retain old commands</p><p><b>Sources/ownership:</b> experiments/polytope-invariant-table/main.rs; experiments/polytope-invariant-table/prepare.rs; experiments/polytope-invariant-table/invariant_features.rs; experiments/polytope-invariant-table/write_database.rs</p><p><b>Check:</b> Old/new same-byte scratch fixture comparison: IDs, targets, features, joins, fingerprints and historical unknowns.</p><p><b>If blocked:</b> Keep two thin adapters; freeze schemas/output identities; never rewrite retained evidence to test refactor.</p></details><details><summary>D2 · Sampling/schema/record IO boundary</summary><p>Map reusable source-event and row schema primitives; explicit duplicate-key, save ordering and writer ownership decisions before safe consolidation</p><p><b>Sources/ownership:</b> crates/symplectic/src/random.rs; crates/symplectic/src/dataset.rs; crates/symplectic/src/database.rs; experiments/polytope-datasets: producer interfaces</p><p><b>Check:</b> Small seeded acceptance descriptor/roundtrip/conflict fixtures; inspect predictable temporary save paths.</p><p><b>If blocked:</b> Keep one-writer restriction explicit and preserve current IO behavior if semantics unresolved.</p></details><details><summary>D3 · Dataset-to-table command and reproduction flow</summary><p>Retained/random/run-local/Slurm/feature-cost consumers use explicit format; truthful generation-preparation distinction and snapshot coverage</p><p><b>Sources/ownership:</b> experiments/polytope-invariant-table: scripts and README; experiments/polytope-datasets/README.md; experiments/sys-datascience/methods/trusted-random-product-method-dispositions.md; experiments/sys-datascience/methods/_shared/random_only.py</p><p><b>Check:</b> Scratch entrypoint smoke, missing payload/mismatched metadata/duplicate provenance errors; verify command contracts.</p><p><b>If blocked:</b> Document rebuild need and supported columns; keep capacity-generation and retained-target limitations explicit.</p></details><details><summary>T1 · Contract fixtures before moves</summary><p>Small baseline fixture packet with accepted/failure outcomes, exact vertices and incidence plus ordering contracts</p><p><b>Sources/ownership:</b> geometry and KKT focused test targets; no implementation ownership</p><p><b>Check:</b> Simplex, cube/crosspolytope, HKO, redundant/duplicate/zero rows, unbounded input and algebraic-field case.</p><p><b>If blocked:</b> Freeze only supported outcomes; disputed G2 expectations stay marked as pending contract.</p></details><details><summary>T2 · Independent-route and one-word solver confidence</summary><p>Focused generic/rational KKT and geometry comparisons with shared-internal dependency map and real failure tests</p><p><b>Sources/ownership:</b> crates/symplectic/src/kkt: test targets; crates/symplectic/src/exact/orbit.rs: test targets; docs/algorithm-testing.md: confidence map</p><p><b>Check:</b> Singular positive feasibility, generic fields, multiplier/objective invariance, exact fallback and paired rational inputs.</p><p><b>If blocked:</b> Retain independent controls; report unmatched contract cases rather than force identical payloads.</p></details><details><summary>T3 · Performance measurement and production path map</summary><p>Small benchmark harness separating validation/enumeration and table load/features/write; correct production capacity route identified</p><p><b>Sources/ownership:</b> benchmark targets; experiments/polytope-invariant-table/feature_cost.rs; docs/algorithm-testing.md: benchmark references</p><p><b>Check:</b> Record identity/compiler/machine/load/cache/time; run only explicitly bounded small measurements.</p><p><b>If blocked:</b> If timing noisy or runtime budget unavailable, ship harness and unmeasured labels; investigate material unexplained regressions before closing.</p></details><details><summary>E1–3 · Nested research account</summary><p>Separate topic authors cover foundations/algorithms, local variation/maxima, product results and empirical methods. Each supplies summary/reminders, precise claims and assumptions, takeaways for mathematics and computation, explanatory reasoning, supporting proofs/data/figures and unresolved gaps. One owner assembles the HTML TOC/result graph and progressive levels, with stable inventory IDs and bidirectional source links. Update inventory part records, not generated index files. Test discovery both from the account and from a code/data source.</p></details><details><summary>P and A · Writing-plan trial and final review</summary><p>A fresh Sol planner uses the assembled account to propose an agent-heavy writing workflow, reserving Jörn for demonstrated reliability gaps and substantive choices. Record missing explanations, extra source reconstruction and unsupported allocations. Sol reviews that plan and assembles the candidate. Astra evaluates the complete result and source trail; fixes return through the responsible manager. The eventual human writeup remains a downstream goal, not a claimed overnight result.</p></details></section>
+<p><a href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/f7e0/msc-math/meta-topics/repository-organization/inventory/index.html">Broader inventory</a> · <a href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/f7e0/msc-math/meta-topics/repository-organization/inventory/parallel-plan.md">Detailed first-unit plan</a></p>
+</main></html>

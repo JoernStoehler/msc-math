@@ -1,5 +1,10 @@
 # Experiments
 
+The [research guide](../docs/research-guide.md) explains the mathematical and
+empirical questions; the [inventory](../meta-topics/repository-organization/inventory/README.md) records result,
+method, data and runtime relationships across these packets.
+
+
 This directory contains retained empirical work, including negative results,
 alternative implementations, data producers, consuming analyses, exact and
 f64 checks, performance measurements, and thesis-support assets. Existing work
@@ -11,7 +16,7 @@ inventory and semantic views below supply alternative terms when the directory
 names are unfamiliar; they do not require reading every plausible README before
 opening the source or evidence needed for the question.
 
-`ARCHITECTURE.md` explains the cross-domain authority boundaries.
+[Repository organization](../meta-topics/repository-organization/README.md) explains the cross-domain authority boundaries.
 
 ## Directory inventory
 
@@ -28,17 +33,10 @@ search cues, not a finding index or a claim that each row is one experiment.
 | `crosspolytope/` | specialized crosspolytope capacity computation and checkpointed output |
 | `dev-flow-graph/` | flow-graph algorithm development spikes, diagnostics, and visualization |
 | `dev-gradient-ascent/` | gradient-ascent implementations, traces, policy comparisons, and endpoint diagnostics |
-| `dev-quadratic-program/` | QP route implementation research, f64/exact/fallback behavior, numerics, verification, and benchmarks |
 | `dev-sys-prediction/` | `sys` prediction producers, error models, and branch/parameter probes |
-| `hko-local-maximum/` | HKO theorem certificate tooling, empirical support, validation, and figures |
 | `local-maxima-check/` | selected-body local-behavior comparison and retained artifacts |
 | `performance/` | retained runtime, memory, and capacity-route measurement programs |
-| `polytope-datasets/` | retained random/product source datasets, producer programs, source schemas, and shared expensive-computation cache |
-| `polytope-invariant-table/` | derived random/product invariant-feature and provenance tables, their producer, validation, and cost checks |
 | `qp-error-bounds/` | wide QP intermediate-variable f64/exact evidence, retained-route evaluation, and soundness trials |
-| `regular-products/` | rotated regular-product sweeps, pentagon empirics, figures, and exact formula certificate |
-| `sys-datascience/` | random/product data-science consumer experiments, method packets, and research state |
-| `sys-landscape/` | hostile-`sys` search implementations, caches, legacy producers, and selected retained searches |
 | `verification/` | capacity properties, minimum-orbit production, orbit recovery, and flow-graph falsifiers |
 | `visualization/` | 4D-polytope viewer, data exporters, and thesis-support screenshots |
 | `writing-quality/` | retained thesis reading inputs, human feedback, and bounded writing-method evaluations |
@@ -46,6 +44,12 @@ search cues, not a finding index or a claim that each row is one experiment.
 Keep this table auditable against the repo-tracked immediate directory tree.
 Add a row when adding an immediate research directory. Do not use omission from
 a selective semantic view as evidence that related work does not exist.
+The moved HKO, product and QP development packages are routed by their
+[topic accounts](../topics/variation-and-local-maxima/README.md),
+[product account](../topics/products/README.md) and
+[capacity/QP account](../topics/capacity-and-qp/README.md). The dataset,
+invariant-table, data-science and search packages now live under
+[empirical studies](../topics/empirical-studies/README.md).
 
 `FINDINGS.md` is a selective, grep-friendly view of notable bounded results,
 negative results, and dispositions across packets. It supplies semantic search
@@ -103,19 +107,19 @@ status, or finding. Such views are useful when task terminology does not match
 directory names. They must state their scope because they need not be
 exhaustive and can become stale.
 
-The current examples below route only to active immediate directories and a
-few notable nested experiment paths. They are not a complete finding index.
+The examples below include current topic owners and active experiment
+directories. They are not a complete finding index.
 
 ### Mathematical object or thesis use
 
 | Search terms | Start |
 | --- | --- |
-| HKO local maximum, certificate, neighborhood | `hko-local-maximum/` |
-| rotated regular polygons, pentagon formula, Lagrangian products | `regular-products/` |
+| HKO local maximum, certificate, neighborhood | `../topics/variation-and-local-maxima/hko-local-maximum/` |
+| rotated regular polygons, pentagon formula, Lagrangian products | `../topics/products/regular-products/` |
 | combinatorial boundaries, cells, crossings | `combinatorial-cells/` |
 | crosspolytope capacity | `crosspolytope/` |
 | selected equality bodies, local behavior | `local-maxima-check/` |
-| hostile `sys`, random/product search, data science | `sys-datascience/`, with source data under `polytope-datasets/` and the retained feature table under `polytope-invariant-table/`; then `sys-landscape/` for older/search implementations |
+| hostile `sys`, random/product search, data science | `../topics/empirical-studies/sys-datascience/`, with source data under `../topics/empirical-studies/polytope-datasets/` and the retained feature table under `../topics/empirical-studies/polytope-invariant-table/`; then `../topics/empirical-studies/sys-landscape/` for older/search implementations |
 | explanatory 4D-polytope figures | `visualization/` |
 | thesis AI-use provenance | `ai-use/` |
 
@@ -123,7 +127,7 @@ few notable nested experiment paths. They are not a complete finding index.
 
 | Search terms | Start |
 | --- | --- |
-| QP/HK2017, f64/exact/fallback routes | `dev-quadratic-program/` |
+| QP/HK2017, f64/exact/fallback routes | `../topics/capacity-and-qp/development/` |
 | flow graph, CH2021, tubes, closed words | `dev-flow-graph/` |
 | gradient ascent, traces, endpoint diagnostics | `dev-gradient-ascent/` |
 | `sys` prediction and branch continuation | `dev-sys-prediction/` |
@@ -133,12 +137,12 @@ few notable nested experiment paths. They are not a complete finding index.
 
 | Search terms | Start |
 | --- | --- |
-| f64/exact intermediate numerics, retained QP soundness | `qp-error-bounds/` and `dev-quadratic-program/numerics-audit/` |
+| f64/exact intermediate numerics, retained QP soundness | `qp-error-bounds/` and `../topics/capacity-and-qp/development/numerics-audit/` |
 | correctness, axioms, agreement, minimum orbits, recovery | `verification/` |
 | runtime, memory, counters, profiling | `performance/` |
-| random/product source datasets | `polytope-datasets/` |
-| invariant random/product method table | `polytope-invariant-table/` |
-| prediction, tail analysis, source transfer, proposer methods | `sys-datascience/methods/` |
+| random/product source datasets | `../topics/empirical-studies/polytope-datasets/` |
+| invariant random/product method table | `../topics/empirical-studies/polytope-invariant-table/` |
+| prediction, tail analysis, source transfer, proposer methods | `../topics/empirical-studies/sys-datascience/methods/` |
 | algorithm-comparison routing rather than evidence | `algorithm-comparisons.md` |
 
 ## Artifacts and commands
@@ -152,8 +156,8 @@ Generated outputs are not hand-edited. Local commands distinguish:
 Retained artifact provenance created before the July 2026 layout migration may
 record `experiments/sys-datascience/produce/` or
 `experiments/sys-datascience/prepare/`. Those exact historical strings remain
-unchanged. Their current physical homes are `experiments/polytope-datasets/`
-and `experiments/polytope-invariant-table/`, respectively.
+unchanged. Their current physical homes are `topics/empirical-studies/polytope-datasets/`
+and `topics/empirical-studies/polytope-invariant-table/`, respectively.
 
 Recorded hashes and Git revisions are provenance aids, not compatibility
 gates. A validator may warn that current code or input bytes differ from a

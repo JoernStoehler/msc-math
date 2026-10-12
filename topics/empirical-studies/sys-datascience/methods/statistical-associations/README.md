@@ -1,0 +1,247 @@
+# statistical-associations
+
+## Research Question
+
+Which engineered scalar covariates are associated with the target scalar
+`sys(a)` in the trusted random/product sample, and what obvious invariant
+feature families are not yet represented?
+
+This is the standard univariate association-screening question: screen one
+scalar covariate at a time against the target scalar, then inspect the strongest
+correlations and their scope limits.
+
+The active method-facing `polytope-table.jsonl` is invariant-only, with fields
+defined by `topics/empirical-studies/polytope-invariant-table/rows.rs::PolytopeTableRow`. Legacy raw Euclidean,
+omega-matrix, transition, `capacity`, and `volume` columns are not active
+covariates.
+
+Conceptually the flow is:
+
+```text
+prepare
+  -> invariant scalar rows plus provenance metadata
+methods
+  -> univariate association screening of active invariant scalar features f_i(a) against sys(a)
+```
+
+This packet currently runs the last step on the invariant scalar features
+already present in the retained table, and records gaps relative to the active
+row schema.
+
+It also owns a first-pass feature-family quotient audit. That audit checks a
+declared set of producer/simple-polytope identities, screens ridge-feature rank
+redundancy, and asks which ridge rules remain distinct in the frozen
+generated-candidate extreme selections. It is not an exhaustive algebraic
+quotient or an empirical screen of every feature pair. It prevents the most
+important known redundancies from inflating apparent geometric coverage.
+
+## Method
+
+Screen eligible scalar retained-table covariates against `sys` with Pearson
+and Spearman correlations. Use a permutation family-maximum check across all
+tested association features for the strongest rank association, categorical
+factor tests for source/provenance strata, and a bootstrap confidence interval
+for the random-product minus generic-random mean `sys` difference.
+
+Eligibility is defined by the shared trusted random/product feature selector:
+
+- include scalar numeric columns present as numeric values in at least `98%` of
+  retained rows;
+- exclude the target `sys`, non-scalar JSON/string columns, sparse numeric
+  columns, legacy `capacity`/`volume` columns, and non-active legacy feature
+  prefixes if an older table is passed;
+- exclude two-face ordering diagnostics from clean covariate screens; the
+  current shared selector rejects the analysis if any loaded row reports
+  incomplete two-face ordering, rather than silently dropping ridge features.
+
+The screen is exhaustive only for the already-engineered scalar numeric
+features stored by the shared prepare stage under this rule. It is not
+feature-engineering closure from `a_k`.
+
+Source and generator metadata are not treated as intrinsic geometric scalar
+features. They are handled separately as categorical factors in
+`source_factor_tests`, including source family, dataset label, facet count,
+source-by-facet, product bucket, product bounce count, and height range when
+those provenance fields are available.
+
+`capacity_source` remains metadata for grouping and source-factor tests. It is
+not treated as an intrinsic scalar invariant feature.
+
+## Inputs
+
+- trusted random/product rows from `../trusted-random-dataset/`
+- feature columns from `topics/empirical-studies/polytope-invariant-table/polytope-table.jsonl`
+
+## Command
+
+```bash
+uv run --script topics/empirical-studies/sys-datascience/methods/statistical-associations/analyze.py
+```
+
+The current quotient artifact uses the same reviewed current-schema rebuild as
+`../standard-baseline-p2/`. Rebuild it and run the audit with:
+
+```bash
+TABLES_DIR="$(mktemp -d /tmp/sys-ds-feature-quotient.XXXXXX)"
+topics/empirical-studies/polytope-invariant-table/build-random-only-slice.sh full \
+  "$TABLES_DIR"
+uv run --script \
+  topics/empirical-studies/sys-datascience/methods/statistical-associations/analyze_feature_family_quotient.py \
+  --tables-dir "$TABLES_DIR"
+```
+
+The quotient script fails if a declared exact identity exceeds its recorded
+floating tolerance. It reads the frozen selection-overlap matrix from
+`../ridge-mechanism-discriminator/artifacts/current/` by default; pass
+`--selection-overlap` only to audit another explicitly identified proposer
+packet.
+
+## Generated Artifacts After Rerun
+
+- `artifacts/summary.json`
+- `artifacts/feature-family-quotient.json`
+- `artifacts/feature-family-rank-pairs.tsv`
+- `artifacts/feature-family-selection-overlap.tsv`
+
+The artifact records:
+
+- `eligible_covariate_family_inventory`;
+- `tested_covariate_family_inventory`;
+- `obvious_covariate_audit`;
+- `obvious_covariate_audit["first_layer_nodes"]`;
+- `source_factor_tests`;
+- `tested_scalar_covariates`;
+- `skipped_constant_covariates`;
+- `excluded_by_design`.
+
+The quotient JSON records input paths and hashes, declared identity assertions,
+bucket composition, thresholds, audit scope, and interpretation boundaries.
+The two TSVs own the detailed rank-pair and frozen-selection overlap rows.
+
+## Schema and rerun boundary
+
+The retained summary below used the registered 39-feature invariant snapshot.
+Today's shared selector requires 45 numeric features, so the no-argument
+command rejects that snapshot. Pass `--tables-dir` pointing to a deliberate
+current-schema rebuild when rerunning, and use a fresh `--out-dir` to preserve
+the frozen result. [P2](../standard-baseline-p2/README.md) owns the recorded
+45-feature rebuild contract. Its six additional ridge columns can change the
+result; the existing numbers are not evidence of an updated run.
+
+## Observation
+
+Recorded integrated full retained run (39-feature snapshot):
+
+- input: retained invariant table under `topics/empirical-studies/polytope-invariant-table`, `14336` trusted
+  random/product rows;
+- active polytope fields: `45`, with `0` forbidden legacy fields;
+- eligible scalar covariates: `39`;
+- nonconstant scalar covariates tested: `29`;
+- strongest absolute Spearman correlation: `0.9384368671850424`;
+- family-maximum permutation p-value with `200` permutations:
+  `0.004975124378109453`;
+- product-minus-generic mean `sys`: `0.04908416085647144`.
+
+This is current retained-table evidence for the invariant-only schema. It is
+not evidence for removed raw Euclidean, raw omega, transition, `capacity`, or
+`volume` covariates.
+
+Under the active invariant schema, current method-facing scalar families are:
+
+- basic counts and simplicity summaries;
+- vertex incidence and degree summaries;
+- ridge-size summaries;
+- facet vertex-count and neighbor-count summaries;
+- ridge symplectic-area summaries normalized by `sqrt(volume)`;
+- `capacity_source` and provenance fields only as grouping/factor metadata.
+
+Partially covered or missing work under the active schema:
+
+- generator rejection/attempt metadata is only available when provenance exposes
+  optional `sample_attempt`;
+- explicit product-structure or symmetry scores are not implemented;
+- additional invariant scalar summaries would need to be added deliberately to
+  `PolytopeTableRow` and its producers.
+
+Missing or separately handled families should be added to
+`topics/empirical-studies/polytope-invariant-table/rows.rs::PolytopeTableRow` or its producers only when they are intended
+to be active invariant method-facing fields.
+
+Interpret the strongest active scalar associations as explanatory signals only.
+This packet does not turn them into a generated-row candidate-proposer.
+
+The current first-pass audit observes that the retained slice is entirely
+simple and verifies the declared combinatorial identities listed in the JSON.
+Within every fixed random-product bucket, ridge-area sum and mean are
+rank-equivalent; entropy, effective face count, and normalized entropy are also
+rank-equivalent. Other ridge magnitude summaries are strongly correlated but
+have materially different frozen extreme selections. This is not evidence that
+all other algebraic or empirical redundancies have been found. Use the generated
+artifacts for the declared identities, ridge correlations, and overlaps rather
+than copying those rows into coordination prose.
+
+## Validity Guards
+
+- Scalar associations are explanatory evidence unless they define a held-out or
+  unevaluated candidate-proposer.
+- Many correlated table columns are screened; the permutation check is a
+  coarse guard, not a formal model-selection theorem.
+- Capacity and volume columns are not active method-facing covariates.
+- Exhaustiveness is only prepare-schema-relative. Changing the invariant
+  feature contract or adding derived invariant geometric, combinatorial, or
+  symplectic scalar summaries to the shared prepare stage would reopen this
+  packet and the other black-box methods that consume prepared features.
+- Categorical factors and engineered raw-dual-vertex features need their own
+  encoding or feature-production step; the count of screened scalar columns is
+  not evidence that those families were covered.
+- Declared combinatorial identities reported by the audit are conditional on
+  the audited slice being entirely simple. The script records and checks that
+  condition before asserting the simple-four-polytope identities. It does not
+  search exhaustively for other identities.
+- The generated pooled-rank columns first replace each feature by fractional
+  ranks inside each source/facet or product bucket, then compute Spearman
+  correlation after pooling rows. They are row-weighted descriptive summaries,
+  not aggregated per-bucket correlations, a causal adjustment, an
+  equal-bucket-weight estimator, or a substitute for grouped holdout.
+- The selection-overlap rows inherit the upstream frozen 100k random-product
+  packet's generator and rule boundaries. They show whether extreme selectors
+  chose the same candidates, not whether any selector can find `sys > 1`.
+
+## Current Disposition
+
+Use as association/interpretation evidence. Do not use as a standalone
+candidate-proposer or as evidence that a generated-candidate route was
+validated.
+
+## Remaining Worthwhile Questions
+
+- Build a small feature-map audit for additional invariant scalars derivable
+  from the producer geometry outside the audited ridge-area multiset and
+  count summaries, then decide which missing families have enough value to
+  implement in `topics/empirical-studies/polytope-invariant-table/invariant_features.rs`.
+- Promote only associations that are strong, stable, and convertible into a
+  pre-evaluation ranking rule.
+
+## Predicted Stability Under Rerun
+
+High on unchanged retained tables and unchanged prepare-stage feature columns.
+
+## Thesis Use
+
+Supports a statement about which current engineered invariant scalar features
+co-vary with `sys`. It does not support a candidate-proposer claim, and it does
+not claim that the obvious feature map from `a_k` is complete.
+
+## Reopen Triggers
+
+- prepared table columns change;
+- the trusted slice stops being entirely simple or its bucket definitions
+  change;
+- the frozen proposer selection-overlap artifact changes;
+- the active invariant-feature contract changes;
+- an obvious derived scalar covariate is identified but not present in the
+  shared prepare-stage schema;
+- categorical source/product-bucket factors are promoted from EDA slices to a
+  model or factor association test;
+- a new random/product dataset is added;
+- thesis wording promotes a scalar association to a stronger claim.

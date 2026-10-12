@@ -49,7 +49,7 @@ cargo check --workspace
 ```
 
 This is only the root Cargo workspace, not every standalone method crate under
-`experiments/sys-datascience/`. It is a quick edit check, not a repository-wide
+`topics/empirical-studies/sys-datascience/`. It is a quick edit check, not a repository-wide
 runtime test.
 
 The reusable capacity regression gate is:

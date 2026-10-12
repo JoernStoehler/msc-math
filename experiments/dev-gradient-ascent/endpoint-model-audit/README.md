@@ -518,7 +518,7 @@ The producer evaluates only named words. It does not run the full sigma search.
 - Symmetry-transverse basis:
   `optimizer-runs/src/quotient.rs`.
 - f64 geometry predicates and thresholds:
-  `experiments/dev-quadratic-program/src/geometry.rs`.
+  `topics/capacity-and-qp/development/src/geometry.rs`.
 - Capacity, volume, and systolic-ratio derivatives:
   `crates/symplectic/src/derivatives.rs`.
 

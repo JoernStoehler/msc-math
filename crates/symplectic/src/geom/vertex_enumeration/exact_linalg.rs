@@ -78,26 +78,8 @@ pub(super) fn rank_int(rows: &[[BigInt; 4]]) -> usize {
     rank
 }
 
-/// Determinant of a 4x4 integer matrix via cofactor expansion.
-///
-/// Mathematical correspondence: δ = det(M_S) in [prop:integer-cramer].
-pub(crate) fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
-    let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
-
-    let m01 = &b[0] * &c[1] - &b[1] * &c[0];
-    let m02 = &b[0] * &c[2] - &b[2] * &c[0];
-    let m03 = &b[0] * &c[3] - &b[3] * &c[0];
-    let m12 = &b[1] * &c[2] - &b[2] * &c[1];
-    let m13 = &b[1] * &c[3] - &b[3] * &c[1];
-    let m23 = &b[2] * &c[3] - &b[3] * &c[2];
-
-    let c00 = &d[1] * &m23 - &d[2] * &m13 + &d[3] * &m12;
-    let c01 = &d[0] * &m23 - &d[2] * &m03 + &d[3] * &m02;
-    let c02 = &d[0] * &m13 - &d[1] * &m03 + &d[3] * &m01;
-    let c03 = &d[0] * &m12 - &d[1] * &m02 + &d[2] * &m01;
-
-    &a[0] * c00 - &a[1] * c01 + &a[2] * c02 - &a[3] * c03
-}
+// Shared integer Cramer determinant; this alias preserves internal callers.
+pub(crate) use euclidean_polytopes::determinant_4d_integer as det4_int;
 
 /// Dot product of two 4-vectors over Z.
 pub(crate) fn dot4_int(a: &[BigInt; 4], b: &[BigInt; 4]) -> BigInt {

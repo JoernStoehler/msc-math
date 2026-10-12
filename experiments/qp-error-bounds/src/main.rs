@@ -609,7 +609,7 @@ fn cases() -> Vec<Case> {
     out.push(case_from_embedded_original(
         "random_F5_s0_0",
         "ordinary_seeded_pre_retention",
-        "experiments/polytope-datasets/random.jsonl#random_F5_s0_0",
+        "topics/empirical-studies/polytope-datasets/random.jsonl#random_F5_s0_0",
         &RANDOM_F5_S0_0_DUAL_F64,
         &RANDOM_F5_S0_0_DUAL_RATIONAL,
         None,
@@ -625,7 +625,7 @@ fn cases() -> Vec<Case> {
     out.push(case_from_embedded_original(
         "random_3x5_s0_0",
         "minimum_window_tie",
-        "experiments/polytope-datasets/random-product.jsonl#random_3x5_s0_0",
+        "topics/empirical-studies/polytope-datasets/random-product.jsonl#random_3x5_s0_0",
         &RANDOM_3X5_S0_0_DUAL_F64,
         &RANDOM_3X5_S0_0_DUAL_RATIONAL,
         Some(product_tie_sigmas),

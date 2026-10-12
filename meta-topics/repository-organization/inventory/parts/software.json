@@ -1,0 +1,685 @@
+{
+  "scope": "Reusable Rust crates, root/standalone Cargo boundaries and representative repository maintenance tooling.",
+  "coverage": "Listed all current crate source paths and Cargo manifests (excluding broad legacy orientation); read crate entry points, algorithm-testing contract, manifests, and representative scalar/linear algebra, polar/filter/incidence/volume, production capacity/general geometry, legacy orbit contracts, KKT/exact kernels, flow-graph control README, derivatives, data/IO, scripts and dated cost/check sources. Full source-level correctness/performance audit, every experiment consumer, standalone method checks, ignored expensive tests, benchmarks and network/release workflows remain uninspected/unrun. This is capability and risk coverage, not a blanket quality PASS or exhaustive comprehension of every file.",
+  "items": [
+    {
+      "id": "software-algebraic-scalars",
+      "kind": "algorithm",
+      "title": "Static exact real-algebraic fields",
+      "summary": "Algebraic<F> provides canonical rational coefficient arithmetic and exact ordering in one statically chosen real field; BigRational also implements ExactScalar. This is a small field-specific scalar API, not general computer algebra.",
+      "state": "Implemented; complete owning-crate release tests passed on 2026-10-10, Rust 1.94.0. Field specifications are trusted mathematical inputs.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Observed release build 25.54s plus individual test groups 0.00–0.59s on this workstation; not scalar-operation performance measurements.",
+      "code_quality": "Maintainability: small separated arithmetic/polynomial/order modules, explicit field marker and constructor contracts. Correctness: ordering refines rational intervals instead of evaluating f64; minimal monic polynomial and unique isolated root are caller obligations, not validated field certificates. No general field-construction or malformed-field correctness claim.",
+      "sources": [
+        {
+          "path": "crates/algebraic-numbers/README.md",
+          "supports": "public field contract, examples and exclusions"
+        },
+        {
+          "path": "crates/algebraic-numbers/src/field_specification.rs",
+          "supports": "trusted minimal-polynomial/isolation assumptions"
+        },
+        {
+          "path": "crates/algebraic-numbers/src/sign_ordering.rs",
+          "supports": "exact interval-refinement sign decisions"
+        },
+        {
+          "path": "crates/algebraic-numbers/tests/cubic_field.rs",
+          "supports": "nonquadratic field regressions"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "consumed by",
+          "path": "crates/euclidean-polytopes/Cargo.toml"
+        },
+        {
+          "relation": "consumed by",
+          "path": "crates/symplectic/Cargo.toml"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Small explicit scalar layer has actual geometry/KKT consumers; preserve the trusted field boundary.",
+      "uncertainties": [
+        "No benchmark or independent symbolic arithmetic audit performed.",
+        "Malformed field markers can violate termination/correctness assumptions."
+      ]
+    },
+    {
+      "id": "software-exact-linear-algebra",
+      "kind": "algorithm",
+      "title": "Exact dense linear algebra and dyadic fast solve",
+      "summary": "RREF, rank, kernel basis, particular-plus-kernel linear solutions, symmetric negative-definiteness and verified fraction-free full-rank rational solve.",
+      "state": "Implemented; owning-crate release tests passed in this survey.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Operation cost unmeasured; dense elimination and rational coefficient growth depend on matrix/field/input. Same crate check as scalar row.",
+      "code_quality": "Maintainability: direct dense algorithms and structured inconsistent/consistent output. Correctness: exact field operations; fraction-free fast path verifies its result against the original system and returns None on unsupported denominator structure/singularity. Callers need generic fallback for completeness. Rank currently computes full RREF; a rank-only optimization is a possible measured-cost improvement, not an established bottleneck.",
+      "sources": [
+        {
+          "path": "crates/algebraic-numbers/src/row_reduction.rs",
+          "supports": "dense exact RREF and rank implementation"
+        },
+        {
+          "path": "crates/algebraic-numbers/src/linear_solve.rs",
+          "supports": "solution and kernel contracts"
+        },
+        {
+          "path": "crates/algebraic-numbers/src/fraction_free.rs",
+          "supports": "verified dyadic/nested-denominator fast path and fallback semantics"
+        },
+        {
+          "path": "crates/algebraic-numbers/tests/exact_linear_algebra.rs",
+          "supports": "exact solution/definiteness regressions"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "consumed by",
+          "path": "crates/symplectic/src/kkt/rational_solver.rs"
+        }
+      ],
+      "action": "keep; investigate",
+      "rationale": "Reusable exact kernel is established infrastructure; benchmark before adding determinant/inertia APIs or optimizing rank.",
+      "uncertainties": [
+        "No input-size complexity or coefficient-growth benchmark performed."
+      ]
+    },
+    {
+      "id": "software-euclidean-exact",
+      "kind": "algorithm",
+      "title": "Exact four-dimensional polar geometry and incidence",
+      "summary": "Exact origin-interior/extreme-point predicates, raw and checked normalized halfspace vertex enumeration, integer-scaled rational acceleration, incidence-based helpers and exact full-dimensional volume.",
+      "state": "Implemented; complete euclidean-polytopes tests passed in this survey, including named fixtures and generated generic/rational comparisons. On11October the incidence helper became the shared implementation for both symplectic adapters; focused face/adapter tests and a representative external consumer check passed after separate review. A raw non-panicking enumeration entrypoint now supplies the symplectic exact adapter;19Euclidean polar tests,4exact constructor tests and ordering/contract fixtures passed.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Observed debug build 25.42s; test group durations included 17.47s polar tests and 6.55s extreme-point tests on this workstation. Generic enumeration materializes all four-subsets and scans exact feasibility/duplicates; no performance benchmark rerun.",
+      "code_quality": "Maintainability: Euclidean scope separated from symplectic algorithms; raw vectors and incidence expose caller responsibilities. Correctness: checked polar APIs validate origin-interior; assuming variants deliberately trust it. Exact outputs do not validate every later volume/incidence assumption. Separate generic and optimized rational routes require maintained correspondence tests. Public README does not list every recently exported helper, so source remains necessary. Facet-intersection adapter agreement now shares one implementation and is not independent evidence.",
+      "sources": [
+        {
+          "path": "crates/euclidean-polytopes/README.md",
+          "supports": "representation, mathematical contracts and numerical split"
+        },
+        {
+          "path": "crates/euclidean-polytopes/src/lib.rs",
+          "supports": "actual exports including assuming-origin-interior and volume/centroid helpers"
+        },
+        {
+          "path": "crates/euclidean-polytopes/src/polar.rs",
+          "supports": "generic and integer-scaled exact routes"
+        },
+        {
+          "path": "crates/euclidean-polytopes/src/faces.rs",
+          "supports": "incidence-only conventions"
+        },
+        {
+          "path": "crates/euclidean-polytopes/tests/polar_vertices.rs",
+          "supports": "optimized-to-generic finite comparison tests"
+        },
+        {
+          "path": "meta-topics/repository-organization/inventory/pilots/2026-10-11/geometry.md",
+          "supports": "G1/G2/G3 contracts, before/after fixtures, independent reviews and limits"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "consumed by",
+          "path": "crates/symplectic/src/algorithms/capacity_4d/geometry.rs"
+        }
+      ],
+      "action": "keep; clarify",
+      "rationale": "Retain exact geometry owner and clarify documentation coverage before migrating additional geometry APIs.",
+      "uncertainties": [
+        "No exhaustive proof/code audit of f64 rejection bounds performed.",
+        "Caller-owned incidence and full-dimensional assumptions remain material."
+      ]
+    },
+    {
+      "id": "software-euclidean-f64",
+      "kind": "algorithm",
+      "title": "Certified sign filters and known-incidence floating volume",
+      "summary": "orient4_sign_f64 and origin-interior trinary filters certify determinant/positive-spanning decisions when determinate; ordinary volume, centroid and facet-volume routines consume known incidence.",
+      "state": "Implemented; euclidean owning-crate tests passed. Predicate certification and floating volume accuracy are distinct contracts.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Historical 2026-07-26 devcontainer: one HKO f64 volume 0.078ms; not a representative or new measurement. Predicate performance not measured here.",
+      "code_quality": "Maintainability: operation-specific indeterminate/error enums. Correctness: sign filter source points to formal error-bound argument; near-boundary cases return Indeterminate. Volume helpers validate finite coordinates but rely on caller incidence/decomposition contracts; an ordinary f64 volume is not automatically a certified volume interval.",
+      "sources": [
+        {
+          "path": "crates/euclidean-polytopes/src/predicates.rs",
+          "supports": "trinary filtering and exact alternatives"
+        },
+        {
+          "path": "crates/euclidean-polytopes/src/volume.rs",
+          "supports": "known-incidence volume/centroid implementation"
+        },
+        {
+          "path": "crates/euclidean-polytopes/src/f64_geometry.rs",
+          "supports": "nonfinite-coordinate errors"
+        },
+        {
+          "path": "formal/f64-orientation-sign-filters.tex",
+          "supports": "predicate proof source"
+        },
+        {
+          "path": "topics/capacity-and-qp/development/performance/CURRENT_COSTS.md",
+          "supports": "dated single-input cost anchor"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "consumed by",
+          "path": "crates/symplectic/src/derivatives.rs"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Preserve certified predicate versus ordinary floating calculation distinction.",
+      "uncertainties": [
+        "Formal proof and all implemented constants were not independently reconciled in this inventory."
+      ]
+    },
+    {
+      "id": "software-production-capacity",
+      "kind": "algorithm",
+      "title": "Production capacity_4d scalar bounds and exact rich outputs",
+      "summary": "Validated binary64 coordinates are interpreted as exact dyadic input; automatic structural-product/general dispatch returns outward bounds, exact product capacity, exact tied candidate words or general action-window KKT witnesses.",
+      "state": "Implemented; public API suite (15 tests) and independent production anchor suite (4 tests) passed on 2026-10-10. Counts identify executed scope, not correctness strength. Global claims depend on referenced candidate-coverage and numerical proofs.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Historical 2026-07-26 warm devcontainer F10 transformed generic cohort: 11.25–11.44ms complete pipeline; noncompact 26-row smoke 27416ms aggregate capacity, versus 2965ms legacy. These are input-specific retained measurements, not refreshed here.",
+      "code_quality": "Maintainability: explicit input checks/results and staged geometry; parallel experiment copy is intentional but semantic sync is manual. General production code still carries singleton batch scaffolding, counters and timing maps inherited from experiments; a focused removal could reduce the maintained surface after correspondence/cost checks. Correctness: trinary numerical certification with exact fallback, certified pruning, explicit finite candidate families. Exact winners are not all physical orbits; wider action windows disable curvature pruning. General size policy: at most 16 facets, vertex infinity norms [1e-3,1e3], at most 100000 cycles.",
+      "sources": [
+        {
+          "path": "crates/symplectic/src/algorithms/capacity_4d/mod.rs",
+          "supports": "public results, action-window family and resource limits"
+        },
+        {
+          "path": "crates/symplectic/src/algorithms/capacity_4d/general.rs",
+          "supports": "verified hybrid solver, pruning, fallback, singleton batch/counters"
+        },
+        {
+          "path": "crates/symplectic/src/algorithms/capacity_4d/geometry.rs",
+          "supports": "exact input and irredundancy reconstruction"
+        },
+        {
+          "path": "crates/symplectic/DEVELOPMENT.md",
+          "supports": "exact-work reasons and proof/code pointers"
+        },
+        {
+          "path": "crates/symplectic/tests/production_capacity_anchors.rs",
+          "supports": "independent finite box/scaling/shear anchors"
+        },
+        {
+          "path": "topics/capacity-and-qp/development/performance/CURRENT_COSTS.md",
+          "supports": "dated caller-shaped costs and expensive fallback exceptions"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "corresponds to",
+          "path": "topics/capacity-and-qp/development/src/selected_route/general.rs"
+        },
+        {
+          "relation": "checked by",
+          "path": "topics/capacity-and-qp/development/tests/selected_route_correspondence.rs"
+        }
+      ],
+      "action": "keep; investigate",
+      "rationale": "Maintain current public separation; investigate simplifying production-only batch/profiling machinery while preserving certification semantics and correspondence.",
+      "uncertainties": [
+        "No new production benchmark, full axioms campaign or rich geometric reconstruction campaign run.",
+        "Scalar production anchors cover a bounded fixture pool, not all accepted inputs."
+      ]
+    },
+    {
+      "id": "software-legacy-orbits",
+      "kind": "algorithm",
+      "title": "Retained HK2017 and billiard orbit-producing controls",
+      "summary": "Pruned/unpruned HK and product billiard frontends provide candidate/KKT payloads, exact aggregation, recovery diagnostics and branch-sensitive control routes.",
+      "state": "Implemented research/control surfaces; default release library gate passed on 2026-10-10 (376 passed, 23 ignored). Legacy numerical guarantee names do not certify global capacity by themselves.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Historical May 2026 axioms correctness test 65.15s; July noncompact cost comparison shows retained legacy can be materially faster. No campaign rerun here.",
+      "code_quality": "Maintainability: shared typed orbit payload/errors and separate frontend modules, but compatibility guarantee names BoundSafe/MinimaSafe/AllSafe require careful reading. Correctness: source explicitly states only IndeterminateF64 candidates get legacy exact rechecking; AdmissibleF64 and heuristic action intervals are not thereby certified. Exact candidate aggregation additionally needs justified candidate completeness.",
+      "sources": [
+        {
+          "path": "crates/symplectic/src/algorithms/orbit_search.rs",
+          "supports": "guarantee and aggregation caveats"
+        },
+        {
+          "path": "crates/symplectic/src/algorithms/hk2017/mod.rs",
+          "supports": "HK control frontends"
+        },
+        {
+          "path": "crates/symplectic/src/algorithms/billiard/mod.rs",
+          "supports": "billiard product frontend"
+        },
+        {
+          "path": "docs/algorithm-testing.md",
+          "supports": "legacy-versus-production coverage distinction"
+        },
+        {
+          "path": "scripts/repo-status/repo-status-smoke-and-core-2026-05-31.md",
+          "supports": "historical checks, not current applicability"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "checked by",
+          "path": "experiments/verification/README.md"
+        }
+      ],
+      "action": "keep; clarify",
+      "rationale": "Keep explicit controls used by experiments; do not merge their heuristic contract with certified scalar results.",
+      "uncertainties": [
+        "Broad legacy property/reconstruction evidence is historical; applicability requires dependency review."
+      ]
+    },
+    {
+      "id": "software-kkt",
+      "kind": "algorithm",
+      "title": "Numerical and exact one-word constrained-QP kernels",
+      "summary": "Saddle-point, projected stationarity/max-margin, rational Fourier-Motzkin positivity and generic exact-field one-word KKT payloads.",
+      "state": "Implemented distinct kernels with distinct success meanings; default release library gate passed on 2026-10-10.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Historical 2026-07-26 raw f64 one-word solve 5.62–7.10us over F5–F11; Fourier-Motzkin and exact fallback costs are input-dependent, unmeasured here.",
+      "code_quality": "Maintainability: generic and rational exact paths repeat KKT assembly/positivity logic while rational path adds verified fraction-free acceleration; consolidation requires preserving exact field generality and selected multiplier witnesses. Correctness: feasible positive stationary KKT witness does not by itself establish fixed-word maximum, physical orbit or global capacity. Numerical residual Q diagnostics are not input-polytope exact certificates.",
+      "sources": [
+        {
+          "path": "crates/symplectic/src/kkt/mod.rs",
+          "supports": "solver boundaries and corrected production rational role"
+        },
+        {
+          "path": "crates/symplectic/src/kkt/rational_solver.rs",
+          "supports": "fraction-free plus generic fallback and exact positivity search"
+        },
+        {
+          "path": "crates/symplectic/src/exact/orbit.rs",
+          "supports": "generic exact-field and specialized rational KKT payload"
+        },
+        {
+          "path": "crates/symplectic/DEVELOPMENT.md",
+          "supports": "projection diagnostic bounds and caveats"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "consumed by",
+          "path": "crates/symplectic/src/algorithms/capacity_4d/general.rs"
+        }
+      ],
+      "action": "keep; investigate",
+      "rationale": "Compare generic/rational assembly and positive-solution selection before proposing shared primitives.",
+      "uncertainties": [
+        "No independent audit of Fourier-Motzkin completeness or growth performed."
+      ]
+    },
+    {
+      "id": "software-flow-graph",
+      "kind": "algorithm",
+      "title": "Conditional rational exact flow-graph/tube search",
+      "summary": "Exact selected-word tube resolution and exhaustive closed-orbit search with explicit cutoff policy and typed unsupported/singular/zero-action outcomes.",
+      "state": "Live rational implementation; retired f64 prototype supplies no current capacity claim. Runtime support is conditional and narrower than arbitrary raw polytope inputs.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Source marks four ignored F7 exhaustive checks at about 60s each in release. These were not run; default lib gate does not include ignored tests.",
+      "code_quality": "Maintainability: detailed local control README provides hypothesis and evidence ledger. Correctness: exhaustive boundary checks independence of subsets up to four normals; direct word resolver has a different boundary. Neither fully verifies bounded irredundancy or consistency of externally supplied incidence/sign matrices. Finite-orbit regularity is not globally certified up front. Exact arithmetic does not discharge the formal capacity theorem.",
+      "sources": [
+        {
+          "path": "crates/symplectic/src/algorithms/flow_graph/README.md",
+          "supports": "live contract, theorem alignment and exclusions"
+        },
+        {
+          "path": "crates/symplectic/src/algorithms/flow_graph/exact_search.rs",
+          "supports": "exact exhaustive search and input rejection"
+        },
+        {
+          "path": "crates/symplectic/src/algorithms/flow_graph/exact_tube.rs",
+          "supports": "one-word resolver and ignored expensive F7 checks"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "checked by",
+          "path": "experiments/dev-flow-graph/README.md"
+        },
+        {
+          "relation": "supports",
+          "path": "thesis/chapters/05-flow-graph.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Preserve conditional runtime contracts and explicit expensive verification layer.",
+      "uncertainties": [
+        "Ignored F7 checks and theorem/proof reconciliation not performed in this software survey."
+      ]
+    },
+    {
+      "id": "software-derivatives",
+      "kind": "algorithm",
+      "title": "Capacity/volume derivatives and local nonsmooth diagnostics",
+      "summary": "One-word KKT gradients, exact-orbit-to-f64 conversion, capacity subgradient/directional helpers, known-incidence volume derivatives and finite-difference checks.",
+      "state": "Implemented; default release-library gate passed on 2026-10-10. Mathematical use depends on selected branch/minimum family; ignored expensive finite-difference checks remain unrun.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "No derivative benchmark run. Some broad finite-difference checks are ignored by default because they rerun expensive capacity searches.",
+      "code_quality": "Maintainability: typed missing-multiplier/empty-subdifferential/conversion errors and shape assertions. Correctness: low-level capacity gradient assumes a valid selected KKT branch and nonzero Q; it is not a global differentiability certificate. Volume derivative uses a documented tiny-facet floor (1e-30). Clarke/minimum-family interpretations require mathematical assumptions beyond stored vectors.",
+      "sources": [
+        {
+          "path": "crates/symplectic/src/derivatives.rs",
+          "supports": "gradient formula, errors, facet floor and ignored checks"
+        },
+        {
+          "path": "crates/symplectic/src/exact/derivatives.rs",
+          "supports": "exact-field derivative counterpart"
+        },
+        {
+          "path": "formal/capacity-derivatives.tex",
+          "supports": "named proof source"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "consumed by",
+          "path": "experiments/dev-gradient-ascent/README.md"
+        }
+      ],
+      "action": "keep; clarify",
+      "rationale": "Retain branch and family assumptions when reusing gradients in optimizers or local diagnostics.",
+      "uncertainties": [
+        "Formal-to-implementation formula audit and nonsmooth generality not assessed."
+      ]
+    },
+    {
+      "id": "software-data-support",
+      "kind": "collection",
+      "title": "Named fixtures, seeded sampling and rational JSONL records",
+      "summary": "Known polytope constructors, accepted random dual-vertex rejection sampling, dataset row schemas and incrementally filled rational geometry records with fieldwise merging.",
+      "state": "Implemented support layer; finite serialization/merge/sample regressions included in release library check.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Sampling cost depends on acceptance and geometry; no cost measurement here. JSONL IO scales with file size.",
+      "code_quality": "Maintainability: named schemas and explicit source provenance. Correctness: sampling is candidate distribution plus acceptance filtering, not uniform over valid polytopes. database::load overwrites duplicate keys within one file, whereas load_many detects conflicts across already-loaded files; inspect whether same-file conflict rejection is desired. save uses a predictable temporary pathname and HashMap iteration order; atomic replacement is not deterministic serialization or multiwriter safety.",
+      "sources": [
+        {
+          "path": "crates/symplectic/src/random.rs",
+          "supports": "seeded attempts and exact acceptance validation"
+        },
+        {
+          "path": "crates/symplectic/src/geom/known_polytopes.rs",
+          "supports": "named geometry fixtures"
+        },
+        {
+          "path": "crates/symplectic/src/database.rs",
+          "supports": "rational serialization, load/load_many/save semantics"
+        },
+        {
+          "path": "crates/symplectic/src/dataset.rs",
+          "supports": "producer-oriented row types"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "consumed by",
+          "path": "topics/empirical-studies/polytope-datasets/README.md"
+        }
+      ],
+      "action": "keep; investigate",
+      "rationale": "Separate schema reuse from scientific sample claims; investigate duplicate-record/concurrent-save expectations before changing IO semantics.",
+      "uncertainties": [
+        "No concurrent writer test or current dataset validation run."
+      ]
+    },
+    {
+      "id": "software-geometry-consolidation",
+      "kind": "collection",
+      "title": "Ordinary geometry remaining inside symplectic",
+      "summary": "Generic exact polytope validation/enumeration in exact/polytope.rs and legacy integer-descriptor geometry in geom/vertex_enumeration overlap Euclidean owner responsibilities; both remain active consumers.",
+      "state": "Incidence and generic enumeration now share Euclidean implementations; generic/rational/f64 validation and error policies remain separate. Bounded G1/G2/G3 tests and reviews passed11October.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "No new benchmark; generic rational construction is historically much slower than filtered integer production geometry on measured cohorts.",
+      "code_quality": "Maintainability: repeated exact dot/cross/rank/enumeration and positive-spanning logic across three surfaces increases review/migration work. Correctness: current paths differ in checked irredundancy, result errors, vector/array representation and descriptors. Removing one without adapters and correspondence checks would lose contracts. Existing independent control use may justify retaining a subset.",
+      "sources": [
+        {
+          "path": "crates/symplectic/src/exact/polytope.rs",
+          "supports": "ordinary generic geometry plus symplectic signs in one module"
+        },
+        {
+          "path": "crates/symplectic/src/geom/vertex_enumeration/exact_linalg.rs",
+          "supports": "separate rational/integer geometry arithmetic"
+        },
+        {
+          "path": "crates/euclidean-polytopes/src/linalg.rs",
+          "supports": "generic geometry arithmetic in intended Euclidean owner"
+        },
+        {
+          "path": "crates/symplectic/src/geom/lagrangian_product.rs",
+          "supports": "active exact geometry consumer"
+        },
+        {
+          "path": "crates/symplectic/src/algorithms/mod.rs",
+          "supports": "active preparation consumer"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "overlaps",
+          "path": "crates/euclidean-polytopes/src/polar.rs"
+        }
+      ],
+      "action": "investigate; consolidate",
+      "rationale": "Actual duplicate enumeration and incidence removed; broad constructor unification deferred because duplicate/rank policies differ. Retain symplectic signs and legacy rational descriptor pipeline.",
+      "uncertainties": [
+        "Experiment consumers and descriptor-dependent callers not exhaustively reviewed.",
+        "A shared generic implementation must not erase useful independent control evidence."
+      ]
+    },
+    {
+      "id": "software-cargo-boundaries",
+      "kind": "workflow",
+      "title": "Root workspace and standalone method builds",
+      "summary": "Root Cargo workspace includes three reusable crates and selected experiment packages; several sys-datascience method packages declare their own [workspace] and local path dependencies.",
+      "state": "Manifest boundaries inspected. Root workspace compilation is not a repository-wide build of every method package or archived source snapshot.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Survey workstation Rust 1.94.0: algebraic release build 25.54s, euclidean debug build 25.42s, symplectic release lib build 53.19s and default lib tests 28.89s; capacity integration-test build 11.68s, production anchors 5.97s, public API 3.41s. Build times include mixed cache/possible shared Cargo-lock waits; not algorithm benchmarks.",
+      "code_quality": "Maintainability: conventional Cargo packages; standalone methods intentionally pin their own dependency/build context. Symplectic uses nalgebra 0.33 plus separately pinned 0.35.0 for verified pivoted Bunch–Kaufman factorization; changing versions requires numerical packet checks. Historical lint/tests are not blanket quality acceptance.",
+      "sources": [
+        {
+          "path": "Cargo.toml",
+          "supports": "explicit root members, dependency/profile settings"
+        },
+        {
+          "path": "rust-toolchain.toml",
+          "supports": "Rust 1.94.0 toolchain"
+        },
+        {
+          "path": "crates/symplectic/Cargo.toml",
+          "supports": "independent pinned nalgebra035 rationale"
+        },
+        {
+          "path": "topics/empirical-studies/sys-datascience/methods/current-body-evaluator/Cargo.toml",
+          "supports": "representative standalone boundary"
+        },
+        {
+          "path": "docs/algorithm-testing.md",
+          "supports": "compile smoke coverage exclusions"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "checked by",
+          "path": "scripts/repo-status/repo-status-smoke-and-core-2026-05-31.md"
+        }
+      ],
+      "action": "keep; clarify",
+      "rationale": "Inventory build scope explicitly and keep retained method snapshots distinct from current standalone packages.",
+      "uncertainties": [
+        "No standalone method compile/test campaign run in this bounded survey.",
+        "Root workspace check belongs to integrating agent."
+      ]
+    },
+    {
+      "id": "software-maintenance-tools",
+      "kind": "workflow",
+      "title": "Artifact, release, status and browser helpers",
+      "summary": "Repository scripts publish/materialize immutable artifact snapshots, build a reviewed clean-tree release ZIP, assess applicability of old check reports and serve bounded project/file views. Usage/coordination tools have separate accounting contracts.",
+      "state": "Representative scripts inspected read-only; no cloud publication, release packaging or remote mutation executed.",
+      "agent_readability": "README/public contracts and named implementation sources inspected; full implementation comprehension is not claimed.",
+      "human_readability": "Entry point and contracts available; Jörn acceptance/readability not assessed in this survey.",
+      "runtime": "Unknown for current publish/materialize/release operations; network sizes and LaTeX build dominate. File viewer source has a 15s Pandoc subprocess timeout; this is a limit, not typical latency.",
+      "code_quality": "Maintainability: named helper owners and focused Python tests exist. artifacts.py validates relative paths, manifest IDs and hashes; build-release.py checks expected commit/clean tracked tree and refuses overwrite. These contracts are source observations, not current end-to-end service tests. Scripts README table is selective: rg finds additional render/source/review helpers, so it is not exhaustive physical accounting.",
+      "sources": [
+        {
+          "path": "scripts/README.md",
+          "supports": "documented helper purposes and commands"
+        },
+        {
+          "path": "scripts/artifacts.py",
+          "supports": "snapshot path/hash identity checks"
+        },
+        {
+          "path": "scripts/build-release.py",
+          "supports": "reviewed-tree and ZIP-manifest checks"
+        },
+        {
+          "path": "scripts/repo-status-summary.sh",
+          "supports": "dated check applicability and artifact freshness exclusions"
+        },
+        {
+          "path": "scripts/serve-files.py",
+          "supports": "viewer render size/time bounds"
+        },
+        {
+          "path": "scripts/serve-project-dashboard.py",
+          "supports": "source status and shared-state serving"
+        },
+        {
+          "path": "scripts/subtree-usage.md",
+          "supports": "manual accounting limitations"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "implements",
+          "path": "docs/reproducibility.md"
+        },
+        {
+          "relation": "implements",
+          "path": "docs/artifacts.md"
+        }
+      ],
+      "action": "keep; clarify",
+      "rationale": "Keep network/release effects explicit and distinguish old verification evidence from live applicability.",
+      "uncertainties": [
+        "Helper tests and live serving/network behavior not run by this software worker.",
+        "All script implementations were not audited."
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "paths": [
+        "crates/symplectic/src/geom/qhull.rs"
+      ],
+      "description": "Consolidated duplicated parsing of Approximate volume and Total volume prefixes into one parse/error path; preserves first matching line and error semantics.",
+      "verification": "All four existing parser tests passed in cargo test -p symplectic --release --lib (376 passed, 23 ignored, exit 0); cargo fmt --all -- --check passed. Public capacity/anchor suites also passed; no producer outputs rewritten."
+    },
+    {
+      "paths": [
+        "crates/symplectic/src/kkt/mod.rs",
+        "crates/symplectic/src/algorithms/capacity_4d/general.rs"
+      ],
+      "description": "Corrected stale documentation claiming rational KKT is validation-only despite production fallback/rich-output calls; replaced copied comment about absent empirical policies with current certified-enclosure/exact-decision semantics.",
+      "verification": "Compared current production call sites and decision constructors; comments only. cargo fmt --all -- --check and symplectic tests passed."
+    },
+    {
+      "paths": [
+        "crates/euclidean-polytopes/src/faces.rs",
+        "crates/symplectic/src/exact/polytope.rs",
+        "crates/symplectic/src/geom/vertex_enumeration/mod.rs"
+      ],
+      "description": "Consolidated incidence-only facet intersection in one Euclidean unordered-pair scan, retaining existing symplectic adapters and input identity.",
+      "verification": "Separate Sol review approved revised implementation; Euclidean faces6/6, exact polytope2/2, rational cube adapter1/1 and qp-retained-exact consumer compilation passed. No speedup or broader validation equivalence claimed."
+    },
+    {
+      "paths": [
+        "crates/euclidean-polytopes/src/polar.rs",
+        "crates/euclidean-polytopes/src/lib.rs",
+        "crates/symplectic/src/exact/polytope.rs"
+      ],
+      "description": "Factored raw normalized-halfspace vertex enumeration from existing generic polar kernel; symplectic exact adapter retains validation/error contracts and consumes shared vertices/incidence.",
+      "verification": "Separate Sol review; before/after ordered simplex,cube,algebraicHKO descriptors match;19polar tests,4exact tests, diagnostic errors and external consumercheck passed. Root workspacecompile and globalformat also passed; no speedup claim."
+    }
+  ],
+  "checks": [
+    {
+      "command": "cargo test -p algebraic-numbers --release",
+      "status": "passed (exit 0)",
+      "observed_summary": [
+        "    Finished `release` profile [optimized + debuginfo] target(s) in 25.54s",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.59s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s"
+      ],
+      "environment": "2026-10-10 workstation, assigned f7e0 checkout, Rust 1.94.0; compilation cache state mixed; command capped at 180 or 240 seconds",
+      "scope": "Existing regression checks only; no retained producer outputs refreshed."
+    },
+    {
+      "command": "cargo test -p euclidean-polytopes",
+      "status": "passed (exit 0)",
+      "observed_summary": [
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.42s",
+        "test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.55s",
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.47s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ],
+      "environment": "2026-10-10 workstation, assigned f7e0 checkout, Rust 1.94.0; compilation cache state mixed; command capped at 180 or 240 seconds",
+      "scope": "Existing regression checks only; no retained producer outputs refreshed."
+    },
+    {
+      "command": "cargo test -p symplectic --release --lib",
+      "status": "passed (exit 0)",
+      "observed_summary": [
+        "    Finished `release` profile [optimized + debuginfo] target(s) in 53.19s",
+        "test result: ok. 376 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 28.89s"
+      ],
+      "environment": "2026-10-10 workstation, assigned f7e0 checkout, Rust 1.94.0; compilation cache state mixed; command capped at 180 or 240 seconds",
+      "scope": "Existing regression checks only; no retained producer outputs refreshed."
+    },
+    {
+      "command": "cargo test -p symplectic --release --test public_capacity_api --test production_capacity_anchors",
+      "status": "passed (exit 0)",
+      "observed_summary": [
+        "    Finished `release` profile [optimized + debuginfo] target(s) in 11.68s",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.97s",
+        "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.41s"
+      ],
+      "environment": "2026-10-10 workstation, assigned f7e0 checkout, Rust 1.94.0; compilation cache state mixed; command capped at 180 or 240 seconds",
+      "scope": "Existing regression checks only; no retained producer outputs refreshed."
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "status": "passed (exit 0)",
+      "environment": "2026-10-10 workstation, Rust 1.94.0",
+      "scope": "Root workspace Rust formatting only."
+    }
+  ],
+  "observed_at": "2026-10-10T16:44:20+00:00",
+  "source_head": "844fc5be3884c12a93dabd795d0a0d12a92b2815 (working tree includes cleanup/inventory changes; no immutable commit claim)"
+}

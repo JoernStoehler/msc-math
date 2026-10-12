@@ -13,11 +13,10 @@ orthogonal complement of the 15 `sys`-symmetry tangent generators. This choice
 avoids assuming that a base active-sigma list contains all right-active or
 singular branch germs. It is a finite heuristic diagnostic, not a
 local-maximality proof. HKO's exact theorem packet under
-`experiments/hko-local-maximum/theorem/` remains the authority for that control.
-The cached HKO certificate-slope calibration under
-`experiments/hko-local-maximum/empirical/certificate-slope-calibration/`
-shows why slope magnitude is not a distance-to-maximum proxy for this sharp
-nonsmooth control.
+`topics/variation-and-local-maxima/hko-local-maximum/theorem/` remains the authority for that control.
+An earlier account cited an HKO certificate-slope calibration packet that is
+absent from this checkout. Its slope claim is not treated as retained evidence
+for this diagnostic; the exact HKO theorem packet above remains the control.
 
 Retained outputs:
 

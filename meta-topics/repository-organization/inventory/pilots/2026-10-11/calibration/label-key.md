@@ -1,0 +1,16 @@
+# Frozen key and selection rationale
+
+Frozen before fresh reviewer assignment on 2026-10-11. Keep this file and the original lineage unavailable to the blinded reviewer until its assessment is returned.
+
+| Blinded file | Source and identity | Prior status |
+| --- | --- | --- |
+| `sample-a.md` | Exact copy of `experiments/writing-quality/runs/20260918-easy-routes/route-reader/final.md`, SHA-256 `dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36` | Known failed: Jörn's contemporary review explicitly said “Needs revision before acceptable.” |
+| `sample-b.md` | Exact copy of `experiments/writing-quality/runs/20260918-human-feedback-revision/revised.md`, SHA-256 `7b597b3a4292031e502ef4285bed0b98c9dafc16e6cbd243c33ce7ebde5f324b` | Provisional conservative control only. This revision addressed annotated organizational and semantic objections; subsequent independent reader and source-meaning checks were recorded, with actionable findings repaired. No human PASS or post-repair comprehensive acceptance exists. |
+
+`figures/association-stratified.svg` is the control's original referenced plot, SHA-256 `7c0f880a45a07b8972dc52d37de4265a077e7b1893c8e4df8d74cb2d8e85fa95`.
+
+The known-failed label is based on `experiments/writing-quality/human-review/responses/20260918-root-contemporary-ds-reader.md`: the significant objections concern a missing visual and visible separation of empirics, interpretation, and selection; too-early population/method detail; unexplained statistical terms and overprecision; ambiguous names for systolic ratio; and an opaque final selection paragraph. Jörn withdrew a proposed pentagon-first ordering change and qualified the opening concern. A calibration prediction should recognize this structure and meaning, not merely find any defect.
+
+The control rationale is based on `experiments/writing-quality/runs/20260918-human-feedback-revision/{README.md,reviews.md,revised.md}` and its cited owners: `topics/empirical-studies/sys-datascience/methods/ridge-endpoint-path/INTERPRETATION.md`, `topics/empirical-studies/sys-datascience/methods/alternative-source-transfer/POST-TARGET-ACCOUNT.md`, the retained concentration validation, and the reviewed pentagon derivation. Its earlier review found weak rule/control explanation and a claim that pentagon explained random-pool success; the final revision repaired these, added stratified plots, distinguished numerical paths from the exact family, and exposed selected/control means. The last source review was focused, so this is a deliberately uncertain control, not an independent proof of acceptance.
+
+Selection limitation: both samples share DS lineage, and the control was revised in response to known objections. A model with training or contextual familiarity may recall the historical text or infer chronology from style. The pair can reject a reviewer that confidently accepts the failed sample or rejects everything, but one successful discrimination cannot establish general review sensitivity, specificity, or human acceptance prediction. The control also contains more explicit headings and a figure because those are among the substantive repairs; they are not synthetic cues inserted for this trial.

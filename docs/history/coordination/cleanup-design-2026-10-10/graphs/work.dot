@@ -1,0 +1,63 @@
+digraph work {
+rankdir=TB;
+graph [fontname="sans-serif", bgcolor="transparent", pad="0.2", nodesep="0.24", ranksep="0.42"]; node [shape=box, style="rounded,filled", fillcolor="#e4f1f6", color="#387084", fontname="sans-serif", fontsize=12, margin="0.13,0.10"]; edge [color="#70818b", arrowsize=0.65, fontname="sans-serif", fontsize=10];
+subgraph cluster_g { label="GEOMETRY · Sol manager"; color="#b8ced8";
+ G0 [label="G2 · Input/error contract
+Resolve or preserve differing policies",fillcolor="#ffedc9",shape=diamond];
+ G1 [label="G1 · Merge repeated
+incidence helpers"];
+ G3 [label="G3–4 · One exact geometry owner
+Adapters + migrated callers"];
+ G0 -> G3; G1 -> G3 [style=dashed,label="same-file integration"];
+}
+subgraph cluster_f {label="FOUNDATIONS · Sol manager";color="#b8ced8";
+ F0 [label="F1,2,5 · Parallel proof consolidation
+Polar geometry / KKT / flow graph"];
+ F1 [label="F3 · Separate current certificates
+from obsolete derivations"];
+ F2 [label="F4 · Resolve claim boundaries
+Pruning / recovery / derivatives",fillcolor="#ffedc9",shape=diamond];
+ F0 -> F1 [label="KKT conventions"];F0 -> F2 [label="KKT conventions"];
+}
+subgraph cluster_d {label="DATA · Sol manager";color="#b8ced8";
+ D0 [label="D1 · One feature-table builder
+Explicit retained / run-local adapters"];
+ D1 [label="D2 · Sampling / record IO
+Duplicates, save and provenance policy",fillcolor="#ffedc9",shape=diamond];
+ D2 [label="D3 · Simpler commands + consumers
+Same identities and honest provenance"];
+ D0 -> D2;D1 -> D2 [style=dashed,label="retain old schema if unresolved"];
+}
+subgraph cluster_t {label="TRUST · Sol manager";color="#b8ced8";
+ T0 [label="T1 · Capture fixtures + failures
+BEFORE changed behavior is accepted"];
+ T1 [label="T2 · Independent-route checks
+Test actual failure modes"];
+ T2 [label="T3 · Benchmarks
+Separate stages; same inputs"];
+ T0 -> T1; T0 -> T2;
+}
+subgraph cluster_e {label="RESEARCH ACCOUNT · Sol manager";color="#b8ced8";
+ E0 [label="E1 · Stable result IDs + content structure
+TOC / typed result graph"];
+ E1 [label="E2 · Parallel detailed topic accounts
+Foundations · local maxima · products · empirical",fillcolor="#eee6fa"];
+ E2 [label="E3 · Assemble nested HTML
+Summary → takeaways → reasoning → evidence",fillcolor="#eee6fa"];
+ EP [label="EARLY · One hard DS slice\nAccount → plan → actual short draft\nUseful enough to expand?",fillcolor="#ffedc9",shape=diamond];
+ EN [label="If not: repair / narrow account\nor expose human writing dependency\nIndependent cleanup continues",fillcolor="#fff4df"];
+ E0 -> EP; EP -> E1 [label="bounded useful result"]; EP -> EN [label="failed value/meaning check"]; E1 -> E2;
+}
+ I [label="I · Sol integration + independent Sol reviews
+Working callers · coherent claims · targeted checks
+Update inventory / source links as each unit returns",fillcolor="#e6edee"];
+ P [label="P · Fresh Sol: joint agent/Jörn writing plan
+Claims/order · reusable text · evidence · effort allocation
+Expose remaining reconstruction and human decisions",fillcolor="#eee6fa"];
+ A [label="A · Astra final review
+One assembled candidate + source-ordered reading packet
+Findings → Sol fixes → consolidated delta review",fillcolor="#d8eadd",color="#387049"];
+ G3 -> I;F1 -> I;F2 -> I;D2 -> I;T1 -> I;T2 -> I;E2 -> I;
+ F0 -> E1 [style=dashed,label="per-topic handoff"];
+ I -> P;P -> A;
+}

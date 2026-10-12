@@ -21,15 +21,20 @@ checkouts. These are workstation locations, not required paths on another machin
 | --- | --- |
 | `/workspaces/msc-math/` | Main checkout. Other worktrees have separate files and changes. |
 | `~/.codex/worktrees/` | Codex-created worktrees; locate this project's checkout through Git. |
-| `/tmp/msc-math/<task>/` | Disposable notes, drafts and exploratory outputs. |
+| `/tmp/msc-math/<task>/<run>/` | Shared-across-worktrees working inputs, outputs and metadata for one agent run; distinct runs can coexist. |
 | `~/.codex/artifacts/` | Files prepared for Jörn to view, review or download; use a project/task subdirectory. |
 | `.agents/skills/` in the checkout | Project-owned skills and their helpers. Installed plugin skills are separate. |
 | `~/.cache/msc-math/artifacts/` | Downloaded research snapshots; [docs/artifacts.md](docs/artifacts.md) owns cache overrides and data links. |
 | `/data/msc-math/` | Candidate future home for a project bundle to copy or mount; no relocation is selected yet. |
 
 Keep lasting project results with their source/evidence owner. Scratch notes and
-review files are not their only retained copy. See [environment docs](docs/development-environments.md)
-for host/sandbox setup and [docs/codex.md](docs/codex.md) for Codex state and recovery.
+review files are not their only retained copy. See [environment docs](meta-topics/development-environment/development-environments.md)
+for host/sandbox setup and [Codex reference](meta-topics/development-environment/codex-reference.md) for Codex state and recovery.
+Agent-created inputs, outputs and metadata start in task/run scratch space; creation
+does not promote them into the active worktree or shared long-term state. Deliberately
+retain small datasets and fixtures in ordinary Git, and use the registered R2
+snapshot route for large retained data; do not introduce Git LFS. See
+[artifact contracts](docs/artifacts.md) before publishing or replacing evidence.
 
 File links for Jörn: `/absolute/path` → `https://joern-pc.tailc5e761.ts.net/files/absolute/path` (expand `~`; URL-encode each path segment).
 
@@ -42,19 +47,22 @@ links must resolve within the same checkout.
 
 Start from the task, then retrieve only the context it needs:
 
-- `README.md` is the entry point; `ARCHITECTURE.md` maps domain ownership.
-- `thesis/README.md` identifies the active reader-facing source and build. `formal/`
-  contains proof development, `crates/` reusable Rust, and `experiments/` producers,
-  retained evidence and interpretation.
-- `docs/coordination/README.md` explains the agent-facing coordination store:
+- `README.md` is the entry point; [repository organization](meta-topics/repository-organization/README.md)
+  owns placement and cross-domain contracts.
+- `thesis/README.md` identifies the active reader-facing source and build. `topics/`
+  owns scientific accounts and their coherent proof, code, producer and evidence
+  packages. Conventional `crates/`, `formal/` and `experiments/` interfaces remain
+  where their build or shared consumers require them; topic READMEs identify sources.
+- `meta-topics/project-management/coordination.md` explains the agent-facing coordination store:
   `current.json` owns selected assignments/resources, `thesis-work.md` owns the
   detailed thesis backlog, and `handoff.md` owns continuation constraints.
-  Read that README when coordinating or handing off work. `docs/project-facts.md`
+  Read that account when coordinating or handing off work. `docs/project-facts.md`
   owns attributed Jörn-confirmed scope; `docs/knowledge/README.md` routes reusable
   interpretation. `docs/history/` owns historical evidence, not current assignments.
-- `INSTALL.md` owns tool setup. Topic READMEs own reproduction commands and local caveats;
-  `papers/` owns source literature and `submit/` release/admin.
-- `docs/codex.md` routes Codex configuration, daemon restart/thread recovery,
+- [Installation workflow](meta-topics/development-environment/installation-workflow.md) owns tool setup. Topic READMEs own reproduction commands and local caveats;
+  [Literature](topics/literature/README.md) owns source collection and search;
+  [thesis submission](meta-topics/thesis-submission/README.md) owns release/admin.
+- [The Codex reference](meta-topics/development-environment/codex-reference.md) routes configuration, daemon restart/thread recovery,
   subagent persistence and official documentation or release-matched source lookup.
 
 Search claims, symbols, artifact paths and likely synonyms with `rg` before concluding that
@@ -62,7 +70,7 @@ work is absent. Follow summaries to their sources. Legacy and generated trees ar
 broad orientation surfaces unless a task specifically needs them.
 
 When assignments, owners, dependencies, decisions or resource constraints materially
-change, update `docs/coordination/current.json`. Jörn's browser view at
+change, update `meta-topics/project-management/current.json`. Jörn's browser view at
 `docs/dashboard/index.html` renders that state. Timestamp observations and show unknown
 quota/spending as unknown; old panes, deadlines and balances are not live state.
 The coordinating agent integrates updates from its workers; preserve other sessions' work.
@@ -81,7 +89,7 @@ Refresh `docs/dashboard/thesis-sources.json` only after that source reconciliati
 
 ## Collaboration friction
 
-Detailed workflow friction is owned by `docs/friction/README.md` and its individual
+Detailed workflow friction is owned by `meta-topics/project-management/friction/README.md` and its individual
 records; the linked Pages overview is the concise human view. When relevant authorized
 work changes material friction or its disposition, update the record and reconcile that
 Page without waiting for Jörn to request it. Keep diagnostics and handoffs in the repository.
@@ -94,7 +102,9 @@ Before sending a prepared user-visible message, use the
 subagent's approval of the exact complete text, including `[review: REVIEWER]`.
 Substantive changes require renewed review. Direct synchronous conversation and
 private native agent messages are exempt; the skill owns the boundaries and procedure.
-If required review is unavailable, keep prepared delivery pending.
+If required review is unavailable, keep prepared delivery pending. New exact review
+packets belong in `/tmp/msc-math/message-reviews/`; lasting findings belong with
+their scientific or meta-topic owner, not in the disposable packet.
 
 Keep the Codex+user workflow moving: during unfinished authorized work, treat
 brief acknowledgments such as "thx" as acknowledgment, not a stop, pause or scope

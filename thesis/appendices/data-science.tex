@@ -138,8 +138,8 @@ endpoints printed as $4.821447361515127$ and $4.821447361515128$.
 The matched row and its source identifier are retained in
 \begin{quote}
 \small\raggedright
-\path{docs/ds-retrospective-revalidation/target-full/comparison.jsonl.gz}
-and \path{experiments/polytope-invariant-table/polytope-provenance-table.jsonl}.
+\path{topics/empirical-studies/retrospective-revalidation/target-full/comparison.jsonl.gz}
+and \path{topics/empirical-studies/polytope-invariant-table/polytope-provenance-table.jsonl}.
 \end{quote}
 
 The current evaluator reconstructs the geometry of the stored binary64 input
@@ -192,8 +192,8 @@ entropy, effective face count and normalized entropy, giving 18 ridge
 descriptors. The full field names are recorded, respectively, in
 \begin{quote}
 \small\raggedright
-\path{experiments/sys-datascience/methods/prediction-ranking/artifacts/summary.json}
-and \path{experiments/sys-datascience/methods/_shared/random_only.py}.
+\path{topics/empirical-studies/sys-datascience/methods/prediction-ranking/artifacts/summary.json}
+and \path{topics/empirical-studies/sys-datascience/methods/_shared/random_only.py}.
 \end{quote}
 
 The boosted comparison used 8,704 training rows and 5,632 test rows. The
@@ -201,7 +201,7 @@ held-out groups were products with 8, 10 or 12 facets and generic polytopes
 with 12 facets; all feature-family comparisons used this same split. Source
 labels determined groups but were not model covariates. The precise group
 counts, feature-family scores and current-schema input reconstruction are in
-\path{experiments/sys-datascience/methods/standard-baseline-p2/}.
+\path{topics/empirical-studies/sys-datascience/methods/standard-baseline-p2/}.
 
 
 \subsection{Selection and comparison rules}\label{app:ds-selection}
@@ -257,7 +257,7 @@ six generic or eleven product bodies per group. These are descriptive
 statistics under conditioning, not evidence of independence, systematic
 reversal, or the effect of a shape intervention. Row identities, cutoffs
 and a second rank calculation were independently checked; the reproducible
-packet is \path{experiments/sys-datascience/methods/selection-mechanism/}.
+packet is \path{topics/empirical-studies/sys-datascience/methods/selection-mechanism/}.
 
 \paragraph{Gaussian rank reference.}
 Each original sample group is assigned a bivariate Gaussian reference
@@ -327,7 +327,7 @@ $0.3810$ for the other ninety bodies. These are means of body-level
 quantities; they do not assert a factorization of the population mean
 of $R/N_2$. Definitions, per-ridge values and the decomposition check
 are retained in
-\path{experiments/sys-datascience/methods/ridge-tail-anatomy/}.
+\path{topics/empirical-studies/sys-datascience/methods/ridge-tail-anatomy/}.
 
 \subsection{Paired height changes and ambient rotations}
 \label{app:ds-deformations}
@@ -351,7 +351,7 @@ and fourteen of sixteen pairs. All 64 bodies have $R\geq11.065$ and
 numerical ratio at most $0.742$. These results reuse the retained capacity
 evaluations; no new capacity calls enter the comparison. Reconstruction,
 row identity and hash checks are recorded in
-\path{experiments/sys-datascience/methods/selection-mechanism/controlled-result.md}.
+\path{topics/empirical-studies/sys-datascience/methods/selection-mechanism/controlled-result.md}.
 
 For ambient rotations, the action is
 \[
@@ -401,7 +401,7 @@ These are paired transformations of retained source bodies, not a new
 independent population or a test isolating the scalar $\rho$ from other
 changed geometric properties. The producer, frozen inputs, evaluator
 identity and complete paired results are retained in
-\path{experiments/sys-datascience/methods/selection-mechanism/balance-artifacts/}.
+\path{topics/empirical-studies/sys-datascience/methods/selection-mechanism/balance-artifacts/}.
 
 \subsection{Finite-budget local optimizer comparison}
 \label{app:ds-local-optimization}
@@ -685,18 +685,18 @@ historical optimizer executable and full proposal traces were not recovered.
 \endfirsthead
 \toprule Result & Repository source \\\midrule
 \endhead
-Historical population and replay & \path{docs/ds-evidence-closure/README.md}; \path{experiments/polytope-datasets/retained-lineage.md}\\
-Restored features and reevaluation & \path{docs/ds-retrospective-revalidation/geometry-full/README.md}; \path{docs/ds-retrospective-revalidation/target-full/README.md}; \path{docs/ds-retrospective-revalidation/repair/README.md}\\
-Feature models & \path{experiments/sys-datascience/methods/prediction-ranking/}; \path{experiments/sys-datascience/methods/standard-baseline-p2/}\\
-Fresh selection & \path{experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/}; \path{experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/}\\
-Transfer & \path{experiments/sys-datascience/methods/alternative-source-transfer/}; \path{experiments/sys-datascience/methods/generic-ridge-tail-stage1-target/}\\
-Paired support heights & \path{experiments/sys-datascience/methods/paired-tangentialization/}\\
-Orientation allocation & \path{experiments/sys-datascience/methods/orientation-allocation/}\\
-Adaptive product sampling & \path{experiments/sys-datascience/methods/diagonal-cem-pilot/}\\
-Local optimization and diagnostics & \path{experiments/dev-gradient-ascent/optimizer-comparison/}; \path{docs/ds-evidence-closure/search-account.md}\\
-Conditional and controlled ridge analyses & \path{experiments/sys-datascience/methods/selection-mechanism/}\\
-Conditional ridge correlations & \path{experiments/sys-datascience/methods/tail-dependence-feasibility/}\\
-Product ridge geometry & \path{docs/ds-evidence-closure/ridge-mathematics.md};
-\path{docs/ds-evidence-closure/triangle-profile.md}; \path{experiments/sys-datascience/methods/ridge-endpoint-path/}\\
+Historical population and replay & \path{topics/empirical-studies/evidence-closure/README.md}; \path{topics/empirical-studies/polytope-datasets/retained-lineage.md}\\
+Restored features and reevaluation & \path{topics/empirical-studies/retrospective-revalidation/geometry-full/README.md}; \path{topics/empirical-studies/retrospective-revalidation/target-full/README.md}; \path{topics/empirical-studies/retrospective-revalidation/repair/README.md}\\
+Feature models & \path{topics/empirical-studies/sys-datascience/methods/prediction-ranking/}; \path{topics/empirical-studies/sys-datascience/methods/standard-baseline-p2/}\\
+Fresh selection & \path{topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/}; \path{topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/}\\
+Transfer & \path{topics/empirical-studies/sys-datascience/methods/alternative-source-transfer/}; \path{topics/empirical-studies/sys-datascience/methods/generic-ridge-tail-stage1-target/}\\
+Paired support heights & \path{topics/empirical-studies/sys-datascience/methods/paired-tangentialization/}\\
+Orientation allocation & \path{topics/empirical-studies/sys-datascience/methods/orientation-allocation/}\\
+Adaptive product sampling & \path{topics/empirical-studies/sys-datascience/methods/diagonal-cem-pilot/}\\
+Local optimization and diagnostics & \path{experiments/dev-gradient-ascent/optimizer-comparison/}; \path{topics/empirical-studies/evidence-closure/search-account.md}\\
+Conditional and controlled ridge analyses & \path{topics/empirical-studies/sys-datascience/methods/selection-mechanism/}\\
+Conditional ridge correlations & \path{topics/empirical-studies/sys-datascience/methods/tail-dependence-feasibility/}\\
+Product ridge geometry & \path{topics/empirical-studies/evidence-closure/ridge-mathematics.md};
+\path{topics/empirical-studies/evidence-closure/triangle-profile.md}; \path{topics/empirical-studies/sys-datascience/methods/ridge-endpoint-path/}\\
 \bottomrule
 \end{longtable}

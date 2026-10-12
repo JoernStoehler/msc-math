@@ -1,0 +1,366 @@
+% Direct KKT enclosure and curvature certificates.
+% Input by the topic precision entry point; labels retained from the old packet.
+\begin{lemma}[Verified inverse-defect solution enclosure]%
+\label{lem:kkt-verified-inverse-defect}
+Let \(K\in\mathbb R^{n\times n}\), \(b\in\mathbb R^n\), let
+\(\widehat x\in\mathbb R^n\) be an approximate solution, and let
+\(R\in\mathbb R^{n\times n}\) be an approximate inverse.  Suppose outward
+arithmetic establishes
+\[
+ \overline r\geq \lVert K\widehat x-b\rVert_\infty,\qquad
+ \overline e\geq \lVert I-KR\rVert_\infty,\qquad
+ \overline e<1.
+\]
+Then \(K\) is invertible and its exact solution \(x^*=K^{-1}b\) satisfies
+\[
+ \lVert K^{-1}\rVert_\infty
+ \leq \frac{\lVert R\rVert_\infty}{1-\overline e},
+ \qquad
+ \lVert\widehat x-x^*\rVert_\infty
+ \leq
+ \rho:=
+ \frac{\lVert R\rVert_\infty\,\overline r}{1-\overline e}.
+\]
+\end{lemma}
+
+\begin{proof}
+The matrix \(KR=I-(I-KR)\) is invertible by the Banach lemma.  Hence both
+\(K\) and \(R\) are invertible, and
+\[
+ K^{-1}=R(KR)^{-1},\qquad
+ \lVert(KR)^{-1}\rVert_\infty
+ \leq (1-\overline e)^{-1}.
+\]
+The inverse bound follows.  Finally,
+\(\widehat x-x^*=K^{-1}(K\widehat x-b)\), which gives the stated error
+enclosure.
+\end{proof}
+
+\begin{lemma}[Certified positive-curvature tangent direction]%
+\label{lem:kkt-certified-curvature-direction}
+Let \(C\in\mathbb R^{5\times m}\) have full row rank, let
+\(H\in\mathbb R^{m\times m}\) be symmetric, and let \(v\in\mathbb R^m\).
+Suppose \(R\) is a right inverse of \(C\), and available outward bounds give
+\[
+ \|R\|_\infty\leq M,\qquad
+ \|Cv\|_\infty\leq r,\qquad
+ \|H\|_\infty\leq L.
+\]
+Put \(\eta=Mr\).  If an outward lower bound for \(v^\top Hv\) is strictly
+greater than
+\[
+ mL\bigl(2\|v\|_\infty\eta+\eta^2\bigr),
+\]
+then there is a vector \(z\in\ker C\) with \(z^\top Hz>0\).
+\end{lemma}
+
+\begin{proof}
+Set \(z=v-RCv\).  Then \(Cz=0\) and
+\(\|z-v\|_\infty\leq\eta\).  Writing \(e=z-v\), the induced infinity norm
+and \(\|w\|_1\leq m\|w\|_\infty\) give
+\[
+ |2v^\top He+e^\top He|
+ \leq mL\bigl(2\|v\|_\infty\eta+\eta^2\bigr).
+\]
+The strict lower-bound hypothesis therefore implies \(z^\top Hz>0\).
+\end{proof}
+
+\begin{lemma}[Cyclic inheritance of a curvature obstruction]%
+\label{lem:kkt-cyclic-obstruction-inheritance}
+Let \(\tau\) and \(\sigma\) be cyclic words with distinct facet labels, and
+suppose \(\tau\) injects into \(\sigma\) preserving cyclic order.  Write
+\(C_\tau,H_\tau\) and \(C_\sigma,H_\sigma\) for their constraint and
+quadratic matrices in the symmetric KKT convention.  If some
+\(z\in\ker C_\tau\) satisfies \(z^\top H_\tau z>0\), then its zero extension
+\(\bar z\) to the positions of \(\sigma\) satisfies
+\[
+ C_\sigma\bar z=0,\qquad
+ \bar z^\top H_\sigma\bar z>0.
+\]
+Consequently no strictly positive feasible point on the support \(\sigma\)
+can be a local maximum of the fixed-word quadratic program.
+\end{lemma}
+
+\begin{proof}
+Deleting the labels outside the image of \(\tau\) leaves a cyclic rotation of
+\(\tau\).  Zero extension immediately preserves all five homogeneous tangent
+constraints, so \(C_\sigma\bar z=0\).
+
+It remains only to check that choosing a different linear cut in the same
+cyclic word does not change the quadratic form on \(\ker C_\tau\).  Moving
+the first label \(a_0\), with coefficient \(z_0\), to the end changes the
+half-quadratic pair sum \(\tfrac12z^\top H_\tau z\) by
+\[
+ -2z_0\sum_{j>0}z_j\,\omega_0(a_0,a_j)
+ =-2z_0\,\omega_0\!\left(a_0,\sum_{j>0}z_ja_j\right)=0,
+\]
+because the first four rows of \(C_\tau z=0\) say
+\(\sum_jz_ja_j=0\), and the omitted \(j=0\) term has
+\(\omega_0(a_0,a_0)=0\).  Repeating this argument handles any cyclic
+rotation.  Pair terms involving labels outside \(\tau\) vanish after zero
+extension, proving equality of the two quadratic values.
+
+Finally, \(\bar z\) is a feasible tangent direction.  At a strictly positive
+feasible point, both sufficiently small signs of this direction remain
+positive.  A local maximum requires the Hessian to be nonpositive on every
+such tangent direction, contradicting
+\(\bar z^\top H_\sigma\bar z>0\).
+\end{proof}
+
+\begin{lemma}[Batched enclosure of the exact KKT residual and inverse defect]%
+\label{lem:kkt-batched-defect-enclosure}
+Let \(K\) be the exact KKT matrix associated to binary64 input data, let
+\(\widehat K\), \(R\), and \(\widehat x\) be binary64 matrices and vectors,
+and suppose an outward binary64 matrix \(D\) satisfies
+\[
+ |K-\widehat K|\leq D
+\]
+entrywise.  Suppose also that every binary64 dot product, optionally followed
+by the subtraction of a scalar \(c\), used below satisfies
+\[
+ \left|\operatorname{fl}\!\left(\operatorname{fl}(a^\top b)-c\right)
+       -(a^\top b-c)\right|
+ \leq \gamma\bigl(|a|^\top|b|+|c|\bigr)+\delta.          \tag{*}
+\]
+for outward binary64 constants \(\gamma<1\) and \(\delta\geq0\).
+
+For a nonnegative dot product, let
+\[
+ \operatorname{updot}(a,b)
+ :=
+ \operatorname{up}\!\left(
+   \frac{\operatorname{fl}(a^\top b)+\delta}{1-\gamma}
+ \right).
+\]
+Apply this entrywise to matrix products, and write
+\[
+ \begin{aligned}
+ S_R&=\operatorname{updot}(|\widehat K|,|R|),&
+ T_R&=\operatorname{updot}(D,|R|),\\
+ S_x&=\operatorname{updot}(|\widehat K|,|\widehat x|),&
+ T_x&=\operatorname{updot}(D,|\widehat x|).
+ \end{aligned}
+\]
+Let the computed central quantities include the final rounded subtraction:
+\[
+ \widehat C_R
+ =\operatorname{fl}\!\left(I-\operatorname{fl}(\widehat K R)\right),
+ \qquad
+ \widehat c_x
+ =\operatorname{fl}\!\left(
+   \operatorname{fl}(\widehat K\widehat x)-b
+ \right).
+\]
+Then outward evaluation of
+\[
+ \begin{aligned}
+ E&=
+   |\widehat C_R|
+   +\gamma(S_R+I)+\delta\mathbf 1+T_R,\\
+ r&=
+   |\widehat c_x|
+   +\gamma(S_x+|b|)+\delta\mathbf 1+T_x
+ \end{aligned}
+\]
+gives the entrywise enclosures
+\[
+ |I-KR|\leq E,\qquad |K\widehat x-b|\leq r.
+\]
+Consequently,
+\(\overline e=\|E\|_\infty\) and
+\(\overline r=\|r\|_\infty\) satisfy the hypotheses of
+Lemma~\ref{lem:kkt-verified-inverse-defect} whenever
+\(\overline e<1\).
+\end{lemma}
+
+\begin{proof}
+For a nonnegative exact dot product \(s=a^\top b\), condition~\((*)\)
+implies
+\(\operatorname{fl}(a^\top b)\geq(1-\gamma)s-\delta\).
+Thus \(s\leq\operatorname{updot}(a,b)\).
+Applying~\((*)\) to the signed product and its final subtraction, and using
+the corresponding nonnegative upper product, gives
+\[
+ \begin{aligned}
+ |\widehat C_R-(I-\widehat K R)|
+ &\leq\gamma(S_R+I)+\delta\mathbf 1,\\
+ |\widehat c_x-(\widehat K\widehat x-b)|
+ &\leq\gamma(S_x+|b|)+\delta\mathbf 1.
+ \end{aligned}
+\]
+Moreover,
+\[
+ |(K-\widehat K)R|\leq D|R|\leq T_R.
+\]
+The triangle inequality now proves the defect enclosure.  Replacing \(R\)
+by \(\widehat x\) gives the residual enclosure.  Outward row sums give the
+claimed infinity-norm bounds.
+\end{proof}
+
+\begin{lemma}[Normwise enclosure of the exact KKT residual and inverse defect]%
+\label{lem:kkt-normwise-defect-enclosure}
+Under the hypotheses and dot-product error model of
+Lemma~\ref{lem:kkt-batched-defect-enclosure}, put
+\[
+ k=\|\widehat K\|_\infty,\quad
+ d=\|D\|_\infty,\quad
+ u=\|R\|_\infty,\quad
+ v=\|\widehat x\|_\infty.
+\]
+Use the fully rounded central quantities
+\(\widehat C_R,\widehat c_x\) defined in
+Lemma~\ref{lem:kkt-batched-defect-enclosure}.
+Then outward evaluation of
+\[
+ \begin{aligned}
+ \overline e_{\mathrm{norm}}
+ &=\|\widehat C_R\|_\infty
+   +\gamma(ku+1)+n\delta+du,\\
+ \overline r_{\mathrm{norm}}
+ &=\|\widehat c_x\|_\infty
+   +\gamma(kv+\|b\|_\infty)+\delta+dv
+ \end{aligned}
+\]
+gives
+\[
+ \|I-KR\|_\infty\leq\overline e_{\mathrm{norm}},\qquad
+ \|K\widehat x-b\|_\infty\leq\overline r_{\mathrm{norm}}.
+\]
+Consequently these quantities may replace the entrywise batched bounds in
+Lemma~\ref{lem:kkt-verified-inverse-defect} whenever
+\(\overline e_{\mathrm{norm}}<1\).
+\end{lemma}
+
+\begin{proof}
+For one entry of the computed inverse defect, the dot-product hypothesis gives
+\[
+ \left|
+ (\widehat C_R)_{ij}
+ -(I-\widehat K R)_{ij}
+ \right|
+ \leq
+ \gamma\left((|\widehat K||R|)_{ij}+I_{ij}\right)+\delta.
+\]
+Summing across row \(i\), then taking the maximum, yields
+\[
+ \|\widehat C_R-(I-\widehat K R)\|_\infty
+ \leq\gamma(ku+1)+n\delta,
+\]
+because
+\(\||\widehat K||R|\|_\infty\leq ku\).
+The input perturbation satisfies
+\(\|(K-\widehat K)R\|_\infty\leq du\).
+The triangle inequality proves the defect bound.  The same argument for the
+single residual column gives a single \(\delta\), while
+\(\||\widehat K||\widehat x|\|_\infty\leq kv\) and
+\(\|(K-\widehat K)\widehat x\|_\infty\leq dv\), proving the residual bound.
+\end{proof}
+
+\begin{remark}[Staged normwise and entrywise evaluation]%
+\label{rem:kkt-staged-defect-enclosure}
+The normwise enclosure avoids the four auxiliary nonnegative matrix products
+in Lemma~\ref{lem:kkt-batched-defect-enclosure}, but may be looser.  After a
+successful finite factorization and under the supported arithmetic contract,
+the selected production algorithm first evaluates
+Lemma~\ref{lem:kkt-normwise-defect-enclosure}; if it is indeterminate, it
+evaluates the tighter entrywise enclosure; only a second indeterminate result
+causes exact rational fallback.  Factorization failure or an unsupported
+floating-point environment instead causes exact fallback before these stages.
+A determinate result from either stage has the same guarantee from
+Lemma~\ref{lem:kkt-verified-inverse-defect}.
+
+For a word of length \(m\), only the omega block of the binary64-input KKT
+matrix incurs assembly roundoff.  If \(M\) bounds the absolute input
+coordinates, the four-term coordinate formula and the same dot-product model
+give the per-entry bound
+\[
+ |K_{ij}-\widehat K_{ij}|
+ \leq \gamma_4\,4M^2+\delta_4.
+\]
+There are at most \(m-1\) such entries in one row, so the implementation uses
+\[
+ \|D\|_\infty
+ \leq (m-1)(\gamma_4\,4M^2+\delta_4),
+\]
+with every operation rounded upward.  Constraint coordinates, ones, and zeros
+are copied exactly from the binary64 input.
+\end{remark}
+
+\begin{remark}[Binary64 implementation contract for the batched enclosure]%
+\label{rem:kkt-batched-binary64-contract}
+The selected production implementation uses
+\(\varepsilon=2^{-52}\), \(s=2n\varepsilon\),
+\(\gamma=\operatorname{up}(s/(1-s))\), and
+\(\delta=\operatorname{up}(4n\,2^{-1074})\).
+Thus it budgets approximately \(4n\) unit roundoffs for an augmented dot
+product that uses at most \(n\) multiplications, \(n-1\) additions, and the
+final subtraction from \(b\) or \(I\).  The dynamic
+matrix path of the pinned \texttt{nalgebra 0.33.3} dependency dispatches to
+\texttt{matrixmultiply 0.3.10}; for the current KKT sizes its ordinary and
+fused multiply-add kernels evaluate one inner-dimension block.  The separate
+\texttt{nalgebra 0.35.0} dependency supplies only the Bunch--Kaufman
+factorization.  Fused
+multiply-add uses fewer roundings than the separately rounded model.
+Multiplication by the GEMM scaling factor \(1\) is exact.
+
+The runtime checks gradual underflow once before each route with opaque runtime
+operands, covering both flush-to-zero outputs and denormals-are-zero inputs.
+The floating-point environment is required to remain unchanged during that
+single-threaded route.  If gradual underflow is unavailable, the route bypasses
+all floating-point certificates---including short-word and curvature
+rejections---and exact-resolves the original candidate stream.  The batched
+predicate itself returns \textsc{Indeterminate}
+if any required value is non-finite, or if the resulting defect norm is not
+strictly below one.  A dependency, target, compiler-arithmetic, maximum-word-
+length, or matrix-multiplication change requires this implementation contract
+to be checked again.  The exact theorem is
+Lemma~\ref{lem:kkt-batched-defect-enclosure}; the dependency inspection and
+exact-binary64 experiments are implementation evidence, not part of its proof.
+\end{remark}
+
+\begin{corollary}[Certified beta, \(Q\), and action signs from one KKT enclosure]%
+\label{cor:kkt-beta-q-from-xi}
+Use the symmetric KKT convention
+\[
+ \begin{pmatrix}H&C^\top\\ C&0\end{pmatrix}
+ \binom{\beta}{\lambda}
+ =
+ \binom{0}{d},
+ \qquad
+ d=(0,0,0,0,1)^\top,
+\]
+and let \(\xi\) be the last component of \(\lambda\).  Under the hypotheses of
+Lemma~\ref{lem:kkt-verified-inverse-defect}, every component of the exact
+\(\beta^*\) and \(\xi^*\) lies within \(\rho\) of its computed value.  Thus
+\[
+ \widehat\beta_i-\rho>0\quad\hbox{for all \(i\)}
+\]
+certifies strict positivity, while
+\(\widehat\beta_i+\rho\leq0\) for some \(i\) certifies failure of strict
+positivity.
+
+Moreover,
+\[
+ 2Q(\beta^*)+\xi^*=0,
+\]
+so outward endpoint rounding gives
+\[
+ Q(\beta^*)\in
+ \left[-\frac{\widehat\xi+\rho}{2},
+       -\frac{\widehat\xi-\rho}{2}\right].
+\]
+For \(0<q_{\rm L}\leq Q(\beta^*)\leq q_{\rm U}\), the action lies in
+\[
+ \frac1{2q_{\rm U}}
+ \leq \mathcal A
+ \leq \frac1{2q_{\rm L}}.
+\]
+\end{corollary}
+
+\begin{proof}
+The component enclosures follow from the infinity-norm bound.  Multiplying
+the stationarity equation \(H\beta^*+C^\top\lambda^*=0\) by
+\(\beta^{*\top}\), and using \(C\beta^*=d\), gives
+\(\beta^{*\top}H\beta^*+\lambda^{*\top}d=2Q(\beta^*)+\xi^*=0\).
+The remaining statements follow by monotonicity.
+\end{proof}

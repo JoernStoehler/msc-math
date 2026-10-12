@@ -142,6 +142,45 @@ fn empty_faces_incidence_returns_empty_outputs() {
     );
 }
 
+#[test]
+fn facet_intersections_keep_input_identity_and_empty_shapes() {
+    // Columns 0 and 1 are identical, while column 4 belongs to no vertex.
+    // Facet identity is retained even for duplicate incidence columns.
+    let incidence = DMatrix::from_row_slice(
+        3,
+        5,
+        &[
+            true, true, false, false, false, //
+            false, false, true, true, false, //
+            true, true, true, false, false,
+        ],
+    );
+    let actual = facet_intersection_is_nonempty_from_vertex_facet_incidence(&incidence);
+    let expected = DMatrix::from_row_slice(
+        5,
+        5,
+        &[
+            false, true, true, false, false, //
+            true, false, true, false, false, //
+            true, true, false, true, false, //
+            false, false, true, false, false, //
+            false, false, false, false, false,
+        ],
+    );
+    assert_eq!(actual, expected);
+
+    let no_vertices = DMatrix::from_element(0, 3, false);
+    assert_eq!(
+        facet_intersection_is_nonempty_from_vertex_facet_incidence(&no_vertices),
+        DMatrix::from_element(3, 3, false)
+    );
+    let no_facets = DMatrix::from_element(2, 0, false);
+    assert_eq!(
+        facet_intersection_is_nonempty_from_vertex_facet_incidence(&no_facets).shape(),
+        (0, 0)
+    );
+}
+
 fn simplex_4d_incidence() -> DMatrix<bool> {
     DMatrix::from_row_slice(
         5,

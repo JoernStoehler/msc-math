@@ -1,0 +1,52 @@
+{
+  "old": "experiments/dev-quadratic-program",
+  "new": "topics/capacity-and-qp/development",
+  "files_moved": 146,
+  "unchanged_by_suffix": {
+    ".md": 5,
+    ".rs": 103,
+    ".py": 11,
+    ".json": 1,
+    ".sh": 2,
+    ".toml": 2,
+    ".jsonl": 1
+  },
+  "changed_relative_paths": [
+    "README.md",
+    "Cargo.toml",
+    "numerics/README.md",
+    "numerics/run.sh",
+    "docs/production-migration-plan.md",
+    "docs/route-consumer-matrix.md",
+    "docs/f64-route.md",
+    "docs/legacy-callsite-inventory.md",
+    "docs/capacity-architecture.md",
+    "verification/README.md",
+    "src/artifact_cases.rs",
+    "performance/run_manifest.sh",
+    "performance/README.md",
+    "performance/CURRENT_COSTS.md",
+    "numerics-audit/README.md",
+    "tools/kkt_error_audit/README.md",
+    "tools/product_closure_route/README.md",
+    "tools/product_closure_route/RESULTS.md",
+    "tools/general_algorithm_ablation/README.md",
+    "tools/general_algorithm_ablation/RESULTS.md",
+    "src/fallback_route/mod.rs"
+  ],
+  "retained_data": {
+    "verification/manifest.json": {
+      "sha256": "c831dc42ef91886517aff9e1586e01f99bedde6da08690517dea6692c54398c7",
+      "unchanged": true
+    },
+    "tools/product_closure_route/sample5.jsonl": {
+      "sha256": "b350714a2ccaeab899ce18f1dba4c7524d1cec3428897abdd8bcf3bf059bddcf",
+      "unchanged": true
+    }
+  },
+  "public_package_names_unchanged": [
+    "exp-dev-quadratic-program",
+    "exp-qp-general-algorithms",
+    "exp-dev-qp-numerics-audit"
+  ]
+}

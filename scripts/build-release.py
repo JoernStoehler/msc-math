@@ -15,9 +15,9 @@ from pathlib import Path
 
 
 DOWNLOADED_SUBMIT_PREFIXES = (
-    "submit/anmeldung-",
-    "submit/erklaerung-",
-    "submit/hinweis-",
+    "meta-topics/thesis-submission/anmeldung-",
+    "meta-topics/thesis-submission/erklaerung-",
+    "meta-topics/thesis-submission/hinweis-",
 )
 
 
@@ -68,7 +68,7 @@ def main() -> int:
     cleanup_blockers = [
         path
         for path in paths
-        if path.startswith("papers/") or path.startswith(DOWNLOADED_SUBMIT_PREFIXES)
+        if path.startswith(("papers/", "topics/literature/sources/")) or path.startswith(DOWNLOADED_SUBMIT_PREFIXES)
     ]
     if cleanup_blockers:
         preview = "\n  ".join(cleanup_blockers[:20])

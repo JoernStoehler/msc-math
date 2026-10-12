@@ -6,13 +6,14 @@ stay under `experiments/crosspolytope/`.
 
 ## Scope
 
-The experiment provides a numeric capacity certificate for
+The experiment provides bounded numerical capacity-search evidence and a
+feasible upper-bound witness for
 `crates/symplectic/src/geom/known_polytopes.rs` and a fast regression in
 `crates/symplectic/src/algorithms/hk2017/tests_literature.rs`.
 
 ## Current State
 
-The binary in `main/main.rs` does not use the public `ehz_capacity` API because
+The binary in `src/main.rs` does not use the public `ehz_capacity` API because
 that path lacked the hooks needed for symmetry reduction and checkpointed
 backtracking. The current binary performs:
 - directed-graph search over admissible facet cycles rather than `(m-1)!`
@@ -61,7 +62,7 @@ Scope caveat:
   - Decision point: the group intersection is fixed to
     `Aut(crosspolytope) ∩ Sp(4, R)` (order 32).
 - Run in release mode only.
-  - `MAX_SUBSET_SIZE = 13` in `main.rs` is a pragmatic cutoff despite non-proven
+  - `MAX_SUBSET_SIZE = 13` in `src/search.rs` is a pragmatic cutoff despite non-proven
     tail optimality.
   - This avoids several-hour runs at larger `m` while preserving the best known
     action at `m = 4`.
@@ -93,7 +94,7 @@ Next work packet:
    - derive a mathematical exclusion argument for `m = 14..16`, or
    - extend this binary and run with a larger cap.
 2. To continue compute:
-   - edit `src/main.rs` (`MAX_SUBSET_SIZE`);
+   - edit `src/search.rs` (`MAX_SUBSET_SIZE`);
    - run `cargo run -p crosspolytope --release --bin crosspolytope`;
    - verify `artifacts/crosspolytope.jsonl` for
      `search_complete_through_m`, best orbit, and `time_capacity_ms`.

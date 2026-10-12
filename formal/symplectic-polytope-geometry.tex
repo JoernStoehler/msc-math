@@ -3,12 +3,9 @@
 %
 % Labels defined here:
 %   def:symplectic-form, def:J0, def:ehz-capacity, def:lagrangian-product,
-%   def:symplectic-product, def:cross-product-4d, def:face-lattice,
-%   def:polar-body, def:polytope-dual, def:polygon-h-rep, def:polygon-area,
+%   def:symplectic-product, def:face-lattice, def:polygon-h-rep, def:polygon-area,
 %   def:reeb-vector-field, def:volume, def:systolic-ratio,
-%   lem:piecewise-linear-reeb, lem:positive-span, lem:bounded-triples,
-%   lem:rational-pipeline, lem:vertex-enumeration, lem:irredundancy,
-%   prop:integer-cramer, lem:shoelace,
+%   lem:piecewise-linear-reeb, lem:rational-pipeline, lem:shoelace,
 %   thm:hko-counterexample,
 %   prop:capacity-symplectic-product,
 %
@@ -204,27 +201,10 @@ Hence $c_{\mathrm{EHZ}}(A \times_S B)
 
 
 % ====================================================================
-% Polytope geometry
+% Polytope geometry (ordinary polar definitions in exact-polar-geometry)
 % ====================================================================
 
-\begin{unverified}
-\begin{definition}[Polytope dual / polar body]\label{def:polytope-dual}
-% [TODO: JÖRN - verify statement]
-% Source: polytope.rs doc comment
-Let $K \subset \mathbb{R}^4$ be a polytope with $0 \in \operatorname{int}(K)$
-given in $H$-representation $K = \{x : \langle a_i, x\rangle \leq 1\}_{i=1}^F$.
-The \emph{polar body} (or \emph{dual}) is
-\[
-  K^\circ \coloneqq \{y \in \mathbb{R}^4 : \langle x, y \rangle \leq 1
-    \text{ for all } x \in K\}
-  = \operatorname{conv}(a_1, \ldots, a_F).
-\]
-\end{definition}
-\end{unverified}
 
-% Agent note: def:polar-body used in some .rs files is an alias
-% for def:polytope-dual. The label below provides this as a cross-reference target.
-\phantomsection\label{def:polar-body}% alias for cross-references from .rs files
 
 
 \begin{unverified}
@@ -240,24 +220,7 @@ face of dimension $\geq 1$.
 \end{unverified}
 
 
-\begin{unverified}
-\begin{definition}[Cross product in $\mathbb{R}^4$]\label{def:cross-product-4d}
-% [TODO: JÖRN - verify statement]
-% Source: cross_product_4d.rs doc comment
-The \emph{cross product} of three vectors $u, v, w \in \mathbb{R}^4$
-is the unique vector $u \times v \times w \in \mathbb{R}^4$
-perpendicular to all three, with magnitude equal to the volume
-of the parallelepiped spanned by $u, v, w$, and orientation
-determined by the right-hand rule.
-Equivalently,
-\[
-  (u \times v \times w)_i
-  = (-1)^{i+1} \det\bigl(M_i\bigr),
-\]
-where $M_i$ is the $3 \times 3$ matrix obtained by deleting
-row~$i$ from the $4 \times 3$ matrix $(u \mid v \mid w)$.
-\end{definition}
-\end{unverified}
+
 
 
 % ====================================================================
@@ -380,212 +343,8 @@ the velocity changes discontinuously from $R_i$ to $R_j$.
 
 
 % ====================================================================
-% Computational geometry lemmas
+% Computational geometry lemma retained here (see exact-polar-geometry for ordinary geometry)
 % ====================================================================
-
-\begin{unverified}
-\begin{lemma}[Positive span implies boundedness]\label{lem:positive-span}
-% [TODO: JÖRN - verify statement and proof]
-% Source: check_bounded_f64_first in vertex_enumeration/boundedness.rs
-Let $a_1, \ldots, a_F \in \mathbb{R}^4 \setminus \{0\}$ and
-$K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1 \;\forall i\}$.
-Then $K$ is bounded if and only if $\{a_1, \ldots, a_F\}$ positively
-spans~$\mathbb{R}^4$, i.e., for every $d \in \mathbb{R}^4 \setminus \{0\}$
-there exists $i$ with $\langle a_i, d \rangle > 0$.
-\end{lemma}
-
-\begin{proof}
-($\Leftarrow$) Suppose $\{a_i\}$ positively spans $\mathbb{R}^4$ but $K$ is
-unbounded. Then $K$ contains a ray: there exist $x_0 \in K$ and
-$d \neq 0$ with $x_0 + t d \in K$ for all $t \geq 0$. This requires
-$\langle a_i, d \rangle \leq 0$ for all~$i$ (otherwise
-$\langle a_i, x_0 + td \rangle \to +\infty$, violating
-$\langle a_i, x_0 + td \rangle \leq 1$). But $\langle a_i, d \rangle \leq 0$
-for all~$i$ contradicts positive spanning. \contradiction
-
-($\Rightarrow$) Suppose positive spanning fails: there exists
-$d \neq 0$ with $\langle a_i, d \rangle \leq 0$ for all~$i$.
-Since $0 \in \operatorname{int}(K)$, we have $0 + td \in K$ for all
-$t \geq 0$: indeed $\langle a_i, td \rangle = t\langle a_i, d\rangle \leq 0 < 1$.
-So $K$ contains the ray through~$d$ and is unbounded.
-\end{proof}
-\end{unverified}
-
-
-\begin{unverified}
-\begin{lemma}[Algorithmic bounded check via triples]\label{lem:bounded-triples}
-% [TODO: JÖRN - verify statement and proof]
-% Source: check_bounded_f64_first in vertex_enumeration/boundedness.rs
-Under the hypotheses of Lemma~\ref{lem:positive-span}, assume
-$\operatorname{rank}\{a_1, \ldots, a_F\} = 4$.
-Then $\{a_i\}$ positively spans $\mathbb{R}^4$ if and only if for every
-triple $\{i,j,k\} \subset \{1,\ldots,F\}$ and every
-$d \in \ker(a_i, a_j, a_k) \setminus \{0\}$, there exist $l, m$ with
-$\langle a_l, d \rangle > 0$ and $\langle a_m, d \rangle < 0$.
-\end{lemma}
-
-\begin{proof}
-($\Leftarrow$) If positive spanning fails, there exists $d \neq 0$ with
-$\langle a_i, d \rangle \leq 0$ for all~$i$. The dual cone
-$C = \{d : \langle a_i, d \rangle \leq 0 \;\forall i\}$ is nontrivial.
-Since $\operatorname{rank}\{a_i\} = 4$, the cone $C$ is pointed: if $C$
-contained a line (both $d$ and $-d$), then $\langle a_i, d \rangle = 0$
-for all~$i$, so $d \in \ker(a_1, \ldots, a_F)^T = \{0\}$, contradicting
-$d \neq 0$.
-
-Every pointed polyhedral cone is generated by its extreme rays. An extreme
-ray of $C \subset \mathbb{R}^4$ lies on the boundary of at least 3 linearly
-independent active constraints $\langle a_i, d \rangle = 0$, so it is
-a nonzero element of $\ker(a_i, a_j, a_k)$ for some triple.
-For this extreme ray~$d^*$, all remaining dual vertices satisfy
-$\langle a_l, d^* \rangle \leq 0$, so the triple check fails.
-
-($\Rightarrow$) If the triple check fails for some $(i,j,k)$ with
-kernel direction~$d$, then $\langle a_l, d \rangle \leq 0$ for all
-$l \neq i,j,k$ (and $\langle a_i, d \rangle = \langle a_j, d \rangle
-= \langle a_k, d \rangle = 0$), so positive spanning fails.
-\end{proof}
-\end{unverified}
-
-
-\begin{unverified}
-\begin{lemma}[Exact vertex enumeration]\label{lem:vertex-enumeration}
-% [TODO: JÖRN - verify statement and proof]
-% Source: enumerate_vertices_int in vertex_enumeration/enumerate.rs
-Let $K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1 \;\forall i\}$
-be a bounded polytope with $0 \in \operatorname{int}(K)$.
-A point $v \in \mathbb{R}^4$ is a vertex of~$K$ if and only if there exists
-a subset $S \subset \{1,\ldots,F\}$ with $|S| \geq 4$ such that:
-\begin{enumerate}
-  \item the matrix $(a_s)_{s \in S'}$ is nonsingular for some
-    $S' \subset S$ with $|S'| = 4$,
-  \item $\langle a_s, v \rangle = 1$ for all $s \in S$ (the defining
-    constraints are tight), and
-  \item $\langle a_i, v \rangle \leq 1$ for all $i \notin S$ (the
-    remaining constraints are satisfied).
-\end{enumerate}
-The algorithm iterates over all $\binom{F}{4}$ four-element subsets $S'$,
-solves $\langle a_{s_k}, v \rangle = 1$ ($k = 1,\ldots,4$) via Cramer's
-rule, checks feasibility, and records the full incidence set
-$S = \{i : \langle a_i, v \rangle = 1\}$.
-\end{lemma}
-
-\begin{proof}
-($\Rightarrow$) Let $v$ be a vertex of~$K$. Then $v$ is an extreme point:
-$v$ cannot be written as a convex combination of two distinct points in~$K$.
-Let $S = \{i : \langle a_i, v \rangle = 1\}$ be the active set.
-The active constraints must have $\operatorname{rank}\{a_s : s \in S\} = 4$,
-since otherwise $v$ would not be an extreme point (one could perturb $v$
-within the nullspace while remaining feasible). So $|S| \geq 4$ and some
-4-element subset $S' \subset S$ has nonsingular coefficient matrix.
-Feasibility of $v$ gives condition (3).
-
-($\Leftarrow$) If conditions (1)--(3) hold, then $v$ is the unique solution
-of the $4 \times 4$ nonsingular system $\langle a_{s_k}, v \rangle = 1$,
-so $v$ cannot be written as a convex combination of two distinct feasible
-points (they would also need to satisfy the 4 tight constraints, forcing
-them to equal~$v$). Hence $v$ is an extreme point, i.e., a vertex.
-
-The algorithm finds all vertices because every vertex has at least one
-4-element subset of active constraints with nonsingular coefficient matrix
-(by the rank argument above), and the algorithm tests all such subsets.
-Deduplication handles non-simple vertices found via multiple subsets.
-\end{proof}
-\end{unverified}
-
-
-\begin{unverified}
-\begin{lemma}[Irredundancy check]\label{lem:irredundancy}
-% [TODO: JÖRN - verify statement and proof]
-% Source: check_irredundancy_f64_first in vertex_enumeration/irredundancy.rs
-Let $K$ be as above with vertices $V$ and vertex-facet incidence
-$V_i = \{v \in V : \langle a_i, v \rangle = 1\}$.
-The $i$-th constraint is irredundant if and only if
-$\operatorname{aff}(V_i)$ is a hyperplane, equivalently
-$\operatorname{affrank}(V_i) = 3$.
-\end{lemma}
-
-\begin{proof}
-The $i$-th constraint defines the facet
-$F_i = K \cap \{x : \langle a_i, x \rangle = 1\}$.
-The vertices of $F_i$ are exactly $V_i$ (the vertices of~$K$ that lie
-on the hyperplane $\langle a_i, x \rangle = 1$).
-
-If $\operatorname{affrank}(V_i) = 3$, then $F_i = \operatorname{conv}(V_i)$
-is a 3-dimensional polytope, so removing the constraint
-$\langle a_i, x \rangle \leq 1$ strictly enlarges~$K$ (the interior
-of $F_i$ relative to the hyperplane becomes exposed). Hence the
-constraint is irredundant.
-
-If $\operatorname{affrank}(V_i) < 3$, then $V_i$ lies in a
-2-dimensional affine subspace, so $F_i$ is at most 2-dimensional.
-A face of dimension $< \dim(K) - 1 = 3$ is not a facet, meaning
-the constraint is redundant: it is implied by the other constraints
-in a neighborhood of $F_i$.
-\end{proof}
-\end{unverified}
-
-
-\begin{unverified}
-\begin{proposition}[Integer-scaled Cramer's rule]\label{prop:integer-cramer}
-% [TODO: JÖRN - verify statement and proof]
-% Source: optimized vertex enumeration in vertex_enumeration/enumerate.rs
-Let $a_1, \ldots, a_F \in \mathbb{Q}^4$ be the dual vertices defining
-$K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1\}$.
-Let $D = \operatorname{lcm}$ of all denominators of all components of
-$a_1, \ldots, a_F$, and set $A_i = D \cdot a_i \in \mathbb{Z}^4$.
-
-For a four-element subset $S = \{s_0, s_1, s_2, s_3\}$, let $M_S$ be the
-$4 \times 4$ matrix with rows $A_{s_k}$, and let $\delta = \det(M_S)$.
-If $\delta \neq 0$, the candidate vertex~$v$ solving
-$\langle a_{s_k}, v \rangle = 1$ for all $k$ has coordinates
-\[
-  v^{(j)} = \frac{D \cdot \nu_j}{\delta},
-  \qquad
-  \nu_j = \det\!\bigl(M_S \text{ with column } j
-    \text{ replaced by } \mathbf{1}\bigr),
-\]
-where $\mathbf{1} = (1,1,1,1)^\top$.
-
-The feasibility gap for facet $i \notin S$ is
-\[
-  1 - \langle a_i, v \rangle
-  = \frac{g_i}{\delta},
-  \qquad
-  g_i = \delta - \sum_{j=0}^{3} A_i^{(j)} \nu_j \;\in\; \mathbb{Z}.
-\]
-Hence $1 - \langle a_i, v \rangle \geq 0$ if and only if
-$\operatorname{sign}(g_i) = \operatorname{sign}(\delta)$ or $g_i = 0$,
-and all intermediate computations are in~$\mathbb{Z}$.
-\end{proposition}
-
-\begin{proof}
-The system $\langle a_{s_k}, v \rangle = 1$ for $k = 0, \ldots, 3$
-is equivalent to $(A_{s_k}/D)^\top v = 1$, i.e.,
-$M_S\, v = D \cdot \mathbf{1}$.
-By Cramer's rule,
-\[
-  v^{(j)} = \frac{\det(M_S^{(j)})}{\delta},
-\]
-where $M_S^{(j)}$ is $M_S$ with column~$j$ replaced by
-$D \cdot \mathbf{1}$.
-By multilinearity of the determinant in the $j$-th column,
-$\det(M_S^{(j)}) = D \cdot \nu_j$.
-
-For the feasibility gap:
-\[
-  1 - \langle a_i, v \rangle
-  = 1 - \sum_{j=0}^{3} \frac{A_i^{(j)}}{D} \cdot \frac{D\, \nu_j}{\delta}
-  = 1 - \frac{1}{\delta} \sum_{j=0}^{3} A_i^{(j)} \nu_j
-  = \frac{\delta - \sum_j A_i^{(j)} \nu_j}{\delta}
-  = \frac{g_i}{\delta}.
-\]
-Since $A_i^{(j)}, \nu_j, \delta \in \mathbb{Z}$, we have $g_i \in \mathbb{Z}$.
-The sign condition follows: $g_i / \delta \geq 0$ iff
-$\operatorname{sign}(g_i) = \operatorname{sign}(\delta)$ or $g_i = 0$.
-\end{proof}
-\end{unverified}
-
 
 \begin{unverified}
 \begin{lemma}[Rational arithmetic pipeline]\label{lem:rational-pipeline}

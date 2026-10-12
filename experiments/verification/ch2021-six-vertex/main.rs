@@ -352,9 +352,9 @@ fn main() {
         experiment_id: "E3-CH2021-six-vertex-exact-reproduction",
         producer,
         sources: Sources {
-            ch_coordinates: "papers/ch2021/s1_introduction_and_main_results.tex (6-vertex polytopes)",
-            ch_two_face_criterion: "papers/ch2021/s3_reeb_dynamics_on_polytopes.tex (Lagrangian 2-face criterion)",
-            hk_capacity_formula: "papers/hk2017/EHZ-polytopes.tex (Theorem 1.1)",
+            ch_coordinates: "topics/literature/sources/ch2021/s1_introduction_and_main_results.tex (6-vertex polytopes)",
+            ch_two_face_criterion: "topics/literature/sources/ch2021/s3_reeb_dynamics_on_polytopes.tex (Lagrangian 2-face criterion)",
+            hk_capacity_formula: "topics/literature/sources/hk2017/EHZ-polytopes.tex (Theorem 1.1)",
             exact_problem_contract: "formal/hk2017-qp-core.tex (def:hk2017-problem)",
         },
         conventions: Conventions {

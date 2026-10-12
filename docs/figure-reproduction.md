@@ -32,13 +32,13 @@ Paths in the selected-file column are relative to `thesis/figures/`.
 | `conditional-ridge-correlation.pdf` | §8 | `methods/selection-mechanism/analyze.py`; registered invariant table and tracked provenance |
 | `association-generic.pdf` | §8 | `thesis/figures/plot_association.py`; same table and provenance |
 | `association-products.pdf` | §8 | Same producer and inputs |
-| `rotation-profile.png` | §9 | `experiments/regular-products/rotated-regular-products/analyze.py`; tracked `lagrangian-products-5x5.jsonl` |
+| `rotation-profile.png` | §9 | `topics/products/regular-products/rotated-regular-products/analyze.py`; tracked `lagrangian-products-5x5.jsonl` |
 | `visualization/viz-hypercube-ridges.png` | §12 | `experiments/visualization/`; Rust hypercube export and pinned browser screenshot |
 | `visualization/viz-hko-pentagon-min-orbit.png` | §12 | Same route with `hko_pentagon` export |
 | `hko-recovery-by-source-distance.pdf` | Appendix A | `experiments/dev-gradient-ascent/ascent-continuation/analyze_hko_calibration.py`; tracked HKO one-step panel |
 | `derivative-and-kkt-scale.pdf` | Appendix A | `experiments/dev-gradient-ascent/endpoint-model-audit/analyze.py`; tracked directional audit |
 
-Here `methods/` abbreviates `experiments/sys-datascience/methods/` only in
+Here `methods/` abbreviates `topics/empirical-studies/sys-datascience/methods/` only in
 the table. The commands below use full paths.
 
 ## Empirical plots from retained inputs
@@ -64,11 +64,11 @@ provenance hashes differ. Keep Python optimization disabled.
 ```bash
 PYTHONOPTIMIZE=0 uv run --script thesis/figures/plot_association.py \
   --table "$figure_table" \
-  --provenance experiments/polytope-invariant-table/polytope-provenance-table.jsonl \
+  --provenance topics/empirical-studies/polytope-invariant-table/polytope-provenance-table.jsonl \
   --out "$figure_run/association"
-PYTHONOPTIMIZE=0 uv run --script experiments/sys-datascience/methods/selection-mechanism/analyze.py \
+PYTHONOPTIMIZE=0 uv run --script topics/empirical-studies/sys-datascience/methods/selection-mechanism/analyze.py \
   --table "$figure_table" \
-  --provenance experiments/polytope-invariant-table/polytope-provenance-table.jsonl \
+  --provenance topics/empirical-studies/polytope-invariant-table/polytope-provenance-table.jsonl \
   --out "$figure_run/conditional"
 uv run --script experiments/dev-gradient-ascent/ascent-continuation/analyze_hko_calibration.py \
   experiments/dev-gradient-ascent/ascent-continuation/artifacts/hko-one-step-development-panel-20260729/raw \
@@ -76,7 +76,7 @@ uv run --script experiments/dev-gradient-ascent/ascent-continuation/analyze_hko_
 uv run --script experiments/dev-gradient-ascent/endpoint-model-audit/analyze.py \
   experiments/dev-gradient-ascent/endpoint-model-audit/artifacts/directional-decomposition-20260729/raw/audit.json \
   "$figure_run/derivative"
-uv run --script experiments/regular-products/rotated-regular-products/analyze.py \
+uv run --script topics/products/regular-products/rotated-regular-products/analyze.py \
   --only-pentagon --out-dir "$figure_run/rotation"
 ```
 
@@ -223,5 +223,5 @@ states its raster resolution rather than claiming cross-version byte identity.
 
 The models' missing bulk input and the selected figures' available plot inputs
 are distinct. The P2 machine-learning experiment requires the reconstructed
-current-schema table described in its [runbook](../experiments/sys-datascience/methods/standard-baseline-p2/README.md);
+current-schema table described in its [runbook](../topics/empirical-studies/sys-datascience/methods/standard-baseline-p2/README.md);
 substituting the historical plotting table drops six ridge descriptors.

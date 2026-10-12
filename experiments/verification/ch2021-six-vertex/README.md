@@ -61,11 +61,11 @@ successor run belongs to this packet.
 ## Sources and conventions
 
 - CH source coordinates and claims:
-  `papers/ch2021/s1_introduction_and_main_results.tex`.
+  `topics/literature/sources/ch2021/s1_introduction_and_main_results.tex`.
 - CH ordinary-flow 2-face criterion:
-  `papers/ch2021/s3_reeb_dynamics_on_polytopes.tex`.
+  `topics/literature/sources/ch2021/s3_reeb_dynamics_on_polytopes.tex`.
 - General convex-polytope capacity formula:
-  `papers/hk2017/EHZ-polytopes.tex`, Theorem 1.1.
+  `topics/literature/sources/hk2017/EHZ-polytopes.tex`, Theorem 1.1.
 - Exact active-word convention and solver contract:
   `formal/hk2017-qp-core.tex`.
 

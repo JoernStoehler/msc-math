@@ -1,6 +1,7 @@
 use euclidean_polytopes::{
     origin_in_interior_of_conv_exact, polar_vertices_exact,
-    polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
+    polar_vertices_exact_rational_assuming_origin_interior,
+    vertices_from_normalized_halfspaces_exact, PolarVerticesExact,
 };
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -338,6 +339,77 @@ fn polar_vertices_exact_panics_when_origin_is_not_interior() {
     ];
 
     let _ = polar_vertices_exact(&points);
+}
+
+#[test]
+fn raw_normalized_halfspaces_support_empty_and_unbounded_inputs() {
+    let no_rows: Vec<Vector4<Q>> = Vec::new();
+    let no_rows_output = vertices_from_normalized_halfspaces_exact(&no_rows);
+    assert!(no_rows_output.vertices.is_empty());
+    assert_eq!(no_rows_output.vertex_facet_incidence.shape(), (0, 0));
+
+    let no_vertices = vec![
+        vq([1, 0, 0, 0]),
+        vq([-1, 0, 0, 0]),
+        vq([0, 1, 0, 0]),
+        vq([0, -1, 0, 0]),
+        vq([1, 1, 0, 0]),
+    ];
+    let empty = vertices_from_normalized_halfspaces_exact(&no_vertices);
+    assert!(empty.vertices.is_empty());
+    assert_eq!(empty.vertex_facet_incidence.shape(), (0, 5));
+
+    let pointed_unbounded = vec![
+        vq([1, 0, 0, 0]),
+        vq([0, 1, 0, 0]),
+        vq([0, 0, 1, 0]),
+        vq([0, 0, 0, 1]),
+    ];
+    let one_vertex = vertices_from_normalized_halfspaces_exact(&pointed_unbounded);
+    assert_eq!(one_vertex.vertices, vec![vq([1, 1, 1, 1])]);
+    assert_eq!(
+        one_vertex.vertex_facet_incidence,
+        nalgebra::DMatrix::from_element(1, 4, true)
+    );
+}
+
+#[test]
+fn raw_normalized_halfspaces_preserve_duplicate_and_zero_row_indices() {
+    let base_rows = crosspolytope_vertices_exact();
+    let base = vertices_from_normalized_halfspaces_exact(&base_rows);
+    let mut rows = base_rows.clone();
+    rows.push(base_rows[0].clone());
+    rows.push(vq([0, 0, 0, 0]));
+    let extended = vertices_from_normalized_halfspaces_exact(&rows);
+
+    assert_eq!(extended.vertices, base.vertices);
+    assert_eq!(extended.vertex_facet_incidence.shape(), (16, 10));
+    for v in 0..extended.vertices.len() {
+        for f in 0..8 {
+            assert_eq!(
+                extended.vertex_facet_incidence[(v, f)],
+                base.vertex_facet_incidence[(v, f)]
+            );
+        }
+        assert_eq!(
+            extended.vertex_facet_incidence[(v, 8)],
+            extended.vertex_facet_incidence[(v, 0)]
+        );
+        assert!(!extended.vertex_facet_incidence[(v, 9)]);
+    }
+}
+
+#[test]
+#[should_panic(expected = "origin-interior polar input produced no exact vertices")]
+fn assuming_origin_interior_wrapper_still_panics_on_empty_output() {
+    let no_vertices = vec![
+        vq([1, 0, 0, 0]),
+        vq([-1, 0, 0, 0]),
+        vq([0, 1, 0, 0]),
+        vq([0, -1, 0, 0]),
+        vq([1, 1, 0, 0]),
+    ];
+    let _ = euclidean_polytopes::polar_vertices_exact_assuming_origin_interior(&no_vertices);
 }
 
 #[test]

@@ -57,7 +57,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
 <p id="observation" class="muted"></p>
 <p class="muted">Expand a node for its prerequisites and evidence. Shared prerequisites link to the same node. Status and ownership come from reported state.</p>
 <div id="portfolio" class="portfolio"></div>
-<p class="muted"><a href="../coordination/graphs/tasks.svg">Exported dependency graph</a> · <a href="../coordination/current.json">Canonical state</a></p>
+<p class="muted"><a href="../../meta-topics/project-management/graphs/tasks.svg">Exported dependency graph</a> · <a href="../../meta-topics/project-management/current.json">Canonical state</a></p>
 </section>
 <details id="other-work" class="archive"><summary id="other-title">Other reported work</summary><div id="other-tasks"></div></details>
 <details id="parallel-section" class="archive"><summary id="parallel-title">Independent work opportunities</summary><p class="muted">These are candidate packages for separate worktrees if selected. Independence does not authorize execution.</p><ul id="parallel-routes"></ul></details>
@@ -73,7 +73,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
 </div>
 <details id="resolved-section" class="archive"><summary id="resolved-title">Resolved decisions</summary><div id="resolved"></div></details>
 <details class="archive"><summary>Recent history</summary><ul id="changes"></ul></details>
-<noscript><p>Open <a href="../coordination/graphs/tasks.svg">the goal graph</a>, <a href="../coordination/current.json">the state file</a> or <a href="../coordination/README.md">coordination guide</a>.</p></noscript>
+<noscript><p>Open <a href="../../meta-topics/project-management/graphs/tasks.svg">the goal graph</a>, <a href="../../meta-topics/project-management/current.json">the state file</a> or <a href="../../meta-topics/project-management/coordination.md">coordination guide</a>.</p></noscript>
 </main>
 <script src="source-status.js"></script>
 <script>
@@ -255,7 +255,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
     pending = true;
     try {
       if (location.protocol === 'file:') throw new Error('Open this dashboard through the project file viewer; see docs/dashboard/README.md.');
-      const response = await fetch('../coordination/current.json', {cache:'no-store'});
+      const response = await fetch('../../meta-topics/project-management/current.json', {cache:'no-store'});
       if (!response.ok) throw new Error('Shared state is unavailable or invalid.');
       render(await response.json());
     } catch (error) {

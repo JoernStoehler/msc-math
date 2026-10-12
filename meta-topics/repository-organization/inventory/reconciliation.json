@@ -1,0 +1,10 @@
+{
+  "aliases": [
+    {
+      "alias": "hko-products-product-initial-rotation",
+      "canonical": "foundations-product-position-increase",
+      "reason": "Both records identify the same initial-rotation theorem in thesis/chapters/11-product-position.tex: c_theta=a/cos(theta) on the stated sufficient interval. Preserve both surveys' source/status observations, but display one result."
+    }
+  ],
+  "limits": "This reconciles a confirmed cross-survey duplicate, not all possible dependencies, derived corollaries or theorem identities. Result-family rows remain grouped. Imported mathematical foundations, new project results, empirical findings and unverified proposals have different states; the result-row count is not a count of proved new theorems."
+}

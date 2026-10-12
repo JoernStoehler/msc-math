@@ -4,6 +4,7 @@ use super::exact_linalg::rank_over_q;
 use super::exact_linalg::test_support::{cross_product_4d_rational, det4, dot4, solve4};
 use super::irredundancy::affine_rank_rational;
 use crate::geom::rational_arithmetic::{frac, rat};
+use nalgebra::Vector4;
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::Zero;
@@ -102,6 +103,127 @@ fn rational_hypercube() -> RationalPolytopeFixture {
 /// Extract vertex descriptors (sets of incident facet indices) from incidence matrix.
 fn vertex_descriptors_from_incidence(p: &RationalPolytopeFixture) -> Vec<BTreeSet<usize>> {
     p.vertex_descriptors.clone()
+}
+
+#[test]
+fn rational_hypercube_facet_intersections_preserve_opposite_pairs() {
+    let h = rational_hypercube();
+    let incidence = super::vertex_facet_incidence_from_descriptors(&h.vertex_descriptors, 8);
+    let intersections = super::facet_intersection_is_nonempty_from_incidence(&incidence);
+    for i in 0..8 {
+        for j in 0..8 {
+            assert_eq!(intersections[(i, j)], i != j && i / 2 != j / 2);
+        }
+    }
+}
+
+fn contract_rows(rows: &[[i64; 4]]) -> Vec<[BigRational; 4]> {
+    rows.iter()
+        .map(|row| std::array::from_fn(|c| rat(row[c])))
+        .collect()
+}
+
+fn generic_rows(rows: &[[BigRational; 4]]) -> Vec<Vector4<BigRational>> {
+    rows.iter()
+        .map(|row| Vector4::from_fn(|c, _| row[c].clone()))
+        .collect()
+}
+
+#[test]
+fn rational_and_generic_exact_cube_agree_on_vertices_and_incidence() {
+    let rows = rational_hypercube().dual_vertices;
+    let generic = crate::exact::exact_vertices_with_incidence(&generic_rows(&rows))
+        .expect("generic exact cube");
+    let (rational_vertices, rational_descriptors) =
+        super::construct_rational_pipeline(&rows).expect("rational exact cube");
+
+    let mut generic_pairs: Vec<([BigRational; 4], BTreeSet<usize>)> = generic
+        .vertices
+        .iter()
+        .enumerate()
+        .map(|(v, vertex)| {
+            (
+                std::array::from_fn(|c| vertex[c].clone()),
+                (0..rows.len())
+                    .filter(|&f| generic.vertex_facet_incidence[(v, f)])
+                    .collect(),
+            )
+        })
+        .collect();
+    generic_pairs.sort();
+    let mut rational_pairs: Vec<_> = rational_vertices
+        .into_iter()
+        .zip(rational_descriptors)
+        .collect();
+    rational_pairs.sort();
+    assert_eq!(generic_pairs, rational_pairs);
+}
+
+/// Run with `--nocapture` to inspect current validation-policy differences.
+/// Assertions require geometric rejection, but do not freeze the disputed
+/// duplicate-inequality or rank-deficient error classification.
+#[test]
+fn constructor_contract_diagnostics_for_small_inputs() {
+    let cube = [
+        [1, 0, 0, 0],
+        [-1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, -1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, -1, 0],
+        [0, 0, 0, 1],
+        [0, 0, 0, -1],
+    ];
+    let mut duplicate = cube.to_vec();
+    duplicate.push(cube[0]);
+    let mut zero = cube.to_vec();
+    zero.push([0, 0, 0, 0]);
+    // The halfspace x_1 <= 2 is strictly redundant for the cube.
+    let redundant_fractional = {
+        let mut rows = contract_rows(&cube);
+        rows.push([frac(1, 2), rat(0), rat(0), rat(0)]);
+        rows
+    };
+    // These five rows span only two dimensions; the H-polyhedron is unbounded.
+    let rank_two = contract_rows(&[
+        [1, 0, 0, 0],
+        [-1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, -1, 0, 0],
+        [1, 1, 0, 0],
+    ]);
+    // These five rows span four dimensions but do not bound x_2, x_3 or x_4.
+    let full_rank_unbounded = contract_rows(&[
+        [1, 0, 0, 0],
+        [-1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+    ]);
+
+    let cases = [
+        ("duplicate", contract_rows(&duplicate), false),
+        ("redundant", redundant_fractional, true),
+        ("zero", contract_rows(&zero), true),
+        ("rank_two", rank_two, true),
+        ("full_rank_unbounded", full_rank_unbounded, true),
+    ];
+    for (label, rows, must_reject) in cases {
+        let generic = crate::exact::exact_vertices_with_incidence(&generic_rows(&rows));
+        let rational = super::construct_rational_pipeline(&rows);
+        let f64_rows: Vec<Vector4<f64>> = rows.iter().map(super::rational_array_to_f64).collect();
+        let f64_input = super::rationalize_f64_dual_vertices(&f64_rows);
+        println!(
+            "{label}: generic={:?}, rational={:?}, f64_input={:?}",
+            generic.as_ref().map(|value| value.vertices.len()),
+            rational.as_ref().map(|value| value.0.len()),
+            f64_input.as_ref().map(Vec::len)
+        );
+        if must_reject {
+            assert!(generic.is_err(), "generic accepted {label}");
+            assert!(rational.is_err(), "rational accepted {label}");
+        }
+    }
 }
 
 // ── Simplex vertex structure ────────────────────────────────────────────

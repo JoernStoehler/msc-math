@@ -1,5 +1,10 @@
 # Rust crates
 
+The [research guide](../docs/research-guide.md) explains the mathematics these
+capabilities serve. The [inventory](../meta-topics/repository-organization/inventory/README.md) distinguishes
+implementation contracts, observed checks and unresolved code-quality questions.
+
+
 Reusable Rust implementation lives in three Cargo crates. Each crate README is
 the entry point; source and tests establish behavior.
 
@@ -13,8 +18,8 @@ the entry point; source and tests establish behavior.
 
 | Concern | Implementation source | Evidence beyond unit tests |
 | --- | --- | --- |
-| Scalar four-dimensional capacity API | `symplectic/src/algorithms/capacity_4d/` | crate README's scalar API contract; `experiments/dev-quadratic-program/` and `experiments/verification/` |
-| HK2017/QP capacity | `symplectic/src/algorithms/hk2017/`, `symplectic/src/algorithms/orbit_search.rs`, `symplectic/src/kkt/` | `experiments/dev-quadratic-program/`, `experiments/verification/` |
+| Scalar four-dimensional capacity API | `symplectic/src/algorithms/capacity_4d/` | crate README's scalar API contract; `topics/capacity-and-qp/development/` and `experiments/verification/` |
+| HK2017/QP capacity | `symplectic/src/algorithms/hk2017/`, `symplectic/src/algorithms/orbit_search.rs`, `symplectic/src/kkt/` | `topics/capacity-and-qp/development/`, `experiments/verification/` |
 | Billiard and Lagrangian-product enumeration | `symplectic/src/algorithms/billiard/` and shared QP/KKT layers | `experiments/regular-products/`, HKO packet |
 | Flow graph | `symplectic/src/algorithms/flow_graph/` | `experiments/dev-flow-graph/`, `experiments/verification/` |
 | Exact single-orbit calculations | `symplectic/src/exact/` | theorem-local Sage or formal packets when proof strength is required |

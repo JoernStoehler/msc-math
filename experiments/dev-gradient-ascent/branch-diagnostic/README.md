@@ -16,7 +16,7 @@ degeneracy or endpoint behavior.
 ## Inputs and outputs
 
 By default the producer reads the polytope and provenance tables in
-`experiments/polytope-invariant-table/`. The polytope table is R2-backed; the
+`topics/empirical-studies/polytope-invariant-table/`. The polytope table is R2-backed; the
 provenance table is tracked in Git.
 
 The output directory contains:

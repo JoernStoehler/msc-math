@@ -802,7 +802,7 @@ fn capacity_all_safe(
     }
 }
 fn parse_args() -> Cli {
-    let mut table = PathBuf::from("experiments/polytope-datasets/random.jsonl");
+    let mut table = PathBuf::from("topics/empirical-studies/polytope-datasets/random.jsonl");
     let mut out =
         PathBuf::from("experiments/dev-gradient-ascent/adaptive-direction-ablation/artifacts");
     let mut facet = 6;

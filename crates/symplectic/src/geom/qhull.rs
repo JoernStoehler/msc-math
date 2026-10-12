@@ -143,20 +143,14 @@ fn parse_fa_output(output: &str) -> Result<f64, QhullError> {
     for line in output.lines() {
         let trimmed = line.trim();
 
-        if let Some(vol_str) = trimmed.strip_prefix("Approximate volume:") {
-            let vol: f64 = vol_str
+        if let Some(vol_str) = trimmed
+            .strip_prefix("Approximate volume:")
+            .or_else(|| trimmed.strip_prefix("Total volume:"))
+        {
+            return vol_str
                 .trim()
                 .parse()
-                .map_err(|e| QhullError::OutputParseFailed(format!("volume: {}", e)))?;
-            return Ok(vol);
-        }
-
-        if let Some(vol_str) = trimmed.strip_prefix("Total volume:") {
-            let vol: f64 = vol_str
-                .trim()
-                .parse()
-                .map_err(|e| QhullError::OutputParseFailed(format!("volume: {}", e)))?;
-            return Ok(vol);
+                .map_err(|e| QhullError::OutputParseFailed(format!("volume: {}", e)));
         }
     }
 

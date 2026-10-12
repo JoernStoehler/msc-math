@@ -187,7 +187,7 @@ def coordination(state):
               for t in state.get("tasks", []) if t.get("status") == "running"]
     gates = [{"id": d["id"], "status": d.get("status")}
              for d in state.get("decisions", []) if d.get("status") not in ("resolved", "parked", "done")]
-    return {"source": "docs/coordination/current.json", "updated_at": state.get("updated_at"),
+    return {"source": "meta-topics/project-management/current.json", "updated_at": state.get("updated_at"),
             "running_assignments": sorted(active, key=lambda t: t["id"]),
             "unresolved_decisions": sorted(gates, key=lambda d: d["id"]),
             "semantic_queue_or_pending_review_count": None}
@@ -288,7 +288,7 @@ def main():
     parser.add_argument("--now", type=date, help="fixed UTC/ISO observation boundary")
     parser.add_argument("--base-url", default="http://127.0.0.1:5080")
     parser.add_argument("--codex-home", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home()/".codex")))
-    parser.add_argument("--state", type=Path, default=ROOT/"docs/coordination/current.json")
+    parser.add_argument("--state", type=Path, default=ROOT/"meta-topics/project-management/current.json")
     parser.add_argument("--brief", action="store_true", help="compact root/worker counters and review signals")
     parser.add_argument("--thread", action="append", default=[], help="include extra project thread UUID (repeatable)")
     args = parser.parse_args()

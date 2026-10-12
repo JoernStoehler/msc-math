@@ -28,7 +28,7 @@ Evidence read: historical task notes for sys first-order and HKO,
 `formal/hko-local-maximality-conditions.tex`,
 `formal/hko-symmetry-gradient-structure.tex`,
 `experiments/combinatorial-cells/README.md`, and
-`papers/hk2017/EHZ-polytopes.tex`.
+`topics/literature/sources/hk2017/EHZ-polytopes.tex`.
 
 ## 1. Problem model
 

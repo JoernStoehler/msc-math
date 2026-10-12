@@ -1,7 +1,8 @@
 //! Flow-graph capacity algorithm work surface.
 //!
-//! The local README is the status and contract surface for this unfinished but
-//! thesis-facing CH2021-style algorithm packet.
+//! The local README routes to the maintained topic account and implementation
+//! contract in `topics/flow-graphs/`. The idealized theorem and rational Rust
+//! rejection boundary have distinct hypotheses and evidence.
 
 pub mod exact_search;
 pub mod exact_tube;

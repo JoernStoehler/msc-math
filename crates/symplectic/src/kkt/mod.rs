@@ -1,6 +1,8 @@
 //! KKT solver module for constrained quadratic optimization on polytopes.
 //!
-//! Solves: max (1/2) beta^T H beta  subject to  C beta = d, beta > 0.
+//! Computes stationary candidates for (1/2) beta^T H beta subject to C beta = d,
+//! with route-specific searches/classifiers for beta > 0. A candidate is not
+//! automatically a fixed-word maximum.
 //!
 //! The KKT module is context-independent: it operates on abstract matrices (C, d, H)
 //! without knowing they come from symplectic geometry. Assembly of (C, d, H) from
@@ -32,7 +34,8 @@
 //! - `constraint_solver` — Solve Cx=d for particular solution + null space basis via SVD
 //! - `beta_feasibility` — Max-margin LP search for beta>0 in affine solution set
 //! - `projection_solver` — Project to constraint null space, optimize reduced objective
-//! - `rational_solver` — Exact rational KKT solver (validation/ground-truth only; NOT used in main capacity enumeration)
+//! - `rational_solver` — Exact rational KKT witnesses for validation,
+//!   indeterminate production fallback, and requested exact minimizers/windows
 
 pub mod beta_feasibility;
 pub mod constraint_solver;
@@ -47,7 +50,9 @@ use nalgebra::{DMatrix, DVector};
 
 // ── Public types ──
 
-/// Constrained quadratic program: max (1/2) beta^T H beta  s.t. C beta = d, beta > 0.
+/// Data for the constrained objective (1/2) beta^T H beta with C beta = d.
+/// Solver-specific positivity and stationarity contracts apply; the data type
+/// does not promise that a returned stationary point is a maximum.
 ///
 /// For EHZ capacity: C encodes closure + normalization, H encodes symplectic action,
 /// beta are dwell-time coefficients. But this struct is context-free.
@@ -71,7 +76,7 @@ pub struct QP {
 ///
 /// The current f64 classifiers use static numerical margins. Treat these
 /// verdicts as route-local f64 labels, not theorem-backed predicates.
-/// Development notes in `experiments/dev-quadratic-program/` track the
+/// Development notes in `topics/capacity-and-qp/development/` track the
 /// proof-backed replacement work.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Verdict {
@@ -84,17 +89,18 @@ pub enum Verdict {
     Indeterminate,
 }
 
-/// Result of solving a QP.
+/// Numerical stationary-candidate result from a QP solver.
 ///
-/// Q is always valid when verdict != False. beta is the best point found.
-/// margin = min_k beta_k quantifies clearance from the positivity boundary.
+/// beta is the point found in the solver's numerical stationary model.
+/// margin = min_k beta_k measures numerical clearance from the positivity boundary.
+/// These fields do not certify an exact witness or a fixed-word maximum.
 #[derive(Clone, Debug)]
 pub struct Solution {
     /// Trinary verdict classifying the solution feasibility.
     pub verdict: Verdict,
-    /// Optimal objective value: Q = (1/2) beta^T H beta.
-    /// Constant over the solution set (null space of projected Hessian).
-    /// Valid for True and Indeterminate. Zero for False.
+    /// Computed stationary objective Q = (1/2) beta^T H beta.
+    /// Directions discarded by the numerical rank threshold are treated as flat
+    /// in this model. False results may retain a nonzero computed value.
     pub q: f64,
     /// Solution vector. For True: all components > 0. For Indeterminate:
     /// best-effort max-margin point. For False: empty or not meaningful.

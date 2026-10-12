@@ -21,7 +21,7 @@ Judge the whole message. Exploration need not complete a task, brevity alone is 
 - **Return:** Say `APPROVE <candidate-version>` or `REJECT <candidate-version>`. Include consequential findings, actionable corrections and important uncertainty. No schema, hashes, fixed checklist fields or repeated candidate text. Approve only with no unresolved consequential objection; perfection and your preferred style are not requirements. Proposed replacement text needs its own review.
 - **Delivery:** The sender checks the actual native reviewer identity, verdict and candidate version, then sends that complete text unchanged. Substantive changes or relevant new user steering require renewed review. The sender owns revision, action and delivery; the reviewer cannot close unrelated unfinished obligations. If required review is unavailable, keep prepared delivery pending and state the limitation in direct conversation.
 
-Keep frozen candidates, supplied context and native review returns together under `docs/coordination/message-reviews/<date>/<packet>/`, preserving revisions separately. Sender storage does not authorize fabricating the reviewer's approval.
+Keep frozen candidates, supplied context and native review returns together under `/tmp/msc-math/message-reviews/<date>/<packet>/`, preserving revisions separately. These are disposable working packets, not repository knowledge. Transfer lasting findings to their scientific or meta-topic owner and retain claim-supporting reviews with the evidence they assess before clearing the packet. Sender storage does not authorize fabricating the reviewer's approval.
 
 ## Limits
 

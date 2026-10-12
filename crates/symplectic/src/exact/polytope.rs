@@ -1,11 +1,18 @@
-//! Flat exact 4D dual-vertex polytope helpers over ordered scalar fields.
+//! Exact normalized 4D H-polytope helpers over ordered scalar fields.
 //!
-//! TODO: add [def:...] to formal math for the exact dual-vertex polytope model.
-//! TODO: add [lem:...] to formal math for the exact 4D vertex enumeration and
-//! irredundancy checks implemented in this module.
+//! Mathematical statements are in `topics/polytope-geometry/exact-polar-geometry.tex`:
+//! [def:polytope-dual], [prop:boundedness-iff], [lem:vertex-enumeration] and
+//! [lem:irredundancy]. The boundedness statement includes a rank-four
+//! hypothesis not separately checked by this legacy constructor. The
+//! affine-rank-three check identifies facet-supporting rows, but duplicate
+//! listed inequalities can pass it without being individually irredundant.
 
-use algebraic_numbers::{rank, solve_linear_system, ExactScalar, LinearSystemSolution};
-use nalgebra::{DMatrix, DVector, Vector4};
+use algebraic_numbers::{rank, ExactScalar};
+use euclidean_polytopes::{
+    facet_intersection_is_nonempty_from_vertex_facet_incidence,
+    vertices_from_normalized_halfspaces_exact,
+};
+use nalgebra::{DMatrix, Vector4};
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
 
@@ -42,6 +49,9 @@ pub struct ExactVerticesWithIncidence<F: ExactScalar + 'static> {
 /// - boundedness by exact cone search;
 /// - existence of at least one vertex;
 /// - every input facet has affine-rank-three incident vertices.
+///
+/// Equal input rows are not rejected. For those rows, the affine-rank check
+/// does not certify irredundancy of each listed inequality.
 pub fn exact_vertices_with_incidence<F: ExactScalar + 'static>(
     dual_vertices: &[Vector4<F>],
 ) -> Result<ExactVerticesWithIncidence<F>, ExactPolytopeError> {
@@ -56,16 +66,22 @@ pub fn exact_vertices_with_incidence<F: ExactScalar + 'static>(
     }
 
     check_bounded(dual_vertices)?;
-    let (vertices, descriptors) = enumerate_vertices(dual_vertices)?;
-    check_irredundancy(&vertices, &descriptors, f)?;
-
-    let vertex_facet_incidence = DMatrix::from_fn(vertices.len(), f, |row, col| {
-        descriptors[row].contains(&col)
-    });
+    let enumerated = vertices_from_normalized_halfspaces_exact(dual_vertices);
+    if enumerated.vertices.is_empty() {
+        return Err(ExactPolytopeError::NoVertices);
+    }
+    let descriptors: VertexDescriptors = (0..enumerated.vertex_facet_incidence.nrows())
+        .map(|row| {
+            (0..f)
+                .filter(|&col| enumerated.vertex_facet_incidence[(row, col)])
+                .collect()
+        })
+        .collect();
+    check_irredundancy(&enumerated.vertices, &descriptors, f)?;
 
     Ok(ExactVerticesWithIncidence {
-        vertices,
-        vertex_facet_incidence,
+        vertices: enumerated.vertices,
+        vertex_facet_incidence: enumerated.vertex_facet_incidence,
     })
 }
 
@@ -107,15 +123,7 @@ pub fn omega_signs_exact<F: ExactScalar>(dual_vertices: &[Vector4<F>]) -> DMatri
 pub fn facet_intersection_is_nonempty_exact(
     vertex_facet_incidence: &DMatrix<bool>,
 ) -> DMatrix<bool> {
-    DMatrix::from_fn(
-        vertex_facet_incidence.ncols(),
-        vertex_facet_incidence.ncols(),
-        |i, j| {
-            i != j
-                && (0..vertex_facet_incidence.nrows())
-                    .any(|v| vertex_facet_incidence[(v, i)] && vertex_facet_incidence[(v, j)])
-        },
-    )
+    facet_intersection_is_nonempty_from_vertex_facet_incidence(vertex_facet_incidence)
 }
 
 fn combinations4(n: usize) -> Vec<[usize; 4]> {
@@ -147,26 +155,6 @@ fn cross_product_4d<F: ExactScalar>(a: &Vector4<F>, b: &Vector4<F>, c: &Vector4<
     let d2 = a[0].clone() * bc_13 - a[1].clone() * bc_03.clone() + a[3].clone() * bc_01.clone();
     let d3 = -(a[0].clone() * bc_12 - a[1].clone() * bc_02 + a[2].clone() * bc_01);
     Vector4::new(d0, d1, d2, d3)
-}
-
-fn solve4<F: ExactScalar + 'static>(
-    rows: &[Vector4<F>; 4],
-    rhs: &Vector4<F>,
-) -> Option<Vector4<F>> {
-    let matrix = DMatrix::from_fn(4, 4, |row, col| rows[row][col].clone());
-    let rhs = DVector::from_fn(4, |row, _| rhs[row].clone());
-    match solve_linear_system(&matrix, &rhs) {
-        LinearSystemSolution::Consistent {
-            particular,
-            kernel_basis,
-        } if kernel_basis.ncols() == 0 => Some(Vector4::new(
-            particular[0].clone(),
-            particular[1].clone(),
-            particular[2].clone(),
-            particular[3].clone(),
-        )),
-        _ => None,
-    }
 }
 
 fn affine_rank<F: ExactScalar + 'static>(points: &[Vector4<F>]) -> usize {
@@ -219,50 +207,6 @@ fn check_bounded<F: ExactScalar + 'static>(
 
 type VertexDescriptors = Vec<BTreeSet<usize>>;
 
-fn enumerate_vertices<F: ExactScalar + 'static>(
-    dual_vertices: &[Vector4<F>],
-) -> Result<(Vec<Vector4<F>>, VertexDescriptors), ExactPolytopeError> {
-    let mut vertices = Vec::new();
-    let mut descriptors = Vec::new();
-
-    for combo in combinations4(dual_vertices.len()) {
-        let rows = combo.map(|idx| dual_vertices[idx].clone());
-        let rhs = Vector4::new(F::one(), F::one(), F::one(), F::one());
-        let Some(vertex) = solve4(&rows, &rhs) else {
-            continue;
-        };
-
-        let mut descriptor = BTreeSet::new();
-        let mut feasible = true;
-        for (facet_idx, dual) in dual_vertices.iter().enumerate() {
-            match dot4(&vertex, dual).cmp(&F::one()) {
-                std::cmp::Ordering::Greater => {
-                    feasible = false;
-                    break;
-                }
-                std::cmp::Ordering::Equal => {
-                    descriptor.insert(facet_idx);
-                }
-                std::cmp::Ordering::Less => {}
-            }
-        }
-
-        if feasible
-            && !descriptor.is_empty()
-            && !descriptors.iter().any(|known| known == &descriptor)
-        {
-            vertices.push(vertex);
-            descriptors.push(descriptor);
-        }
-    }
-
-    if vertices.is_empty() {
-        return Err(ExactPolytopeError::NoVertices);
-    }
-
-    Ok((vertices, descriptors))
-}
-
 fn check_irredundancy<F: ExactScalar + 'static>(
     vertices: &[Vector4<F>],
     descriptors: &[BTreeSet<usize>],
@@ -287,7 +231,7 @@ fn check_irredundancy<F: ExactScalar + 'static>(
 mod tests {
     use super::{
         dot4, exact_vertices_with_incidence, facet_intersection_is_nonempty_exact,
-        omega_signs_exact,
+        omega_signs_exact, ExactPolytopeError,
     };
     use algebraic_numbers::{Algebraic, ExactScalar, RealAlgebraicField};
     use nalgebra::{DMatrix, Vector4};
@@ -381,7 +325,11 @@ mod tests {
             facet_intersection_is_nonempty_exact(&exact.vertex_facet_incidence);
         assert_eq!(facet_intersections.nrows(), 5);
         assert_eq!(facet_intersections.ncols(), 5);
-        assert!(!facet_intersections[(0, 0)]);
+        for i in 0..5 {
+            for j in 0..5 {
+                assert_eq!(facet_intersections[(i, j)], i != j);
+            }
+        }
     }
 
     #[test]
@@ -400,5 +348,119 @@ mod tests {
             assert_eq!(omega_signs[(i, j)], 0);
             assert_eq!(omega_signs[(j, i)], 0);
         }
+    }
+
+    #[test]
+    fn exact_vertex_order_preserves_legacy_lexicographic_facets() {
+        let simplex = exact_vertices_with_incidence(&exact_simplex_dual_vertices()).unwrap();
+        let hko = exact_vertices_with_incidence(&exact_hko_dual_vertices()).unwrap();
+        let z = BigRational::zero();
+        let cube_rows = vec![
+            Vector4::new(q(1), z.clone(), z.clone(), z.clone()),
+            Vector4::new(q(-1), z.clone(), z.clone(), z.clone()),
+            Vector4::new(z.clone(), q(1), z.clone(), z.clone()),
+            Vector4::new(z.clone(), q(-1), z.clone(), z.clone()),
+            Vector4::new(z.clone(), z.clone(), q(1), z.clone()),
+            Vector4::new(z.clone(), z.clone(), q(-1), z.clone()),
+            Vector4::new(z.clone(), z.clone(), z.clone(), q(1)),
+            Vector4::new(z.clone(), z.clone(), z, q(-1)),
+        ];
+        let cube = exact_vertices_with_incidence(&cube_rows).unwrap();
+        let simplex_order: &[[usize; 4]] = &[
+            [0, 1, 2, 3],
+            [0, 1, 2, 4],
+            [0, 1, 3, 4],
+            [0, 2, 3, 4],
+            [1, 2, 3, 4],
+        ];
+        let hko_order: &[[usize; 4]] = &[
+            [0, 1, 5, 6],
+            [0, 1, 5, 9],
+            [0, 1, 6, 7],
+            [0, 1, 7, 8],
+            [0, 1, 8, 9],
+            [0, 4, 5, 6],
+            [0, 4, 5, 9],
+            [0, 4, 6, 7],
+            [0, 4, 7, 8],
+            [0, 4, 8, 9],
+            [1, 2, 5, 6],
+            [1, 2, 5, 9],
+            [1, 2, 6, 7],
+            [1, 2, 7, 8],
+            [1, 2, 8, 9],
+            [2, 3, 5, 6],
+            [2, 3, 5, 9],
+            [2, 3, 6, 7],
+            [2, 3, 7, 8],
+            [2, 3, 8, 9],
+            [3, 4, 5, 6],
+            [3, 4, 5, 9],
+            [3, 4, 6, 7],
+            [3, 4, 7, 8],
+            [3, 4, 8, 9],
+        ];
+        let cube_order: &[[usize; 4]] = &[
+            [0, 2, 4, 6],
+            [0, 2, 4, 7],
+            [0, 2, 5, 6],
+            [0, 2, 5, 7],
+            [0, 3, 4, 6],
+            [0, 3, 4, 7],
+            [0, 3, 5, 6],
+            [0, 3, 5, 7],
+            [1, 2, 4, 6],
+            [1, 2, 4, 7],
+            [1, 2, 5, 6],
+            [1, 2, 5, 7],
+            [1, 3, 4, 6],
+            [1, 3, 4, 7],
+            [1, 3, 5, 6],
+            [1, 3, 5, 7],
+        ];
+        for (name, polytope, expected) in [
+            ("simplex", simplex.vertex_facet_incidence, simplex_order),
+            ("HKO", hko.vertex_facet_incidence, hko_order),
+            ("cube", cube.vertex_facet_incidence, cube_order),
+        ] {
+            let descriptors: Vec<Vec<usize>> = (0..polytope.nrows())
+                .map(|v| {
+                    (0..polytope.ncols())
+                        .filter(|&f| polytope[(v, f)])
+                        .collect()
+                })
+                .collect();
+            let expected: Vec<Vec<usize>> = expected.iter().map(|facets| facets.to_vec()).collect();
+            assert_eq!(descriptors, expected, "{name} vertex order changed");
+        }
+    }
+
+    #[test]
+    fn exact_validation_keeps_early_error_precedence() {
+        let zero = Vector4::new(q(0), q(0), q(0), q(0));
+        let mut simplex_with_zero = exact_simplex_dual_vertices();
+        simplex_with_zero[0] = zero;
+        assert_eq!(
+            exact_vertices_with_incidence(&simplex_with_zero),
+            Err(ExactPolytopeError::ZeroDualVertex(0))
+        );
+
+        simplex_with_zero.pop();
+        assert_eq!(
+            exact_vertices_with_incidence(&simplex_with_zero),
+            Err(ExactPolytopeError::TooFewFacets(4))
+        );
+
+        let unbounded = vec![
+            Vector4::new(q(1), q(0), q(0), q(0)),
+            Vector4::new(q(-1), q(0), q(0), q(0)),
+            Vector4::new(q(0), q(1), q(0), q(0)),
+            Vector4::new(q(0), q(0), q(1), q(0)),
+            Vector4::new(q(0), q(0), q(0), q(1)),
+        ];
+        assert_eq!(
+            exact_vertices_with_incidence(&unbounded),
+            Err(ExactPolytopeError::Unbounded)
+        );
     }
 }

@@ -93,7 +93,7 @@ pub struct OrbitKktData {
     ///
     /// It is not a proved error bound for the exact binary64-input KKT
     /// problem; see the falsifying regression and status note in
-    /// `experiments/dev-quadratic-program`.
+    /// `topics/capacity-and-qp/development`.
     pub q_error_bound: f64,
     /// Closure multipliers when the chosen backend/path provides them.
     pub mu: Option<[f64; 4]>,

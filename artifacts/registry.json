@@ -3,10 +3,10 @@
     "alternative-source-transfer-v1": {
       "description": "Frozen source table for the reviewed alternative-source transfer packet.",
       "links": {
-        "source.jsonl": "experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/source.jsonl"
+        "source.jsonl": "topics/empirical-studies/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/source.jsonl"
       },
       "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
-      "producer": "experiments/sys-datascience/methods/alternative-source-transfer/README.md",
+      "producer": "topics/empirical-studies/sys-datascience/methods/alternative-source-transfer/README.md",
       "release": true,
       "snapshot": "8c1802d647e612cf6f58513db517a90972f68fb5ca5c9ce4c1bc02ea88d2a1d1"
     },
@@ -23,27 +23,27 @@
     "covariance-rho-frozen-packet": {
       "description": "Recovered immutable pre-target geometry and feature caches for row-level covariance-rho audit.",
       "links": {
-        "assembly-output.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/assembly-output.json",
-        "frozen-manifest-summary.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/frozen-manifest-summary.json",
-        "frozen-selected-candidates-before-sys.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/frozen-selected-candidates-before-sys.jsonl",
-        "seed-2026071201-refresh-output.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201-refresh-output.txt",
-        "seed-2026071201/candidate-feature-table.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/candidate-feature-table.jsonl",
-        "seed-2026071201/candidate-geometry-cache.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/candidate-geometry-cache.jsonl",
-        "seed-2026071201/resolved-run-config.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/resolved-run-config.json",
-        "seed-2026071201/selected-candidates-before-sys.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/selected-candidates-before-sys.jsonl",
-        "seed-2026071201/selection-plan.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/selection-plan.json",
-        "seed-2026071202-command-output.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-command-output.txt",
-        "seed-2026071202-refresh-output.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-refresh-output.txt",
-        "seed-2026071202-resource.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-resource.txt",
-        "seed-2026071202/candidate-feature-table.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/candidate-feature-table.jsonl",
-        "seed-2026071202/candidate-geometry-cache.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/candidate-geometry-cache.jsonl",
-        "seed-2026071202/resolved-run-config.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/resolved-run-config.json",
-        "seed-2026071202/selected-candidates-before-sys.jsonl": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/selected-candidates-before-sys.jsonl",
-        "seed-2026071202/selection-plan.json": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/selection-plan.json",
-        "target-field-audit.txt": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/target-field-audit.txt"
+        "assembly-output.json": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/assembly-output.json",
+        "frozen-manifest-summary.json": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/frozen-manifest-summary.json",
+        "frozen-selected-candidates-before-sys.jsonl": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/frozen-selected-candidates-before-sys.jsonl",
+        "seed-2026071201-refresh-output.txt": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201-refresh-output.txt",
+        "seed-2026071201/candidate-feature-table.jsonl": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/candidate-feature-table.jsonl",
+        "seed-2026071201/candidate-geometry-cache.jsonl": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/candidate-geometry-cache.jsonl",
+        "seed-2026071201/resolved-run-config.json": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/resolved-run-config.json",
+        "seed-2026071201/selected-candidates-before-sys.jsonl": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/selected-candidates-before-sys.jsonl",
+        "seed-2026071201/selection-plan.json": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071201/selection-plan.json",
+        "seed-2026071202-command-output.txt": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-command-output.txt",
+        "seed-2026071202-refresh-output.txt": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-refresh-output.txt",
+        "seed-2026071202-resource.txt": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202-resource.txt",
+        "seed-2026071202/candidate-feature-table.jsonl": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/candidate-feature-table.jsonl",
+        "seed-2026071202/candidate-geometry-cache.jsonl": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/candidate-geometry-cache.jsonl",
+        "seed-2026071202/resolved-run-config.json": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/resolved-run-config.json",
+        "seed-2026071202/selected-candidates-before-sys.jsonl": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/selected-candidates-before-sys.jsonl",
+        "seed-2026071202/selection-plan.json": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/seed-2026071202/selection-plan.json",
+        "target-field-audit.txt": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/local/covariance-rho-frozen-packet/target-field-audit.txt"
       },
       "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
-      "producer": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md",
+      "producer": "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md",
       "release": false,
       "snapshot": "72566e80cc331ab235c5fbdbe4ef0a4924e7f669c613b36987f82c42ad3aab61"
     },
@@ -94,43 +94,43 @@
     "polytope-datasets": {
       "description": "Retained random, random-product, and shared producer-cache datasets.",
       "links": {
-        "random-product.jsonl": "experiments/polytope-datasets/random-product.jsonl",
-        "random.jsonl": "experiments/polytope-datasets/random.jsonl",
-        "shared-cache.jsonl": "experiments/polytope-datasets/shared-cache.jsonl"
+        "random-product.jsonl": "topics/empirical-studies/polytope-datasets/random-product.jsonl",
+        "random.jsonl": "topics/empirical-studies/polytope-datasets/random.jsonl",
+        "shared-cache.jsonl": "topics/empirical-studies/polytope-datasets/shared-cache.jsonl"
       },
       "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
-      "producer": "experiments/polytope-datasets/README.md",
+      "producer": "topics/empirical-studies/polytope-datasets/README.md",
       "release": true,
       "snapshot": "f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96"
     },
     "polytope-invariant-table": {
       "description": "Retained random/product invariant feature table.",
       "links": {
-        "polytope-table.jsonl": "experiments/polytope-invariant-table/polytope-table.jsonl"
+        "polytope-table.jsonl": "topics/empirical-studies/polytope-invariant-table/polytope-table.jsonl"
       },
       "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
-      "producer": "experiments/polytope-invariant-table/README.md",
+      "producer": "topics/empirical-studies/polytope-invariant-table/README.md",
       "release": true,
       "snapshot": "c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a"
     },
     "product-bounce-class-degeneration": {
       "description": "Retained exact class-degeneration row and pair tables.",
       "links": {
-        "degeneration-pairs.jsonl": "experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-pairs.jsonl",
-        "degeneration-rows.jsonl": "experiments/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-rows.jsonl"
+        "degeneration-pairs.jsonl": "topics/empirical-studies/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-pairs.jsonl",
+        "degeneration-rows.jsonl": "topics/empirical-studies/sys-datascience/methods/product-bounce-class-degeneration/artifacts/degeneration-rows.jsonl"
       },
       "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
-      "producer": "experiments/sys-datascience/methods/product-bounce-class-degeneration/README.md",
+      "producer": "topics/empirical-studies/sys-datascience/methods/product-bounce-class-degeneration/README.md",
       "release": true,
       "snapshot": "174a90d4445c719c286f138a7e421407e3a34616bc5fd0f4448c51e1a0d0f048"
     },
     "product-bounce-distribution": {
       "description": "Retained exact two- and three-bounce class minima for random-product rows.",
       "links": {
-        "class-minima.jsonl": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl"
+        "class-minima.jsonl": "topics/empirical-studies/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl"
       },
       "migrated_from_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55",
-      "producer": "experiments/sys-datascience/methods/product-bounce-distribution/README.md",
+      "producer": "topics/empirical-studies/sys-datascience/methods/product-bounce-distribution/README.md",
       "release": true,
       "snapshot": "a336e8301eae3986a04cb717f29e447a576776d240997851478a795d48c215c4"
     },

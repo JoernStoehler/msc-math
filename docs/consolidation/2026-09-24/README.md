@@ -1,7 +1,7 @@
 # Mathematics consolidation — 24 September 2026
 
 The source return is preserved at
-`docs/pro-handoffs/msc-math-consolidation-20260924/msc_math_consolidation_codex.zip`
+`docs/history/pro-handoffs/msc-math-consolidation-20260924/msc_math_consolidation_codex.zip`
 with SHA-256
 `82c40c7df813fdc0fa2c1b8e56cd4edbb5fd599108b87f37250f7c0ae91dae8b`.
 

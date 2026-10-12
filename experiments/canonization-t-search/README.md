@@ -4,7 +4,7 @@ Status: frozen self-contained experiment as of 2026-06-29.
 
 This experiment found and tested a useful generic coordinate canonizer for random
 polytope facet-normal rows. It is intentionally not wired into
-`experiments/polytope-invariant-table`, and future agents should not treat it as
+`topics/empirical-studies/polytope-invariant-table`, and future agents should not treat it as
 the next default integration target.
 
 The method is still worth keeping: it gives a clean generic construction,

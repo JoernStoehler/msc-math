@@ -1,0 +1,1356 @@
+{
+  "scope": "Mathematical foundations and proof-development results in formal/, excluding hko* and pentagon-affine-products/ assigned elsewhere; includes product-position record and selected thesis interfaces.",
+  "coverage": "Read formal/README.md, FINDINGS.md and main.tex; surveyed every non-HKO top-level formal mathematical packet by actual statements, local proof passages and status markers. Read six-facet reduction, active-orbit coverage, orbit recovery/verification, product-position supporting record and selected thesis statement/proof passages closely. Long flow-graph/numerical/product packets were sampled at theorem/argument/status boundaries, not independently re-proved line by line. One bounded Luna discovery read the seven numerical packets and matching predicate/polar/direct-KKT implementation interfaces; its return was integrated, with current direct-certificate first 400 lines re-read by parent. No expensive producers rerun, no LaTeX/PDF build or rendered human-readable QA performed. HKO, independent affine pentagon and legacy pentagon rotation theorem evidence belong to other owners; bibliography/preamble not substantively audited. Related empirical inventories may duplicate product-position and solver results; root owns identity reconciliation. Runtime unknowns and source approval comments are not acceptance inferred from file presence.",
+  "items": [
+    {
+      "id": "foundations-conventions",
+      "kind": "reference",
+      "title": "Symplectic, EHZ, systolic and polytope conventions",
+      "summary": "Defines coordinates (q1,q2,p1,p2), J0(q,p)=(-p,q), omega=<J0u,v>, facet Reeb vectors 2J0a, normalized halfspaces and sys=c^2/(2V); collects polygon, polar and face notation.",
+      "state": "Core symplectic/EHZ definitions have source approval comments; numerous companion definitions retain unverified/TODO markers.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/symplectic-polytope-geometry.tex",
+          "supports": "Actual definitions and local review markers"
+        },
+        {
+          "path": "thesis/chapters/02-preliminaries-convex-symplectic-notation.tex",
+          "supports": "Reader-facing symplectic preliminaries"
+        },
+        {
+          "path": "topics/polytope-geometry/exact-polar-geometry.tex",
+          "supports": "Polar definition and ordinary exact geometry, moved11October"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate",
+      "rationale": "Preserve a single convention owner and keep approval of a definition separate from theorems using it.",
+      "uncertainties": [
+        "Convention consistency of every downstream derivative and historical note is not established."
+      ]
+    },
+    {
+      "id": "foundations-capacity-symmetries",
+      "kind": "result-family",
+      "title": "Capacity scaling and affine symplectic invariance",
+      "summary": "States degree-two conformality and invariance under MK+b for M in Sp(4); these support normalization and quotient arguments.",
+      "state": "Standard external facts locally stated without proofs, in unverified environments with explicit Jörn TODOs.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/capacity-algorithms.tex",
+          "supports": "Conformality and symplectic-invariance statements/status"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate",
+      "rationale": "Consolidate standard imported facts with active preliminaries rather than treating proof placeholders as project-original results.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-shoelace",
+      "kind": "result",
+      "title": "Symplectic shoelace identity",
+      "summary": "Computes twice the action of a closed piecewise-constant-velocity loop as an ordered sum of interval-length products times omega of velocities.",
+      "state": "Complete local algebraic proof; source records Jörn text approval b7a8bc0.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/symplectic-polytope-geometry.tex",
+          "supports": "lem:shoelace and closure-based proof"
+        },
+        {
+          "path": "thesis/chapters/03-generalized-reeb-orbits-polytopes.tex",
+          "supports": "Reader-facing orbit/action development"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-symplectic-product-area",
+      "kind": "result",
+      "title": "Capacity of a symplectic planar product",
+      "summary": "States c_EHZ(A x_S B)=min(area A,area B), using reduction to disks and a ball/cylinder squeeze.",
+      "state": "Unverified local proof candidate; explicit gap concerns a global area-preserving diffeomorphism from an arbitrary convex factor to a disk.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/symplectic-polytope-geometry.tex",
+          "supports": "prop:capacity-symplectic-product and embedded GAP comment"
+        },
+        {
+          "path": "thesis/chapters/11-product-position.tex",
+          "supports": "Reader-facing use of initial symplectic product capacity"
+        }
+      ],
+      "relationships": [],
+      "action": "investigate",
+      "rationale": "The theorem may have valid external support, but the retained local proof route has an acknowledged gap.",
+      "uncertainties": [
+        "Active thesis proof/import contract for this standard fact was not traced beyond the displayed product-position use."
+      ]
+    },
+    {
+      "id": "foundations-volume-star",
+      "kind": "result",
+      "title": "Origin-star triangulation of 4-volume",
+      "summary": "Triangulates facets and cones them to an interior origin to sum simplex determinant volumes.",
+      "state": "Statement and proof exist inside unverified environment with Jörn TODO.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/symplectic-polytope-geometry.tex",
+          "supports": "lem:volume-star-triangulation"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Retain the geometry argument while showing local approval and implementation equivalence as unresolved.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-boundedness",
+      "kind": "result",
+      "title": "Positive-span and triple-kernel boundedness test",
+      "summary": "For normalized 4D halfspaces, boundedness is equivalent to rank four plus both signs on every rank-three triple-kernel line. Positive spanning gives the recession-cone equivalence; the rank condition blocks vacuous low-rank acceptance.",
+      "state": "Original proposition statement retained with approval provenance57e73d9. Endpoint proof corrected, independent-triple condition clarified and duplicate proof removed; changes agent-reviewed11October, not renewed Jörn approval.",
+      "agent_readability": "Consolidated source and changed implications inspected by a separate Sol mathematical reviewer on11October; no substantive blocker reported. Human review remains open.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/polytope-geometry/exact-polar-geometry.tex",
+          "supports": "Moved original labels and explicit local status;11October consolidation"
+        }
+      ],
+      "relationships": [],
+      "action": "keep; clarify",
+      "rationale": "One proof owner now preserves full-rank and independent-triple conditions plus sampling-policy boundaries.",
+      "uncertainties": [
+        "Sampling implementation uses SVD and skips degenerate triples under a probability-zero rationale; this is not a universal exact-input implementation contract."
+      ]
+    },
+    {
+      "id": "foundations-vertices",
+      "kind": "algorithm",
+      "title": "Exact four-facet vertex enumeration",
+      "summary": "Enumerates nonsingular four-row intersections, checks every remaining halfspace and retains full tight-facet incidence; completeness includes nonsimple vertices through rank-four active subsets.",
+      "state": "Local proof exists, unverified with Jörn TODO.",
+      "agent_readability": "Consolidated source and changed implications inspected by a separate Sol mathematical reviewer on11October; no substantive blocker reported. Human review remains open.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Combinatorial candidate count binomial(F,4) is explicit in source; measured exact-runtime cost not inspected.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/polytope-geometry/exact-polar-geometry.tex",
+          "supports": "Moved original labels and explicit local status;11October consolidation"
+        }
+      ],
+      "relationships": [],
+      "action": "keep; clarify",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Live exact implementation and deduplication correspondence were not audited."
+      ]
+    },
+    {
+      "id": "foundations-irredundancy",
+      "kind": "result",
+      "title": "Facet irredundancy from incident-vertex affine rank",
+      "summary": "For a bounded full-dimensional normalized H-polytope and a listed row with no identical duplicate, individual irredundancy is equivalent to affine rank three of its incident vertices.",
+      "state": "Duplicate-row hypothesis and two-way proof corrected11October; separate agent review found no mathematical blocker. Unverified wrapper and Jörn review obligation retained.",
+      "agent_readability": "Consolidated source and changed implications inspected by a separate Sol mathematical reviewer on11October; no substantive blocker reported. Human review remains open.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/polytope-geometry/exact-polar-geometry.tex",
+          "supports": "Moved original labels and explicit local status;11October consolidation"
+        }
+      ],
+      "relationships": [],
+      "action": "keep; clarify",
+      "rationale": "Distinguish a geometric facet from whether deleting one named inequality changes the body.",
+      "uncertainties": [
+        "Rank-only and duplicate-sensitive validators are not declared equivalent."
+      ]
+    },
+    {
+      "id": "foundations-hk-translation",
+      "kind": "result",
+      "title": "HK2017 sign, scaling and word-orientation translation",
+      "summary": "Changing normals/heights to dual vertices yields closure sum beta a=0 and sum beta=1; reversing HK displayed order gives active Reeb traversal order with Q=1/2 beta^T H beta and c=1/(2Qmax).",
+      "state": "Explicit source-theorem convention audit; not proof of project-original solver correctness. On11October consumer links were added while approved KKT derivations remained unchanged; a separately reviewed subset-word bridge now owns the enumeration step.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/hk2017-qp-conventions.tex",
+          "supports": "Algebraic variable change, reversal and factor-two comparison"
+        },
+        {
+          "path": "topics/capacity-and-qp/proofs/ehz-kkt-system.tex",
+          "supports": "Dual-vertex QP lemma with approval comment"
+        }
+      ],
+      "relationships": [],
+      "action": "keep; clarify",
+      "rationale": "Existing convention owner was sufficient; consumers now link to it, while the QP core owns the separate enumeration equivalence.",
+      "uncertainties": [
+        "Historical notes still contain alternate-looking H and Q conventions; no exhaustive consumer audit performed."
+      ]
+    },
+    {
+      "id": "foundations-hk-global-formula",
+      "kind": "result",
+      "title": "Finite Haim-Kislev polytope capacity formula",
+      "summary": "Global maximization over cyclic distinct-facet support words with nonnegative normalized closure weights computes EHZ capacity as 1/(2Qmax).",
+      "state": "External theorem translated into project conventions; formal definition and selected thesis theorem/proof exist. The11October core explicitly states irredundant normalized facet input and supplies the zero-weight/cyclic-word equivalence in an unverified, independently agent-reviewed lemma.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/hk2017-qp-core.tex",
+          "supports": "def:hk2017-problem and theorem translation"
+        },
+        {
+          "path": "thesis/chapters/04-quadratic-program.tex",
+          "supports": "Reader-facing finite capacity theorem and proof"
+        },
+        {
+          "path": "meta-topics/repository-organization/inventory/pilots/2026-10-11/conventions.md",
+          "supports": "Exact changed hypotheses, enumeration bridge, source checks and review limits"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "supported by",
+          "path": "topics/literature/sources/hk2017/EHZ-polytopes.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-global-minimizer",
+      "kind": "result",
+      "title": "Global HK maximizers realize simple minimum-action orbits",
+      "summary": "Deleting zero weights preserves objective/closure; a global maximizer gives a global dual minimizer and nonsmooth dual correspondence translates it onto the polytope boundary with the active pure-facet word.",
+      "state": "Local proof explicitly depends on HK2017 Lemma 2.1/Clarke dual correspondence; arbitrary positive stationary witnesses do not imply primal placement.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/hk2017-qp-core.tex",
+          "supports": "fact:hk2017 and full realization proof"
+        },
+        {
+          "path": "thesis/chapters/03-generalized-reeb-orbits-polytopes.tex",
+          "supports": "Reader-facing simple-minimizer development"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Independent revalidation of the imported nonsmooth correspondence was outside this survey."
+      ]
+    },
+    {
+      "id": "foundations-kkt-stationarity",
+      "kind": "result",
+      "title": "Fixed-word KKT linear system",
+      "summary": "Symmetric block system identifies equality-constrained stationarity, closure and normalization; positivity makes a feasible stationary witness, not automatically a fixed-word maximum or physical orbit.",
+      "state": "Complete local Lagrange-system proof; source records Jörn approval b7a8bc0.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/capacity-and-qp/proofs/ehz-kkt-system.tex",
+          "supports": "lem:H-quadratic and lem:kkt"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-kkt-unique-value",
+      "kind": "result",
+      "title": "Singular KKT solutions share one objective value",
+      "summary": "If the fixed-word block system has several solutions, beta^T H beta=-xi is unique; Q=-xi/2. Beta and other multipliers can remain nonunique.",
+      "state": "Complete local nullspace proof; source records Jörn statement/proof approvals.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/capacity-and-qp/proofs/ehz-kkt-system.tex",
+          "supports": "lem:well-defined and proof"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Corrected secondary FINDINGS factor-two wording; uniqueness of scalar value must not be promoted to smooth/unique weights.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-kkt-global-aggregation",
+      "kind": "algorithm",
+      "title": "Complete exact stationary-witness aggregation",
+      "summary": "Every positive exact KKT witness is feasible and bounded by Qmax; after support deletion a global maximum is an interior KKT point. Complete candidate aggregation therefore recovers scalar capacity without checking every candidate for second-order maximality.",
+      "state": "Complete local argument and exhaustive algorithm; algorithm source has Jörn approval comment. Enumeration completeness and exact input provenance remain required.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Enumeration is finite and factorial in word size; no retained measured cost audited for this mathematical exhaustive algorithm.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/capacity-and-qp/proofs/ehz-kkt-system.tex",
+          "supports": "rem:kkt-witness-versus-capacity"
+        },
+        {
+          "path": "formal/capacity-algorithms.tex",
+          "supports": "alg:ehz"
+        },
+        {
+          "path": "thesis/chapters/04-quadratic-program.tex",
+          "supports": "Reader-facing QP algorithm/correctness"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "A consumer requesting all physical minimizers or nearby branches needs a stronger output contract."
+      ]
+    },
+    {
+      "id": "foundations-fixed-word-qp",
+      "kind": "result-family",
+      "title": "Exact fixed-word quadratic optimization structure",
+      "summary": "Compactness, affine reduction, singular critical-point trichotomy and reduced-Hessian boundary/interior cases lead to a rational per-word solver route; support deletion handles boundary optima in complete scalar aggregation.",
+      "state": "Detailed proofs and algorithm exist; packet retains explicit incomplete boundary/threshold obligations and f64 discontinuity warnings.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/hk2017-qp-core.tex",
+          "supports": "Basic-properties, q-on-affine, critical-points, boundary-vs-interior and exact-solver development"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Keep exact structural facts separately from unfinished numerical decision promises.",
+      "uncertainties": [
+        "No independent proof audit or current exact solver correspondence check performed."
+      ]
+    },
+    {
+      "id": "foundations-adjacency-pruning",
+      "kind": "result",
+      "title": "Adjacency-only pruning preserves scalar HK capacity",
+      "summary": "Consecutive facets of a positive-duration physical minimizing word intersect, so exhaustive scalar capacity search may discard words with disjoint consecutive facets.",
+      "state": "Source records Jörn text approval 0839595; global minimizing-orbit realization supplies the necessary condition.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/capacity-algorithms.tex",
+          "supports": "cor:adjacency-pruning"
+        },
+        {
+          "path": "topics/capacity-and-qp/proofs/search-pruning-correctness.tex",
+          "supports": "A1 distinction and provenance"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate",
+      "rationale": "Keep approved adjacency-only pruning distinct from stronger local-transition proof candidates.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-transition-blocking",
+      "kind": "result-family",
+      "title": "Directed transition blocking-set test and ridge reduction",
+      "summary": "A local physical Fi to Fj transition requires omega(ai,aj)>=0 and a common point with strict slack for every approach/departure blocker. Ridge interiors make that extra test automatic for simple polytopes; a nonsimple six-facet example distinguishes A2 and A3.",
+      "state": "Two parallel full proofs in KKT/pruning notes, both unverified; proof in pruning note omits an explicit empty-blocker convention supplied in the KKT version.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/capacity-and-qp/proofs/search-pruning-correctness.tex",
+          "supports": "lem:transition-feasibility, cor:ridge-sufficiency and explicit example"
+        },
+        {
+          "path": "topics/capacity-and-qp/proofs/ehz-kkt-system.tex",
+          "supports": "lem:numerical-transition-feasibility"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate, clarify",
+      "rationale": "Remove duplicate theorem maintenance while preserving approved A1 versus unverified A3 status and strict-slack content.",
+      "uncertainties": [
+        "Local transition sufficiency does not imply one global placement for an entire word.",
+        "Example counts 33 versus 39 are retained source claims; computation was not rerun."
+      ]
+    },
+    {
+      "id": "foundations-orbit-placement",
+      "kind": "algorithm",
+      "title": "Base-point recovery and beta-to-time conversion",
+      "summary": "On-facet linear equations and all segment endpoint halfspaces describe a convex set of valid base points; normalized beta becomes physical time tau=T beta.",
+      "state": "Local proof and conversion remark have Jörn math approval f7d26ea.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/reeb-orbit-recovery.tex",
+          "supports": "lem:base-point-recovery and rem:beta-to-tau"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Existence of placement comes from valid global output/physical-orbit hypotheses, not arbitrary fixed-word stationarity."
+      ]
+    },
+    {
+      "id": "foundations-orbit-finite-check",
+      "kind": "result",
+      "title": "Finite breakpoint verification of facet Reeb loops",
+      "summary": "Closure, facet velocity, on-facet equalities and all breakpoint halfspaces guarantee a piecewise-affine facet-flow loop remains on the boundary.",
+      "state": "Short complete local containment proof; source records Jörn approval 9987258. The stated iff simple-orbit claim needs a simplicity assumption on repeated labels beyond the displayed four checks.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/finite-reeb-orbit-verification.tex",
+          "supports": "lem:finite-orbit-verification and proof"
+        },
+        {
+          "path": "formal/reeb-orbit-recovery.tex",
+          "supports": "Simple-orbit definition requiring each facet velocity on one interval"
+        }
+      ],
+      "relationships": [],
+      "action": "investigate",
+      "rationale": "Preserve finite geometric verification while checking whether the statement must explicitly forbid repeated separated facet labels.",
+      "uncertainties": [
+        "The four displayed checks alone do not visibly enforce the source definition of simplicity; this was not repaired in the bounded cleanup."
+      ]
+    },
+    {
+      "id": "foundations-product-block-enumeration",
+      "kind": "result",
+      "title": "At most three billiard blocks in planar Lagrangian-product enumeration",
+      "summary": "The candidate family ([Q|QQ][P|PP])^k, k=2 or 3, with adjacent pairs and disjoint labels contains a capacity-maximizing word. This is an existence/completeness result, not all-orbit classification.",
+      "state": "Selected thesis contains current proof via short strong billiards, splitting/merging and minimality; formal source is older unverified supporting development.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/billiard-capacity-algorithm.tex",
+          "supports": "Facet/block structure and current-proof ownership caveat"
+        },
+        {
+          "path": "thesis/chapters/04-quadratic-program.tex",
+          "supports": "thm:lagrangian-product-finite-enumeration and proof"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate",
+      "rationale": "Use current complete proof as authority while retaining historical derivation only when it adds evidence.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-product-six-facet",
+      "kind": "result",
+      "title": "Six-facet sparse maximizer and closure-vertex enumeration",
+      "summary": "Bilinearity in factor closure distributions lets a global maximizer move to vertices with at most three q and three p labels; factor masses are both 1/2. Closure-vertex pair enumeration with at most 120 cyclic orders per pair recovers capacity.",
+      "state": "Formal header and project facts record Jörn acceptance 2026-07-28; full formal proof and selected thesis theorem/proof exist. No genericity hypothesis.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Selected thesis includes statement, explanatory proof-mechanism figure and full proof; source records Jörn proof acceptance. This survey did not inspect the rendered PDF.",
+      "runtime": "At most 5!=120 cyclic orders per factor-vertex pair, stated in proof; no measured runtime audited here.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/products/product-qp-six-facet-reduction.tex",
+          "supports": "Theorem, cyclic-cut/support lemmas, proof, corollary and acceptance record"
+        },
+        {
+          "path": "thesis/chapters/04-quadratic-program.tex",
+          "supports": "thm:quadratic-program-product-six-facet and closure-vertex algorithm"
+        },
+        {
+          "path": "docs/project-facts.md",
+          "supports": "Attributed acceptance statement 85"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "implements",
+          "path": "crates/symplectic/src/algorithms/capacity_4d/product.rs"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Existence of a sparse winner does not classify every maximizing orbit or certify f64 predicates."
+      ]
+    },
+    {
+      "id": "foundations-product-two-bounce",
+      "kind": "result-family",
+      "title": "Two-bounce difference-body inradius and complete k=2 QP",
+      "summary": "Strong two-bounce minimum and the complete mathematical four-block QP both equal A2(P,Q), the difference-body inradius; every minimizing displacement has a strong-billiard realization. Stored transition-pruned f64-seeded stream equality needs an equality candidate retained and exact-resolved.",
+      "state": "Full developer-facing proof packet at agent-review status, compiled per source; explicitly not accepted by Jörn.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/products/product-two-bounce-class.tex",
+          "supports": "Strong formula, complete k=2 theorem and stream boundary"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Group mathematically linked geometric/QP values while retaining their distinct implementation obligation.",
+      "uncertainties": [
+        "Universal completeness of the production stored stream for this class is explicitly unproved."
+      ]
+    },
+    {
+      "id": "foundations-product-triangle",
+      "kind": "result-family",
+      "title": "Triangle-product two/three-bounce classification and placement",
+      "summary": "For triangle factors, capacity is below A2 exactly when a strict directed Hamiltonian word exists; such words have explicit proper strong three-bounce placement. Otherwise the two-bounce class realizes capacity. Includes finite sign-cell comparison and equality criterion.",
+      "state": "Full agent-derived packet awaiting Jörn review; relies on upstream complete product enumeration and global maximizer realization. Finite exact computations are supporting falsifier evidence.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/products/product-triangle-bounce-classification.tex",
+          "supports": "Sign-cell algebra, wordwise comparison, placement proposition and final classification"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Keep triangle-specific placement separate from unjustified general local-sign-to-global-placement inference.",
+      "uncertainties": [
+        "Independent proof review and selected-thesis inclusion were not established in this survey."
+      ]
+    },
+    {
+      "id": "foundations-regular-rotation-domain",
+      "kind": "result",
+      "title": "Relative rotation fundamental domain for regular polygon products",
+      "summary": "Simultaneous symplectic rotations and reflection reduce n-by-m regular centered polygon product search to relative angles [0,pi/lcm(n,m)].",
+      "state": "Complete short local symmetry proof; angle convention is explicit.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/lagrangian-product-rotation-symmetry.tex",
+          "supports": "lem:rotation-fundamental-domain"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Introductory empirical/only-known-counterexample assertions are historical context, not current global literature coverage."
+      ]
+    },
+    {
+      "id": "foundations-odd-factor-mirror",
+      "kind": "result",
+      "title": "Equal odd regular factors have an extra mirror symmetry",
+      "summary": "Symplectic factor swap followed by simultaneous rotation gives sys(theta)=sys(pi/n-theta), reducing equal pentagon search to [0,pi/10].",
+      "state": "Complete short local proof using -P=R(pi/n)P for odd n.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/lagrangian-product-rotation-symmetry.tex",
+          "supports": "lem:odd-regular-factor-swap-mirror"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "included in",
+          "path": "thesis/chapters/09-rotated-regular-polygons.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-product-position-increase",
+      "kind": "result",
+      "title": "Symplectic product position never maximizes rigid-rotation capacity",
+      "summary": "For convex planar factors of areas a<=b and fixed Lagrangian endpoint capacity ell, c_theta=a/cos(theta) for 0<=tan(theta)<=ell/(2a). This path is a rigid body rotation of angle theta/2; volume is fixed, so small positive angles improve sys.",
+      "state": "Full selected-thesis proof uses HK mass split plus polygon approximation and explicit conjugation; supporting record notes independent read-only check, without asserting novelty/human acceptance.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Reader-facing section explains factor planes, theorem, mass bound, limiting argument and physical rotation; rendered PDF acceptance not inspected.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/products/product-rotation/README.md",
+          "supports": "Convention and review record"
+        },
+        {
+          "path": "thesis/chapters/11-product-position.tex",
+          "supports": "thm:product-initial-rotation and full proof"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Stated initial interval is sufficient and need not be maximal.",
+        "Potential identity overlap with empirical-results inventory is for root reconciliation."
+      ]
+    },
+    {
+      "id": "foundations-product-position-triangle",
+      "kind": "result",
+      "title": "A Lagrangian endpoint can be worse than the symplectic endpoint",
+      "summary": "For the displayed triangle and determinant-one diagonal image, both areas are 9/2; the Lagrangian endpoint is exactly 18/5. Supporting prefix-slot bound and 120 cyclic orders establish equality; reader-facing example needs only an attaining upper bound.",
+      "state": "Exact supporting proof and rational verification script exist; no rerun in this inventory.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Short explicit triangle example is in selected thesis; exact equality proof is supporting Markdown.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/products/product-rotation/README.md",
+          "supports": "Six prefix bounds and exact endpoint proof"
+        },
+        {
+          "path": "topics/products/product-rotation/verify.py",
+          "supports": "Rational checks for normals, all cyclic orders and conjugation"
+        },
+        {
+          "path": "thesis/chapters/11-product-position.tex",
+          "supports": "ex:product-endpoints feasible witness"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Script execution cost and current execution success not measured."
+      ]
+    },
+    {
+      "id": "foundations-fg-tube-semantics",
+      "kind": "result-family",
+      "title": "Idealized flow-graph tube semantics and safe pruning",
+      "summary": "Primitive affine tubes, gluing, emptiness inheritance, fixed-point reconstruction, action normalization and real action cutoffs form the idealized exhaustive algorithm. Short words have no positive-time orbit; symplectic return-map identities support determinant analysis.",
+      "state": "Full local proof chain, independently agent-reviewed and Jörn-confirmed per 2026-07-11 header; all theorem environments remain unverified. Real-number model, separate from optimized Rust.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/flow-graph-real-algorithm.tex",
+          "supports": "Primitive/gluing/fixed-point/cutoff lemmas and exhaustive algorithm"
+        },
+        {
+          "path": "thesis/chapters/05-flow-graph.tex",
+          "supports": "Reader-facing tube semantics and exact algorithm"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Keep the idealized algorithm semantics distinct from floating-point cached/pruned implementation claims.",
+      "uncertainties": [
+        "No full line-by-line proof re-review or Rust correspondence audit performed."
+      ]
+    },
+    {
+      "id": "foundations-fg-capacity-correctness",
+      "kind": "result",
+      "title": "Idealized regular exhaustive flow graph computes EHZ",
+      "summary": "For a full-dimensional origin-interior polytope with a flow-graph nondegenerate presentation and finite-orbit-regular exhaustive run, search returns capacity and represented strict simple pure-facet trajectories below the chosen action window.",
+      "state": "Complete conditional proof using simple minimizing support; source records independent review/Jörn confirmation. Selected thesis contains theorem/proof; optimized implementation remains separate.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/flow-graph-real-algorithm.tex",
+          "supports": "thm:fg-real-capacity-correctness and proof"
+        },
+        {
+          "path": "thesis/chapters/05-flow-graph.tex",
+          "supports": "thm:exact-flow-graph-correctness and proof"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Singular long-word outcomes outside regularity class are not covered by this theorem."
+      ]
+    },
+    {
+      "id": "foundations-fg-genericity",
+      "kind": "result",
+      "title": "Flow-graph regularity is open dense in presentation chambers",
+      "summary": "Finite determinant nonvanishing conditions give a Euclidean-open dense correctness locus in every nonempty open ordered normalized irredundant H-presentation chamber, relative to the primitive-denominator contract.",
+      "state": "Long algebraic proof chain includes symplectic contraction and nonzero determinant construction; source records Jörn confirmation, with unverified wrappers retained.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/flow-graph-real-algorithm.tex",
+          "supports": "Long-word determinant lemmas, prop:fg-presentation-chamber-genericity and generic corollary"
+        },
+        {
+          "path": "thesis/chapters/05-flow-graph.tex",
+          "supports": "prop:flow-graph-presentation-chamber-genericity"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Genericity gives neither every-input correctness nor numerical conditioning guarantees."
+      ]
+    },
+    {
+      "id": "foundations-fg-abstract-contract",
+      "kind": "result",
+      "title": "Abstract certified resolver contract implies capacity correctness",
+      "summary": "Exact accepted word realizations and lower-bound certificates for every discarded unresolved family imply scalar capacity correctness; direct, cached and cutoff schemes are proved only after assuming their resolver/search axioms.",
+      "state": "Unverified developer-facing proof scaffold with an explicitly open concrete supported-input contract.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/flow-graph-capacity.tex",
+          "supports": "Search axioms, abstract capacity theorem and conditional scheme propositions"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate, clarify",
+      "rationale": "Retain as the interface for implementation correspondence, avoid duplicating it as a second established implementation theorem.",
+      "uncertainties": [
+        "No concrete production resolver is proved to satisfy all axioms."
+      ]
+    },
+    {
+      "id": "foundations-fg-risk-comparison",
+      "kind": "collection",
+      "title": "Flow-graph proof risk and CH2021 non-transfer notes",
+      "summary": "Historical risk ledger routes primitive/gluing/fixed-point claims to the current idealized proof; live obligations concern Rust correspondence, singular words, pruning and action cutoffs. CH2021 supplies comparisons/literature context, not automatic correctness for this algorithm.",
+      "state": "Explicitly historical ledger plus live implementation boundary; source-routed comparison scaffold, not a new theorem.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/flow-graph-proof-risk.tex",
+          "supports": "Statuses, falsifier routing and live Rust boundary"
+        },
+        {
+          "path": "formal/flow-graph-ch2021-comparison.tex",
+          "supports": "Non-transfer rule and source comparison"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate",
+      "rationale": "Compress repeated proof-risk status narration while preserving concrete unresolved interfaces and rejected transfer arguments.",
+      "uncertainties": [
+        "Ledger includes a length-three zero-time lemma subsumed by current short-word theorem; root can reconcile duplicate identity."
+      ]
+    },
+    {
+      "id": "foundations-dual-vertex-derivatives",
+      "kind": "result-family",
+      "title": "Regular branch capacity, volume and systolic derivatives",
+      "summary": "Derives constrained-envelope capacity gradient for one fixed orbit, volume derivative and quotient-rule sys derivative; gives a finite smooth minimum-envelope model for switching regimes.",
+      "state": "Agent-written derivations, every local result unverified with Jörn TODOs; applicability requires nondegenerate branch/volume chart and complete competing branch control.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/capacity-derivatives.tex",
+          "supports": "Capacity, volume, piecewise-smooth and sys derivative lemmas"
+        },
+        {
+          "path": "formal/combinatorial-boundary-regularity.tex",
+          "supports": "Duplicate quotient-rule sys gradient"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate, investigate",
+      "rationale": "Preserve derivations but audit dimensions/sign conventions and branch scope before unifying with current gradient code.",
+      "uncertainties": [
+        "Displayed N column definition and N^T beta expression need dimension/convention reconciliation.",
+        "No theorem-strength arbitrary-polytope derivative follows."
+      ]
+    },
+    {
+      "id": "foundations-regular-smoothness",
+      "kind": "result-family",
+      "title": "Nonsingular branch smoothness and tie classification",
+      "summary": "Positive beta and invertible KKT give open feasibility and smooth branch action; zero-weight contraction preserves stationarity/value; complete regular envelopes yield unique-winner smoothness or distinct-gradient tie nonsmoothness.",
+      "state": "Full local regular lemmas but overall classification proof has explicit gaps for singular competitors, orbit appearance and tie-locus transversality; unverified.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/capacity-smoothness-classification.tex",
+          "supports": "Per-orbit lemmas, contraction, sensitivity and classification proof/TODOs"
+        }
+      ],
+      "relationships": [],
+      "action": "investigate",
+      "rationale": "Separate valid regular matrix-inverse calculations from incomplete global envelope and measure-zero claims.",
+      "uncertainties": [
+        "Setup writes H using an antisymmetric-looking index formula rather than explicit symmetric earlier/later cases; requires convention audit.",
+        "Measure-zero switching claim assumes transversality not proved locally."
+      ]
+    },
+    {
+      "id": "foundations-appearance-derivative",
+      "kind": "result",
+      "title": "Directional derivative proposal for zero-weight branch appearance",
+      "summary": "For nonsingular tied branch data with strict signed beta derivatives, proposes min of directionally feasible action slopes.",
+      "state": "Unverified proof candidate: Step 5 explicitly lacks coverage/gap control for omitted or singular/appearing competitors; degenerate zero beta derivative directions excluded.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/capacity-boundary-subdifferential.tex",
+          "supports": "thm:subdiff-with-appearance, proof Step 5 TODO and open questions"
+        }
+      ],
+      "relationships": [],
+      "action": "investigate",
+      "rationale": "Do not label the displayed theorem a completed conditional theorem when needed lower-bound hypotheses are not fully in its statement.",
+      "uncertainties": [
+        "The note itself identifies action-gap and singular competitor obligations."
+      ]
+    },
+    {
+      "id": "foundations-support-envelope",
+      "kind": "result",
+      "title": "Exact fixed-normal support-number envelope and derivative",
+      "summary": "With fixed normals in an open stable irredundant support chamber, capacity is the compact lower envelope of (b dot h)^2/(2Q_sigma(b)); derivative is 2c min(alpha dot v). Zero-coordinate active limits and singular KKT are handled without matrix inversion.",
+      "state": "Complete agent-proved local proof awaiting Jörn review, all inside unverified frame; relies on HK formula and chamber volume variation.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/active-orbit-facet-coverage.tex",
+          "supports": "lem:facet-coverage-support-envelope and compactness/derivative proof"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Excludes nonsimple support-wall points and arbitrary changes of normals."
+      ]
+    },
+    {
+      "id": "foundations-active-weight-balance",
+      "kind": "result",
+      "title": "Necessary convex balance at a local sys maximum",
+      "summary": "In that support chamber, facet areas divided by 4V lie in the convex hull of active normalized HK weights; at most F+1 active data suffice. Quotient translation/scaling directions are annihilated.",
+      "state": "Full separation/Caratheodory proof at agent status, awaiting Jörn review.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/active-orbit-facet-coverage.tex",
+          "supports": "thm:facet-coverage-active-weight-balance and proof"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "A numerical orbit list requires certified completeness/gap arguments before applying this necessary condition."
+      ]
+    },
+    {
+      "id": "foundations-facetwise-coverage",
+      "kind": "result",
+      "title": "Every facet is used by some minimizing orbit at a local maximum",
+      "summary": "Convex balance implies max active alpha_i>=S_i/(4V)>0 for each facet; inward movement gives quantified capacity decrease. The minimizing orbit may depend on the facet; no single all-facet orbit is required.",
+      "state": "Agent-proved corollary with explicit Jörn-confirmed facetwise research quantifier; mathematical proof not yet accepted.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/active-orbit-facet-coverage.tex",
+          "supports": "cor:facet-coverage-active-orbit, proof and quantifier clarification"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Positive labelled dwell is not relative-interior visitation.",
+        "Coverage alone is not sufficient for local maximality."
+      ]
+    },
+    {
+      "id": "foundations-arbitrary-chart-balance",
+      "kind": "result",
+      "title": "Conditional convex-hull balance and strict interior sufficiency",
+      "summary": "A complete uniform compact first-order lower-envelope model forces zero into the row convex hull at a local maximum. Strict interior/spanning of touching upper rows on a symmetry slice gives strict local maximality; boundary balance alone does not.",
+      "state": "Short abstract proof and support-chart sufficiency argument at agent status; full arbitrary-chart branch-model premise remains unproved.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/active-orbit-facet-coverage.tex",
+          "supports": "lem:facet-coverage-abstract-balance and sufficiency boundary"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "HKO feasible touching upper sections are sufficient-certificate rows, not a complete active-orbit catalogue for necessary balance."
+      ]
+    },
+    {
+      "id": "foundations-arbitrary-firstorder",
+      "kind": "collection",
+      "title": "Semialgebraic right-active-germ framework for arbitrary polytopes",
+      "summary": "Defines quantified optimizer/value graphs and a finite direction-cell evaluator route retaining zero-beta appearances, singular optimizer continua, repeated rows and exact branch gap/dominance requirements. The note classifies the general route ONLY-HEAVY.",
+      "state": "Research specification and theorem candidates; no checked citation chain/implemented complete evaluator established. Contains a thesis-readable explanation of why positive base KKT rows are insufficient.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Section 6 gives a connected reader-facing explanation; heavy formal route and historical HKO-specific necessity discussion need separation before thesis use.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/sys-first-order-local-behavior.md",
+          "supports": "Full framework, candidate aggregation, hard-case table and verdict"
+        }
+      ],
+      "relationships": [],
+      "action": "investigate",
+      "rationale": "Preserve the reusable obstacle analysis and exact quantifiers; avoid advertising existence machinery as a finished computational capability.",
+      "uncertainties": [
+        "Checked semialgebraic geometry citation chain, differentiability orders and practical evaluator cost remain unresolved.",
+        "Historical HKO-specific completeness discussion should not be confused with the selected feasible-section sufficient proof."
+      ]
+    },
+    {
+      "id": "foundations-combinatorial-continuity",
+      "kind": "result",
+      "title": "Systolic ratio remains continuous across combinatorial walls",
+      "summary": "Hausdorff continuity of capacity and volume proves sys continuity along bounded full-dimensional local polytope paths; retained finite-orbit mechanism alone does not establish upper semicontinuity.",
+      "state": "Proof sketch explicitly cites standard capacity continuity; direct finite mechanism retains acknowledged gaps.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/combinatorial-boundary-regularity.tex",
+          "supports": "prop:sys-continuous, general-theory proof and direct-mechanism caveats"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "The retained direct mechanism has convention factor/transition-feasibility inaccuracies and should not be promoted as an independent proof."
+      ]
+    },
+    {
+      "id": "foundations-combinatorial-step",
+      "kind": "result-family",
+      "title": "Linearized incidence and exact omega boundary diagnostics",
+      "summary": "Differentiates simple-vertex systems and slack for a first-order incidence-time estimate; omega under linear row motion is an exact quadratic polynomial.",
+      "state": "Proofs exist, but incidence lemma names an actual flip time despite an embedded gap saying it is only a first-order approximation. A quadratic root need not change sign if it is double.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/combinatorial-boundary-regularity.tex",
+          "supports": "lem:step-bound-incidence and lem:step-bound-omega"
+        }
+      ],
+      "relationships": [],
+      "action": "investigate",
+      "rationale": "Keep useful diagnostics while correcting exact-bound claims before use in certified search.",
+      "uncertainties": [
+        "Transition matrix here combines adjacency and omega yet calls resulting cycles feasible without A3/global placement.",
+        "No code/effect check of step-bound producer was performed."
+      ]
+    },
+    {
+      "id": "foundations-canonization",
+      "kind": "result",
+      "title": "Generic canonical coordinates modulo Sp(4) and row permutation",
+      "summary": "Distinct omega-row multiset signatures label rows; first successful symplectic Gram-Schmidt quadruple gives an invariant representative on a Euclidean-open dense spanning domain.",
+      "state": "Full agent-written unverified proof; not a universal section and no near-tie/f64 certification.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Retained container hyperfine wall-clock record: T at F=6/10/12 costs 0.0406/0.196/0.381 ms per call; compared sys 0.152–0.173/1.64–1.67/3.36–3.39 s. Source notes perf blocked by perf_event_paranoid=4; current host performance not inferred.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/generic-coordinate-canonization.tex",
+          "supports": "Generic-domain lemmas, equivariance and canonization proposition"
+        },
+        {
+          "path": "experiments/canonization-t-search/README.md",
+          "supports": "f64 prototype and empirical invariance/cost record"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Retain theorem/prototype but make generic and numerical exclusions prominent.",
+      "uncertainties": [
+        "Signature collisions on symmetric inputs need canonical labeling/backtracking; adversarial near-tie stability unproved."
+      ]
+    },
+    {
+      "id": "foundations-rational-scaling",
+      "kind": "result-family",
+      "title": "Integer scaling preserves exact rational predicate signs",
+      "summary": "Positive common denominators preserve determinant/dot/triple-normal signs, origin-interior and polar predicates; Cramer numerators and integer feasibility gaps replace rational decision intermediates.",
+      "state": "Consolidated mechanical exact proofs, with positive common-denominator versus implementation LCM distinction retained. Agent review11October; unapproved by Jörn.",
+      "agent_readability": "Consolidated source and changed implications inspected by a separate Sol mathematical reviewer on11October; no substantive blocker reported. Human review remains open.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "topics/polytope-geometry/exact-polar-geometry.tex",
+          "supports": "Moved original labels and explicit local status;11October consolidation"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "implements",
+          "path": "crates/euclidean-polytopes/src/predicates.rs"
+        },
+        {
+          "relation": "implements",
+          "path": "crates/euclidean-polytopes/src/polar.rs"
+        }
+      ],
+      "action": "keep; clarify",
+      "rationale": "One owner for Cramer/scaling signs; exact rational preservation remains distinct from floating filter correctness.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-f64-orientation",
+      "kind": "result-family",
+      "title": "Fail-closed determinant-sign and origin-interior filters",
+      "summary": "Leibniz error bound gamma26 and conservative upward envelope give ternary determinant signs and corresponding triple-sign origin-interior decisions for finite binary64 entries viewed as exact real inputs.",
+      "state": "Full agent-written proof note explicitly unapproved; nonfinite/subnormal/underflow cases yield indeterminate. Does not certify rounded proxies for distinct rational data.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Luna inspected matching predicates.rs factor-16 and fail-closed implementation structure; parent did not re-review code or run tests. This is correspondence evidence, not independent numerical certification.",
+      "sources": [
+        {
+          "path": "formal/f64-orientation-sign-filters.tex",
+          "supports": "Error-envelope, ternary filter and origin test proofs"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "implements",
+          "path": "crates/euclidean-polytopes/src/predicates.rs"
+        }
+      ],
+      "action": "clarify",
+      "rationale": "Preserve input semantics and fail-closed behavior as part of the result.",
+      "uncertainties": []
+    },
+    {
+      "id": "foundations-old-f64-prefilter",
+      "kind": "collection",
+      "title": "Removed SVD/solve exact-polar rejection-filter design",
+      "summary": "Retains an inactive generic inverse/SVD rejection-bound design with explicit true-versus-computed condition-number and SVD-constant gaps.",
+      "state": "Former Rust filter removed because proof unverified; not current exact-polar certification.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/f64-prefilter-bound.tex",
+          "supports": "Inactive status, central unverified proposition and open proof issues"
+        }
+      ],
+      "relationships": [],
+      "action": "relocate, clarify",
+      "rationale": "Keep rejected design/proof-gap evidence with historical owner and avoid confusion with the different live determinant/Cramer prefilter.",
+      "uncertainties": [
+        "Live determinant/Cramer rejection-only polar filter is distinct and is inventoried by code owner."
+      ]
+    },
+    {
+      "id": "foundations-near-singular-exclusion",
+      "kind": "result-family",
+      "title": "Conditional bounded-vertex exclusion for near-singular tuples",
+      "summary": "For A_I x=1, inconsistency residual or least-norm solution above B excludes vertices under an explicit relevant-vertex norm bound; residual>epsilon B also excludes bounded solutions under a norm-bounded matrix perturbation.",
+      "state": "Entire note agent-written/unverified; ordinary f64 diagnostics are not outward certificates and small determinant alone does not exclude vertices.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/f64-near-singular-vertices.tex",
+          "supports": "Exact/perturbative exclusion lemmas and diagnostic scope"
+        },
+        {
+          "path": "topics/capacity-and-qp/development/docs/f64-route.md",
+          "supports": "Diagnostic command route"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "A global B-bound and certified lower residual/norm bounds must be supplied; no current producer rerun."
+      ]
+    },
+    {
+      "id": "foundations-facet-removal-distortion",
+      "kind": "result-family",
+      "title": "Conditional near-redundant facet removal and distortion bounds",
+      "summary": "Valid outward delta yields P subset P_removed subset (1+delta)P. Single/Multi band comparison (4r-3 for a 4D facet) and multi-band guard give containment, then capacity/volume/sys distortion by monotonicity and scaling.",
+      "state": "Agent-written unverified proofs awaiting review; ordinary runtime delta is explicitly diagnostic, not outward certified.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/near-redundant-facet-removal-bounds.tex",
+          "supports": "Containment, band-comparison and distortion implications"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Retain mathematical containment chain and subtle Single/Multi guard; keep runtime delta certification as its own missing arrow.",
+      "uncertainties": [
+        "Outward runtime delta and EHZ monotonicity/import proof status remain open in note."
+      ]
+    },
+    {
+      "id": "foundations-kkt-direct-certificate",
+      "kind": "result-family",
+      "title": "Verified inverse-defect direct KKT solution certificate",
+      "summary": "Outward residual and inverse defect below one establish invertibility and infinity-norm solution enclosure; batched/normwise variants include binary64 assembly error, then beta signs and Q/action intervals follow from 2Q+xi=0.",
+      "state": "Current locally proved direct certificate family; explicit supported binary64 input/arithmetic/kernel environment, with exact fallback for indeterminate or unsupported cases. Note has no human approval assertion.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "The first roughly 400 lines have explicit theorem/proof/implementation-contract structure; whole packet is notation-dense and itself says reorganization is required before thesis-facing use.",
+      "runtime": "Related retained v2 audit takes about 30 s; broad f64 variants together under 0.2 s, q4:p5 direct candidate solving about 54 ms (interpretation.md). These are audit costs, not the direct-certificate per-call timing.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/hk2017-qp-precision.tex",
+          "supports": "Verified inverse, batched/normwise lemmas, corollary and binary64 implementation contract"
+        },
+        {
+          "path": "experiments/qp-error-bounds/interpretation.md",
+          "supports": "Retained numerical audit boundary and exact replay costs"
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "implements",
+          "path": "crates/symplectic/src/algorithms/capacity_4d/general.rs"
+        }
+      ],
+      "action": "consolidate, clarify",
+      "rationale": "Separate current proved direct certificates from obsolete perturbation proxies in the 1108-line mixed-status packet.",
+      "uncertainties": [
+        "Dependency/target/compiler/kernel changes require rechecking implementation contract.",
+        "Exact beta/action enclosures alone do not supply complete enumeration or arbitrary real-data input certification."
+      ]
+    },
+    {
+      "id": "foundations-curvature-obstruction",
+      "kind": "result-family",
+      "title": "Certified positive curvature and cyclic obstruction inheritance",
+      "summary": "Right-inverse projection and outward residual/curvature bounds prove a true positive-curvature vector in ker C; zero extension along cyclic subword inclusion propagates obstruction and rules out strictly positive local maxima on larger supports.",
+      "state": "Short local proofs in current precision packet; certificate depends on exact right inverse and certified outward bounds.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/hk2017-qp-precision.tex",
+          "supports": "lem:kkt-certified-curvature-direction and lem:kkt-cyclic-obstruction-inheritance"
+        }
+      ],
+      "relationships": [],
+      "action": "clarify",
+      "rationale": "Retain the result and its hypotheses beside its evidence owner.",
+      "uncertainties": [
+        "Current code pruning correspondence is not independently audited here."
+      ]
+    },
+    {
+      "id": "foundations-legacy-qp-errors",
+      "kind": "collection",
+      "title": "Older perturbation proxies and residual correction development",
+      "summary": "Contains assembly/SVD/reduced-Hessian perturbation links, first/second-order Q identities, near-null LP rationale and pseudoinverse Taylor claims. Residual-corrected error bound is conditional on invertible symmetric KKT and certified spectral gap.",
+      "state": "Mixed: exact identities, unverified lemmas, invalid computable-beta denominator substitution, unproved constants and pseudoinverse cancellation gap. Legacy runtime Q quantity is explicitly not an exact binary64-input error bound.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/hk2017-qp-precision.tex",
+          "supports": "Status remark, perturbation-chain/Taylor gaps and legacy quantity boundary"
+        },
+        {
+          "path": "topics/capacity-and-qp/proofs/ehz-kkt-system.tex",
+          "supports": "Unverified residual-corrected Q lemma and partly approved Type-C near-null discussion"
+        }
+      ],
+      "relationships": [],
+      "action": "consolidate, relocate",
+      "rationale": "Preserve mathematical diagnostics and rejected proposals, remove their ambiguity as current certificate owners.",
+      "uncertainties": [
+        "Some partial identities may remain useful but no whole-packet certificate should be inferred."
+      ]
+    },
+    {
+      "id": "foundations-admissibility-history",
+      "kind": "collection",
+      "title": "Historical near-zero admissibility-gap audit",
+      "summary": "Narrative reports 70 random and 92 product polytopes, 29 tiny UNKNOWN gaps only among products and no material scalar capacity change; individual benign-rounding explanation remains unconfirmed.",
+      "state": "Explicitly historical stale/revalidate note; old artifacts removed in numerics replacement. Not a current exactness certificate.",
+      "agent_readability": "Statement and local proof/status read; textual source is searchable and uses explicit labels. This survey is not an independent mathematical proof review.",
+      "human_readability": "Mathematical LaTeX source has statement/proof structure; rendered PDF readability and human acceptance were not assessed by this survey.",
+      "runtime": "Not applicable to the mathematical statement; execution or reproduction cost of associated implementations is unknown unless separately recorded.",
+      "code_quality": "Not applicable to proof prose; implementation correspondence and current tests were not assessed in this row.",
+      "sources": [
+        {
+          "path": "formal/admissibility-precision-audit.tex",
+          "supports": "Counts, gap range, stale evidence marker and individual confirmation gap"
+        }
+      ],
+      "relationships": [],
+      "action": "relocate, clarify",
+      "rationale": "Retain provenance but attenuate empirically-exact conclusion and route current numerics to retained producers.",
+      "uncertainties": [
+        "Original source artifacts only recoverable through history; not recovered in this bounded survey."
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "path": "formal/README.md",
+      "change": "Added six-facet reduction to capacity-algorithm routing and product-position proof record to Lagrangian-product routing.",
+      "verification": "Links checked against filesystem; no mathematical source rewritten."
+    },
+    {
+      "path": "formal/FINDINGS.md",
+      "change": "Corrected singular KKT objective normalization (beta^T H beta=-xi; Q=-xi/2), replaced stale no-certificate precision summary with current outward direct-certificate scope, added accepted six-facet reduction finding, and corrected the directional-appearance summary to expose its missing Step 5 lower-bound obligation.",
+      "verification": "Compared exact wording against ehz-kkt-system lem:well-defined, precision first 400 lines six-facet proof/project-facts acceptance record and boundary-subdifferential Step 5; JSON and path checks performed."
+    },
+    {
+      "path": "formal/exact-polar-geometry.tex",
+      "change": "Consolidated13 labels from geometry, boundedness and rational-scaling notes; preserved separate sampling/symplectic ownership and original approval provenance, and corrected listed hypotheses/proof steps.",
+      "verification": "Formal build114pages, unique labels, separate Sol mathematical review of consequential changes; no human approval or selected-thesis promotion. See meta-topics/repository-organization/inventory/pilots/2026-10-11/foundations.md."
+    },
+    {
+      "path": "formal/hk2017-qp-core.tex",
+      "change": "Added source-backed full-permutation/subset-word bridge and explicit facet hypothesis; linked KKT/core consumers to existing convention owner.",
+      "verification": "Separate Sol mathematical review and formal build114pages passed. New lemma unverified; approved KKT proof bodies unchanged."
+    }
+  ]
+}

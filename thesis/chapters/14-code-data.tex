@@ -10,9 +10,11 @@ pentagon-rotation packet described below are present there. This manuscript and 
 research additions are held in the working repository; they are not all included
 in that public commit. The repository URL follows ongoing development.
 
+\begin{sloppypar}
 The HKO local-maximality proof and the original rotation computation have
-proof-facing packets in the public tree.  The HKO packet in
-\path{experiments/hko-local-maximum/theorem/} contains the finite witness, the
+proof-facing packets in the public tree.  The HKO packet, at
+\path{experiments/hko-local-maximum/theorem/} in that public commit and now maintained at
+\path{topics/variation-and-local-maxima/hko-local-maximum/theorem/}, contains the finite witness, the
 exact SageMath verifier, its recorded verification summary, and the Rust
 programs used to select the witness.  Rust supplies finite choices; it is not
 trusted for theorem correctness.  SageMath reconstructs the algebraic objects
@@ -24,11 +26,12 @@ The annotated program printed in the appendix is maintained separately as
 \path{thesis/appendices/hko_core.py}. It reconstructs the same selected
 words, feasible sections, and exact derivative covectors; the appendix maps
 its shorter presentation to the public verifier
-\path{experiments/hko-local-maximum/theorem/verify.sage.py}.
+\path{experiments/hko-local-maximum/theorem/verify.sage.py}
+(now at \path{topics/variation-and-local-maxima/hko-local-maximum/theorem/verify.sage.py}).
 The appendix file was not part of the public commit cited above.
 
 The second ten-facet local maximum is maintained in
-\path{experiments/hko-local-maximum/non-hko/}. Its rational witness and
+\path{topics/variation-and-local-maxima/hko-local-maximum/non-hko/}. Its rational witness and
 Python/SymPy verifier check the complete product calculation, the 24 feasible
 upper sections, the rank and positivity predicates, and the exceptional
 quadratic direction. An independent checker in the same packet recomputes the
@@ -36,9 +39,11 @@ geometry and derivatives by a different triangulation and direct section
 solve. These exact checks do not replace the analytic neighborhood argument
 or constitute a proof-assistant formalization.
 
+\end{sloppypar}
+
 The rotated-pentagon packet is stored under
 \begin{center}
-  \small\path{experiments/regular-products/}\\[-0.2em]
+  \small\path{topics/products/regular-products/}\\[-0.2em]
   \path{pentagon-rotation-formula-proof/}.
 \end{center}
 It contains the exact SageMath classifier and the recorded full-run transcript
@@ -50,28 +55,28 @@ argument remain mathematical inputs.  The repository exposes the finite
 computation and its output for inspection, with SageMath's exact arithmetic
 and root isolation inside the software trust boundary. The maintained
 affine-pentagon argument and its source-convention check are in
-\path{formal/pentagon-affine-products/}.
+\path{topics/products/pentagon-affine-products/}.
 
 The numerical audits in Section~\ref{sec:numerics} have distinct evidence owners.
 The tracked report and producers for the \(249\) KKT systems and the complete
 \(88\)- and \(1271\)-word comparisons are in
-\path{experiments/dev-quadratic-program/tools/general_algorithm_ablation/}.
+\path{topics/capacity-and-qp/development/tools/general_algorithm_ablation/}.
 Its \path{RESULTS.md} records the counts and outcomes; its \path{run.sh}
 produces new verification and numerical-audit transcripts. The original
 per-system output is not included as a tracked or registered artifact, so
 the retained report and a new execution are different evidence objects.
 
 The \(88\)-product audit is retained row by row in
-\path{experiments/dev-quadratic-program/tools/product_closure_route/sample5.jsonl},
+\path{topics/capacity-and-qp/development/tools/product_closure_route/sample5.jsonl},
 with its interpretation in that directory's \path{RESULTS.md}.
 The external \texttt{polytope-datasets} artifact supplies
 \path{random-product.jsonl} and \path{shared-cache.jsonl} for the separate
 \(10\,240\)-product observation. These are registered files,
-materialized under \path{experiments/polytope-datasets/}; they are not part
+materialized under \path{topics/empirical-studies/polytope-datasets/}; they are not part
 of a plain checkout. The product report identifies the historical
 geometry-to-cache join and its scope. These numerical packets concern finite
 tests, with the production-to-development comparison recorded separately in
-\path{docs/numerics-correspondence-check/}.
+\path{topics/capacity-and-qp/evidence/numerics-correspondence-check/}.
 
 Other non-proof evidence is tracked as ordinary repository files. The
 historical first-order experiment retains its
@@ -96,7 +101,7 @@ returned capacity intervals for 14,335 of the 14,336 original geometries;
 one body remains outside the input-size policy. These new intervals do not
 certify the historical numerical ratios, whose volumes are floating-point
 values. Recovery and reevaluation receipts are in
-\path{docs/ds-retrospective-revalidation/}.
+\path{topics/empirical-studies/retrospective-revalidation/}.
 Consequently, cloning the repository alone does not provide every input needed
 to repeat all empirical analyses, regenerate every figure, or reproduce every
 reported run.  Packet-local instructions describe available producers and

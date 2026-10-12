@@ -1,0 +1,44 @@
+% formal/hk2017-qp-precision.tex — HK2017 QP precision bounds
+% Finite-precision perturbation chain and Q error bounds.
+%
+% Labels defined here:
+%   rem:conditioning-precondition, rem:perturbation-chain,
+%   lem:link-assembly, lem:link-svd, lem:link-beta0,
+%   lem:link-gradient, lem:link-reduced-hessian, lem:link-eigenvalues,
+%   lem:link-beta, rem:eigendirection-error,
+%   lem:q-error-first-order, lem:q-correction-second-order,
+%   rem:runtime-q-bound, lem:pseudoinverse-orthogonality,
+%   lem:kkt-batched-defect-enclosure,
+%   lem:kkt-normwise-defect-enclosure,
+%   lem:kkt-certified-curvature-direction,
+%   lem:kkt-cyclic-obstruction-inheritance,
+%   cor:taylor-structure, cor:exact-correction
+%
+% Labels referenced but defined elsewhere:
+%   rem:qp-setup, prop:q-on-affine, prop:critical-points,
+%   prop:boundary-vs-interior (formal/hk2017-qp-core.tex)
+%
+% input by formal/main.tex — do not add \documentclass or \begin{document}
+%
+% ══════════════════════════════════════════════════════════════════════
+% Error analysis
+% ══════════════════════════════════════════════════════════════════════
+
+\begin{remark}[Status of the finite-precision claims]\label{rem:qp-precision-status}
+This packet separates proved exact-arithmetic identities,
+first-order perturbation heuristics, and incomplete runtime proposals.  In
+particular, the computable \(\beta\)-quantity in
+\eqref{eq:eta-computable} has unproved constants and an invalid denominator
+substitution, and the legacy runtime quantity in
+Remark~\ref{rem:runtime-q-bound} is not an error bound for the exact
+binary64-input KKT problem.  Neither may be cited as a numerical certificate.
+The current proved direct certificate is instead the outward inverse-defect
+argument in Lemmas~\ref{lem:kkt-verified-inverse-defect} and
+\ref{lem:kkt-batched-defect-enclosure}, with the cheaper normwise
+specialization in Lemma~\ref{lem:kkt-normwise-defect-enclosure}.  The direct certificate and the conditional/historical precision account
+have separate source owners; thesis-facing use still requires checking the
+implementation and the outer candidate coverage.
+\end{remark}
+
+\input{../topics/capacity-and-qp/proofs/direct-kkt-certificate}
+\input{../topics/capacity-and-qp/proofs/conditional-precision}

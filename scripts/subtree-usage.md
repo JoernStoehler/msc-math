@@ -2,7 +2,7 @@
 
 **Closure verdict:** Jörn graded this Codex config/resource-workflow attempt FAIL.
 The component repairs and scoped checks described here remain evidence; they
-are not human acceptance of the workflow. See [current handoff](../docs/coordination/handoff.md).
+are not human acceptance of the workflow. See [current handoff](../meta-topics/project-management/handoff.md).
 
 **Accounting fixes applied on 3 October.** Owned response records now prevent
 copied-fork double counting, ordinary forks stay separate from workers, and

@@ -1,0 +1,40 @@
+{
+  "qp-derivation-review": {
+    "old": "docs/qp-derivation-review",
+    "new": "topics/capacity-and-qp/evidence/qp-derivation-review",
+    "sha256": {
+      "README.md": "6008a16d10d270d277a63876ee0b78f9ac577b274fc2c27b54a9667cf3b00a39",
+      "inputs.json": "b8848928b3c370b95a473207b212f68630d86ecf546902d0e5680818545064ae"
+    }
+  },
+  "numerics-correspondence-check": {
+    "old": "docs/numerics-correspondence-check",
+    "new": "topics/capacity-and-qp/evidence/numerics-correspondence-check",
+    "sha256": {
+      "proposed-attribution.patch": "3621b64ee2da2e2ec4c5a3ffccd4e371aac81ff406ed73d30653ddb4e170a7a9",
+      "README.md": "75d4b3d60a8212472e67997f46256463765dfe7ece683eb51f1b3afc03e176bd",
+      "source-sha256.txt": "c8ce051d47787b6d0f07a507d06bce16de665febbaf6502d2bf851c5482cd64f"
+    }
+  },
+  "qp-flow-integration": {
+    "old": "docs/qp-flow-integration",
+    "new": "topics/capacity-and-qp/evidence/qp-flow-integration",
+    "sha256": {
+      "manifest.json": "292955b02a19bfad03af0869950babaecd1aecda74a4ba8ba0e2ef92b3de131a",
+      "README.md": "e877038e97d46da44260ae18693bf8feaa84985a78a3c97b3578d3b9d6c2ada3",
+      "integration.patch": "74f70d7f75a2e2da2025a588742b8232afc3f4be60f02be81ff83a4e50571a5a",
+      "check-inputs.py": "3ba90a3f1d960c9dbcabb22fa45363dd1e254c8eff8bbc5d453ef1dc1e8cb248",
+      "build-check.json": "df54e31d45995f5425b4f1504c23f069a7086d52d8bfce10bf42d6f59b3af8b4",
+      "proposed/04-quadratic-program.tex": "28ea35b9d9d877225dfac7e1d72ca6e28b910b513cbcabaabeddcda7f37df6ee",
+      "proposed/main.tex": "073a819a3f1a1ed204e8e333f4b4ac5eb4d067d5845b0bac03e99e1fe706d08b",
+      "proposed/05-flow-graph.tex": "75326a33e53123aefa94e1890f2f717405be12b022f37092a434d0088dbc5192"
+    }
+  },
+  "imported-theorem-contracts": {
+    "old": "docs/imported-theorem-contracts",
+    "new": "topics/capacity-and-qp/evidence/imported-theorem-contracts",
+    "sha256": {
+      "README.md": "f104c3d5c88ab71757c8238c4d2137ce106de447f2e13d6a98eff102cd947a9a"
+    }
+  }
+}

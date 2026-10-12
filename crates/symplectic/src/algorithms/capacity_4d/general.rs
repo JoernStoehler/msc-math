@@ -1,7 +1,7 @@
 //! Faithful production copy of the selected verified general QP route.
 //!
 //! Keep the mathematical semantics in sync with
-//! `experiments/dev-quadratic-program/src/selected_route/general.rs`. The
+//! `topics/capacity-and-qp/development/src/selected_route/general.rs`. The
 //! experiment copy retains route variants and counters used by
 //! `tools/general_algorithm_ablation`; production fixes the chosen
 //! LBLT/hybrid route. The correspondence suite must compare capacity bounds
@@ -39,10 +39,8 @@ enum DecisionKind {
 #[derive(Clone, Copy, Debug)]
 struct Decision {
     kind: DecisionKind,
-    // These legacy experiment field names have different status by guard:
-    // certified radii for OutwardCertified and BatchedAnalyticEnvelope,
-    // unverified estimates for EmpiricalThenExact, and None for exact
-    // decisions. Do not expose them through a shared production result type.
+    // Radius fields hold certified f64 enclosures, or None for exact decisions.
+    // Keep these internal diagnostics separate from the public capacity bounds.
     action: Option<f64>,
     beta_radius: Option<f64>,
     q_radius: Option<f64>,
@@ -953,7 +951,7 @@ fn interval_determinant(matrix: &[Vec<Interval>]) -> Interval {
 /// exist because C^T is onto, and positivity/Q can be decided exactly. This is
 /// called only when the one-sided determinant filter cannot prove
 /// inconsistency; retained counts and cost are in
-/// experiments/dev-quadratic-program/tools/general_algorithm_ablation/RESULTS.md.
+/// topics/capacity-and-qp/development/tools/general_algorithm_ablation/RESULTS.md.
 fn short_exact_decision(exact_duals: &[[BigRational; 4]], word: &[usize]) -> Decision {
     let m = word.len();
     let matrix = DMatrix::from_fn(5, m, |row, col| {

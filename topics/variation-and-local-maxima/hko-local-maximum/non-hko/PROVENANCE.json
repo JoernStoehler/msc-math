@@ -1,0 +1,64 @@
+{
+  "created_date": "2026-09-22",
+  "task": "one non-HKO local maximum with exactly ten genuine facets",
+  "original_upload_name": "non_hko_f10_localmax_handoff(1).zip",
+  "original_upload_sha256": "5a61d25f1a49bd292c2d9a83758fcd3dcb82607898424b73be8d8a6eb6dee70c",
+  "original_upload_size_bytes": 40968,
+  "repository": {
+    "name": "JoernStoehler/msc-math",
+    "commit": "3929a8c7f0f766640ea78372848a5752a0ae7e08",
+    "commit_author_date": "2026-09-19T08:04:13Z",
+    "tree": "b6742251d1c34d6e103e1ebfb7c9e1898fb5f86e",
+    "confirmation_method": "connected GitHub commit API read",
+    "compiled_or_modified": false,
+    "files_read": [
+      "docs/capacity-calculation-map.md",
+      "experiments/local-maxima-check/control-calibration/PILOT-REPORT.md",
+      "crates/symplectic/src/algorithms/capacity_4d/general.rs lines 1-250",
+      "crates/symplectic/src/algorithms/capacity_4d/geometry.rs lines 1-260"
+    ]
+  },
+  "proof_dependencies": [
+    "HK Theorem 1.1",
+    "elementary convex polytope geometry",
+    "inverse function theorem",
+    "uniform local Taylor argument",
+    "exact rational algebra"
+  ],
+  "discovery_seeds": {
+    "weight_family_expansion": 2026092201,
+    "certificate_subset_proposer": 2026092202
+  },
+  "core_acceptance": "No floating mathematical predicate; no retained report trusted.",
+  "known_numerical_failure": "Full scalar poll aborted after two probes on indeterminate HiGHS status; not used for proof.",
+  "code_authorship_scope": "New candidate-specific exact proof/check code; supplied offline bridge reused for diagnostics.",
+  "novelty_scope": "No claim of priority for the planar product equality construction; this packet certifies the full ten-facet local claim.",
+  "run_provenance": "evidence/exact/RUN.json",
+  "historical_path_base": "run_provenance and paths beginning evidence/ or discovery/, plus RUN_LEDGER.md, are relative to the nested archive root, not the integrated directory.",
+  "historical_archive": {
+    "repository_path": "docs/history/pro-handoffs/msc-math-consolidation-20260924/msc_math_consolidation_codex.zip",
+    "sha256": "82c40c7df813fdc0fa2c1b8e56cd4edbb5fd599108b87f37250f7c0ae91dae8b",
+    "nested_member": "incoming/non_hko_f10_certified_result.zip",
+    "nested_sha256": "adff85a5f18c83ab8ed97c55a48cf91382d206626461519550902706f61c0bd0",
+    "member_paths": [
+      "RUN_LEDGER.md",
+      "evidence/exact/RUN.json",
+      "evidence/exact/verify.log",
+      "evidence/reproduction/CLEAN_EXTRACTION.json",
+      "evidence/reproduction/verify.log",
+      "discovery/"
+    ],
+    "routing_checked_date": "2026-10-04",
+    "routing_check": "Both archive hashes and all 70 nested MANIFEST.sha256 entries verified; six current core source/witness hashes match evidence/exact/RUN.json."
+  },
+  "integrated_verification": {
+    "path_base": "topics/variation-and-local-maxima/hko-local-maximum/non-hko/",
+    "run_date": "2026-09-24",
+    "original_log": "verification/20260924-original.log",
+    "original_summary": "verification/20260924-original-summary.json",
+    "independent_log": "verification/20260924-independent.log",
+    "independent_result": "verification/20260924-independent.json",
+    "reproduction_instructions": "README.md",
+    "original_path_base": "experiments/hko-local-maximum/non-hko/"
+  }
+}

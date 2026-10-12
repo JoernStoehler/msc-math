@@ -37,7 +37,7 @@ Initially not imported:
 - the archive method ledger, because most of its numerical rows point to
   artifacts that are not present here;
 - the archive-only heuristic f64 geometry export from
-  `experiments/dev-quadratic-program/`.
+  `topics/capacity-and-qp/development/`.
 
 The later closeout imports only the frozen F=10 held-out and matched
 larger-budget datasets used by the thesis. Their provenance identifies the

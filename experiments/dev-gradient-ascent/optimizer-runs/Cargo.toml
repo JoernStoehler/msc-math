@@ -11,8 +11,8 @@ workspace = true
 blake3.workspace = true
 clarabel = "0.11.1"
 euclidean-polytopes.workspace = true
-exp-dev-quadratic-program = { path = "../../dev-quadratic-program" }
-exp-sys-landscape = { path = "../../sys-landscape" }
+exp-dev-quadratic-program = { path = "../../../topics/capacity-and-qp/development" }
+exp-sys-landscape = { path = "../../../topics/empirical-studies/sys-landscape" }
 good_lp.workspace = true
 nalgebra.workspace = true
 rand.workspace = true

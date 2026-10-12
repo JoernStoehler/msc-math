@@ -446,7 +446,7 @@ fn select_states(cli: &Cli, all_rows: &[LocatedRow]) -> Vec<DiagnosticState> {
     states.push(DiagnosticState {
         state_id: "positive_control_hko2024".to_string(),
         control_role: "positive_control_exact_theorem_local_maximum".to_string(),
-        selection_rule: "fixed HKO2024 ten-facet theorem control; theorem authority is experiments/hko-local-maximum/theorem, not this diagnostic".to_string(),
+        selection_rule: "fixed HKO2024 ten-facet theorem control; theorem authority is topics/variation-and-local-maxima/hko-local-maximum/theorem, not this diagnostic".to_string(),
         source_path: "symplectic::known_polytopes::hko_pentagon".to_string(),
         source_iteration: None,
         source_eta: None,

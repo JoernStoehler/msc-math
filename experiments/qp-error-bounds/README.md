@@ -18,7 +18,7 @@ packet; promotion of another QP algorithm changes the supported comparison set,
 not the packet's original question.
 
 Method relatives include
-`experiments/dev-quadratic-program/numerics-audit/` for route-coupled KKT
+`topics/capacity-and-qp/development/numerics-audit/` for route-coupled KKT
 variable/predicate auditing and numerical studies of optimization or volume
 algorithms that may reuse methodology without importing this packet's helpers.
 

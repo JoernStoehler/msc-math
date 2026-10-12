@@ -1,5 +1,6 @@
 use algebraic_numbers::{solve_linear_system, ExactScalar, LinearSystemSolution};
 use nalgebra::{DMatrix, DVector, Vector4};
+use num_bigint::BigInt;
 
 pub(crate) fn combinations3(n: usize) -> Vec<[usize; 3]> {
     let mut result = Vec::new();
@@ -77,4 +78,29 @@ pub(crate) fn solve4_exact<T: ExactScalar + 'static>(
         )),
         _ => None,
     }
+}
+
+/// Exact determinant of a four-by-four integer matrix, supplied as ordered rows.
+///
+/// The sign uses ordinary row/column orientation. Singular inputs return zero;
+/// no rank, halfspace, boundedness or facet validation is performed. Arithmetic
+/// uses `BigInt` throughout. This is the determinant kernel in the rational
+/// polar/Cramer pipelines described by [prop:integer-cramer] in
+/// `topics/polytope-geometry/exact-polar-geometry.tex`.
+pub fn determinant_4d_integer(rows: &[[BigInt; 4]; 4]) -> BigInt {
+    let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
+
+    let m01 = &b[0] * &c[1] - &b[1] * &c[0];
+    let m02 = &b[0] * &c[2] - &b[2] * &c[0];
+    let m03 = &b[0] * &c[3] - &b[3] * &c[0];
+    let m12 = &b[1] * &c[2] - &b[2] * &c[1];
+    let m13 = &b[1] * &c[3] - &b[3] * &c[1];
+    let m23 = &b[2] * &c[3] - &b[3] * &c[2];
+
+    let c00 = &d[1] * &m23 - &d[2] * &m13 + &d[3] * &m12;
+    let c01 = &d[0] * &m23 - &d[2] * &m03 + &d[3] * &m02;
+    let c02 = &d[0] * &m13 - &d[1] * &m03 + &d[3] * &m01;
+    let c03 = &d[0] * &m12 - &d[1] * &m02 + &d[2] * &m01;
+
+    &a[0] * c00 - &a[1] * c01 + &a[2] * c02 - &a[3] * c03
 }

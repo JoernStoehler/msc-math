@@ -1,0 +1,4 @@
+# Numerical smoke outputs remain local after relocation from experiments/.
+**/*smoke*.jsonl
+**/*smoke*.png
+**/*smoke*.tex

@@ -61,7 +61,7 @@ def projection(state, digest):
             raise ValueError(f"Completed task has an unfinished prerequisite: {task['id']}")
 
     lines = [
-        "// Generated from docs/coordination/current.json; do not edit.",
+        "// Generated from meta-topics/project-management/current.json; do not edit.",
         f"// coordination-sha256: {digest}",
         "digraph project {",
         '  graph [rankdir=BT, newrank=true, bgcolor="white", fontname="sans-serif",',
@@ -147,8 +147,8 @@ def projection(state, digest):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--state", type=Path, default=REPO / "docs/coordination/current.json")
-    parser.add_argument("--output-dir", type=Path, default=REPO / "docs/coordination/graphs")
+    parser.add_argument("--state", type=Path, default=REPO / "meta-topics/project-management/current.json")
+    parser.add_argument("--output-dir", type=Path, default=REPO / "meta-topics/project-management/graphs")
     parser.add_argument("--check", action="store_true", help="Check DOT projection and SVG source hash without rerendering")
     args = parser.parse_args()
     try:

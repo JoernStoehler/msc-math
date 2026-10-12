@@ -1,0 +1,518 @@
+{
+  "schema_version": 1,
+  "prepared_at_utc": "2026-10-10T18:23:00Z",
+  "source_basis": [
+    "docs/inventory/parallel-plan.md",
+    "docs/inventory/parts/software.json",
+    "docs/inventory/parts/foundations.json",
+    "docs/inventory/parts/empirical.json",
+    "docs/inventory/parts/guidance.json"
+  ],
+  "scope": "Bulk-cleanup planning only; no implementation, broad audit, expensive producer or launch authorization inferred.",
+  "orchestration": {
+    "root": "Sol coordinator",
+    "branches": [
+      "geometry-sol",
+      "foundations-sol",
+      "data-sol",
+      "trust-sol",
+      "guide-sol"
+    ],
+    "prompt_phase": "Branch managers concurrently elaborate compact work ideas into exact owned prompts; bounded Luna leaves gather caller/reference maps and fixtures; Sol decides substantive contracts and reviews.",
+    "review": "Separate focused Sol reviews per returned branch; Astra final assembled review once, targeted recheck only for unresolved defects.",
+    "capacity": "99 is a ceiling, not desired fanout; serialize overlapping files and measure useful bounded concurrency.",
+    "shared_files": "formal/main.tex, formal/symplectic-polytope-geometry.tex and guide/index surfaces have one integrating writer; other branch owners return patches/sections for those files.",
+    "dependencies": "depends_on are final result/acceptance dependencies; discovery/prompt elaboration may begin earlier. T1 baseline acceptance is required for geometry/data changes even where implementation can start concurrently."
+  },
+  "packages": [
+    {
+      "id": "G1",
+      "title": "Shared incidence-only intersection",
+      "branch_manager": "geometry-sol",
+      "classification": "standard",
+      "outcome": "One Euclidean incidence helper, compatibility adapters, migrated three duplicate scans",
+      "owned_scope": [
+        "crates/euclidean-polytopes/src/faces.rs",
+        "crates/symplectic/src/exact/polytope.rs: incidence helper",
+        "crates/symplectic/src/geom/vertex_enumeration/mod.rs: incidence helper"
+      ],
+      "depends_on": [],
+      "independence": "Combinatorial incidence operation needs no agreement about floating validation or irredundancy.",
+      "verification": "Compare facet intersection sets on nonsimple and redundant fixtures.",
+      "existing_test_limit": "Duplicate scan agreement does not constitute independent geometric evidence.",
+      "partial_or_failure": "Ship the helper and adapters even if larger geometry migration stalls.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "G2",
+      "title": "Resolve normalized-geometry acceptance boundary",
+      "branch_manager": "geometry-sol",
+      "classification": "project-judgment",
+      "outcome": "Explicit input/errors/facet-identity contract and resolution or isolation of duplicate-inequality irredundancy issue",
+      "owned_scope": [
+        "geometry API contract decision; proof edits assigned through foundations manager, not a second writer"
+      ],
+      "depends_on": [],
+      "independence": "Bounded decision can run alongside incidence extraction and table work.",
+      "verification": "Compare named duplicate, redundant, zero-row, rank-deficient and unbounded cases against current APIs.",
+      "existing_test_limit": "Compilation does not establish identical validation semantics.",
+      "partial_or_failure": "Preserve old validation adapters and state inequivalence; do not claim policies equivalent.",
+      "project_decision": "Does facet-defining mean distinct geometric facet or removal of a named inequality? Preserve generic fields and ordered rows; do not collapse legacy descriptor/floating policies.",
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "G3",
+      "title": "Checked normalized exact H-geometry owner",
+      "branch_manager": "geometry-sol",
+      "classification": "standard-after-contract",
+      "outcome": "Euclidean owner for exact ordered normalized 4D rows, validation, vertices/incidence; symplectic compatibility boundary",
+      "owned_scope": [
+        "crates/euclidean-polytopes/src/polar.rs",
+        "crates/euclidean-polytopes/src/linalg.rs",
+        "crates/symplectic/src/exact/polytope.rs: checked geometry"
+      ],
+      "depends_on": [
+        "G2"
+      ],
+      "independence": "Migration can use an agreed contract independently of data preparation and nongeometry proofs.",
+      "verification": "Generic/algebraic and rational paired fixtures; preserved error distinctions and facet identities.",
+      "existing_test_limit": "Existing library gate cannot prove mathematical correspondence or catch every consumer ordering assumption.",
+      "partial_or_failure": "Keep checked adapter with established backend; leave unsupported legacy pipeline explicit.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "G4",
+      "title": "Geometry consumer migration",
+      "branch_manager": "geometry-sol",
+      "classification": "standard-after-contract",
+      "outcome": "All active callers move through supported interfaces with ordering/errors preserved",
+      "owned_scope": [
+        "crates/symplectic/src/algorithms",
+        "crates/symplectic/src/geom/lagrangian_product.rs",
+        "crates/symplectic/src/derivatives.rs",
+        "crates/symplectic/src/exact/derivatives.rs",
+        "experiments/qp-error-bounds/src/retained_exact.rs",
+        "experiments/dev-flow-graph/visualize-tube/main.rs",
+        "experiments/verification/ch2021-six-vertex/main.rs"
+      ],
+      "depends_on": [
+        "G1",
+        "G3"
+      ],
+      "independence": "Caller map/preparation starts now; code integration waits for the API.",
+      "verification": "Focused caller checks plus standalone build scopes, not only root workspace.",
+      "existing_test_limit": "Root cargo check misses standalone experiments; set equality misses ordering-dependent consumers.",
+      "partial_or_failure": "Add missed caller before closing; migrate subsets behind compatibility names.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "F1",
+      "title": "Exact polar proof packet",
+      "branch_manager": "foundations-sol",
+      "classification": "standard-with-mathematical-review",
+      "outcome": "Reusable formal exact-polar owner imported once, crate-to-proof links, labels and approval provenance preserved",
+      "owned_scope": [
+        "formal/exact-polar-geometry.tex (proposed)",
+        "formal/symplectic-polytope-geometry.tex: ordinary geometry",
+        "formal/random-polytope-boundedness.tex: exact boundedness",
+        "formal/rational-integer-scaling.tex",
+        "formal/main.tex"
+      ],
+      "depends_on": [],
+      "independence": "Proof move preserves statements and can proceed while G2 isolates disputed irredundancy.",
+      "verification": "Statement/equation/hypothesis comparison and formal build; independent Sol mathematical review.",
+      "existing_test_limit": "Build only establishes LaTeX integrity; agreement with code cannot validate proof.",
+      "partial_or_failure": "Leave disputed lemma in old owner with explicit caveat; preserve rank, recession, nonsimple, denominator/LCM distinctions.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "F2",
+      "title": "KKT signs, scaling and word orientation",
+      "branch_manager": "foundations-sol",
+      "classification": "standard-with-mathematical-review",
+      "outcome": "Single reusable convention translation with downstream sign/factor references; stationary/scalar/global/orbit meanings distinguished",
+      "owned_scope": [
+        "formal/hk2017-qp-conventions.tex",
+        "formal/ehz-kkt-system.tex: conventions",
+        "formal/hk2017-qp-core.tex: convention references",
+        "formal/FINDINGS.md: convention references"
+      ],
+      "depends_on": [],
+      "independence": "Independent mathematical packet; does not modify geometry or production schema.",
+      "verification": "Check Q, H, multiplier and action equations against source theorem and current solver contract.",
+      "existing_test_limit": "Finite examples can miss reversal and factor-two mistakes; positive stationary witness is not a global optimum.",
+      "partial_or_failure": "Preserve differing historical conventions as explicitly mapped history rather than silently normalize.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "F3",
+      "title": "Current direct certificate versus historical proxy",
+      "branch_manager": "foundations-sol",
+      "classification": "standard-with-mathematical-review",
+      "outcome": "Split current inverse-defect certificate family and implementation assumptions from obsolete residual/proxy development",
+      "owned_scope": [
+        "formal/hk2017-qp-precision.tex",
+        "formal/ehz-kkt-system.tex: legacy error references",
+        "experiments/qp-error-bounds/interpretation.md: navigation"
+      ],
+      "depends_on": [
+        "F2"
+      ],
+      "independence": "Extraction outline can start immediately; equation normalization waits for F2.",
+      "verification": "Preserve outward rounding, assembly error, defect bound, fallback and kernel environment; inspect current implementation references.",
+      "existing_test_limit": "Residual closeness does not certify exact input body; beta/action bounds do not establish enumeration completeness.",
+      "partial_or_failure": "Retain source packet and expose clear current/historical sections if physical split causes label churn.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "F4",
+      "title": "Pruning, orbit recovery and branch assumptions",
+      "branch_manager": "foundations-sol",
+      "classification": "project-judgment",
+      "outcome": "Focused contract map separating approved adjacency pruning, conditional local transitions, placement, regular derivatives and unfinished envelope claims",
+      "owned_scope": [
+        "formal/search-pruning-correctness.tex",
+        "formal/reeb-orbit-recovery.tex",
+        "formal/finite-reeb-orbit-verification.tex",
+        "formal/capacity-derivatives.tex",
+        "formal/combinatorial-boundary-regularity.tex",
+        "formal/capacity-boundary-subdifferential.tex"
+      ],
+      "depends_on": [
+        "F2"
+      ],
+      "independence": "Subpackets can elaborate concurrently with disjoint statement ownership; no arbitrary-polytope research required.",
+      "verification": "Check repeated separated facet labels, derivative dimensions/signs, branch hypotheses and exact theorem strength.",
+      "existing_test_limit": "Gradient tests at regular points do not prove wall behavior or global competing-branch completeness.",
+      "partial_or_failure": "Consolidate only established equations; retain weaker conditional statements and named missing implications.",
+      "project_decision": "Choose supported statement strength and whether repeated facet labels must be excluded; do not repair gaps by advertising numerical evidence as proof.",
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "F5",
+      "title": "Flow-graph explanation and correctness layers",
+      "branch_manager": "foundations-sol",
+      "classification": "standard-with-mathematical-review",
+      "outcome": "One idealized theorem route, one abstract resolver contract, concise concrete unresolved-interface map",
+      "owned_scope": [
+        "formal/flow-graph-real-algorithm.tex",
+        "formal/flow-graph-capacity.tex",
+        "formal/flow-graph-proof-risk.tex",
+        "formal/flow-graph-ch2021-comparison.tex",
+        "crates/symplectic/src/algorithms/flow_graph/README.md"
+      ],
+      "depends_on": [],
+      "independence": "No geometry API or dataset changes; links to later caller migration remain adapters.",
+      "verification": "Trace accepted/discarded family obligations, regularity and exact-vs-floating/runtime assumptions.",
+      "existing_test_limit": "Examples and compilation cannot prove a concrete resolver satisfies all abstract axioms.",
+      "partial_or_failure": "Keep unresolved supported-input contract visible; do not launch expensive tube verification or assert production correctness.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "D1",
+      "title": "One invariant table builder, two input adapters",
+      "branch_manager": "data-sol",
+      "classification": "standard",
+      "outcome": "Shared feature/provenance/write stage; explicit retained/run-local formats; wrappers retain old commands",
+      "owned_scope": [
+        "experiments/polytope-invariant-table/main.rs",
+        "experiments/polytope-invariant-table/prepare.rs",
+        "experiments/polytope-invariant-table/invariant_features.rs",
+        "experiments/polytope-invariant-table/write_database.rs"
+      ],
+      "depends_on": [],
+      "independence": "Uses existing geometry API; no dependence on migration or expensive capacity generation.",
+      "verification": "Old/new same-byte scratch fixture comparison: IDs, targets, features, joins, fingerprints and historical unknowns.",
+      "existing_test_limit": "Serialization tests alone do not catch missing provenance or fabricated evaluator metadata.",
+      "partial_or_failure": "Keep two thin adapters; freeze schemas/output identities; never rewrite retained evidence to test refactor.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "D2",
+      "title": "Sampling/schema/record IO boundary",
+      "branch_manager": "data-sol",
+      "classification": "project-judgment",
+      "outcome": "Map reusable source-event and row schema primitives; explicit duplicate-key, save ordering and writer ownership decisions before safe consolidation",
+      "owned_scope": [
+        "crates/symplectic/src/random.rs",
+        "crates/symplectic/src/dataset.rs",
+        "crates/symplectic/src/database.rs",
+        "experiments/polytope-datasets: producer interfaces"
+      ],
+      "depends_on": [],
+      "independence": "Contract discovery and safe extraction independent of table-builder implementation; no new sample campaign.",
+      "verification": "Small seeded acceptance descriptor/roundtrip/conflict fixtures; inspect predictable temporary save paths.",
+      "existing_test_limit": "Existing finite merge tests do not establish multiwriter safety; accepted sampling is not uniform over valid bodies.",
+      "partial_or_failure": "Keep one-writer restriction explicit and preserve current IO behavior if semantics unresolved.",
+      "project_decision": "Same-file conflicting duplicate keys versus historical overwrite; deterministic output versus multiwriter semantics; schema migration requires coordinated selection.",
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "D3",
+      "title": "Dataset-to-table command and reproduction flow",
+      "branch_manager": "data-sol",
+      "classification": "standard-after-interface",
+      "outcome": "Retained/random/run-local/Slurm/feature-cost consumers use explicit format; truthful generation-preparation distinction and snapshot coverage",
+      "owned_scope": [
+        "experiments/polytope-invariant-table: scripts and README",
+        "experiments/polytope-datasets/README.md",
+        "experiments/sys-datascience/methods/trusted-random-product-method-dispositions.md",
+        "experiments/sys-datascience/methods/_shared/random_only.py"
+      ],
+      "depends_on": [
+        "D1"
+      ],
+      "independence": "Consumer commands can be mapped now; final migration waits for D1 only, not D2 schema decisions.",
+      "verification": "Scratch entrypoint smoke, missing payload/mismatched metadata/duplicate provenance errors; verify command contracts.",
+      "existing_test_limit": "Registered snapshot lacks six later ridge columns; smoke test does not make old snapshot fully reproductive.",
+      "partial_or_failure": "Document rebuild need and supported columns; keep capacity-generation and retained-target limitations explicit.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "T1",
+      "title": "Contract fixtures before moves",
+      "branch_manager": "trust-sol",
+      "classification": "standard",
+      "outcome": "Small baseline fixture packet with accepted/failure outcomes, exact vertices and incidence plus ordering contracts",
+      "owned_scope": [
+        "geometry and KKT focused test targets; no implementation ownership"
+      ],
+      "depends_on": [],
+      "independence": "Baseline tests run before and beside migrations; acceptance gates consume them later.",
+      "verification": "Simplex, cube/crosspolytope, HKO, redundant/duplicate/zero rows, unbounded input and algebraic-field case.",
+      "existing_test_limit": "Existing release gate samples behavior and may share the same defect across routes.",
+      "partial_or_failure": "Freeze only supported outcomes; disputed G2 expectations stay marked as pending contract.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "T2",
+      "title": "Independent-route and one-word solver confidence",
+      "branch_manager": "trust-sol",
+      "classification": "standard-with-project-judgment",
+      "outcome": "Focused generic/rational KKT and geometry comparisons with shared-internal dependency map and real failure tests",
+      "owned_scope": [
+        "crates/symplectic/src/kkt: test targets",
+        "crates/symplectic/src/exact/orbit.rs: test targets",
+        "docs/algorithm-testing.md: confidence map"
+      ],
+      "depends_on": [
+        "T1",
+        "F2"
+      ],
+      "independence": "Uses existing kernels; any implementation extraction is assigned separately after evidence rather than assumed beneficial.",
+      "verification": "Singular positive feasibility, generic fields, multiplier/objective invariance, exact fallback and paired rational inputs.",
+      "existing_test_limit": "Agreement is weaker after shared assembly/predicates; positive feasibility is not fixed-word maximality or placement.",
+      "partial_or_failure": "Retain independent controls; report unmatched contract cases rather than force identical payloads.",
+      "project_decision": "Which portions merit shared primitives without erasing independent evidence? This package produces a bounded recommendation, not an automatic KKT rewrite.",
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "T3",
+      "title": "Performance measurement and production path map",
+      "branch_manager": "trust-sol",
+      "classification": "standard-with-bounded-runtime",
+      "outcome": "Small benchmark harness separating validation/enumeration and table load/features/write; correct production capacity route identified",
+      "owned_scope": [
+        "benchmark targets",
+        "experiments/polytope-invariant-table/feature_cost.rs",
+        "docs/algorithm-testing.md: benchmark references"
+      ],
+      "depends_on": [
+        "T1"
+      ],
+      "independence": "Harness design independent of refactors; baseline capture precedes changes, comparisons follow branch completion.",
+      "verification": "Record identity/compiler/machine/load/cache/time; run only explicitly bounded small measurements.",
+      "existing_test_limit": "Legacy performance targets may bypass production route; no universal regression threshold or unmeasured speed promise.",
+      "partial_or_failure": "If timing noisy or runtime budget unavailable, ship harness and unmeasured labels; investigate material unexplained regressions before closing.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "E1",
+      "title": "Research guide topic explanation consolidation",
+      "branch_manager": "guide-sol",
+      "classification": "standard-with-scope-judgment",
+      "outcome": "Guide routes readers through retained result identities, code/evidence owners, assumptions and caveats across geometry, KKT, flow, data and other result families",
+      "owned_scope": [
+        "docs/inventory/parts/: owned topic records",
+        "docs/research-guide.md",
+        "docs/knowledge/README.md: routes"
+      ],
+      "depends_on": [],
+      "independence": "Guide skeleton and unchanged-topic routes proceed concurrently; changed-unit entries consume branch handoffs incrementally.",
+      "verification": "Fresh reader traces one result through guide and one code/data entrypoint; no global inventory prerequisite.",
+      "existing_test_limit": "Link validity does not establish human comprehension or mathematical acceptance.",
+      "partial_or_failure": "Keep unresolved topics explicitly conditional and source-owned; do not force unrelated results into geometry narrative.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "E2",
+      "title": "Source/code/data explanation links and boundary reconciliation",
+      "branch_manager": "guide-sol",
+      "classification": "standard-after-handoffs",
+      "outcome": "Unit handoff records update owner, result identity and explanation; selected thesis dashboard reconciled only for materially changed claims",
+      "owned_scope": [
+        "docs/inventory/parts/: owned topic records",
+        "crate/local READMEs: links",
+        "docs/dashboard/thesis.html: affected claims only",
+        "docs/dashboard/thesis-sources.json: after reconciliation"
+      ],
+      "depends_on": [
+        "G4",
+        "F1",
+        "F3",
+        "F4",
+        "F5",
+        "D3"
+      ],
+      "independence": "Per-unit updates are available earlier; these are final closure dependencies, not an all-or-nothing writing start gate.",
+      "verification": "Check same-checkout links, thesis location/caveat/evidence for promoted claims, source ownership and unknowns.",
+      "existing_test_limit": "Successful link checks/build do not validate mathematics or reproduction claims.",
+      "partial_or_failure": "Mark affected claims stale if timely reconciliation impossible; retain detailed missing-implication handoff.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    },
+    {
+      "id": "I1",
+      "title": "Branch integration and assembled review",
+      "branch_manager": "root-sol",
+      "classification": "standard-with-final-review",
+      "outcome": "Integrated changed repository and evidence packet; separate fresh-agent writing-plan trial and final Astra review follow.",
+      "owned_scope": [
+        "integration manifests",
+        "docs/coordination/current.json",
+        "docs/inventory/parallel-plan.md: execution selection if approved"
+      ],
+      "depends_on": [
+        "G4",
+        "F1",
+        "F3",
+        "F4",
+        "F5",
+        "D3",
+        "T2",
+        "T3",
+        "E2"
+      ],
+      "independence": "Sol branch managers integrate one complete change at a time; Astra reads final assembled output once with targeted unresolved-interface evidence.",
+      "verification": "Focused branch Sol reviews; final assembled Astra consistency check of contracts, caveats, conflicts and supported launch boundaries.",
+      "existing_test_limit": "Repeated broad reads do not create independence; tests do not validate proof or overnight reliability.",
+      "partial_or_failure": "Blocked interface prevents dependent promotion, not all streams; ship supported adapters or weaker statements and keep costly launch pending explicit allowance.",
+      "project_decision": null,
+      "model_roles": {
+        "prompt_elaboration": "Sol branch manager or separate Sol prompt worker",
+        "execution": "Sol substantive owner; Luna only bounded helper leaves",
+        "review": "separate Sol focused contract/diff reviewer",
+        "assembled_review": "Astra after branch integration"
+      }
+    }
+  ],
+  "explanation_scope_update": "Q13: substantial nested HTML account, parallel topic writers, TOC/result graph and summaries/takeaways/reasoning/proof-evidence levels. Fresh Sol prepares an agent/Jörn writing plan with agent-heavy execution and bounded human involvement where reliability is insufficient. Not a promise of seven-day completion.",
+  "early_checks_update": {
+    "date": "2026-10-11",
+    "source": "docs/coordination/graphs/cleanup-2026-10-10/early-checks.md",
+    "early_value_gate": "First hard topic account -> fresh Sol plan -> actual short passage before expanding topic authors/prose production; preserve independent useful cleanup.",
+    "local_gates": [
+      "Reviewer discrimination before using approval to justify prose scaling",
+      "Geometry/data compatibility before bulk caller migrations",
+      "First reviewed unit integrated before scaling producers"
+    ],
+    "limits": "Checkpoint timing is proposed; pilots not run. Only two local cache snapshots verified offline."
+  }
+}

@@ -36,6 +36,7 @@ CHECK_PATHS=(
   '**/Cargo.lock'
   'rust-toolchain.toml'
   'artifacts/registry.json'
+  'topics/**'
   'experiments/**/*.jsonl'
   'experiments/**/*.json'
   'experiments/**/*.png'
@@ -56,7 +57,7 @@ CHECK_PATHS=(
   'formal/**/*.tex'
   'formal/**/*.bib'
   'formal/.latexmkrc'
-  'submit/**/*.pdf'
+  'meta-topics/thesis-submission/**/*.pdf'
   '.codex/config.toml'
   '.codex/base-instructions.md'
   'scripts/**'
@@ -65,15 +66,15 @@ CHECK_PATHS=(
 )
 ORIENTATION_PATHS=(
   'AGENTS.md'
-  'ARCHITECTURE.md'
+  'meta-topics/repository-organization/**'
   'README.md'
-  'INSTALL.md'
+  'meta-topics/development-environment/installation-workflow.md'
   '.gitignore'
   '.agents/skills/**'
   '.codex/agents/**'
   'docs/README.md'
   'docs/capabilities.md'
-  'docs/development-environments.md'
+  'meta-topics/development-environment/development-environments.md'
   'docs/artifacts.md'
   'docs/project-facts.md'
   'docs/coordination/**'
@@ -214,12 +215,12 @@ echo "The referenced checks did not refresh tracked datasets, figures, or genera
 echo "Use the Artifact-Refresh Boundary section in $STATUS_FILE before treating generated artifacts as fresh."
 echo "High-risk refresh areas:"
 echo "- experiments/verification/"
-echo "- experiments/hko-local-maximum/"
-echo "- experiments/sys-landscape/"
-echo "- experiments/dev-quadratic-program/numerics-audit/"
+echo "- topics/variation-and-local-maxima/hko-local-maximum/"
+echo "- topics/empirical-studies/sys-landscape/"
+echo "- topics/capacity-and-qp/development/numerics-audit/"
 echo "- experiments/combinatorial-cells/"
 echo "- experiments/crosspolytope/ and experiments/visualization/"
-echo "- submit/"
+echo "- meta-topics/thesis-submission/"
 echo
 
 echo "Shared artifacts:"

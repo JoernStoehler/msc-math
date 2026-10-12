@@ -29,8 +29,8 @@ workspace = true
 
 [dependencies]
 exp-dev-gradient-ascent = { path = "../dev-gradient-ascent" }
-exp-regular-products = { path = "../regular-products" }
-exp-sys-landscape = { path = "../sys-landscape" }
+exp-regular-products = { path = "../../topics/products/regular-products" }
+exp-sys-landscape = { path = "../../topics/empirical-studies/sys-landscape" }
 good_lp.workspace = true
 nalgebra.workspace = true
 num-rational.workspace = true

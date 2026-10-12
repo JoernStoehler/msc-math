@@ -46,16 +46,16 @@ use nalgebra::{DMatrix, DVector, Vector4};
 /// - 10x tighter than EPS_MARGIN_TRUE (1e-9) so Indeterminate verdicts are
 ///   returned for any solution where beta is ambiguous.
 ///
-/// Making it 10x larger (1e-11) would misclassify some real near-zero betas as
-/// positive. Making it 10x smaller (1e-13) would pass some eigensolver noise
-/// through as certified solutions.
+/// Making it 10x larger (1e-11) would reject more real small positive betas.
+/// Making it 10x smaller (1e-13) would pass some eigensolver noise
+/// through as numerically feasible candidates.
 pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 
 /// Minimum Q(beta) value to consider a solution meaningful.
 ///
 /// Avoids division-by-near-zero when computing capacity = 1/(2Q).
 ///
-/// **Why 1e-15:** Q = c_EHZ^{-2} / 2 is O(0.01)--O(10) for our polytopes
+/// **Why 1e-15:** Q_max = 1 / (2 c_EHZ) is O(0.01)--O(10) for our polytopes
 /// (typical c_EHZ ~ 0.3--3). Q < 1e-15 indicates either a degenerate candidate
 /// with astronomically high action or pure f64 noise. In either case, this
 /// candidate is unlikely to be the capacity maximizer. This threshold is a
@@ -86,18 +86,15 @@ const EIGEN_CONDITION_TAU: f64 = 1e-3;
 
 /// Maximum acceptable residual norm for the KKT solution.
 ///
-/// Rejects numerically poor solutions where ||Mx - b|| is too large. Solutions
-/// with residual below this have Q error bounds E = 4.5 * ||r||^2 / |lambda_min|
-/// that are small relative to Q values of interest.
+/// Rejects numerically poor solutions where the rounded ||Mx - b|| is too large.
+/// This is a legacy quality filter; passing it does not enclose the exact residual
+/// or certify Q. The stored q_error_bound is a diagnostic, as documented below.
 ///
-/// **Why 1e-6:** The q_error experiment (Part 1) measures worst-case E = 2.9e-11
-/// across 1.1M nodes (F <= 10) with typical residuals ~1e-14 to ~1e-10.
-/// Residuals above 1e-6 signal genuine numerical failure (e.g., extremely
-/// ill-conditioned matrices). At residual = 1e-6 with |lambda_min| = 1e-3,
-/// the error bound is E = 4.5e-9, which is ~5 orders of magnitude below
-/// the observed worst case. Making it 10x larger (1e-5) risks accepting poor
-/// solutions; 10x smaller (1e-7) would reject some valid solutions on
-/// moderately ill-conditioned polytopes.
+/// The retained q_error experiment observed diagnostic values up to 2.9e-11
+/// across 1.1M nodes (F <= 10), with typical residuals around 1e-14 to 1e-10.
+/// These historical observations motivated the 1e-6 cutoff; they are not a
+/// proof that every accepted system has small total error. At residual 1e-6
+/// and eigenvalue magnitude 1e-3, the diagnostic formula gives 4.5e-9.
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Threshold for filtering Type A eigenvectors in null-space search.
@@ -156,9 +153,10 @@ pub enum KktOutcome {
     /// The KKT matrix is singular (all eigenvalues ≈ 0).
     SingularMatrix,
     /// A near-null eigenvector has O(1) constraint violation (Type C).
-    /// [rem:near-null-lp-search] conjectures this is impossible; its occurrence
-    /// means the proof has a gap. The orbit is skipped; capacity may lack proven
-    /// error bounds if this was the best orbit.
+    /// [rem:near-null-lp-search] rules this out for an exact normalized
+    /// eigenpair. Its numerical occurrence signals a failed solver assumption,
+    /// not a certified rejection of the exact word. This legacy route skips
+    /// the candidate and therefore may miss a capacity-relevant word.
     TypeCViolation,
     /// The LP null-space shift and beta0 fallback both violate constraints
     /// beyond tolerance. The orbit is skipped; same caveat as TypeCViolation.
@@ -245,7 +243,7 @@ pub struct KktResult {
 /// the strict tier takes over. This replaces the old LU + SVD fallback with a
 /// single factorization.
 ///
-/// Returns `KktOutcome::Feasible(result)` with beta, corrected Q, error bound,
+/// Returns `KktOutcome::Feasible(result)` with beta, corrected Q, residual diagnostic,
 /// and inertia, or a non-feasible variant explaining why no solution was found.
 ///
 /// [lem:kkt]: KKT conditions give the stationarity equations used to generate
@@ -346,11 +344,11 @@ pub(crate) fn q_from_beta(dual_vertices: &[Vector4<f64>], perm: &[usize], beta: 
 ///
 /// Computes the pseudoinverse retaining eigenvalues with |lambda_i| > threshold,
 /// checks the residual, searches the null space if rank-deficient, and computes
-/// the Q error bound.
+/// the legacy Q diagnostic.
 ///
 /// Returns None if this threshold didn't produce a result (caller should try
-/// a different threshold). Returns Some(KktOutcome) with a mathematical
-/// classification if a definitive answer was reached.
+/// a different threshold). Returns Some(KktOutcome) with a route-local
+/// numerical classification when that tier makes a decision.
 fn try_pseudoinverse_with_threshold(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
@@ -381,7 +379,7 @@ fn try_pseudoinverse_with_threshold(
         return None; // Tier fallback: try next threshold.
     }
 
-    // Q error bound computation ([lem:q-error-bound]).
+    // Legacy Q diagnostic computation (inspired by [lem:q-error-bound]).
     // Solution vector is [beta_hat; mu_hat; xi_hat].
     // Q_tilde = Q(beta_hat) + (r2^T mu_hat + r3 * xi_hat).
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
@@ -390,12 +388,11 @@ fn try_pseudoinverse_with_threshold(
     let q_correction = r2_dot_mu + r3 * xi_hat;
 
     // [lem:q-error-bound]: |lambda_min| = min_j |lambda_j| over ALL eigenvalues of M.
-    // This makes E large for near-singular M, which correctly exposes that the lemma's
-    // bound is too loose. The solver panics on basic polytopes (simplex, hypercube, etc.)
-    // because the bound is wrong — the actual Q is accurate but the bound says otherwise.
-    // See formal/hk2017-qp-precision.tex and
-    // experiments/dev-quadratic-program/README.md: the q-error-bound lemma
-    // needs replacing with a tighter bound before thesis-facing use.
+    // Near-singular or singular systems can make this legacy diagnostic large.
+    // The exact residual lemma assumes nonsingularity and a proved spectral gap;
+    // thresholded computed eigenvalues do not establish those hypotheses.
+    // The selected production route uses the direct inverse-defect certificate
+    // plus exact fallback; this raw solver retains the diagnostic for audits.
     let abs_lambda_min = eigenvalues
         .iter()
         .map(|e| e.abs())
@@ -404,12 +401,13 @@ fn try_pseudoinverse_with_threshold(
 
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
     // Extract Lagrange multipliers from pseudoinverse solution.
-    // These are valid even after null-space shift of beta, because null-space
-    // directions preserve the KKT objective Q (see Q-constancy check below).
+    // The legacy route retains these multipliers after a near-null beta shift.
+    // Exact null shifts preserve the KKT objective, but threshold-discarded
+    // numerical directions need not. The Q-constancy check below is a diagnostic.
     let mu0: Vec<f64> = (m..m + 4).map(|i| x0[i]).collect();
     let xi0 = x0[m + 4];
 
-    // If already feasible (all beta > EPS), compute error bound and return.
+    // If already feasible (all beta > EPS), compute the residual diagnostic and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         return Some(finalize_result(
             &beta0,
@@ -584,7 +582,7 @@ fn extract_constraint_residual(kkt: &DMatrix<f64>, beta: &[f64], m: usize) -> f6
     sq_sum.sqrt()
 }
 
-/// Build the final KktResult with Q computation and error bound assertion.
+/// Build the final KktResult with Q computation and residual-diagnostic assertion.
 #[allow(clippy::too_many_arguments)]
 fn finalize_result(
     beta: &[f64],
@@ -628,7 +626,7 @@ fn finalize_result(
     // The q_error_bound and q_corrected values are stored in KktResult for
     // auditing. Gap: need proven error bound or algorithm change before
     // thesis-facing use; track route-development status in
-    // experiments/dev-quadratic-program/README.md.
+    // topics/capacity-and-qp/development/README.md.
 
     KktOutcome::Feasible(KktResult {
         beta: beta.to_vec(),

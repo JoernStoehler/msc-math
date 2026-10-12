@@ -231,7 +231,7 @@ def main():
         override_text = str(override).lower() if isinstance(override, bool) else escape(override)
         lines.append('| ' + ' | '.join([label, record['cli_stage'], str(record['default']).lower(), str(record['enabled']).lower(), override_text if override is not None else 'inherit', record['review_group'], escape(record['description'] or 'No enum description'), displayed]) + ' |')
     lines += ['', '## Project setting provenance', '',
-              'Git identifies the last change to a committed line, not the Codex version running when it was written. Uncommitted lines are identified explicitly. The existing project overrides were assessed against 0.160.0 in docs/codex.md; historical runtime versions remain unknown unless their sources recorded them.', '',
+              'Git identifies the last change to a committed line, not the Codex version running when it was written. Uncommitted lines are identified explicitly. The existing project overrides were assessed against 0.160.0 in meta-topics/development-environment/codex-reference.md; historical runtime versions remain unknown unless their sources recorded them.', '',
               '| Line | Setting | Last change | Recorded runtime at that change |',
               '| --- | --- | --- | --- |']
     provenance = []

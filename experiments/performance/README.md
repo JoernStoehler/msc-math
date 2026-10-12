@@ -3,7 +3,7 @@
 This directory is the physical home of reusable runtime and memory profiling
 targets. Correctness and regression experiments belong in
 `experiments/verification/`. Numerical error-audit runs belong in
-`experiments/dev-quadratic-program/numerics-audit/`.
+`topics/capacity-and-qp/development/numerics-audit/`.
 
 For datascience-style f64 capacity workflow questions, the workflow-level
 performance packet has moved to
@@ -65,7 +65,7 @@ This target answers the recurring question:
 It compares only these two paths:
 
 - `f64_transition_pruned_hk`: pure-f64 route from
-  `experiments/dev-quadratic-program/src/f64_route/`;
+  `topics/capacity-and-qp/development/src/f64_route/`;
 - `exact_transition_pruned_f64_then_exact_fallback`: exact transition-pruned
   HK2017 candidate generation plus
   `aggregate_orbits_with_dual_vertices_exact(..., MinimaSafe)`.
@@ -212,7 +212,7 @@ indeterminate near-minimum candidates.
 ### `capacity-route-costs`
 
 This target is the paired executable cost demonstration for the capacity-route
-ladder in `experiments/dev-quadratic-program/src/route_demonstrations/`. It
+ladder in `topics/capacity-and-qp/development/src/route_demonstrations/`. It
 compares the current small set of materially different scalar routes on the
 same deterministic random fixtures:
 
@@ -276,7 +276,7 @@ Interpretation boundaries:
 
 The datascience f64 capacity performance binaries, f64-specific summarizers,
 and manifest workflow wrapper now live in
-`experiments/dev-quadratic-program/performance/`.
+`topics/capacity-and-qp/development/performance/`.
 
 ### `hk2017-pruned-f64`
 

@@ -1,0 +1,1372 @@
+{
+  "scope": "HKO local maxima; regular/affine polygon products; fixed-pentagon arbitrary-partner and odd-regular symmetric-partner work; selected thesis chapters 7/9/10/11 and immediate product-position desk follow-ups.",
+  "coverage": "Read inventory contract, topic READMEs, current chapter11 in full, chapter7/9/10 statement/proof routing, main affine research statements and selected proof sections, HKO formal route headers/setup, finite summaries/transcripts, and fixed-partner proof/status notes. Inspected production capacity adapter and HKO verifier reconstruction/check interface. Did not rerun producers or exact verifiers, build PDFs, inspect every Rust/Sage/Python line, read every data row, extract immutable ZIPs, or audit all archived review evidence. General review-evidence paths were located; historical acceptance claims are attributed to current owner sources rather than newly inferred from archives. Uninspected collections are marked explicitly. Human readability status records source evidence, not this agent's invented acceptance. Read archived HKO human-feedback status, pentagon replacement provenance, bounded 4 October acceptance sources, and current thesis-work scope disposition. Read only the cached landscape final run_summary to quote timing; no download, symlink materialization or producer execution. Bounded follow-up checked Sage certificate git history and historical/current byte/AST identity, without rerunning Sage; source-hash mismatch is exactly shebang deletion in 53d55689.",
+  "items": [
+    {
+      "id": "hko-products-hko-local-max",
+      "kind": "result",
+      "title": "HKO local maximum among ten-facet four-polytopes",
+      "summary": "Local maximality at the published HKO pentagon product, including perturbations breaking product structure; strict first-order decrease on the 25-dimensional quotient slice. Not an unrestricted facet-count theorem.",
+      "state": "Computer-assisted theorem: analytic feasible-upper-section implication plus exact 26-row algebraic certificate.",
+      "agent_readability": "Formal source reports agent line-check against verifier propositions; verifier has an explained listing. Current chapter inspected for routing, not independently re-audited. Retained 4 October bounded source/PDF acceptance also checks finite-predicate-to-neighborhood framing, not exhaustive verification.",
+      "human_readability": "Formal header records Jörn route acceptance 2026-06-04 and quick formal-PDF review 2026-06-05. Historical hko-reading-feedback.md records a finished September 14 HKO preview reading judged already PASS, with specific further presentation requests. That frozen draft judgment is not current integrated-thesis PASS.",
+      "runtime": "Unknown: retained verification-summary.json has no elapsed time; no rerun.",
+      "code_quality": "Inspected verifier reconstructs exact geometry over a pinned ordered number field and uses explicit ValueError gates rather than removable Python assertions. Full maintainability assessment not performed.",
+      "sources": [
+        {
+          "path": "formal/hko-feasible-section-upper-branches.tex",
+          "supports": "Analytic implication, symmetry quotient and dated review status."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/theorem/verification-summary.json",
+          "supports": "Recorded exact rank 25, symmetry rank 15 and positive convex relation."
+        },
+        {
+          "path": "thesis/chapters/07-hko.tex",
+          "supports": "Selected reader-facing theorem and proof."
+        },
+        {
+          "path": "docs/history/review-evidence/calibration/hko-reading-feedback.md",
+          "supports": "Human reading annotations and bounded PASS judgment on one identified HKO draft, not whole thesis."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md",
+          "supports": "Bounded independent source acceptance, its mathematical-review depth and limits."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-pdf.md",
+          "supports": "Identified 100-page candidate, physical-page review depth and explicit absence of Jörn/Kai whole-thesis PASS."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "supported by",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/theorem/verify.sage.py"
+        },
+        {
+          "relation": "supported by",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/theorem/witness.json"
+        },
+        {
+          "relation": "explained by",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/theorem/verify.sage.py.explained.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Final current-thesis human proof/prose acceptance not established by the historical quick review."
+      ]
+    },
+    {
+      "id": "hko-products-non-hko-local-max",
+      "kind": "result",
+      "title": "A non-HKO ten-facet local maximum",
+      "summary": "Rational genuine hexagon–quadrilateral product: 10 facets, 24 vertices, volume 1/2, capacity 1, ratio 1. Local maximum among all nearby genuine ten-facet four-polytopes; two equality parameters modulo symmetry, hence non-strict. Different vertex count rules out affine equivalence to HKO.",
+      "state": "Exact rational/rational-function certificate with analytic uniform-neighborhood argument and retained independent implementation audit; included in selected chapter 07.",
+      "agent_readability": "Packet separates proof, result, source literature, witness and independent audit; proof inspected only for structure/status in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "24 September retained original run: 12.724343861 s; independent audit: 3.551142393 s (their JSON summaries; hardware unspecified).",
+      "code_quality": "Independent audit does not import submitted verifier modules. Independent checker uses Python assertions and README requires PYTHONOPTIMIZE=0. No new code execution or maintainability audit.",
+      "sources": [
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/non-hko/RESULT.md",
+          "supports": "Precise quantifier, equality family and finite predicates."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/non-hko/PROOF.md",
+          "supports": "Analytic neighborhood implication."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/non-hko/verification/20260924-original-summary.json",
+          "supports": "Recorded exact rerun."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/non-hko/verification/20260924-independent.json",
+          "supports": "Independent implementation audit."
+        },
+        {
+          "path": "thesis/chapters/07-hko.tex",
+          "supports": "Reader-facing second local maximum."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md",
+          "supports": "Bounded independent source acceptance, its mathematical-review depth and limits."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-pdf.md",
+          "supports": "Identified 100-page candidate, physical-page review depth and explicit absence of Jörn/Kai whole-thesis PASS."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "supported by",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/non-hko/certificate/certificate_base.json"
+        },
+        {
+          "relation": "verified by",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/non-hko/verify.py"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "No current human mathematical/prose acceptance found.",
+        "No numerical neighborhood radius, uniqueness or global maximality claimed."
+      ]
+    },
+    {
+      "id": "hko-products-hko-smooth-failure",
+      "kind": "result",
+      "title": "Nonsingular-only HKO certificate attempt has numerical rank defect",
+      "summary": "44 nonsingular positive-beta branches have projected f64 rank 23 in a 25-dimensional quotient; 106 singular rows among 150 positive active rows motivate explicit feasible sections. Does not rule out every nonsingular repair.",
+      "state": "Retained numerical diagnostic of a failed proof route; not theorem evidence.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Unknown; no rerun.",
+      "code_quality": "Numerical diagnostic/source not fully audited.",
+      "sources": [
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/smooth-only-rank-defect/README.md",
+          "supports": "Counts, numerical scope and route consequence."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/smooth-only-rank-defect/summary.json",
+          "supports": "Retained diagnostic summary."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "explains",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/theorem/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Rank is reported numerically, not as an exact impossibility theorem."
+      ]
+    },
+    {
+      "id": "hko-products-hko-legacy-smooth-envelope",
+      "kind": "collection",
+      "title": "Unresolved smooth-envelope HKO argument",
+      "summary": "Older first-/second-order envelope conditions presume smooth optimizing branches; the source marks the non-smooth sufficiency argument for Jörn verification. Separate symmetry note mixes observed active-row bookkeeping with explicitly unverified group-map text.",
+      "state": "Historical/incomplete proof development, superseded as a local-maximality proof route by explicit feasible sections.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "formal/hko-local-maximality-conditions.tex",
+          "supports": "Unresolved sufficiency TODO and smooth-envelope setup."
+        },
+        {
+          "path": "formal/hko-symmetry-gradient-structure.tex",
+          "supports": "Symmetry/gradient development including unverified map construction."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "superseded by",
+          "path": "formal/hko-feasible-section-upper-branches.tex"
+        }
+      ],
+      "action": "clarify",
+      "rationale": "Preserve failed-route rationale while preventing proof-like titles from being mistaken for the selected theorem.",
+      "uncertainties": [
+        "Individual symmetry and envelope claims have mixed review status; no uniform proved verdict justified."
+      ]
+    },
+    {
+      "id": "hko-products-rotation-profile",
+      "kind": "result",
+      "title": "Complete rotated regular-pentagon capacity and ratio profile",
+      "summary": "Exact full-angle P5 × RθP5 profile; selected short proof uses HKO endpoint values, positive trigonometric interpolation, one attaining word and symmetry. Independent affine theorem also recovers this same result.",
+      "state": "Selected analytic theorem; three proof routes correspond to one result, not three theorems.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Formal affine README calls the short endpoint-interpolation argument accepted; acceptance of every subsequent prose version is explicitly excluded. Current reader-facing chapter exists; current PASS unknown.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "thesis/chapters/09-rotated-regular-polygons.tex",
+          "supports": "Current statement and endpoint-interpolation proof."
+        },
+        {
+          "path": "topics/products/pro-handoffs/pentagon-generalization/math/rotated-pentagon-proof.tex",
+          "supports": "Earlier short analytic proof route."
+        },
+        {
+          "path": "topics/products/pentagon-affine-products/README.md",
+          "supports": "Historical acceptance and distinction from later prose."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md",
+          "supports": "Bounded independent source acceptance, its mathematical-review depth and limits."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-pdf.md",
+          "supports": "Identified 100-page candidate, physical-page review depth and explicit absence of Jörn/Kai whole-thesis PASS."
+        },
+        {
+          "path": "docs/history/pentagon-chapter-v2/README.md",
+          "supports": "Jörn accepted underlying pentagon argument while rejecting earlier exposition; replacement chapter acceptance not asserted."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "also proved by",
+          "path": "topics/products/pentagon-affine-products/research.tex"
+        },
+        {
+          "relation": "earlier route",
+          "path": "topics/products/regular-products/pentagon-rotation-formula-proof/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Human acceptance of current selected wording is separate from short-argument acceptance."
+      ]
+    },
+    {
+      "id": "hko-products-rotation-sage-route",
+      "kind": "workflow",
+      "title": "Earlier exhaustive Sage certificate for the pentagon profile",
+      "summary": "Classifies all 3,340 words on 0<θ<π/10. Endpoint continuity and mirror symmetry are mathematical steps outside the run. Retained independently of the selected analytic argument.",
+      "state": "Recorded Sage 10.7 run passed. Recorded source SHA-256 differs current bytes solely because commit 53d55689 removed the Sage shebang; retained run binds pre-removal source, not current byte identity. Historical/current parsed Python ASTs are identical.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Retained transcript: CERTIFICATE PASSED in 2613.87 s under Sage 10.7, Python assertions enabled; hardware unspecified. No rerun.",
+      "code_quality": "Bounded git provenance check: transcript SHA 5cb004f3df24a27cb5bf6a6bd4b2f281e17edf834bbbb25895f88c31f239aed4 exactly matches source at 7319f9e4 and 53d55689 parent. Current SHA is 17864dbde55025656e6e46e31b80f61e75f322436ac186fe78d52c5d1ab33b79. Removing only the first historical line (#!/usr/bin/env sage -python) yields current bytes exactly, and ast.dump(ast.parse(...)) matches. No mathematical computation changed in this comparison; no rerun or comprehensive code audit.",
+      "sources": [
+        {
+          "path": "topics/products/regular-products/pentagon-rotation-formula-proof/README.md",
+          "supports": "Coverage and trust boundary."
+        },
+        {
+          "path": "topics/products/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt",
+          "supports": "3,340 classifications and successful run."
+        },
+        {
+          "path": "topics/products/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py",
+          "supports": "Exact certificate source."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "earlier proof route for",
+          "path": "thesis/chapters/09-rotated-regular-polygons.tex"
+        },
+        {
+          "relation": "uses",
+          "path": "formal/combinatorial-boundary-regularity.tex"
+        },
+        {
+          "relation": "uses",
+          "path": "formal/lagrangian-product-rotation-symmetry.tex"
+        }
+      ],
+      "action": "keep + clarify",
+      "rationale": "Retain costly certificate history and explain migration-only hash drift rather than either claiming current byte binding or treating drift as a failed semantic certificate.",
+      "uncertainties": [
+        "Transcript is not a run of the current byte-identical file; the sole observed source change is interpreter-launch metadata. Actual current-environment execution has not been measured.",
+        "Recorded successful execution and AST identity do not independently establish mathematical completeness."
+      ]
+    },
+    {
+      "id": "hko-products-affine-capacity",
+      "kind": "result",
+      "title": "Capacity of independently affine regular-pentagon factors",
+      "summary": "For translated nonsingular linear images GP5 and HP5, c=w²/max|n_i^T G^-1 H^-T n_j|. Includes independent shears, stretches, scales and reflections; 25 pairings suffice.",
+      "state": "Complete analytic proof, two independent agent audits and checked primary-source contract; selected in chapter 10. Human acceptance and novelty unestablished.",
+      "agent_readability": "Canonical research note is self-contained with primary references; README reports two no-gap independent audits. Survey read main statements and route, not a third audit.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Principal capacity theorem and tensor containment proof."
+        },
+        {
+          "path": "topics/products/pentagon-affine-products/source-contract.md",
+          "supports": "External sparse/HK factor/sign/hypothesis contract."
+        },
+        {
+          "path": "topics/products/pentagon-affine-products/README.md",
+          "supports": "Audit/provenance status."
+        },
+        {
+          "path": "thesis/chapters/10-affine-pentagons.tex",
+          "supports": "Selected reader-facing extension."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md",
+          "supports": "Bounded independent source acceptance, its mathematical-review depth and limits."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-pdf.md",
+          "supports": "Identified 100-page candidate, physical-page review depth and explicit absence of Jörn/Kai whole-thesis PASS."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "extends",
+          "path": "thesis/chapters/09-rotated-regular-polygons.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "No claim for arbitrary pentagons or arbitrary independent affine heptagons.",
+        "No human proof/prose PASS or publication novelty established."
+      ]
+    },
+    {
+      "id": "hko-products-affine-sharp-bound",
+      "kind": "result",
+      "title": "Sharp ratio and equality class across the independent affine pentagon family",
+      "summary": "Global in this family: ratio ≤(3+√5)/5; equality iff the relative matrix is a positive multiple of Rπ/10 times a decagon dihedral symmetry. Does not replace the nearby general ten-facet local theorem.",
+      "state": "Analytic determinant/area containment proof in audited affine packet; included in selected chapter 10.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Sharp-bound theorem and equality characterization."
+        },
+        {
+          "path": "thesis/chapters/10-affine-pentagons.tex",
+          "supports": "Selected sharp ratio and equality prose."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md",
+          "supports": "Bounded independent source acceptance, its mathematical-review depth and limits."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-pdf.md",
+          "supports": "Identified 100-page candidate, physical-page review depth and explicit absence of Jörn/Kai whole-thesis PASS."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "uses",
+          "path": "topics/products/pentagon-affine-products/research.tex"
+        },
+        {
+          "relation": "complements",
+          "path": "formal/hko-feasible-section-upper-branches.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Human acceptance and novelty remain open."
+      ]
+    },
+    {
+      "id": "hko-products-four-six-hull",
+      "kind": "result",
+      "title": "Four-block plus paired-triangle matrix reduction",
+      "summary": "Finite product capacity representation combines the four-block hull with six-block matrices from pairs of closure triples; width-body formula holds precisely when the latter lie in the former. Existing sparse reduction is recalled, not claimed new.",
+      "state": "Analytic structural theorem in agent-audited research note.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Theorem Four blocks plus paired triangles and attribution to supplied sparse reduction."
+        },
+        {
+          "path": "topics/products/pro-handoffs/pentagon-generalization/math/product-six-facet-reduction.tex",
+          "supports": "Supplied reduction route."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "supports",
+          "path": "topics/products/pentagon-affine-products/research.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Cross-topic duplicate identity with product algorithm/sparse-reduction inventory requires integration."
+      ]
+    },
+    {
+      "id": "hko-products-affine-angle-envelope",
+      "kind": "result",
+      "title": "Complete rotation profiles of independently affine pentagon pairs",
+      "summary": "Each profile is the support envelope of at most 50 signed coefficient pairs; exposed vertices identify actual branches and exposed equalities identify switches, including ties.",
+      "state": "Analytic corollary of the independent affine capacity formula.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Section All independently affine pentagon rotation profiles."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "derived from",
+          "path": "topics/products/pentagon-affine-products/research.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": []
+    },
+    {
+      "id": "hko-products-interpolation-sharpness",
+      "kind": "result",
+      "title": "Exact criterion for endpoint interpolation to be sharp",
+      "summary": "For a polygonal coefficient hull, equality at one strict interior angle iff a feasible coefficient maximizes at both endpoints; then equality holds over the full interval. Endpoint equality alone does not give this conclusion.",
+      "state": "Analytic proposition in the agent-audited research note.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Exact sharpness criterion and proof."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "explains",
+          "path": "thesis/chapters/09-rotated-regular-polygons.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": []
+    },
+    {
+      "id": "hko-products-pentagon-switch-six",
+      "kind": "result",
+      "title": "Six-block maximizers occur at pentagon switch angles",
+      "summary": "Explicit alternating coefficient lies in a four-block decagon edge interior and maximizes at θ=π/10. A universal claim that every pentagon optimizer reduces to four blocks would be false.",
+      "state": "Exact analytic example in audited packet.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Section Why pentagon switch points are not strictly four-block."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "qualifies",
+          "path": "topics/products/pentagon-affine-products/research.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": []
+    },
+    {
+      "id": "hko-products-triangle-obstruction",
+      "kind": "result",
+      "title": "Regular triangle profile obstructs a universal width-body formula",
+      "summary": "Complete P3 × RθP3 profile from its one closure pair. At zero angle c=3/2, whereas four-block-only calculation gives 9/4; six-block coefficient hull strictly contains the four-block hull.",
+      "state": "Exact analytic counterexample; novelty of triangle capacity is not claimed.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Section Triangles show that the width-body rule is not universal."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "qualifies",
+          "path": "topics/products/pentagon-affine-products/research.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": []
+    },
+    {
+      "id": "hko-products-heptagon-profile",
+      "kind": "result",
+      "title": "Complete rotated heptagon–heptagon profile",
+      "summary": "P7 × RθP7 has a full secant angular profile including every switch angle, established by exact exclusion of every six-block competitor.",
+      "state": "Complete analytic result in agent-audited development; optional further mathematics, not selected thesis9/10 theorem.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Two further complete angular profiles and exhaustive closure/order exclusion."
+        },
+        {
+          "path": "topics/products/pentagon-affine-products/README.md",
+          "supports": "Scope and agent-audit boundaries."
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Does not imply arbitrary independently affine heptagon capacity formula.",
+        "Human acceptance and novelty unknown."
+      ]
+    },
+    {
+      "id": "hko-products-pentagon-heptagon-profile",
+      "kind": "result",
+      "title": "Complete rotated pentagon–heptagon profile",
+      "summary": "P5 × RθP7 has a full secant angular profile including every switch angle, established by exact exclusion of every six-block competitor.",
+      "state": "Complete analytic result in agent-audited development; optional further mathematics, not selected thesis9/10 theorem.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Two further complete angular profiles and exhaustive closure/order exclusion."
+        },
+        {
+          "path": "topics/products/pentagon-affine-products/README.md",
+          "supports": "Scope and agent-audit boundaries."
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Does not imply arbitrary independently affine heptagon capacity formula.",
+        "Human acceptance and novelty unknown."
+      ]
+    },
+    {
+      "id": "hko-products-strict-containment-stability",
+      "kind": "result",
+      "title": "Open nonregular families retain width-body capacity",
+      "summary": "Strict containment of the finite six-block hull in the four-block hull persists in fixed labelled-facet polygon neighborhoods; gives all-angle width-body formula around 7×7 and 5×7 pairs. Regular secant formulas need not persist.",
+      "state": "Complete analytic stability proposition, optional beyond selected chapters.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-affine-products/research.tex",
+          "supports": "Strict width dominance is stable and neighborhood application."
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "No explicit norm radius or all-convex-body topology claim."
+      ]
+    },
+    {
+      "id": "hko-products-symmetric-pentagon-partner",
+      "kind": "result",
+      "title": "Fixed regular pentagon with any centrally symmetric partner",
+      "summary": "For every symmetric planar convex K, c(K×P5)=max{r:r(P5−P5)^polar⊆K−K}; sharp ratio (10+6√5)/25<1, attained exactly by translated/dilated prescribed decagon. Proof covers ten normal triangles, not an empirical extrapolation.",
+      "state": "Independent agent-checked analytic proof; Jörn explicitly selected inclusion on 3 October, but current thesis-work scope disposition says currently omitted. Human proof acceptance and presentation remain open.",
+      "agent_readability": "Short Markdown geometric proof with explicit placements and separate external cover criterion; independently checked per source.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/symmetric-partner-lemma.md",
+          "supports": "Explicit capacity/area proof and audit status."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/first-window.md",
+          "supports": "Relation to collection and separate affine proof."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md",
+          "supports": "Later general theorem subsumes pentagon and notes pentagon selection."
+        },
+        {
+          "path": "docs/coordination/thesis-work.md",
+          "supports": "Explicit selected-but-currently-omitted manuscript disposition."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "subsumed by",
+          "path": "topics/products/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Do not confuse central symmetry of K with a formula for arbitrary asymmetric partners.",
+        "Current manuscript omission is confirmed by thesis-work.md; presentation route and human proof acceptance remain open."
+      ]
+    },
+    {
+      "id": "hko-products-odd-symmetric-partner",
+      "kind": "result",
+      "title": "All odd regular n≥5 factors with centrally symmetric partners",
+      "summary": "General exact width formula and sharp κn=4(1+cos(π/n))²/[n²sin(π/n)sin(2π/n)]<1; unique partner up to prescribed translation/dilation; κn decreases to 8/π². Includes affine-image factor transfer; subsumes n=5 and n=7 calibrations.",
+      "state": "3 October agent-derived analytic argument independently checked by research_choices; human acceptance, generalization thesis inclusion and novelty explicitly absent.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md",
+          "supports": "General theorem, acute/obtuse placements, equality and monotonicity."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/heptagon-symmetric-partner.md",
+          "supports": "Earlier n=7 special case, alias under the general theorem."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "generalizes",
+          "path": "topics/products/pentagon-arbitrary-partner/symmetric-partner-lemma.md"
+        },
+        {
+          "relation": "supersedes special case",
+          "path": "topics/products/pentagon-arbitrary-partner/heptagon-symmetric-partner.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "n=3 excluded by calibration obstruction; arbitrary nonsymmetric odd-factor pairs unresolved."
+      ]
+    },
+    {
+      "id": "hko-products-odd-partner-stability",
+      "kind": "result",
+      "title": "Symmetric-partner formula persists near each odd regular factor",
+      "summary": "Open neighborhood among genuine cyclically labelled n-facet polygons retains exact formula for every centrally symmetric partner. Fixed-Q sharp ratio/equality class follows and stays below one after shrinking neighborhood. Boundary templates use exact support identity, not mere continuity.",
+      "state": "Separate 3 October agent-checked analytic deduction; no human acceptance or thesis selection.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/local-calibration-stability.md",
+          "supports": "Precise topology, boundary identity and proof."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "extends",
+          "path": "topics/products/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "No explicit radius, uniform-in-n statement or openness in all convex bodies."
+      ]
+    },
+    {
+      "id": "hko-products-asymmetry-necessary",
+      "kind": "result",
+      "title": "Difference-body area excess needed for ratio above one",
+      "summary": "For arbitrary K and odd regular Q, central symmetrization has capacity WQ(K); ratio ≤κn(1+δ(K)), so ratio>1 requires δ>1/κn−1. Pentagon threshold about 0.06762746.",
+      "state": "Analytic corollary of symmetric-partner theorem; necessary condition only, no sufficiency/sharpness/novelty claim.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md",
+          "supports": "General asymmetric-partner implication."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/first-window.md",
+          "supports": "Earlier pentagon corollary."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "derived from",
+          "path": "topics/products/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": []
+    },
+    {
+      "id": "hko-products-partner-cover-rigidity",
+      "kind": "result",
+      "title": "Local HKO rigidity for arbitrary planar partners of a fixed pentagon",
+      "summary": "Placement-hull area has a linear local deficit modulo common translation; claimed consequence is local product maximality for arbitrary planar partner K without facet bound, equality only translates/homothets. Does not cover arbitrary nonproduct four-bodies.",
+      "state": "Derivation with executed exact finite certificate; continuum signed-polygon lower estimate still requires independent mathematical review before promotion.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Retained local-cover verification JSON: elapsed_seconds 1.102819958992768; execution environment/hardware not established here.",
+      "code_quality": "Finite arithmetic verifier separated from unformalized continuum implication; source not independently audited in this survey.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/local-cover-rigidity.md",
+          "supports": "Statement, continuum lemma and explicit remaining review obligation."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/local-cover/README.md",
+          "supports": "Finite certificate scope."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/local-cover/verification/20260924.json",
+          "supports": "Recorded exact predicate verification."
+        }
+      ],
+      "relationships": [],
+      "action": "keep + investigate",
+      "rationale": "High-value extension with a precisely identified evidence gap; preserve without calling arithmetic PASS a complete accepted theorem.",
+      "uncertainties": [
+        "Continuum signed-polygon estimate has not been independently formalized/audited according to desk README."
+      ]
+    },
+    {
+      "id": "hko-products-one-cut-partial",
+      "kind": "result",
+      "title": "Partial extension to one added facet at HKO",
+      "summary": "Combines ten-facet sharpness, feasible vertex insertion and cap-volume O(δ^(4−k)) estimate. Proves coupled local maximality for cuts whose limiting exposed primal face has dimension k≤1; k=2 and k=3 remain unresolved.",
+      "state": "Conditional/partial analytic deduction, explicitly not a full F=11 theorem.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/local-cut-lifting.md",
+          "supports": "Inputs, coupling argument and missing two-face/facet cases."
+        }
+      ],
+      "relationships": [],
+      "action": "keep + investigate",
+      "rationale": "Retain achieved cases and exact outstanding cases rather than treating partial extension as absent or complete.",
+      "uncertainties": [
+        "Depends on accepted F=10 sharpness and supplied exact insertion input; this survey did not reverify those inputs.",
+        "No complete eleven-facet local theorem."
+      ]
+    },
+    {
+      "id": "hko-products-cover-generic-cell",
+      "kind": "result",
+      "title": "Generic translation-cell minima move to contacts",
+      "summary": "Convex-hull area is quadratic and separately affine in each polygon-translation block. At an interior local minimum PSD Hessian has zero diagonal blocks, hence is zero; a constant-area move reaches a cell boundary in bounded domains.",
+      "state": "Analytic contact-reduction lemma; not complete finite classification of rigid contact patterns.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/smooth-cell-reduction.md",
+          "supports": "Proof and limits on iteration over coupled boundary strata."
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Boundary-stratum reduction and global minimum-area cover remain open."
+      ]
+    },
+    {
+      "id": "hko-products-harmonic-fibers",
+      "kind": "result",
+      "title": "Same fitting vector and widths can hide polar geometry",
+      "summary": "Three explicit odd support-harmonic smooth bodies have identical full width field, area, perimeter, capacity and all ten fit scales, yet different centroid-polar products. Maximal-template placements distinguish modes.",
+      "state": "Analytic construction plus retained numerical controls; representation result, no extremal/novelty claim.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Unknown for harmonic follow-up; no rerun.",
+      "code_quality": "Support-body formulas are analytic; numerical summary is not rigorous certification of arbitrary measurements.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/harmonic-fibers.md",
+          "supports": "Exact support construction and distinction from radial-harmonic adverse example."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/harmonic-fibers-v1-summary.json",
+          "supports": "Retained measured controls."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "consumes",
+          "path": "topics/products/pentagon-arbitrary-partner/evaluator.py"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Independent proof-acceptance evidence not established in this survey."
+      ]
+    },
+    {
+      "id": "hko-products-partner-evaluator",
+      "kind": "algorithm",
+      "title": "Ten triangle-fitting LPs evaluate fixed-pentagon products",
+      "summary": "Floating-point 3-variable LP evaluator returns capacity, complete fitting vector, primal/dual/contact witnesses and residuals. Invalid/failed solves raise errors. Consequential candidates require exact/interval reconstruction and completeness checks.",
+      "state": "Numerically calibrated reusable desk capability; not a rigorous capacity certificate.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "README reports 15 calibration/control bodies in 0.222 s; usual 10-LP calls 14–17 ms locally; hardware unspecified, small well-scaled polygons only.",
+      "code_quality": "Inspected source contract distinguishes support length from gauge, both template orders and LP primal/dual checks; no complete maintainability review or rerun.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/research-charter.md",
+          "supports": "External criterion derivation, numerical contract and calibration."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/evaluator.py",
+          "supports": "Implementation entry point."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/calibration.json",
+          "supports": "Retained calibration controls."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "generates",
+          "path": "topics/products/pentagon-arbitrary-partner/collection-v1.jsonl"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Floating-point accuracy and calibration do not establish exact capacity of every arbitrary input."
+      ]
+    },
+    {
+      "id": "hko-products-partner-collection",
+      "kind": "dataset",
+      "title": "Heterogeneous partners, fixed-width paths and geometric measurements",
+      "summary": "33 base geometries plus 16 descendants (side counts 3–90), and 94 follow-up measurements on five strict-gap symmetrization paths. Controlled acquisition, not IID population data; all five paths reach two-bounce ceiling before midpoint. Retained onset LP witnesses; no universal onset law inferred.",
+      "state": "Retained empirical collection with independent measurement fixtures/residual checks and explicit retired forced-law interpretation.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "first-window.md: initial 49 geometries 1.473 s; 94 symmetrization records 2.112 s. Local measurements, hardware unspecified.",
+      "code_quality": "Signed-triangle monomial integration separates continuous area moments from vertex averaging; floating-point LP residuals remain nonrigorous.",
+      "sources": [
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/first-window.md",
+          "supports": "Coverage, timings, onset interpretation and limitations."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/collection-v1-metadata.json",
+          "supports": "Seed/input identities and raw-construction provenance."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/validation-v1.json",
+          "supports": "Measurement/metamorphic and residual validation."
+        },
+        {
+          "path": "topics/products/pentagon-arbitrary-partner/symmetrization-v1-summary.json",
+          "supports": "Onset LP witnesses."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "generated by",
+          "path": "topics/products/pentagon-arbitrary-partner/collection.py"
+        },
+        {
+          "relation": "generated by",
+          "path": "topics/products/pentagon-arbitrary-partner/symmetrization.py"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "143 records comprise only 33 originally sampled bases; relatives/repeated endpoints are not independent."
+      ]
+    },
+    {
+      "id": "hko-products-product-initial-rotation",
+      "kind": "result",
+      "title": "Every symplectic planar product initially improves under rigid rotation",
+      "summary": "For arbitrary planar convex factors with areas a≤b and Lagrangian endpoint capacity ℓ, cθ=a/cosθ when tanθ≤ℓ/(2a). Proof by mass splitting and polygonal approximation; rigid angle θ/2; small positive tilt increases ratio.",
+      "state": "Independently agent-audited analytic research argument, selected as theorem in thesis11; no novelty/human PASS claim.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "thesis/chapters/11-product-position.tex",
+          "supports": "Current theorem, convex-body extension and explicit rigid rotation."
+        },
+        {
+          "path": "topics/products/product-position-research/README.md",
+          "supports": "Research proof and independent audit status."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-source-review.md",
+          "supports": "Bounded independent source acceptance, its mathematical-review depth and limits."
+        },
+        {
+          "path": "docs/history/thesis-restart-2026-10-04/acceptance-pdf.md",
+          "supports": "Identified 100-page candidate, physical-page review depth and explicit absence of Jörn/Kai whole-thesis PASS."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "includes consequence",
+          "path": "thesis/chapters/11-product-position.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Interval is sufficient and need not end at actual first transition."
+      ]
+    },
+    {
+      "id": "hko-products-product-endpoint-overshoot",
+      "kind": "result",
+      "title": "Intermediate product position can exceed both endpoint capacities",
+      "summary": "Explicit anisotropic triangle pair has Lagrangian capacity at most 18/5<9/2 symplectic capacity; initial rotation theorem then forces capacities exceeding both endpoints and an interior path maximum.",
+      "state": "Analytic counterexample in selected thesis11; not full angular classification.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Not applicable to the analytic statement; no producer rerun.",
+      "code_quality": "Not applicable to the analytic proof.",
+      "sources": [
+        {
+          "path": "thesis/chapters/11-product-position.tex",
+          "supports": "Example Product endpoints and continuity consequence."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "derived from",
+          "path": "thesis/chapters/11-product-position.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": []
+    },
+    {
+      "id": "hko-products-product-endpoint-collision",
+      "kind": "result",
+      "title": "Endpoint data do not determine intermediate capacities",
+      "summary": "One-parameter rational triangle family fixes both factor areas and endpoint capacities but changes cπ/4=18√2/(7−2s); whole-interval rational inequalities enumerate 120 cyclic orders. Fixed first-loss angle arctan(2/5).",
+      "state": "Exact separating construction with independent agent audit/rerun reported in desk source; not included as a theorem in inspected thesis11.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Desk README: exact certificate and 12-body numerical control each below one second locally; no precise hardware or new timing.",
+      "code_quality": "Standard-library Fraction arithmetic and exhaustive 120-order coverage; numerical control is separate. Survey did not re-audit implementation.",
+      "sources": [
+        {
+          "path": "topics/products/product-position-research/README.md",
+          "supports": "Family, formulas, complete coverage and audit status."
+        },
+        {
+          "path": "topics/products/product-position-research/exact_endpoint_collision.py",
+          "supports": "Fraction-arithmetic certificate."
+        },
+        {
+          "path": "topics/products/product-position-research/exact-endpoint-collision.json",
+          "supports": "Retained certificate coefficients/winners."
+        },
+        {
+          "path": "docs/coordination/thesis-work.md",
+          "supports": "Corrected distinction between integrated endpoint inequality/interior maximum and the retained equal-endpoint family."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "complements",
+          "path": "thesis/chapters/11-product-position.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity. The 10 October integration corrected the backlog to distinguish this retained family from the narrower example actually in chapter11.",
+      "uncertainties": [
+        "Duplicate with wider empirical desk inventory possible; reconcile by identity."
+      ]
+    },
+    {
+      "id": "hko-products-product-lift-failure",
+      "kind": "result",
+      "title": "Planar lift existence does not imply global minimality",
+      "summary": "Translative fit tanθ r≤1 characterizes existence of the lifted characteristic and a local insertion threshold, but exact rational triangle family has strict fit while a feasible action beats the lift. Strict inequalities make failure persist on an open set. Bounds ℓ/(2a)≤tan(first loss)≤1/r.",
+      "state": "Completed analytic negative result with exact witness; no full first-loss classification.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Unknown for follow-up; no rerun.",
+      "code_quality": "Exact feasible-action witness suffices to beat lift; no claim that it computes a complete profile.",
+      "sources": [
+        {
+          "path": "topics/products/product-position-research/lift-persistence.md",
+          "supports": "Existence/action derivation, insertion test and exact robust counterfamily."
+        },
+        {
+          "path": "topics/products/product-position-research/lift-persistence.json",
+          "supports": "Retained exact/numerical verification."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "extends",
+          "path": "topics/products/product-position-research/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Current human acceptance and novelty not established."
+      ]
+    },
+    {
+      "id": "hko-products-regular-sweeps",
+      "kind": "dataset",
+      "title": "Regular polygon-product empirical sweeps",
+      "summary": "Retained broad regular-pair rotation sweeps and figures; historical JSONL has retired billiard iterations field. Current Rust adapter produces exact rational capacity/outward binary64 bounds with approximate ratio because volume converts to f64.",
+      "state": "Supporting historical datasets; refreshed producer contract must not be attributed retroactively to old rows.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Unknown: no sweep rerun or aggregate timing inspected.",
+      "code_quality": "Inspected adapter validates geometry/facet/norm inputs and candidate-family tag; has cache-versus-raw-route regression test. No tests run in this inventory-only README change.",
+      "sources": [
+        {
+          "path": "topics/products/regular-products/rotated-regular-products/README.md",
+          "supports": "Retained-versus-current contract and selected plot reproduction."
+        },
+        {
+          "path": "topics/products/regular-products/src/capacity.rs",
+          "supports": "Current production adapter and deterministic minimizing-word choice."
+        },
+        {
+          "path": "topics/products/regular-products/src/volume.rs",
+          "supports": "Approximate volume interface."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "generated by",
+          "path": "topics/products/regular-products/rotated-regular-products/main.rs"
+        },
+        {
+          "relation": "illustrates",
+          "path": "thesis/chapters/09-rotated-regular-polygons.tex"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Historical finite-QP samples are not independently certified by regenerating their plots."
+      ]
+    },
+    {
+      "id": "hko-products-pentagon-figures",
+      "kind": "figure-set",
+      "title": "Pentagon sampled KKT landscape and orbit illustrations",
+      "summary": "73-angle frozen-universe landscape reports 3,340 raw words, four-way numerical statuses and 40 sampled-profile groups; static plots and orbit viewer aid exposition. Does not classify exact intervals or prove lower envelope. Raw landscape is intentionally externalized as registered immutable artifact pentagon-kkt-branch-landscape, with a locally cached copy but no materialized checkout link.",
+      "state": "Empirical figure packet with explicit numerical limits; selected theorem is analytic and independent.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Inspected last run_summary row of cached registered snapshot d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae/files/kkt-branch-landscape.jsonl: elapsed_seconds 13.396924664. Source snapshot identified by artifacts/registry.json; no producer rerun, hardware not extracted.",
+      "code_quality": "Contract preserves failures/indeterminate samples and warns Q error-bound lemma needs replacement before theorem use; plotting uses nominal actions only. Maintainability/test execution unassessed.",
+      "sources": [
+        {
+          "path": "topics/products/regular-products/pentagon-rotation-empirics/README.md",
+          "supports": "Frozen universe, statuses, grouping and evidence boundary."
+        },
+        {
+          "path": "topics/products/regular-products/pentagon-rotation-empirics/kkt-branch-analysis.json",
+          "supports": "Retained analysis and input identity."
+        },
+        {
+          "path": "topics/products/regular-products/pentagon-rotation-empirics/main.rs",
+          "supports": "Producer."
+        },
+        {
+          "path": "topics/products/regular-products/pentagon-rotation-empirics/analyze.py",
+          "supports": "Explicit-input analyzer and spike refusal."
+        },
+        {
+          "path": "artifacts/registry.json",
+          "supports": "Logical pentagon-kkt-branch-landscape snapshot and established consumer link; inspected corresponding local cached member without materializing."
+        },
+        {
+          "path": "docs/artifacts.md",
+          "supports": "Immutable artifact storage, cache and materialization contract."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "illustrates",
+          "path": "thesis/chapters/09-rotated-regular-polygons.tex"
+        }
+      ],
+      "action": "keep + clarify",
+      "rationale": "Preserve useful illustrations and numerical caveats; repaired stale Sage-as-current-proof routing.",
+      "uncertainties": [
+        "Cached raw member exists and is registered; no full cache-integrity verification performed. Numerical error-bound limitation remains as described."
+      ]
+    },
+    {
+      "id": "hko-products-hko-empirics",
+      "kind": "collection",
+      "title": "HKO neighborhood, first-/second-order and added-facet support packets",
+      "summary": "Aggregate owner map for first-order, second-order, fixed-F10 random/product and quotient-ray sampling, F11 splits and cut-then-ascent, plus row-bank validation and figures. Distinct identified observations have their own inventory rows; this collection is not an additional result.",
+      "state": "Empirical result-family and reusable diagnostic collection; local README distinguishes each packet and write behavior.",
+      "agent_readability": "Source inspected for inventory; mathematical proof not re-audited in this survey.",
+      "human_readability": "Unknown: source presence or thesis inclusion does not establish human readability or acceptance.",
+      "runtime": "Unknown: child outputs/producers not all audited for retained timings; no full runs.",
+      "code_quality": "Survey read packet interfaces, not every source/artifact or numerical contract. Exact-bank and row-bank labels do not make the whole empirical collection theorem proof.",
+      "sources": [
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/README.md",
+          "supports": "Exhaustive entry points, command/write contracts and theorem separation."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/README.md",
+          "supports": "Four empirical strands and limited inference."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/neighborhood-sampling/README.md",
+          "supports": "Sampler populations and controls."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/row-bank-validation/README.md",
+          "supports": "Cross-check scope."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "supports context for",
+          "path": "thesis/chapters/07-hko.tex"
+        },
+        {
+          "relation": "distinct from",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/theorem/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Retain the result and its evidence with explicit scope and proof-route identity.",
+      "uncertainties": [
+        "Detailed individual empirical effect sizes and dataset integrity not inspected in this bounded survey."
+      ]
+    },
+    {
+      "id": "hko-products-first-order-observation",
+      "kind": "result",
+      "title": "HKO first-order numerical orbit and ascent observation",
+      "summary": "Retained phase-A sensitivity reports 717 valid orbits and 150 within the one-percent near-optimal gap; one Armijo ascent attempt is rejected/no-change. A single-branch gradient and stopped ascent do not establish nonsmooth criticality.",
+      "state": "Finite numerical bookkeeping and failed improving-step search, separate from exact feasible-section proof.",
+      "agent_readability": "Local README identifies question, retained observations, command/write contract and limitations; full source proof audit not performed.",
+      "human_readability": "Unknown: experiment documentation is not evidence of human acceptance or publication readability.",
+      "runtime": "Unknown; no producer rerun.",
+      "code_quality": "README and retained-output contract inspected; numerical implementation not independently audited in this survey.",
+      "sources": [
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/first-order/README.md",
+          "supports": "Counts, threshold and ascent interpretation."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/first-order/hko-neighborhood-sensitivity.jsonl",
+          "supports": "Retained sensitivity evidence."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/first-order/hko-neighborhood-ascent.jsonl",
+          "supports": "Retained no-change ascent row."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "included in",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Preserve the distinct finite observation with its declared sampler, threshold and inference limits.",
+      "uncertainties": [
+        "No branch-completeness or local-maximality conclusion from this observation."
+      ]
+    },
+    {
+      "id": "hko-products-second-order-observation",
+      "kind": "result",
+      "title": "HKO sampled flat-space curvature observation",
+      "summary": "Numerical active-gradient rank 25 leaves 15 flat directions; all 15 basis directions have negative median symmetric curvature and 100 sampled flat directions show negative curvature. Smallest-scale individual deltas include near-zero positive values.",
+      "state": "Resolution-dependent finite-step support, not negative definiteness or a theorem for every flat direction.",
+      "agent_readability": "Local README identifies question, retained observations, command/write contract and limitations; full source proof audit not performed.",
+      "human_readability": "Unknown: experiment documentation is not evidence of human acceptance or publication readability.",
+      "runtime": "Unknown; no producer rerun.",
+      "code_quality": "README and retained-output contract inspected; numerical implementation not independently audited in this survey.",
+      "sources": [
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/second-order/README.md",
+          "supports": "Retained curvature findings and numerical caveat."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/second-order/second-order-base.jsonl",
+          "supports": "Numerical rank and basis."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/second-order/second-order-random.jsonl",
+          "supports": "Random directional probes."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "included in",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Preserve the distinct finite observation with its declared sampler, threshold and inference limits.",
+      "uncertainties": [
+        "Sensitive to SVD tolerance, epsilon grid and active-orbit selection."
+      ]
+    },
+    {
+      "id": "hko-products-m11-ascent-observation",
+      "kind": "result",
+      "title": "Twenty added-facet cut-and-ascent trials do not improve HKO",
+      "summary": "All 20 completed seeded F=11 placements retain the new facet; none beats HKO at the producer improvement threshold after its specific ascent/overshoot/random-escape policy.",
+      "state": "Finite negative search result; no all-F11 local theorem.",
+      "agent_readability": "Local README identifies question, retained observations, command/write contract and limitations; full source proof audit not performed.",
+      "human_readability": "Unknown: experiment documentation is not evidence of human acceptance or publication readability.",
+      "runtime": "Unknown; no producer rerun.",
+      "code_quality": "README and retained-output contract inspected; numerical implementation not independently audited in this survey.",
+      "sources": [
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/m11-ascent/README.md",
+          "supports": "Retained count, outcome and exact search-policy scope."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/m11-ascent/m11-ascent.jsonl",
+          "supports": "Completed placement records."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "included in",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Preserve the distinct finite observation with its declared sampler, threshold and inference limits.",
+      "uncertainties": [
+        "Policy/seed/threshold dependent; changed-facet-count mathematical result remains unsupported by this panel."
+      ]
+    },
+    {
+      "id": "hko-products-quotient-ray-observation",
+      "kind": "result",
+      "title": "Thirty-two HKO quotient rays show resolved nominal transitions",
+      "summary": "Seed-44 uniform Euclidean sphere panel in a fixed 25-dimensional affine slice: all 32 rays have sampled above-to-below ratio-one transition, midpoint range 0.0438428–0.112061, median 0.0784326. No sampled re-entry; seven controls pass. Route brackets match nominal positive-radius transition brackets.",
+      "state": "Accepted retained finite mechanism/readiness screen; no positivity inradius, first mathematical exit, trapping, population law or capacity certificate.",
+      "agent_readability": "Local README identifies question, retained observations, command/write contract and limitations; full source proof audit not performed.",
+      "human_readability": "Unknown: experiment documentation is not evidence of human acceptance or publication readability.",
+      "runtime": "Panel README records 1419.31 s wall time for 1171 capacity evaluations at commit 03d8322557af0f4f54c6b5ce9bed431e46d87fc4; current-machine repeat not measured.",
+      "code_quality": "Frozen reviewed launch packet; settings/source/hash bundle retained. README explicitly limits build binding to auditable provenance, not cryptographic dependency attestation.",
+      "sources": [
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/neighborhood-sampling/m10-quotient-ray/README.md",
+          "supports": "Accepted observation and claim boundaries."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/neighborhood-sampling/m10-quotient-ray/manifest.json",
+          "supports": "Source/settings/build provenance."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/neighborhood-sampling/m10-quotient-ray/summary.json",
+          "supports": "Run completion and counts."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "included in",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Preserve the distinct finite observation with its declared sampler, threshold and inference limits.",
+      "uncertainties": [
+        "Gauge/metric/measure dependent; pointwise chart checks do not certify full segments.",
+        "Earlier product-plane radius panel has a different measure/gauge; radii cannot establish quotient-versus-product effects."
+      ]
+    },
+    {
+      "id": "hko-products-row-bank-cross-check",
+      "kind": "result",
+      "title": "Selected Rust exact-bank rows independently cross-checked in Sage",
+      "summary": "Rust exports selected HKO/control exact rows; Sage recomputes q, action, beta and capacity derivatives independently. Six first-order exact-bank rows are solver/derivative checks, not a complete branch catalogue or 26-row theorem certificate.",
+      "state": "Live validation machinery with retained canonical input/report, not a new mathematical theorem.",
+      "agent_readability": "Local README identifies question, retained observations, command/write contract and limitations; full source proof audit not performed.",
+      "human_readability": "Unknown: experiment documentation is not evidence of human acceptance or publication readability.",
+      "runtime": "Unknown; no producer rerun.",
+      "code_quality": "README and retained-output contract inspected; numerical implementation not independently audited in this survey.",
+      "sources": [
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/row-bank-validation/README.md",
+          "supports": "Validation architecture and distinction from theorem predicate."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/row-bank-validation/row-bank-validation-report.jsonl",
+          "supports": "Retained independent recomputation report."
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/first-order/README.md",
+          "supports": "Six-row exact-bank scope."
+        }
+      ],
+      "relationships": [
+        {
+          "relation": "included in",
+          "path": "topics/variation-and-local-maxima/hko-local-maximum/empirical/README.md"
+        }
+      ],
+      "action": "keep",
+      "rationale": "Preserve the distinct finite observation with its declared sampler, threshold and inference limits.",
+      "uncertainties": [
+        "This survey did not inspect every report row or rerun cross-check."
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "path": "experiments/regular-products/pentagon-rotation-empirics/README.md",
+      "change": "Replace stale current-theorem routing to Sage certificate/continuity with selected analytic chapter 09 and independent chapter 10 routes; preserve exhaustive certificate as earlier independent route.",
+      "verification": "Compared README statements with current chapters9/10 and formal affine route map; no scientific statement or producer changed. Inventory JSON schema fields, unique IDs, all source/relationship paths and git diff whitespace checked."
+    },
+    {
+      "path": "experiments/regular-products/rotated-regular-products/README.md",
+      "change": "Separate selected rotation chapter from maintained independent affine extension, which the old sentence conflated.",
+      "verification": "Cross-checked existing files and selected chapter identities; no data regeneration. Inventory JSON schema fields, unique IDs, all source/relationship paths and git diff whitespace checked."
+    }
+  ]
+}

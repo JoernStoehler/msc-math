@@ -2,7 +2,7 @@
 
 Status: named development candidate, not promoted library code and not thesis
 evidence by itself. This describes the algorithm, not an assignment to develop
-or promote it. [Current work and ownership](../../docs/coordination/thesis-work.md) records
+or promote it. [Current work and ownership](../../meta-topics/project-management/thesis-work.md) records
 the live scope. For perturbation-scale behavior, see
 [branch-cartography/](branch-cartography/README.md).
 
@@ -76,7 +76,7 @@ Earlier versions of this note and the removed `PROMOTION-READINESS.md` are
 recoverable in Git. Commit `f3c924d4` contains historical source and input tables
 and command fragments; `6a5ee97d` removed unretained numerical claims from the
 promotion packet. At `f3c924d4`, the inputs are
-`experiments/sys-landscape/datascience/tables/polytope-table.jsonl` and
+`topics/empirical-studies/sys-landscape/datascience/tables/polytope-table.jsonl` and
 `polytope-provenance-table.jsonl` in that same directory; command fragments are
 in `experiments/dev-gradient-ascent/README.md`. Use `git show <commit>:<path>`
 to inspect them without restoring a checkout.

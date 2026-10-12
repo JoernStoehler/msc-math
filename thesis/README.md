@@ -17,10 +17,11 @@ using only these tracked source files and installed TeX tools. There is no
 `legacy/` search fallback and no alternative draft selected by the build.
 
 Current unfinished work and the limits of past reviews are in
-[../docs/coordination/thesis-work.md](../docs/coordination/thesis-work.md). The frozen resumption PDF
+[../meta-topics/project-management/thesis-work.md](../meta-topics/project-management/thesis-work.md). The frozen resumption PDF
 at `docs/resume/thesis-resume.pdf` is diagnostic, not an accepted or submitted thesis.
 
 The layout migration is recorded in `docs/resume/layout-migration.json`. It
 maps former selected paths to these paths. Other old thesis variants can be read
 from commit `35f29db4:thesis/`; they are not current sources. Figure-producing
-experiments remain under `experiments/`, with their original evidence contracts.
+packets are routed through [topic accounts](../README.md) and
+[experiments](../experiments/README.md), with their original evidence contracts.

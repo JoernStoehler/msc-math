@@ -1,0 +1,28 @@
+{
+  "schema": "msc-math.writing-pilot-inputs.v1",
+  "freeze_utc": "2026-10-11T16:42:30Z",
+  "note": "Initial author inputs are frozen by hashes. The three baseline account files are also copied byte-for-byte under input-baseline/. Other sources are referenced by hash; authors opened them as needed. These are source identities, not evidence that raw experiments were rerun.",
+  "initial_inputs": {
+    "docs/inventory/pilots/2026-10-11/writing/account.html": "2cf2e08c7c75ae88e701120a0d544dba67fd2a481f64c15af8e89d8d1663a805",
+    "docs/inventory/pilots/2026-10-11/writing/author-brief.md": "49388b3462438c87e43917b7f00c0ce711720cc6f286205b1a81dbb29f57a286",
+    "docs/ds-evidence-closure/README.md": "e4c8fd41262f8d87f1f8237e1411297845f1abdd0fae7221af6d0c2079328ed3",
+    "docs/ds-evidence-closure/ridge-mathematics.md": "b908929295ca9b7e0e5b43eebac68e9171d9b80b002978aac79ddda2937040b2",
+    "docs/ds-evidence-closure/search-account.md": "8adf80e3400948beebfd593b8e738b657d6d908331fdbab53918d2f36a91f5e2"
+  },
+  "shared_and_checked_sources": {
+    "thesis/chapters/08-data-science.tex": "4c7e4436641d8b01c7819cc1cdbae8f21a73cc71fac7fc36c8efbc148aecaa00",
+    "thesis/appendices/data-science.tex": "1d3839e7614b133e65e87c38ce908d5c67ba30acdd246bd51f691c6a65d54e15",
+    "thesis/chapters/09-rotated-regular-polygons.tex": "42f9e1f927faefd8a8c4b3a70787d992c7fa7d63c45a540322dc027a3916de36",
+    "docs/ds-retrospective-revalidation/README.md": "300ca9b9b052ea7bbf66558bdb1dfd836bce4272905c79273be2e0c56255926d",
+    "experiments/sys-datascience/methods/ridge-endpoint-path/INTERPRETATION.md": "fa6fb446851571f3aa03d169639f0ff3fc3a5a283b92ef96d0463fb73acb1a74",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md": "ce31364cd2209ce771780d649b3301b9de266bf0aa2cd1baea79d9adc0d1a9e2",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/README.md": "1063abf3c31d24f93d7055753f4edbc7730b6f96f996d134c9376b4959483c01",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selection-summary.tsv": "f52d7e2f3407700b3873e6d30997c5c567774176e0580641b86d45062b7d2551",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/README.md": "54320b681e96828d881bd742acafb4e17f86b9cd8b2ee0836cee6cbce29a7341",
+    "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/validation-verdict.json": "ee63877852882d53d839dc081daa903397290158b9d3393ea90cc7be3b32f5b5",
+    "experiments/sys-datascience/methods/alternative-source-transfer/README.md": "ff32e19ec97a9d71d714a5ac3a2e2d406727cd7906386c758fc0b13dfac51834",
+    "experiments/sys-datascience/methods/alternative-source-transfer/POST-TARGET-ACCOUNT.md": "9fa39d7545c0ccc0811f50a28f0c658e395a3f09da1bcb7ca355822c16bc9661",
+    "experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/analysis.json": "872b932cf38811184104a6bf46afe34f079c291fa5b6e9bc90e05a80df1d407a",
+    "experiments/writing-quality/runs/20260918-human-feedback-revision/figures/association-receipt.json": "d85a8d4a69d7e23018347858277ee43d47b3598cdce81e64cd32e3670e70d785"
+  }
+}

@@ -14,6 +14,7 @@ mod enumerate;
 mod exact_linalg;
 mod irredundancy;
 
+use euclidean_polytopes::facet_intersection_is_nonempty_from_vertex_facet_incidence;
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use std::collections::BTreeSet;
@@ -167,15 +168,7 @@ pub(crate) fn vertex_facet_incidence_from_descriptors(
 pub(crate) fn facet_intersection_is_nonempty_from_incidence(
     vertex_facet_incidence: &DMatrix<bool>,
 ) -> DMatrix<bool> {
-    DMatrix::from_fn(
-        vertex_facet_incidence.ncols(),
-        vertex_facet_incidence.ncols(),
-        |i, k| {
-            i != k
-                && (0..vertex_facet_incidence.nrows())
-                    .any(|v| vertex_facet_incidence[(v, i)] && vertex_facet_incidence[(v, k)])
-        },
-    )
+    facet_intersection_is_nonempty_from_vertex_facet_incidence(vertex_facet_incidence)
 }
 
 pub(crate) fn omega_signs_from_rational_dual_vertices(

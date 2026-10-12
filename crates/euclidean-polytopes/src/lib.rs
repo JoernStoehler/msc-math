@@ -24,10 +24,11 @@ pub use faces::{
     facet_vertices_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
     vertex_facets_from_vertex_facet_incidence, TwoFace,
 };
+pub use linalg::determinant_4d_integer;
 pub use polar::{
     polar_vertices_exact, polar_vertices_exact_assuming_origin_interior,
     polar_vertices_exact_rational, polar_vertices_exact_rational_assuming_origin_interior,
-    PolarVerticesExact,
+    vertices_from_normalized_halfspaces_exact, PolarVerticesExact,
 };
 pub use predicates::{
     all_points_are_extreme_exact, orient4_sign_f64, origin_in_interior_of_conv_exact,

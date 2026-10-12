@@ -81,5 +81,5 @@ on materializing the general candidate set.
 
 The copy-editable experiment counterparts and the exact/numerical
 correspondence producers live under
-`experiments/dev-quadratic-program/src/selected_route/` and
-`experiments/dev-quadratic-program/tools/`.
+`topics/capacity-and-qp/development/src/selected_route/` and
+`topics/capacity-and-qp/development/tools/`.

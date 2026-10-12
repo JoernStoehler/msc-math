@@ -1,0 +1,578 @@
+% formal/ehz-kkt-system.tex — kkt module
+% Mathematical results supporting library/src/kkt/
+%
+% Labels defined here:
+%   lem:kkt, lem:H-quadratic, lem:well-defined,
+%   lem:dual-vertex-qp,
+%   lem:numerical-transition-feasibility, lem:q-error-bound,
+%   rem:near-null-lp-search
+%
+% Sources: thesis/legacy/general-case-algorithm.tex,
+%   thesis/legacy/general-case-algorithm-proof.tex,
+%   thesis/legacy/appendix-numerical.tex
+%
+% Notation: A = dual-vertex matrix, H = action matrix,
+%   beta = dwell-time weights, mu = Lagrange multiplier (closure),
+%   xi = Lagrange multiplier (normalization).
+
+% input by formal/main.tex — do not add \documentclass or \begin{document}
+
+% ── Setup: linear system referenced by the lemmas ──
+%
+% For a polytope K with dual vertices a_i and an active-traversal pair
+% (S, sigma),
+% define the dual-vertex matrix A and action matrix H:
+%   A_{id} = a_{sigma(i),d},
+%   H_{ij} = omega_0(a_{sigma(j)}, a_{sigma(i)})  for i > j,
+%            0                                      for i = j,
+%            omega_0(a_{sigma(i)}, a_{sigma(j)})    for i < j.
+%
+% The linear system is:
+%   [ H    A    1 ] [ beta ]   [ 0 ]
+%   [ A^T  0    0 ] [ mu   ] = [ 0 ]
+%   [ 1^T  0    0 ] [ xi   ]   [ 1 ]
+%
+% See thesis/legacy/general-case-algorithm.tex, Algorithm [alg:ehz].
+
+The word $\sigma$ in this section records active Reeb traversal order, and
+$\beta$ denotes dual-vertex weights.  Its symmetric action matrix and
+$Q_\sigma=\frac12\beta^\top H\beta$ use the project convention in
+Subsection~\ref{subsec:hk2017-active-word-qp-convention}; HK2017's displayed
+fixed-word objective uses the reversed order.  The source-to-project
+normal/height translation is in
+Subsection~\ref{subsec:hk2017-normals-heights-dual-vertices}.
+
+
+\begin{notationupdated}
+\begin{lemma}[Double sum as quadratic form]\label{lem:H-quadratic}
+% Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
+% Notation updated to dual-vertex form; math unchanged
+\[
+  \sum_{1 \leq j < i \leq |S|}
+    \beta_i\, \beta_j\,
+    \omega_0(a_{\sigma(j)},\, a_{\sigma(i)})
+  = \tfrac{1}{2}\, \beta^\top H\, \beta.
+\]
+In particular,
+$\nabla_{\beta}
+  (\beta^\top H\, \beta) = 2H \beta$.
+\end{lemma}
+
+\begin{proof}
+For $i > j$,
+$H_{ij} = \omega_0(a_{\sigma(j)}, a_{\sigma(i)})$
+by definition of~$H$.
+Hence the double sum equals
+$\sum_{j < i} \beta_i\, \beta_j\, H_{ij}$.
+Since $H$ is symmetric with zero diagonal,
+$\sum_{j < i} \beta_i \beta_j H_{ij}
+= \tfrac{1}{2}\, \beta^\top H\, \beta$.
+\end{proof}
+\end{notationupdated}
+
+\begin{notationupdated}
+\begin{lemma}[KKT conditions and the algorithm's linear system]%
+\label{lem:kkt}
+% Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
+% Notation updated to symmetric convention: (lambda, nu) -> (mu, xi)
+% Notation updated to dual-vertex form; math unchanged
+For fixed $(S, \sigma)$, the linear
+system is the Lagrange system for
+critical points of
+$\beta^\top H\, \beta$ on the constraint
+manifold
+$\{A^\top \beta = 0,\; \mathbf{1}^\top \beta = 1\}$.
+\end{lemma}
+
+\begin{proof}
+The gradient is
+$\nabla_{\beta}
+  (\beta^\top H \beta) = 2H \beta$
+(Lemma~\ref{lem:H-quadratic}).
+The Lagrange conditions
+$\nabla(\beta^\top H \beta)
+= -A\lambda - \mathbf{1}\nu$
+give
+$2H\beta + A\lambda + \mathbf{1}\nu = 0$.
+Absorbing the factor~$2$ into the multipliers
+($\mu = \lambda/2$, $\xi = \nu/2$):
+\[
+  H \beta + A \mu + \mathbf{1} \xi = 0,
+\]
+which, together with $A^\top \beta = 0$ and
+$\mathbf{1}^\top \beta = 1$, is exactly
+the linear system.
+\end{proof}
+\end{notationupdated}
+
+% Review target: distinguish the one-word KKT contract from the outer scalar
+% capacity argument. The candidate argument follows the proof in
+% thesis/legacy/general-case-algorithm-proof.tex.
+\begin{remark}[KKT witnesses and the finite capacity algorithm]
+\label{rem:kkt-witness-versus-capacity}
+For a fixed support and ordered word, the KKT system characterizes stationary
+points of the equality-constrained quadratic objective on the relative
+interior of that support face.  A solution with $\beta_i>0$ and
+$Q_\sigma(\beta)>0$ is therefore an exact feasible KKT witness.  It need not
+be the maximum of $Q_\sigma$ on that face.
+
+The scalar finite Haim--Kislev algorithm uses these witnesses as candidates.
+Every positive witness is feasible and hence has value at most the global
+quantity $Q_{\max}$.  Conversely, a global maximizer becomes an interior KKT
+point after deleting its zero coordinates.  Consequently, exact KKT solves
+over a complete candidate family suffice for the scalar capacity value,
+without requiring every stationary candidate to satisfy a second-order
+maximum condition.  Such a condition, or another soundness argument, is
+required when a fixed-word maximum or a complete minimizer set is claimed.
+An arbitrary KKT witness does not determine a physical orbit.  In contrast, a
+\emph{global} HK2017 maximizer already gives a global dual minimizer; Clarke's
+dual action correspondence then realizes it as a minimum-action simple
+generalized closed Reeb orbit (Fact~\ref{fact:hk2017}).  The translating
+constant in that correspondence supplies the primal placement on~$\partial K$;
+it is not provided by feasibility or stationarity of the finite KKT system
+alone.
+\end{remark}
+
+
+\begin{notationupdated}
+\begin{lemma}[Well-definedness]\label{lem:well-defined}
+% Jörn: text approved (06a976c) — statement
+% Jörn: text approved (0bbc647) — proof
+% Notation updated to symmetric convention: (lambda, nu) -> (mu, xi)
+% Notation updated to dual-vertex form; math unchanged
+If the linear system has multiple solutions
+$(\beta, \mu, \xi)$, they all yield the same value
+$\beta^\top H \beta$.
+\end{lemma}
+
+\begin{proof}
+Write the three block rows of the linear system as
+\[
+  \text{(I)}\ H\beta + A\mu + \mathbf{1}\xi = 0, \qquad
+  \text{(II)}\ A^\top \beta = 0, \qquad
+  \text{(III)}\ \mathbf{1}^\top \beta = 1.
+\]
+For any solution, left-multiply~(I) by~$\beta^\top$:
+\[
+  \beta^\top H\beta
+  + \underbrace{(A^\top\beta)^\top}_{=\,0\text{ by (II)}}\mu
+  + \underbrace{(\mathbf{1}^\top\beta)}_{=\,1\text{ by (III)}}\xi
+  = 0,
+\]
+so $\beta^\top H\beta = -\xi$.
+Now let $(\delta\beta, \delta\mu, \delta\xi)$ be any element
+of the null space, so that
+\[
+  \text{(I$'$)}\ H\,\delta\beta + A\,\delta\mu + \mathbf{1}\,\delta\xi = 0, \qquad
+  \text{(II$'$)}\ A^\top\delta\beta = 0, \qquad
+  \text{(III$'$)}\ \mathbf{1}^\top\delta\beta = 0.
+\]
+Left-multiply~(I) by~$\delta\beta^\top$:
+\[
+  \delta\beta^\top H\beta
+  + \underbrace{(A^\top\delta\beta)^\top}_{=\,0\text{ by (II$'$)}}\mu
+  + \underbrace{(\mathbf{1}^\top\delta\beta)}_{=\,0\text{ by (III$'$)}}\xi
+  = 0.
+\]
+Left-multiply~(I$'$) by~$\delta\beta^\top$:
+\[
+  \delta\beta^\top H\,\delta\beta
+  + \underbrace{(A^\top\delta\beta)^\top}_{0}\delta\mu
+  + \underbrace{(\mathbf{1}^\top\delta\beta)}_{0}\delta\xi
+  = 0.
+\]
+Therefore
+\[
+  (\beta + \delta\beta)^\top H(\beta + \delta\beta)
+  = \beta^\top H\beta
+    + 2\,\delta\beta^\top H\beta
+    + \delta\beta^\top H\,\delta\beta
+  = -\xi. \qedhere
+\]
+\end{proof}
+\end{notationupdated}
+
+
+\begin{lemma}[Dual-vertex QP formulation]%
+\label{lem:dual-vertex-qp}
+% Jörn: text approved (82daaaef) — statement and proof
+% Source: qp_assembly.rs build_qp_from_dual_vertices
+Let $K = \{x : \langle a_i, x \rangle \leq 1\}$ with dual
+vertices~$a_i \in \mathbb{R}^4$.
+For a cyclic permutation~$\sigma$ of $|S|$~facet indices,
+define the constraint matrix~$A$ and action matrix~$H$ as in the
+linear system (see header), and let $\mathbf{1} \in \mathbb{R}^{|S|}$
+be the all-ones vector.
+Then the fixed-word Haim--Kislev problem is
+\[
+  \max_{\beta}\; Q_\sigma(\beta)
+  =\tfrac{1}{2}\,\beta^\top H\,\beta
+  \quad\text{s.t.}\quad
+  A^\top \beta = 0,\quad
+  \mathbf{1}^\top \beta = 1,\quad
+  \beta\geq0.
+\]
+If \(Q_\sigma(\beta)>0\), the associated dual curve has period and
+action \(T=1/(2Q_\sigma(\beta))\).  This is a capacity value only when
+the candidate is globally maximizing over the complete word family.
+In particular, the factorization $a_i = n_i/h_i$
+into unit normal~$n_i$ and support value~$h_i$ plays no role:
+the constraints and objective depend only on the dual
+vertices~$a_i$ and the bilinearity of~$\omega_0$.
+\end{lemma}
+
+\begin{proof}
+The Reeb vector on facet~$i$ is
+$R_i = 2\, J_0\, a_i$, where $J_0$ is the standard
+complex structure.
+For a closed pure-facet dual curve visiting facets
+$\sigma(1), \ldots, \sigma(|S|)$ with dwell times
+$T\beta_i$, where $\beta_i\geq0$ and $\sum_i\beta_i=1$:
+
+\emph{Closure.}
+The orbit closes iff
+$\sum_i T\beta_i\, R_{\sigma(i)} = 0$.
+Since $R_i = 2\, J_0\, a_i$ and $J_0$ is invertible, this is equivalent to
+$\sum_i a_{\sigma(i)}\, \beta_i = 0$,
+which is $A^\top \beta = 0$.
+
+\emph{Normalization.}
+The dwell-time fractions sum to one:
+$\mathbf{1}^\top \beta = 1$.
+
+\emph{Objective and action.}
+For \(j<i\), the pair contribution is
+$\beta_i\,\beta_j\,\omega_0(a_{\sigma(j)}, a_{\sigma(i)})$
+in the active-word convention.
+By Lemma~\ref{lem:H-quadratic}, the total action equals
+$2T^2Q_\sigma(\beta)=T^2\beta^\top H\beta$,
+where (H) is the symmetric action matrix defined above.
+Choosing \(T=1/(2Q_\sigma(\beta))\) makes the action equal to \(T\),
+which is the free-period dual normalization used by the Haim--Kislev
+formula.  Feasibility or KKT stationarity for this one word does not establish
+that \(T=c_{\mathrm{EHZ}}(K)\); that conclusion requires global maximality.
+
+All three ingredients --- closure, normalization, action ---
+are stated purely in terms of the dual vertices~$a_i$.
+The factorization $a_i = n_i/h_i$ is never used, and
+$\|n_i\| = 1$ is never assumed.
+\end{proof}
+
+
+\begin{unverified}
+\begin{lemma}[Transition feasibility]%
+\label{lem:numerical-transition-feasibility}\label{lem:transition-feasibility}
+% Source: thesis/legacy/appendix-numerical.tex
+Let $K \subset \mathbb{R}^4$ be a convex polytope with
+facets $F_1, \ldots, F_m$ and dual vertices~$a_k$.
+A \emph{transition} $F_i \to F_j$ is a segment of a
+Reeb trajectory that travels with velocity~$R_i$
+for positive time,
+then immediately with velocity~$R_j$ for positive time.
+A transition $F_i \to F_j$ exists if and only if
+\begin{enumerate}
+\item $\omega_0(a_i, a_j) \ge 0$, and
+\item $\exists\, x \in F_i \cap F_j$ with
+  $\langle a_k, x \rangle < 1$
+  for all $k \notin \{i,j\}$ satisfying
+  $\omega_0(a_i, a_k) < 0$ or
+  $\omega_0(a_j, a_k) > 0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+A transition $F_i \to F_j$ exists if and only if
+there is a point $x \in F_i \cap F_j$ and
+$\varepsilon > 0$ such that
+$x + t\, J_0 a_i \in K$ for $t \in [-\varepsilon, 0]$
+and $x + t\, J_0 a_j \in K$ for $t \in [0, \varepsilon]$:
+since $R_i = 2\, J_0\, a_i$,
+traveling with velocity~$R_i$ is equivalent to
+moving in direction~$J_0 a_i$.
+
+\emph{Necessity.}
+Let $x \in F_i \cap F_j$ realize the transition.
+For the approach ($t < 0$) to satisfy
+the~$F_j$ constraint:
+$\langle a_j, x + t\, J_0 a_i \rangle
+= 1 + t\,\omega_0(a_i, a_j) \leq 1$,
+which forces $\omega_0(a_i, a_j) \geq 0$
+(since $t < 0$).
+For the departure ($t > 0$), the~$F_i$ constraint gives
+$\langle a_i, x + t\, J_0 a_j \rangle
+= 1 - t\,\omega_0(a_i, a_j) \leq 1$,
+again requiring $\omega_0(a_i, a_j) \geq 0$.
+This proves~(1).
+
+For~(2), suppose $k \notin \{i,j\}$ satisfies
+$\omega_0(a_i, a_k) < 0$.
+Then
+$\langle a_k, x + t\, J_0 a_i \rangle
+= \langle a_k, x \rangle + t\,\omega_0(a_i, a_k)$.
+Since $t < 0$ and $\omega_0(a_i, a_k) < 0$,
+their product $t\,\omega_0(a_i, a_k) > 0$, so
+$\langle a_k, x + t\, J_0 a_i \rangle
+> \langle a_k, x \rangle$.
+If $\langle a_k, x \rangle = 1$, this
+exceeds~$1$, violating $x + t\, J_0 a_i \in K$.
+Hence $\langle a_k, x \rangle < 1$.
+The case $\omega_0(a_j, a_k) > 0$ is analogous
+for the departure.
+
+\emph{Sufficiency.}
+Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
+we construct $\varepsilon > 0$ witnessing
+the transition.
+For $k \notin \{i,j\}$ with
+$\omega_0(a_i, a_k) \geq 0$ and
+$\omega_0(a_j, a_k) \leq 0$:
+$\langle a_k, x + t\, J_0 a_i \rangle
+\leq \langle a_k, x \rangle \leq 1$
+for $t \leq 0$,
+and
+$\langle a_k, x + t\, J_0 a_j \rangle
+\leq \langle a_k, x \rangle \leq 1$
+for $t \geq 0$.
+For the remaining $k \notin \{i,j\}$
+(those with $\omega_0(a_i, a_k) < 0$ or
+$\omega_0(a_j, a_k) > 0$),
+condition~(2) gives
+$\langle a_k, x \rangle < 1$.
+Let $\delta$ be the minimum of
+$1 - \langle a_k, x \rangle > 0$
+over these~$k$ (or any $\delta > 0$ if there are none),
+and set
+\[
+ M = \max_k\bigl(
+ |\omega_0(a_i, a_k)| + |\omega_0(a_j, a_k)|\bigr).
+\]
+If $M>0$, choose $0<\varepsilon<\delta/M$; if $M=0$,
+choose any $\varepsilon>0$.  In the latter case all constraint values
+are constant along both directions.  When the blocking set is empty,
+its strict-slack requirement is vacuous, but $F_i\cap F_j\neq\emptyset$
+is still required by condition~(2).
+Then all halfspace constraints hold for the
+approach and departure, so $x$ together
+with~$\varepsilon$ witnesses the transition
+$F_i \to F_j$.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[$Q$ error bound from KKT residual]%
+\label{lem:q-error-bound}
+% Source: thesis/legacy/appendix-numerical.tex
+Let $M$ be the symmetric KKT matrix
+with smallest eigenvalue magnitude
+$|\lambda_{\min}| = \min_j |\lambda_j| > 0$,
+and let $x_0 = (\beta_0, \mu_0, \xi_0)$ be the exact
+solution.
+Let $\hat x = (\hat\beta, \hat\mu, \hat\xi)$ be the
+numerical solution with residual
+\[
+  r \;=\; M\hat x - b
+  \;=\; \begin{pmatrix}
+    H\hat\beta + A\hat\mu + \mathbf{1}\hat\xi \\
+    A^\top\hat\beta \\
+    \mathbf{1}^\top\hat\beta - 1
+  \end{pmatrix}
+  \;=:\; \begin{pmatrix}r_1 \\ r_2 \\ r_3\end{pmatrix},
+\]
+where $r_1 \in \mathbb{R}^m$ is the stationarity residual,
+$r_2 \in \mathbb{R}^4$ is the constraint residual, and
+$r_3 \in \mathbb{R}$ is the normalisation residual.
+Define the \emph{residual-corrected objective}
+\[
+  \tilde Q
+  \;=\; Q(\hat\beta)
+    + \bigl(r_2^\top\hat\mu + r_3\,\hat\xi\bigr)
+\]
+and the \emph{error bound}
+\[
+  E \;=\; \frac{9}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}.
+\]
+Then $|Q(\beta_0) - \tilde Q| \leq E$.
+\end{lemma}
+
+\begin{proof}
+Write $\delta x = \hat x - x_0$ with components
+$(\delta\beta, \delta\mu, \delta\xi)$.
+Since $M x_0 = b$, we have $M\,\delta x = r$,
+hence $\|\delta x\| \leq \|r\| / |\lambda_{\min}|$ and
+each component satisfies the same bound:
+\[
+  \|\delta\beta\| \leq \frac{\|r\|}{|\lambda_{\min}|}, \quad
+  \|\delta\mu\| \leq \frac{\|r\|}{|\lambda_{\min}|}, \quad
+  |\delta\xi| \leq \frac{\|r\|}{|\lambda_{\min}|}.
+\]
+
+\emph{Step~1: expand $Q(\hat\beta) - Q(\beta_0)$.}
+Since $Q(\beta) = \tfrac{1}{2}\,\beta^\top H\,\beta$,
+\[
+  Q(\hat\beta) - Q(\beta_0)
+  = \delta\beta^\top H\,\beta_0
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\]
+
+\emph{Step~2: rewrite the cross term using KKT.}
+The stationarity condition (first block of $M x_0 = b$) is
+$H\beta_0 + A\mu_0 + \mathbf{1}\xi_0 = 0$.
+Hence
+\[
+  \delta\beta^\top H\,\beta_0
+  = -\delta\beta^\top(A\mu_0 + \mathbf{1}\xi_0)
+  = -(A^\top\delta\beta)^\top \mu_0
+    - (\mathbf{1}^\top\delta\beta)\,\xi_0.
+\]
+The constraint residual blocks give
+$A^\top\delta\beta = A^\top\hat\beta = r_2$
+(since $A^\top\beta_0 = 0$ by the exact constraint)
+and similarly $\mathbf{1}^\top\delta\beta = r_3$, hence
+\[
+  -\delta\beta^\top H\,\beta_0
+  = r_2^\top\mu_0 + r_3\,\xi_0.
+\]
+Substituting into Step~1 and rearranging:
+\[
+  Q(\beta_0) = Q(\hat\beta) + (r_2^\top\mu_0 + r_3\,\xi_0)
+    - \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\]
+
+\emph{Step~3: substitute numerical multipliers.}
+Write $\mu_0 = \hat\mu - \delta\mu$ and
+$\xi_0 = \hat\xi - \delta\xi$:
+\[
+  r_2^\top\mu_0 + r_3\,\xi_0
+  = (r_2^\top\hat\mu + r_3\,\hat\xi)
+    - (r_2^\top\delta\mu + r_3\,\delta\xi).
+\]
+The first term is the computable correction.
+The second is a second-order remainder:
+\[
+  |r_2^\top\delta\mu + r_3\,\delta\xi|
+  \leq \|r_2\|\,\|\delta\mu\| + |r_3|\,|\delta\xi|
+  \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|},
+\]
+using $\|r_2\|, |r_3| \leq \|r\|$
+and the component bounds.
+
+\emph{Step~4: bound the quadratic term
+  using the KKT block structure.}
+Expanding $\delta x^\top M\,\delta x$
+via the block structure
+$M = \bigl[\begin{smallmatrix}
+  H & A & \mathbf{1} \\
+  A^\top & 0 & 0 \\
+  \mathbf{1}^\top & 0 & 0
+\end{smallmatrix}\bigr]$
+gives
+\[
+  \delta\beta^\top H\,\delta\beta
+  = \delta x^\top M\,\delta x
+    - 2\,r_2^\top\delta\mu
+    - 2\,r_3\,\delta\xi,
+\]
+where we used $A^\top\delta\beta = r_2$
+and $\mathbf{1}^\top\delta\beta = r_3$ from Step~2.
+For the first term,
+\[
+  |\delta x^\top M\,\delta x|
+  = |r^\top M^{-1} r|
+  = \Bigl|\sum_j \frac{(v_j^\top r)^2}{\lambda_j}\Bigr|
+  \leq \frac{\|r\|^2}{|\lambda_{\min}|}.
+\]
+Combining with the component bounds
+for $\|\delta\mu\|$ and $|\delta\xi|$:
+\[
+  |\delta\beta^\top H\,\delta\beta|
+  \leq \frac{\|r\|^2}{|\lambda_{\min}|}
+    + 4\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = \frac{5\,\|r\|^2}{|\lambda_{\min}|}.
+\]
+
+\emph{Conclusion.}
+\[
+  |Q(\beta_0) - \tilde Q|
+  \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|}
+    + \frac{5}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = \frac{9}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = E.
+  \qedhere
+\]
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}[Near-null LP search for admissible~$\hat\beta$]%
+\label{rem:near-null-lp-search}
+% Source: saddle_point_solver.rs, beta_feasibility.rs
+% Jörn: math approved — Type C impossibility (Type C bullet only), 2026-03-22
+% [TODO: JÖRN - verify Type A filtering rationale and Type B bounded-LP argument]
+
+\noindent\textbf{Setting.}
+When the augmented KKT matrix~$M$ is numerically rank-deficient
+(eigenvalues below threshold~$\tau$),
+the pseudoinverse~$\hat\beta$ may have near-zero or negative components.
+The true~$\beta^*$ lies approximately in the affine set
+$\hat\beta + \operatorname{span}\{
+  (\hat v_{j_1})_\beta, \ldots,
+  (\hat v_{j_k})_\beta\}$,
+where~$(\hat v_j)_\beta \in \mathbb{R}^m$ denotes the
+$\beta$-block of the $j$-th discarded eigenvector.
+
+\medskip\noindent\textbf{LP formulation.}
+The implementation searches this affine set via
+\[
+  \max\; t \quad \text{s.t.}\quad
+  \hat\beta_i + \sum_{\ell=1}^{k} \alpha_\ell\,
+    (\hat v_{j_\ell})_{\beta,i} \;\geq\; t
+  \quad \text{for all } i \in S,
+\]
+over $\alpha \in \mathbb{R}^k$ and $t \in \mathbb{R}$.
+If $t^* > 0$, the reconstructed~$\beta$ has all components positive.
+
+\medskip\noindent\textbf{Eigenvector classification.}
+Not all discarded eigenvectors contribute usefully to the LP.
+The $(m{+}5)$-dimensional eigenvectors split into blocks
+$\hat v_j = ((\hat v_j)_\beta,\; (\hat v_j)_\mu,\; (\hat v_j)_\xi)$.
+From $M\hat v_j = \hat\lambda_j \hat v_j$, reading the constraint rows:
+$A^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
+and
+$\mathbf{1}^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
+Three types arise:
+
+\begin{itemize}
+\item \textbf{Type~A} ($\|(\hat v_j)_\beta\| \approx 0$):
+  Content lives in the multiplier blocks $(\mu, \xi)$.
+  Including these in the LP creates free variables with
+  near-zero coefficients, causing spurious unboundedness.
+  \emph{Filtered out} before the LP
+  (threshold $\|(\hat v_j)_\beta\| < 10^{-10}$).
+
+\item \textbf{Type~B} ($\|(\hat v_j)_\beta\| = O(1)$,
+  constraint violation $O(|\hat\lambda_j|)$):
+  Approximately constraint-preserving.
+  Since $\mathbf{1}^\top (\hat v_j)_\beta \approx 0$,
+  the direction has mixed signs,
+  so the LP is bounded.
+  Handled correctly by the LP.
+
+\item \textbf{Type~C} ($\|(\hat v_j)_\beta\| = O(1)$,
+  constraint violation $O(1)$):
+  \emph{Cannot occur.}
+  From $M\hat v_j = \hat\lambda_j \hat v_j$,
+  the constraint rows give
+  $A^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
+  and
+  $\mathbf{1}^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
+  Since $\|\hat v_j\| = 1$,
+  the constraint violation per unit~$\alpha$ is
+  $\leq |\hat\lambda_j| \leq \tau$.
+  For discarded eigenvectors ($|\hat\lambda_j| \leq \tau = 10^{-3}$),
+  this is $O(\tau)$, not $O(1)$.
+  The implementation returns \texttt{KktOutcome::TypeCViolation}
+  with a warning if a Type~C direction is ever encountered,
+  skipping the orbit.
+\end{itemize}
+\end{remark}
+\end{unverified}

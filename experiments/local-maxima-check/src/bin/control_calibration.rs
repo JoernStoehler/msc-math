@@ -177,7 +177,7 @@ fn main() {
     let hko = evaluated_state(
         "hko_reference",
         "proved_fixed_f_positive_control",
-        "symplectic::known_polytopes::hko_pentagon; theorem authority: experiments/hko-local-maximum/theorem/README.md",
+        "symplectic::known_polytopes::hko_pentagon; theorem authority: topics/variation-and-local-maxima/hko-local-maximum/theorem/README.md",
         known_polytopes::hko_pentagon().dual_vertices_f64.clone(),
     );
     let hko_quotient = quotient_basis(&hko.duals);
@@ -299,7 +299,7 @@ fn main() {
             "experiments/local-maxima-check/control-calibration/README.md",
             "experiments/local-maxima-check/src/bin/control_calibration.rs",
             "experiments/local-maxima-check/src/directions.rs",
-            "experiments/hko-local-maximum/theorem/README.md",
+            "topics/variation-and-local-maxima/hko-local-maximum/theorem/README.md",
             "thesis/chapters/09-rotated-regular-polygons.tex",
             "experiments/dev-gradient-ascent/quotient-endpoint-diagnostic/artifacts/DISCUSSION.md",
         ],

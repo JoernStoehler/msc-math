@@ -1,0 +1,17 @@
+# F2 conventions pilot: HK2017 to project QP
+
+Owner: `foundations_pilot`; bounded source comparison on 11 October 2026. The source owners examined were `formal/hk2017-qp-conventions.tex`, `formal/ehz-kkt-system.tex`, and `formal/hk2017-qp-core.tex`. The HK2017 theorem statement was checked against `papers/hk2017/EHZ-polytopes.tex` (`formula_theorem`, lines 66–80); the project action matrix was checked against `crates/symplectic/src/kkt/qp_assembly.rs`. No thesis or Rust code was changed.
+
+## Result
+
+The convention packet already owns the necessary sign, order and normalization translation. HK2017's displayed objective pairs a later word entry with an earlier one. The project names an active Reeb traversal word and uses the earlier entry first, encoded by a symmetric matrix with `H_{ij}=omega_0(a_{sigma(i)},a_{sigma(j)})` for `i<j` and `Q=1/2 beta^T H beta`. Reversing the named word maps the two orientations. Positive heights give the weight change `b_i=beta_i h_i`, so the project closure and normalization are `sum b_i a_i=0` and `sum b_i=1`; the reciprocal factor is `c_EHZ=1/(2 Q_max)`. Those mappings were already explained in the convention owner and were **not** moved or rederived in the approved KKT lemmas.
+
+The packet had explicitly left HK2017's full-permutation family versus the project's subset/cyclic-word family as a separate claim, while the QP core asserted the translation without that bridge. A new unverified lemma, `lem:hk2017-full-to-subset-words`, now owns it in `formal/hk2017-qp-core.tex`: remove or insert zero-weight entries, and use closure plus antisymmetry to show cyclic rotation leaves the earlier-first pair sum unchanged. A feasible support cannot have one entry because every facet row is nonzero. This proves equality of the *scalar candidate maxima after the word-orientation translation*; it does not identify fixed named words before reversal. The convention packet points to the new lemma.
+
+The QP-core definition now says the input is a bounded full-dimensional polytope with an irredundant normalized **facet** presentation. That makes its use of actual facets and nonzero dual rows explicit. The KKT packet now has a short preface pointing to the convention owner's active-word and normal/height subsections. Its existing approved double-sum, KKT and dual-vertex lemma/proof bodies were not edited. The per-word dual-vertex QP is evaluable without decomposing each `a_i` into a normal and height; comparison to HK2017's source theorem uses the explicit variable change in the convention packet.
+
+## Status and checks
+
+The new enumeration lemma is agent-authored and remains inside `unverified`. No Jörn approval is asserted for it or for the input-hypothesis clarification. A separate read-only mathematical reviewer checked deletion/insertion, cyclic invariance, word reversal, the factor of two, and the narrowed facet hypothesis; it found the argument sound and suggested an index-notation correction, which was applied. This is agent review, not thesis promotion.
+
+`(cd formal && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex)` succeeded with 114 pages, and the log has no undefined references or duplicate-label warnings. `git diff --check -- formal` passed. Source comparison found no reason to extract another sign/order proof packet: the shared convention owner is adequate, while the QP definition and KKT derivations retain their distinct roles. Formal README/FINDINGS and inventory/research-guide navigation are owned by the integrating agent.

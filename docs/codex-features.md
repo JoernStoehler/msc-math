@@ -183,7 +183,7 @@ Project review groups are a first-pass screen of registry descriptions. They do 
 
 ## Project setting provenance
 
-Git identifies the last change to a committed line, not the Codex version running when it was written. Uncommitted lines are identified explicitly. The existing project overrides were assessed against 0.160.0 in docs/codex.md; historical runtime versions remain unknown unless their sources recorded them.
+Git identifies the last change to a committed line, not the Codex version running when it was written. Uncommitted lines are identified explicitly. The existing project overrides were assessed against 0.160.0 in meta-topics/development-environment/codex-reference.md; historical runtime versions remain unknown unless their sources recorded them.
 
 | Line | Setting | Last change | Recorded runtime at that change |
 | --- | --- | --- | --- |
@@ -236,4 +236,4 @@ Git identifies the last change to a committed line, not the Codex version runnin
 | 123 | `path = "/home/agent/.agents/skills/subagent-prompting/SKILL.md"` | 2d6d9bb61c · 2026-09-14T09:00:59+00:00 · Prefer repository-owned sandbox skills | unknown; see dated assessment |
 | 124 | `enabled = false` | 2d6d9bb61c · 2026-09-14T09:00:59+00:00 · Prefer repository-owned sandbox skills | unknown; see dated assessment |
 
-Interpretation and candidate changes belong to [the maintained reference](codex.md).
+Interpretation and candidate changes belong to [the maintained reference](../meta-topics/development-environment/codex-reference.md).

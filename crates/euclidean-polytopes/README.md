@@ -2,6 +2,10 @@
 
 Euclidean convex-polytope helpers for thesis Rust code.
 
+The [polytope-geometry topic](../../topics/polytope-geometry/README.md) owns the
+mathematical account, source disposition and cross-route caveats. This README
+owns the crate's operation-level API contracts.
+
 Use this crate for ordinary convex geometry that does not mention the
 symplectic form: convex-hull predicates, polar/dual conversion, vertex-facet
 incidence, affine-subspace polygons, and Euclidean volume/area helpers.
@@ -9,6 +13,15 @@ incidence, affine-subspace polygons, and Euclidean volume/area helpers.
 Do not use this crate for EHZ capacity, Reeb dynamics, symplectic signs, KKT
 assembly, orbit search, or thesis experiment workflow code. Those stay in
 `symplectic` or experiment packages.
+
+The reusable mathematical source is [exact polar geometry](../../topics/polytope-geometry/exact-polar-geometry.tex):
+normalized halfspaces, recession-cone boundedness, exact vertices, qualified
+irredundancy and rational determinant predicates. Its local review markers apply;
+a successful build or exact arithmetic does not supply a proof of every caller.
+The shared facet-intersection helper preserves input column identities, returns
+a symmetric Boolean matrix with false diagonal, and requires only incidence.
+The symplectic compatibility functions use this same implementation, so their
+agreement is not independent geometric evidence.
 
 ## Representation
 
@@ -47,6 +60,8 @@ use algebraic_numbers::ExactScalar;
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 
+pub fn determinant_4d_integer(rows: &[[num_bigint::BigInt; 4]; 4]) -> num_bigint::BigInt;
+
 pub fn origin_in_interior_of_conv_exact<T: ExactScalar + 'static>(
     points: &[Vector4<T>],
 ) -> bool;
@@ -79,6 +94,10 @@ pub struct PolarVerticesExact<T: ExactScalar + 'static> {
     pub vertices: Vec<Vector4<T>>,
     pub vertex_facet_incidence: DMatrix<bool>,
 }
+
+pub fn vertices_from_normalized_halfspaces_exact<T: ExactScalar + 'static>(
+    rows: &[Vector4<T>],
+) -> PolarVerticesExact<T>;
 
 pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
@@ -152,11 +171,25 @@ pub fn sample_random_dual_vertices_f64<R: rand::Rng + ?Sized>(
 ) -> Vec<Vector4<f64>>;
 ```
 
+`determinant_4d_integer(rows)` returns the signed exact determinant of four
+ordered integer rows, including zero for singular matrices. It performs no
+geometric validation. The rational polar and symplectic rational Cramer paths
+share this arithmetic primitive while retaining separate filters and policies.
+
 `sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng)` samples
 candidate normalized dual vertices `a_i = n_i / h_i`, with unit normals `n_i`
 uniform on `S^3` and independent heights `h_i` uniform in `[h_min, h_max)`.
 It asserts `facet_count >= 5` and finite `0 < h_min < h_max`. It does not
 construct a polytope, validate boundedness, or test non-redundancy.
+
+`vertices_from_normalized_halfspaces_exact(rows)` enumerates the finite vertices
+of the normalized halfspace intersection without validating boundedness or
+facet policy. It accepts redundant, duplicate and unbounded inputs and returns
+an empty vertex list with correctly shaped incidence when there are no vertices.
+The generic symplectic constructor now shares this enumeration while keeping its
+existing validation order and error distinctions. Its output order is covered
+by frozen simplex, cube and algebraic HKO fixtures; these do not constitute an
+independent check of the shared enumeration.
 
 `polar_vertices_exact(vertices)` computes vertices of the normalized polar
 `{ y in R^4 : <v_i, y> <= 1 }`. It validates the required contract

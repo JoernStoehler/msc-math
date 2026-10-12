@@ -293,8 +293,8 @@ def source_identity(baseline, run):
     # Retained pre-migration provenance keeps its exact historical input path.
     if not provenance["source_input"].endswith(
         (
-            "experiments/polytope-datasets/random.jsonl",
-            "experiments/sys-datascience/produce/random.jsonl",
+            "topics/empirical-studies/polytope-datasets/random.jsonl",
+            "topics/empirical-studies/sys-datascience/produce/random.jsonl",
         )
     ):
         fail("provenance source path mismatch")

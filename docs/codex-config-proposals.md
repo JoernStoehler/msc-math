@@ -31,7 +31,7 @@ Applied config block:
 ```toml
 # Capability limit checked at CLI 0.160.0: no supported config switch to disable
 # V2 message encryption. Production support for a plaintext-forcing client patch
-# is unverified; do not claim client patches are proved ineffective (docs/codex.md).
+# is unverified; do not claim client patches are proved ineffective (meta-topics/development-environment/codex-reference.md).
 
 # PROVISIONAL TRIAL: approved by Jörn on 2026-10-03, assessed at CLI 0.160.0.
 # Codex injects UTC timestamps automatically for elapsed-time awareness. The 60s
@@ -67,7 +67,7 @@ Applied config block:
 # window below 20,000 tokens before auto-compaction; this starting threshold is
 # speculative, not a measured optimum or a spending allowance. Recheck useful
 # warnings, model compatibility and continuity across compaction; revise/disable
-# if unhelpful. See docs/codex.md and docs/codex-config-proposals.md.
+# if unhelpful. See meta-topics/development-environment/codex-reference.md and docs/codex-config-proposals.md.
 [features.token_budget]
 enabled = true
 reminder_threshold_tokens = 20000
@@ -82,7 +82,7 @@ context/history extension, new encryption key, source patch, build, restart or
 paid cache experiment is selected. `rollout_budget` requires a chosen allowance
 and reminder thresholds; it cannot be enabled as merely a passive meter.
 
-See [the maintained assessment](codex.md#time-context-capacity-expenditure-and-caching)
+See [the maintained assessment](../meta-topics/development-environment/codex-reference.md#time-context-capacity-expenditure-and-caching)
 and [full generated flag inventory](codex-features.md). TOML/schema validation can
 check these candidates without activating them; it does not establish successful
 live adoption or behavioral benefit.
@@ -100,7 +100,7 @@ positive cap, with stopping on exhaustion, and has no count-up-only setting.
 `get_goal` can report accumulated goal token/time usage without a token cap, but
 requires an explicitly created goal and comes with automatic goal continuation.
 This is a candidate distinction, not selection of a goal, a cap or a new meter.
-See the source-backed [assessment](codex.md#time-context-capacity-expenditure-and-caching).
+See the source-backed [assessment](../meta-topics/development-environment/codex-reference.md#time-context-capacity-expenditure-and-caching).
 
 <a id="c-prepared-ongoing-work-count-up-reminder-activation-awaits-approval"></a>
 

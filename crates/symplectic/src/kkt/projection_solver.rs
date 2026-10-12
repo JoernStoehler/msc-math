@@ -15,16 +15,17 @@
 //! eigendecomposition, partitioning eigenvalues into retained
 //! (|lambda| > threshold) and null (|lambda| <= threshold).
 //!
-//! **Step 3 -- Compose critical set.** The full critical set is
-//! beta = beta0 + V(alpha0 + W gamma), where W are the null-space eigenvectors
-//! of H'. These directions don't change Q but can change beta.
+//! **Step 3 -- Compose numerical critical set.** The model treats
+//! beta = beta0 + V(alpha0 + W gamma) as its critical set, where W contains
+//! eigenvectors discarded by the rank threshold. Exact null directions preserve
+//! Q; near-null directions can change Q and are only treated as flat here.
 //!
 //! **Step 4 -- Optional max-margin search.** `solve_projected` preserves the
 //! older behavior by finding gamma maximizing min_k beta_k via
 //! `beta_feasibility::find_max_margin`. `solve_projected_critical_point` stops
 //! before this step.
 //!
-//! **Step 5 -- Compute Q.** Q = (1/2) beta^T H beta, constant over the solution set.
+//! **Step 5 -- Compute Q.** Evaluate Q = (1/2) beta^T H beta at the chosen point.
 //!
 //! Mathematical correspondence: [lem:kkt], Part C.2 of algorithm design
 
@@ -55,8 +56,9 @@ const EPS_PROJECTED_STATIONARITY: f64 = 1e-8;
 /// Critical point of `Q` on the affine constraint space `C beta = d`.
 ///
 /// This result deliberately does not decide `beta > 0`. If
-/// `flat_direction_count > 0`, the critical set is affine: `beta` is one
-/// representative and flat directions can change beta without changing Q.
+/// `flat_direction_count > 0`, `beta` represents the numerical affine model
+/// whose discarded eigendirections are treated as flat. Only exact null
+/// directions are guaranteed to change beta without changing Q.
 /// `q_error_bound` is a residual-based bound for the computed projected
 /// stationarity problem: when finite, it bounds the Q-value gap caused by the
 /// reported stationarity residual in the retained eigenspace. It is not an

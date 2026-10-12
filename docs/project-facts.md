@@ -199,7 +199,8 @@ and does not settle the other data-science gaps.
       He also challenged an insufficient account of the scientific value of
       the proof, method and consequences. Selection is not proof acceptance,
       prose acceptance or approval of a substantial autonomous programme.
-      Source: `docs/empirical-viterbo-design/desk/pentagon-arbitrary-partner/symmetric-partner-lemma.md`.
+      Maintained proof: `topics/products/pentagon-arbitrary-partner/symmetric-partner-lemma.md`.
+      The 2026-10-03 selection and wording above retain their original thread attribution.
 
 ## HKO Proof Support
 

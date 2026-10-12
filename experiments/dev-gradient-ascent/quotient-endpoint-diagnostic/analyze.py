@@ -88,7 +88,9 @@ def validate_manifest_contract(path: Path):
         "symplectic",
     ):
         assert name in dependencies
-    assert dependencies["exp-sys-landscape"]["path"] == "../sys-landscape"
+    landscape_path = (path.parent / dependencies["exp-sys-landscape"]["path"]).resolve()
+    expected_landscape = path.resolve().parents[2] / "topics/empirical-studies/sys-landscape"
+    assert landscape_path == expected_landscape.resolve()
 
 
 def validate():

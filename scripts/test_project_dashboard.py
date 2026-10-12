@@ -128,14 +128,16 @@ module.main()
     def test_bookmarks_head_and_bounded_read_only_serving(self):
         with self.request("/docs/project-now.html") as response:
             self.assertTrue(response.url.endswith("/docs/dashboard/thesis.html"))
+        with self.request("/docs/inventory/pilots/2026-10-11/geometry.md?view=source") as response:
+            self.assertIn("/meta-topics/repository-organization/inventory/pilots/2026-10-11/geometry.md?view=source", response.url)
         with self.request("/docs/dashboard/index.html", "HEAD") as response:
             self.assertEqual(response.status, 200)
             self.assertGreater(int(response.headers["Content-Length"]), 0)
             self.assertEqual(response.read(), b"")
-        for path in ("/INSTALL.md", "/AGENTS.md", "/AGENTS.md.commentary.md", "/docs/coordination/otel-design.md", "/docs/coordination/graphs/tasks.svg", "/docs/coordination/skill-migration-plan.md"):
+        for path in ("/meta-topics/development-environment/installation-workflow.md", "/AGENTS.md", "/meta-topics/agent-workflow/collaboration-rationale.md", "/meta-topics/development-environment/otel-design.md", "/meta-topics/project-management/graphs/tasks.svg", "/meta-topics/project-management/coordination.md", "/meta-topics/project-management/expired-window-retention-2026-10-12.md", "/docs/history/coordination/five-hour-design-2026-10-03/README.md", "/docs/coordination/skill-migration-plan.md", "/docs/inventory/index.html", "/meta-topics/repository-organization/inventory/index.html"):
             with self.request(path) as response:
-                self.assertEqual(response.status, 200)
-        for path in ("/README.md", "/../AGENTS.md", "/%2e%2e/AGENTS.md", "/docs/", "/.git/config"):
+                self.assertEqual(response.status, 200, path)
+        for path in ("/README.md", "/../AGENTS.md", "/%2e%2e/AGENTS.md", "/docs/", "/.git/config", "/docs/coordination/five-hour-portfolio-prompt.md", "/docs/coordination/handoffs/20261008-ab-split/A-cloud.md"):
             with self.request(path) as response:
                 self.assertEqual(response.status, 404)
         with self.request("/" + dashboard.STATE, "POST") as response:

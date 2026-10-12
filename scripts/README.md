@@ -91,10 +91,10 @@ scripts/view-graph.sh 00-now.dot
 scripts/view-graph.sh --list
 ```
 
-When a dependency graph is useful, sources live in `docs/coordination/graphs/`.
+When a dependency graph is useful, sources live in `meta-topics/project-management/graphs/`.
 Graphs are optional; `--list` reports when none is maintained. The older `docs/task-graph/` and
 `codex/task-graph/` spellings remain compatibility aliases. Graphs project the
-canonical assignments in `docs/coordination/current.json`; they are not another
+canonical assignments in `meta-topics/project-management/current.json`; they are not another
 backlog. The helper uses `less -S` in an interactive terminal so
 box-art lines do not wrap.
 
@@ -113,7 +113,8 @@ LaTeX and artifact tooling missing from the universal image, verifies the
 selected Rust/Python runtimes, copies the setup-secret R2 credentials into a
 private rclone config available to agent commands and cached resumes, and
 verifies remote access. The configuration and credential-lifetime contract is
-in `docs/development-environments.md` and `docs/artifacts.md`.
+in `meta-topics/development-environment/development-environments.md` and
+`docs/artifacts.md`.
 
 ## `maintain-cloud.sh`
 

@@ -106,17 +106,23 @@ pub fn two_faces_from_vertex_facet_incidence(
 pub fn facet_intersection_is_nonempty_from_vertex_facet_incidence(
     vertex_facet_incidence: &DMatrix<bool>,
 ) -> DMatrix<bool> {
-    DMatrix::from_fn(
-        vertex_facet_incidence.ncols(),
-        vertex_facet_incidence.ncols(),
-        |left_facet, right_facet| {
-            left_facet != right_facet
-                && (0..vertex_facet_incidence.nrows()).any(|vertex_index| {
-                    vertex_facet_incidence[(vertex_index, left_facet)]
-                        && vertex_facet_incidence[(vertex_index, right_facet)]
-                })
-        },
-    )
+    let facet_count = vertex_facet_incidence.ncols();
+    let mut intersections = DMatrix::from_element(facet_count, facet_count, false);
+
+    // Check each unordered pair once; the first common vertex is sufficient.
+    // Input columns keep their identities, including duplicate incidence columns.
+    for left_facet in 0..facet_count {
+        for right_facet in left_facet + 1..facet_count {
+            let shares_vertex = (0..vertex_facet_incidence.nrows()).any(|vertex_index| {
+                vertex_facet_incidence[(vertex_index, left_facet)]
+                    && vertex_facet_incidence[(vertex_index, right_facet)]
+            });
+            intersections[(left_facet, right_facet)] = shares_vertex;
+            intersections[(right_facet, left_facet)] = shares_vertex;
+        }
+    }
+
+    intersections
 }
 
 fn count_common_sorted(left: &[usize], right: &[usize]) -> usize {

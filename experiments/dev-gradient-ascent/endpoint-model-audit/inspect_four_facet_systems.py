@@ -5,7 +5,7 @@
 """Inspect the f64 four-facet systems behind a retained endpoint.
 
 This reproduces the determinant threshold and the bounded-candidate tests used
-by experiments/dev-quadratic-program/src/geometry.rs closely enough to explain
+by topics/capacity-and-qp/development/src/geometry.rs closely enough to explain
 which counter contributed to an optimizer trace. It is a numerical diagnostic,
 not an independent implementation of the production geometry route.
 """

@@ -53,10 +53,10 @@ apply those lessons. This inspection does not justify rewriting `AGENTS.md`.
 
 | Decision lesson | Observation and source | Boundary / gap in the first pass |
 | --- | --- | --- |
-| Compare consequential approaches before polishing the incumbent | [Audit finding 1](../history/process-audit/REPORT.md): the research frame narrowed toward search/allocation; a user correction restored explanation/proof; later Pro provided stronger mathematics | Later success does not prove earlier discovery was guaranteed. [Independent reconciliation](../history/process-audit/independent/reconciliation.md) also retains justified computational-method recovery and cross-result synthesis. The budget row routes only the first audit, leaving those important counterbalances one step farther away. |
-| Deferring a solution leaves its parent objective open | [Planning context, observed failure](../history/memories/planning-context.md#observed-planning-failure): deferred summary design became navigation closure, omitting authoring-workflow discovery | Already routed correctly. Historical priorities do not authorize current thesis work; explicit cancellation can close the parent. No wording repair is indicated without a forward failure. |
+| Compare consequential approaches before polishing the incumbent | [Audit finding 1](../../meta-topics/agent-workflow/process-audit/REPORT.md): the research frame narrowed toward search/allocation; a user correction restored explanation/proof; later Pro provided stronger mathematics | Later success does not prove earlier discovery was guaranteed. [Independent reconciliation](../../meta-topics/agent-workflow/process-audit/independent/reconciliation.md) also retains justified computational-method recovery and cross-result synthesis. The budget row routes only the first audit, leaving those important counterbalances one step farther away. |
+| Deferring a solution leaves its parent objective open | [Planning context, observed failure](../../meta-topics/project-management/planning-context.md#observed-planning-failure): deferred summary design became navigation closure, omitting authoring-workflow discovery | Already routed correctly. Historical priorities do not authorize current thesis work; explicit cancellation can close the parent. No wording repair is indicated without a forward failure. |
 | Plan/spending approval survives steering and handoff; small authorized work can proceed | Current [project guidance](../../AGENTS.md#collaboration-and-planning) and [commentary](../../AGENTS.md.commentary.md#agent-pm-and-jörns-spending-gate); audit finding 5 records an invented small-task gate | Pending-gate durability is a current user boundary. UI disappearance and runtime enforcement are unresolved mechanics. The historical incident alone does not prove the present tooling fails. |
-| Scope a readiness claim to the artifact and evidence checked | Audit findings 3–4: a known integration obligation remained open despite local reviews; narrow preflight did not establish prose readiness. [Reviewer trial](../history/reviewer-trial/README.md) retains local PASS, false alarms and unresolved flags separately | Already routed. A separate [authoring comparison](../history/memories/authoring-workflow.md) records a retained revision and conflicting reviewers, without a human before/after test or a repeatable method. It is not directly routed from the index; this matters when choosing the next workflow experiment. |
+| Scope a readiness claim to the artifact and evidence checked | Audit findings 3–4: a known integration obligation remained open despite local reviews; narrow preflight did not establish prose readiness. [Reviewer trial](../history/reviewer-trial/README.md) retains local PASS, false alarms and unresolved flags separately | Already routed. A separate [authoring comparison](../../meta-topics/agent-workflow/authoring-workflow.md) records a retained revision and conflicting reviewers, without a human before/after test or a repeatable method. It is not directly routed from the index; this matters when choosing the next workflow experiment. |
 | A useful human decision needs an exact object and sufficient context | [Interaction handoff](../history/reviewer-trial/interaction-handoff.md): paragraph context changed an isolated-sentence judgment; exact phrase questions produced usable decisions | Already routed. Historical relayed instructions about queue-only reading, prediction disclosure and final-PDF delivery are not current universal rules. |
 
 **Evidence status:** these are bounded historical observations and current
@@ -78,7 +78,7 @@ would move, no new process-note owner would be created, and no thesis or
 dashboard scientific claims would change.
 
 1. Extend the existing budget/approach row's **Read** cell with
-   `[independent reconciliation](../history/process-audit/independent/reconciliation.md)`.
+   `[independent reconciliation](../../meta-topics/agent-workflow/process-audit/independent/reconciliation.md)`.
    Its **What to recover** cell would become:
    “Compare scientific alternatives and connections among existing results;
    retain justified computational recovery; avoid invented small-task gates;
@@ -87,7 +87,7 @@ dashboard scientific claims would change.
 
    | When deciding | Read | What to recover |
    | --- | --- | --- |
-   | Whether one useful authoring attempt establishes a workflow | [Authoring comparison](../history/memories/authoring-workflow.md), then [planning context](../history/memories/planning-context.md) | Retained local revision, disagreeing reviewers and untested human/transfer outcome; reference evidence, not a queued passage check or final acceptance |
+   | Whether one useful authoring attempt establishes a workflow | [Authoring comparison](../../meta-topics/agent-workflow/authoring-workflow.md), then [planning context](../../meta-topics/project-management/planning-context.md) | Retained local revision, disagreeing reviewers and untested human/transfer outcome; reference evidence, not a queued passage check or final acceptance |
 
 Existing provenance is retained at its owners. A test consuming the authoring
 comparison should use its dated revision and current knowledge pointers;

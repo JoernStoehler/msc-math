@@ -17,7 +17,7 @@ from matplotlib.ticker import ScalarFormatter
 HERE = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser()
 parser.add_argument('--table', type=Path, default=Path.home()/'.cache/msc-math/artifacts/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a/files/polytope-table.jsonl')
-parser.add_argument('--provenance', type=Path, default=Path('experiments/polytope-invariant-table/polytope-provenance-table.jsonl'))
+parser.add_argument('--provenance', type=Path, default=Path('topics/empirical-studies/polytope-invariant-table/polytope-provenance-table.jsonl'))
 parser.add_argument('--out', type=Path, default=HERE,
                     help='Output directory for both figures and their receipt (default: beside this script).')
 a = parser.parse_args()

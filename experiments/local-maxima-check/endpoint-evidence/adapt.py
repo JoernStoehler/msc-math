@@ -83,7 +83,7 @@ def adapt_control_calibration(path: Path) -> list[dict[str, Any]]:
                 "positive_fixed_f_evidence": (
                     {
                         "status": "proved",
-                        "source": "experiments/hko-local-maximum/theorem/",
+                        "source": "topics/variation-and-local-maxima/hko-local-maximum/theorem/",
                     }
                     if state_id == "hko_reference"
                     else None
@@ -170,7 +170,7 @@ def adapt_quotient(states_path: Path, probes_path: Path) -> list[dict[str, Any]]
                 "positive_fixed_f_evidence": (
                     {
                         "status": "proved",
-                        "source": "experiments/hko-local-maximum/theorem/",
+                        "source": "topics/variation-and-local-maxima/hko-local-maximum/theorem/",
                     }
                     if state_id == "positive_control_hko2024"
                     else None

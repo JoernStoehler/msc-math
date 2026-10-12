@@ -81,7 +81,7 @@ full capacity recomputation is still needed because many equality points are
 undercut by a third branch. It is a method result, not a new high-`sys` result.
 
 Route optimizer work back to `experiments/dev-gradient-ascent/`. Route reusable
-KKT solver/API design back to `experiments/dev-quadratic-program/` or
+KKT solver/API design back to `topics/capacity-and-qp/development/` or
 `crates/symplectic/` once it is stable enough to stop being packet-local.
 
 ## Current Directory Inventory

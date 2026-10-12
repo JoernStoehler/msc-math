@@ -1,0 +1,37 @@
+digraph team {
+rankdir=TB;graph [fontname="sans-serif", bgcolor="transparent", pad="0.2", nodesep="0.24", ranksep="0.42"]; node [shape=box, style="rounded,filled", fillcolor="#e4f1f6", color="#387084", fontname="sans-serif", fontsize=12, margin="0.13,0.10"]; edge [color="#70818b", arrowsize=0.65, fontname="sans-serif", fontsize=10];
+ R [label="Sol root
+5 compact branch seeds in parallel
+Scope, slots, cross-branch decisions",fillcolor="#d8eadd"];
+ G [label="Sol geometry manager"];F [label="Sol foundations manager"];D [label="Sol data manager"];T [label="Sol trust manager"];E [label="Sol research-account manager"];
+ GW [label="Sol implementation
+Luna caller search / bounded refactors
+Separate Sol review"];
+ FW [label="Parallel Sol proof editors
+Luna comparison / references
+Separate Sol mathematical review"];
+ DW [label="Sol producer / schema work
+Luna fixtures / debugging / wrappers
+Separate Sol review"];
+ TW [label="Sol test / benchmark design
+Luna runs / failure isolation
+Separate Sol review"];
+ EW [label="Parallel Sol topic authors
+Luna extraction / links / HTML mechanics
+Sol whole-account review"];
+ I [label="Sol integrator
+Shared files, interface changes, candidate
+Assembles source-ordered reading packet",fillcolor="#e6edee"];
+ O [label="Luna bounded observer
+Usage, build contention, review queues
+Reports exceptions to root",fillcolor="#e6edee"];
+ P [label="Fresh Sol planner
+Uses assembled account
+Drafts agent/Jörn writing plan",fillcolor="#eee6fa"];
+ A [label="Astra final reviewer
+Candidate + plan + evidence packet
+Targeted follow-up after fixes",fillcolor="#d8eadd"];
+ R -> {G F D T E};G -> GW;F -> FW;D -> DW;T -> TW;E -> EW;
+ {GW FW DW TW EW} -> I [style=dashed,label="reviewed units"];
+ R -> O [style=dashed];I -> P;P -> A;
+}

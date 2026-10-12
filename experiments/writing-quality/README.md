@@ -2,6 +2,13 @@
 
 Usable historical reading inputs and separate feedback for developing future writing detectors and editors. Setup does not assess detector capability or authorize thesis rewriting. The local bundle is committed in ordinary repository storage; no runtime dependency on `.git/codex` or session logs remains. External official releases are reproducibly fetched into ignored caches.
 
+The [September human-feedback figure run](runs/20260918-human-feedback-revision/MIGRATION.md)
+is a frozen source/figure snapshot, including its original plot defaults. The
+maintained plot producer is [the thesis figure script](../../thesis/figures/plot_association.py);
+use its current data paths for new outputs. The linked migration note explains
+how to retain the original snapshot hashes, use the maintained producer for
+scratch outputs, or copy the original script into scratch before reconstructing.
+
 ## Quick use
 
 From repository root, Python 3 and Poppler (`pdftotext`, `pdfinfo`) on PATH:

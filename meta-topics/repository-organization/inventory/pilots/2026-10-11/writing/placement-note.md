@@ -1,0 +1,21 @@
+# Chapter 8 context and placement conflict
+
+The [context preview](context-preview.html) puts the [repaired pilot passage](repaired-passage.md) between two unchanged excerpts from selected [Chapter 8](../../../../../../thesis/chapters/08-data-science.tex), SHA-256 `4c7e4436641d8b01c7819cc1cdbae8f21a73cc71fac7fc36c8efbc148aecaa00` at inspection. It is a reading preview, not a proposed source diff, merged chapter or PDF. The display converts the following `\subsection` command to a Markdown heading; its prose and mathematical statement are unchanged. The proposed passage text is unchanged apart from heading levels in the preview. No thesis source was edited.
+
+**Hypothetical placement tested:** after the chapter introduction's paragraph beginning “These findings also distinguish two tasks” (ending “numerical tests for local optimality”), and before `\subsection{Covariance balance gives a second geometric signal}`. A literal replacement would span `\subsection{Symplectic ridge area}` and `\label{subsec:ds-sampling}` at lines 30–31 through the last paragraph before the covariance subsection at line 336. The preview quotes the exact adjacent lead-in and the covariance subsection's complete first explanatory paragraph. This gives Jörn a contextual read of the new argument's opening and exit without presenting it as accepted integration.
+
+**That literal replacement is not ready.** The current span contains results and interfaces absent from the one-to-two-page pilot passage:
+
+| Current Chapter 8 material in the span | Consequence of literal replacement |
+| --- | --- |
+| Conditional attenuation analysis, fitted Gaussian reference, gradient-boosted comparison and its appendix pointers | Their numerical and interpretive evidence would disappear from the chapter. The pilot passage reports only one conditional rank contrast. |
+| Three selected figure environments (`fig:ds-conditional-ranks`, `fig:ds-ridge-association`, `fig:ds-ridge-products`) | The collapsible historical SVG is a useful preview, but is not a replacement for all three integrated figure purposes, labels or PDF layout. |
+| Generic ten-facet $R/N_2$ selection and Euclidean-area/alignment factorization; selected-tail failure cases | Those observations would be dropped. They are separate from the product-only test in the pilot passage. |
+| Complete exact triangle profile, product ridge minimum $R\geq8$ with equality and proof, and the cube control | The candidate mentions opposite triangle ordering but does not retain these equations, proof or extremal statement. |
+| `eq:ds-pentagon-ridge-capacity` and `eq:ds-triangle-profile` | Live references from the introduction, conclusion, appendix and AI-use disclosure would break if the equations and labels were removed. `eq:ds-product-ridge-minimum` also disappears from this source span. |
+
+The preceding chapter introduction already summarizes the inverse association, opposite exact laws and selection-versus-improvement distinction. Even as a replacement, the candidate's opening repeats part of that lead-in; adding it as an extra subsection before the existing ridge block would repeat much more of the evidence. A later integration should instead choose which candidate transitions and explanations improve the existing sections, retain the supported results and live labels, and check the assembled PDF and source links. This pilot has not made those editorial decisions.
+
+At the exit, the candidate mentions a concurrent covariance selector only to specify control eligibility; the unchanged next subsection introduces covariance as a new geometric signal. That anticipatory mention is accurate but may need an appendix pointer or shorter control note in a merged version so the reader is not expected to understand an undefined selector before its section.
+
+**Contextual review question:** does the candidate's phenomenon → exact family and limit → new selection sequence help the mathematical reader move from the chapter introduction into the covariance and intervention results? A favorable contextual judgment would justify a bounded integration proposal; it would not authorize removing the substantive current span as a whole. Human acceptance remains open.

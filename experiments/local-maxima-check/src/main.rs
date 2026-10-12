@@ -264,9 +264,9 @@ fn main() {
         source_paths: vec![
             "experiments/local-maxima-check/README.md",
             "thesis/chapters/09-rotated-regular-polygons.tex",
-            "experiments/regular-products/rotated-regular-products/lagrangian-products-3x6-6deg.jsonl",
-            "experiments/regular-products/rotated-regular-products/lagrangian-products-4x4-6deg.jsonl",
-            "papers/ch2021/s1_introduction_and_main_results.tex",
+            "topics/products/regular-products/rotated-regular-products/lagrangian-products-3x6-6deg.jsonl",
+            "topics/products/regular-products/rotated-regular-products/lagrangian-products-4x4-6deg.jsonl",
+            "topics/literature/sources/ch2021/s1_introduction_and_main_results.tex",
             "experiments/verification/ch2021-six-vertex/report.json",
         ],
         claim_boundary: "Finite fixed-facet probes can find improving points but cannot prove local maximality from a miss.",

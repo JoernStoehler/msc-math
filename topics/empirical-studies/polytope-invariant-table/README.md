@@ -1,0 +1,332 @@
+# Polytope Invariant Table
+
+This directory is the derived-dataset producer for the retained random/product
+invariant table. It loads named source datasets, computes the current
+mathematically coherent invariant feature families, preserves source
+provenance, and writes method-facing tables.
+
+For the retained 14,336-row inputs, preparation copies stored capacity, volume,
+and systolic-ratio targets; it does not recompute or certify them. The
+[retained numerical lineage](../polytope-datasets/retained-lineage.md) records
+the source/table byte identities and the remaining execution-provenance gap.
+
+Current active method-facing covariates are invariant-feature columns. Prepare
+does not choose a canonical representative. It computes formulas whose values
+are invariant under `Sp(4) x R_+ x R^4 x Perm(F)`, with metadata kept separate
+from numeric covariates.
+
+The historical executable names still contain `prepare`, but this directory is
+not a general pipeline stage through which unrelated datasets or columns must
+pass. The active producer contract is random/product only. Old ascent and
+continuation table uses are obsolete for this thesis slice.
+
+The [empirical producer/schema account](../producers-and-schema.md)
+connects this package to sampling populations, retained target uncertainty and
+method-table versions.
+
+## Commands
+
+Build the retained random/product table in place:
+
+```bash
+topics/empirical-studies/polytope-invariant-table/build-retained-table.sh
+```
+
+This retained rebuild reads the shared producer files under
+`topics/empirical-studies/polytope-datasets/`. Materialize them first in a fresh worktree:
+
+```bash
+scripts/artifacts.py materialize polytope-datasets
+```
+
+Use the run-local producer smoke below when the goal is to test
+source/provenance plumbing without the retained full data.
+
+Build scratch slices for development or evidence runs:
+
+```bash
+topics/empirical-studies/polytope-invariant-table/build-random-only-slice.sh smoke
+topics/empirical-studies/polytope-invariant-table/build-random-only-slice.sh method
+topics/empirical-studies/polytope-invariant-table/build-random-only-slice.sh full
+```
+
+The scoped builder calls
+`sys-table-builder --input-format retained --random-only-size <smoke|method|full>`.
+Limited presets take deterministic stratified prefixes:
+
+- `smoke`: `8` generic random rows plus `20` product rows;
+- `method`: `512` generic random rows plus `1024` product rows;
+- `full`: all retained random/product rows.
+
+## Run-Local Producer Input
+
+`sys-table-builder --input-format run-local` consumes a run-local producer output directory
+containing `computed-polytopes.jsonl` plus producer metadata files:
+
+```bash
+cargo run -p exp-polytope-datasets --release --bin sys-datascience-produce -- \
+  --mode smoke \
+  --producers random,random-product \
+  --output-dir /tmp/ds-produce-smoke-cold \
+  --parallelism 4 \
+  --base-cache /tmp/ds-produce-smoke-cache.jsonl
+
+uv run --script topics/empirical-studies/polytope-datasets/validate-datascience-produced.py \
+  --produce-dir /tmp/ds-produce-smoke-cold \
+  --mode smoke \
+  --producers random,random-product
+
+cargo run -p exp-polytope-invariant-table --release --bin sys-table-builder -- \
+  --input-format run-local \
+  --produce-dir /tmp/ds-produce-smoke-cold \
+  --out-dir /tmp/ds-prepare-smoke
+
+uv run --script topics/empirical-studies/polytope-invariant-table/fingerprint-dataset.py \
+  /tmp/ds-prepare-smoke
+```
+
+For the known HKO reference/holdout row:
+
+```bash
+cargo run -p exp-polytope-datasets --release --bin sys-datascience-produce -- \
+  --mode smoke \
+  --producers known-hko-reference \
+  --output-dir /tmp/ds-produce-hko \
+  --parallelism 1 \
+  --base-cache /tmp/ds-produce-hko-cache.jsonl
+
+cargo run -p exp-polytope-invariant-table --release --bin sys-table-builder -- \
+  --input-format run-local \
+  --produce-dir /tmp/ds-produce-hko \
+  --out-dir /tmp/ds-prepare-hko
+```
+
+Prepared HKO rows use `capacity_source = known_hko_reference` and provenance
+`role = reference_holdout`. Shared trusted-random method filters exclude this
+dataset by default; score it only through reference-aware packets.
+
+`licca-datascience-prepare.slurm.sh` is dormant run-local infrastructure; no
+submission is selected. See `topics/empirical-studies/sys-datascience/LICCA.md`. If a
+selected producer run or a distinct reproduction task needs LICCA table
+construction, a new job-specific handoff must reassess resources. The script
+runs only the prebuilt
+`sys-table-builder` binary, so build before any approved submission:
+
+```bash
+cd "$HOME/msc-math"
+export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
+cargo build --release -p exp-polytope-invariant-table --bin sys-table-builder
+```
+
+Validate the produce directory before submitting prepare, then fingerprint the
+prepare output after the job finishes.
+
+The small [builder fixture](fixtures/builder-smoke) freezes one generic
+five-facet row and one triangle-product row, their pre-refactor table bytes,
+and malformed run-local inputs. Its run-local evaluator labels and fixed seed
+are fixture placeholders, not recovered historical provenance. The original
+unseeded retained rows remain there to check that unknown metadata stays
+unknown. The commands and comparison results are recorded in the
+[data pilot](../../../meta-topics/repository-organization/inventory/pilots/2026-10-11/data.md).
+
+## Prepared Outputs
+
+Current method-facing files:
+
+- `polytope-table.jsonl`: one row per retained random/product polytope, with
+  identity/target fields, source metadata needed by methods, and invariant
+  feature columns;
+- `polytope-provenance-table.jsonl`: one row per retained random/product
+  provenance record. Run-local and canonical random/product provenance rows
+  include a nested `source` object when source bucket data is available.
+  Run-local reference prepares can additionally contain `known_hko_reference`
+  provenance rows for holdout scoring.
+
+`polytope-table.jsonl` is the method-facing table. It exports only
+identity/target/source fields and invariant feature columns. Raw dual vertices,
+capacity, volume, Euclidean representative features, omega magnitudes of
+normalized dual rows, and transition features remain in producer artifacts and
+are joined by `poly_id` only when source inspection is needed.
+
+The active columns are:
+
+- identity/target/metadata: `poly_id`, `sys`, `capacity_source`, and, for fresh
+  run-local prepares, `capacity_method`, `capacity_candidate_family`, and
+  `volume_method`;
+- combinatorial invariants: facet/vertex/edge/ridge counts, simplicity,
+  vertex-incidence summaries, vertex-degree summaries, ridge-size summaries,
+  facet-vertex summaries, and facet-neighbor summaries;
+- symplectic two-face area invariants: successfully ordered two-face
+  symplectic area statistics divided by `volume.sqrt()`, plus dimensionless
+  max/top-3 shares.
+
+The mathematical contract is implemented in `invariant_features.rs`. The key
+facts are:
+
+- combinatorial columns depend only on the face lattice;
+- two-face symplectic area is translation-invariant by telescoping around each
+  closed polygonal face and Sp(4)-invariant by definition of a symplectic map;
+- under primal scaling `x -> lambda x`, two-face symplectic area scales by
+  `lambda^2`, while 4D volume scales by `lambda^4`, so division by
+  `volume.sqrt()` removes scale.
+
+`capacity_source` is a historical name for dataset origin (for example,
+`random_sample`), not the capacity evaluator. The provenance-table `backend`
+is the producer's requested `auto`/`product` mode, not proof of the route that
+ran. Fresh run-local method-table rows therefore copy the evaluator's actual
+candidate family and its capacity/volume method labels from
+`computed-polytopes.jsonl`. Those labels describe numerical provenance; they
+do not turn approximate `sys` values into theorem-level exact values. The
+registered retained table predates these projected fields, so their absence
+must remain "unrecorded", not be inferred from source code or backend aliases.
+
+In the normalized inequality representation, a translated polytope can be
+represented again as `<a_i, x> <= 1` only when the translated origin is
+interior, so all facet denominators are positive. The geometric invariance
+claim is for the polytope; the f64 table builder assumes such a normalized
+input representation.
+
+The v1 active table intentionally excludes Euclidean representative
+features, omega magnitudes of normalized dual rows, and cutoff/sign features.
+Omega sign and transition features need a tolerant ternary classifier plus
+boundary-hit diagnostics before they should be treated as method-facing full
+invariants.
+
+Check the frozen adapter and metadata contracts without a producer run:
+
+```bash
+cargo build -p exp-polytope-invariant-table --bins
+python3 topics/empirical-studies/polytope-invariant-table/check-builder-fixture.py
+```
+
+Run-local preparation requires seed, rejection attempt and sample index. It
+checks the product sample facet count and source `k+m` against its payload.
+These checks reject metadata disagreement; they do not certify the numerical
+target or establish that a payload was emitted by the current producer.
+
+Check the invariant feature contract with:
+
+```bash
+cargo test -p exp-polytope-invariant-table invariant_features --release
+cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-invariant-feature-check
+```
+
+The report command uses synthetic polytopes and deterministic representatives
+of scale, translation, facet permutation, sampled `Sp(4)` via `exp(JH)`, and a
+full-group composition. It is a low-friction guard for new invariant columns;
+feature additions should extend this report before method packets consume the
+new column.
+
+Check prepared outputs with:
+
+```bash
+uv run --script topics/empirical-studies/polytope-invariant-table/fingerprint-dataset.py \
+  topics/empirical-studies/polytope-invariant-table
+```
+
+## Feature Cost Profiler
+
+Use `sys-datascience-feature-cost` when a method packet needs per-polytope cost
+for the current invariant feature families before adding method-local timing
+boilerplate.
+
+Smoke command, independent of retained producer files:
+
+```bash
+cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-feature-cost -- \
+  --synthetic-smoke \
+  --out-dir /tmp/sys-ds-feature-cost-smoke
+```
+
+Retained producer sample command, after materializing `polytope-datasets` as
+described above:
+
+```bash
+cargo run -p exp-polytope-invariant-table --release --bin sys-datascience-feature-cost -- \
+  --random-only-size smoke \
+  --max-polytopes 10 \
+  --out-dir /tmp/sys-ds-feature-cost-smoke
+```
+
+Use `--max-polytopes all` only when deliberately spending the larger run. The
+command is sequential so that per-row timings remain easy to interpret.
+`--retained-produce-dir` overrides the retained cache directory containing
+`random.jsonl` and `random-product.jsonl`. This is intentionally different from
+  `sys-table-builder --input-format run-local --produce-dir`, which consumes run-local producer
+outputs with `computed-polytopes.jsonl`.
+
+Generated files:
+
+- `feature-cost-per-polytope.jsonl`: one row per profiled polytope, with
+  `poly_id`, `capacity_source`, `facet_count`, product bucket fields when
+  available, group timings in milliseconds, total timings, cached/recomputed
+  volume, and selected invariant feature values for sanity checks.
+- `feature-cost-group-summary.tsv`: aggregate timing summary by `bucket` and
+  feature group, plus the `all` bucket.
+- `feature-cost-run-summary.json`: input mode, row counts, output paths, and
+  the timing-boundary note.
+
+Timing boundaries:
+
+- JSONL rows use the direct field names `standard_prepare_feature_time_ms`,
+  `volume_recompute_ms`, and
+  `feature_first_total_with_volume_recompute_ms`.
+- TSV summary rows use shorter group labels:
+  `standard_prepare_feature_total`,
+  `volume_recompute_from_dual_vertices`, and
+  `feature_first_total_with_volume_recompute`.
+- `standard_prepare_feature_time_ms` is a component sum for the current prepare
+  feature path: decode dual vertices, reconstruct the polytope from dual
+  vertices, enumerate the face lattice, compute skeleton summaries, compute
+  ridge symplectic-area summaries, and assemble the output row. It uses the
+  producer-cached volume for normalization, as the current prepared table does.
+  It is not a clean wall-time replay, because the profiler also runs exact
+  volume recomputation before the later component timings.
+- `volume_recompute_ms` measures exact volume recomputation from the
+  reconstructed dual-vertex geometry. This is not currently paid by prepare
+  when producer volume is already cached, but it is the relevant extra cost for
+  feature-first proposer code that starts from dual vertices only.
+
+## Identity And Provenance Contract
+
+The prepared random/product tables keep polytope identity separate from sample
+or state provenance:
+
+- `poly_id` hashes ordered binary64 normalized-dual coordinates (normalizing
+  signed zero), rather than an exact rational payload or a canonical geometric
+  equivalence class. Repeated identical representations share an ID; facet
+  permutation or another equivalent representative may change it.
+- provenance rows carry source metadata such as `root_group_id`,
+  `lineage_id`, and `source`. `source` is the structured sampling-event
+  descriptor; existing flat columns such as `sample_h_min`, `sample_h_max`,
+  `product_k`, and `product_m` are compatibility/access columns derived from
+  the same source data.
+- exact rational geometry payloads such as `dual_vertices_rational` stay with
+  the polytope identity rather than with a one-off method-local matrix.
+- optimizer or local-system rows may need additional state-level identity, but
+  that belongs to a reopened producer design, not to the retained
+  random/product prepared schema.
+
+Do not replace this with a single wide table unless a concrete consumer
+justifies the provenance loss and migration cost. Add schema fields when
+possible.
+
+## Code map
+
+- `builder_cli.rs` exposes the explicit `--input-format retained|run-local`
+  entrypoint. `main.rs` (`sys-dataset`) and `prepare.rs`
+  (`sys-datascience-prepare`) remain compatibility commands.
+- `load_caches.rs` adapts retained random/product rows; `run_local.rs` adapts
+  run-local computed payloads and sample metadata. Historical evaluator fields
+  stay absent in retained output when the source did not record them.
+- `table_builder.rs` shares feature, provenance, and write stages.
+- `invariant_features.rs` computes the active method-facing invariant feature
+  columns.
+- `features_dual_vertices.rs`, `features_face_symplectic.rs`,
+  `features_helpers.rs`, and `features_skeleton.rs` provide the narrow helper
+  surfaces used by `invariant_features.rs`.
+- `write_database.rs` writes the prepared JSONL tables.
+
+Reusable feature columns belong here when several method packets should consume
+them. Model-specific matrices, train/test labels, reports, and plots belong in
+the relevant method folder.

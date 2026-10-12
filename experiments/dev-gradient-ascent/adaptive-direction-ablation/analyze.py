@@ -54,8 +54,8 @@ if generic_mode:
     # Retained pre-migration provenance keeps its exact historical input path.
     assert prov["source_input"].endswith(
         (
-            "experiments/polytope-datasets/random.jsonl",
-            "experiments/sys-datascience/produce/random.jsonl",
+            "topics/empirical-studies/polytope-datasets/random.jsonl",
+            "topics/empirical-studies/sys-datascience/produce/random.jsonl",
         )
     )
     screening = json.loads((screening_root / "screening-report.json").read_text())

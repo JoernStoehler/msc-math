@@ -1,0 +1,27 @@
+{
+  "observed_at": "2026-10-12 09:30 UTC",
+  "scope": "Pre-move working-file identities; preserved payload/provenance bytes, not mathematical certification. Outer pentagon-return/README.md route subsequently repaired.",
+  "old_to_new_prefix": {
+    "docs/pro-handoffs/": "topics/products/pro-handoffs/"
+  },
+  "sha256_before_move": {
+    "docs/pro-handoffs/pentagon-generalization/GOAL.md": "2e392172a3d4a384919ce66b3d67947570241c2e60b5aa717b80586cc5dce361",
+    "docs/pro-handoffs/pentagon-generalization/PROVENANCE.md": "b626ce90da3954d4f2a769ecc979e5177abbc5b45560b0b2bc0e8db6148b5feb",
+    "docs/pro-handoffs/pentagon-generalization/SOURCES.md": "d40c49be0d1908fde41bc2904c8471b782265ba0dc2b17baaec287aa6eb1fd09",
+    "docs/pro-handoffs/pentagon-generalization/CONTEXT.md": "f528c23778fb4c6ccade32547e37cd86fef02553ba774a50fee893f334207aeb",
+    "docs/pro-handoffs/pentagon-generalization/source-hashes.json": "8633e4ec6a80c31f147d72aa960074a91942067615a3f472e4b5b95ff674c25b",
+    "docs/pro-handoffs/pentagon-generalization/math/rotated-pentagon-proof.tex": "e41574584039911ceb25cc7cd508544df6e8028c2dad6eee32c39532e2efba15",
+    "docs/pro-handoffs/pentagon-generalization/math/product-six-facet-reduction.tex": "f74325caef85829b5a6595f414d17e0e0b4ab60a5b17fae8ca78ae6eacbccf82",
+    "docs/pro-handoffs/pentagon-generalization-pro.zip": "92c62f3c40b66502522e94c1c92d106bb78b74453c7c303053b9526d23492619",
+    "docs/pro-handoffs/pentagon-return/README.md": "15153d9479094b8d0c34ea6fe41bb38b6967975c83aeea6b1d392973516ea314",
+    "docs/pro-handoffs/pentagon-return/audit-affine.md": "57bff6d1963c32df91f6b18c3ba606c317a91ba2cf6d21a1ee24aa1fc3ab422c",
+    "docs/pro-handoffs/pentagon-return/audit-extensions.md": "f38800cf11f0f0c2c3f1a7a010fdb093bf586c7fd78bb493100979716fe60a44",
+    "docs/pro-handoffs/pentagon-return/pentagon-generalization-results.zip": "3c4a8317b6900dd1706f302dca22ec30eec2ea4b4175bd9a42dd23a3cb5d67db",
+    "docs/pro-handoffs/pentagon-return/received/README.md": "410b6280c5506b049658197efc1000a0f687c907de6c7e42f44ac6f812974490",
+    "docs/pro-handoffs/pentagon-return/received/MANIFEST.json": "f2362209647061ee33cf56819bf96ddd908e1522d1ec80d3e618639996d3f48a",
+    "docs/pro-handoffs/pentagon-return/received/verification/README.md": "96ec7b86834d4a9b894b0539f7989b2230b90be5c7b750618f102c9648cf2d30",
+    "docs/pro-handoffs/pentagon-return/received/verification/results.json": "fab4f35e6178417af500b5e2594e02a809948ce7faa3bb3e2168f5346d5194a6",
+    "docs/pro-handoffs/pentagon-return/received/verification/check.py": "d9e8871d5929f786a53ac9020a79615d405722fa8ab317cf175a9e35d0aca851",
+    "docs/pro-handoffs/pentagon-return/received/math/research.tex": "dd416f21f6cea0a211fbafd3d14908fc6333b175c0851050713104686b4e8c25"
+  }
+}

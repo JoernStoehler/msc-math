@@ -1373,6 +1373,84 @@
       "commit": "a6bbfe94d988b6cd0a798fcbbbd39899b6bdc6cb",
       "blob": "435bd7b248b43aa1de226fd88fbccc392a367da1",
       "reason": "duplicate preservation copy; verifier now reads this immutable ancestor commit:path"
+    },
+    {
+      "path": "docs/coordination/goal-map.json",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "15f5c2a8aa99fcaf2fb0b8ce906a2f74b3c0a6d3",
+      "reason": "Retired 2026-10-10 after Jörn answered Q11 that he does not use the separate provisional conceptual goal map and that keeping such messages in the repository proved unhelpful. Preserve exact proposal/rationale in Git rather than current navigation; this disposition concerns the old conceptual map, not the selected execution dependency graph."
+    },
+    {
+      "path": "docs/coordination/graphs/goal-map.dot",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "644d057776c398da5261e2def89cef25c2c7d258",
+      "reason": "Retired 2026-10-10 after Jörn answered Q11 that he does not use the separate provisional conceptual goal map and that keeping such messages in the repository proved unhelpful. Preserve exact proposal/rationale in Git rather than current navigation; this disposition concerns the old conceptual map, not the selected execution dependency graph."
+    },
+    {
+      "path": "docs/coordination/graphs/goal-map.svg",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "b5e5a01489f3bef3670a6322a8938c4b0af78bfb",
+      "reason": "Retired 2026-10-10 after Jörn answered Q11 that he does not use the separate provisional conceptual goal map and that keeping such messages in the repository proved unhelpful. Preserve exact proposal/rationale in Git rather than current navigation; this disposition concerns the old conceptual map, not the selected execution dependency graph."
+    },
+    {
+      "path": "docs/coordination/graphs/goal-map.html",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "516950d3a413f0605e78579203234399cf8ebe84",
+      "reason": "Retired 2026-10-10 after Jörn answered Q11 that he does not use the separate provisional conceptual goal map and that keeping such messages in the repository proved unhelpful. Preserve exact proposal/rationale in Git rather than current navigation; this disposition concerns the old conceptual map, not the selected execution dependency graph."
+    },
+    {
+      "path": "scripts/render-goal-map.py",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "e0a4fe7ccc002728a459f4e117275c14617d9256",
+      "reason": "Retired 2026-10-10 with the separate provisional conceptual goal map after Jörn rejected continued use in inventory Q11. No live input or consumer remains after integrating root retires navigation; preserve rendering mechanics and rationale in Git."
+    },
+    {
+      "path": "docs/coordination/restart-2026-10-04.md",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "42e0f96851966354d13c93e8e421eb6fcc56474f",
+      "reason": "Expired named-agent launch/dispatch instructions; lasting findings transferred to retention/scientific owner."
+    },
+    {
+      "path": "docs/coordination/five-hour-hko-extension-prompt.md",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "c15ffc50ae509496d27415ae23e215d7d45269f8",
+      "reason": "Expired named-agent launch/dispatch instructions; lasting findings transferred to retention/scientific owner."
+    },
+    {
+      "path": "docs/coordination/five-hour-thesis-proof-prompt.md",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "445b0c1c4b9fe7d8e96371ab912b7254ece4867d",
+      "reason": "Expired named-agent launch/dispatch instructions; lasting findings transferred to retention/scientific owner."
+    },
+    {
+      "path": "docs/coordination/five-hour-local-cover-prompt.md",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "16adf55216900e0c5458b1d67cc40ce3029d931d",
+      "reason": "Expired named-agent launch/dispatch instructions; lasting findings transferred to retention/scientific owner."
+    },
+    {
+      "path": "docs/coordination/five-hour-portfolio-prompt.md",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "191a7b609dd130b580a27dca41d87e1788ad140f",
+      "reason": "Expired named-agent launch/dispatch instructions; lasting findings transferred to retention/scientific owner."
+    },
+    {
+      "path": "docs/coordination/handoffs/20261008-ab-split/sessions.md",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "a87ef143fd7f5959bf686eb8003547196aa356c3",
+      "reason": "Expired named-agent launch/dispatch instructions; lasting findings transferred to retention/scientific owner."
+    },
+    {
+      "path": "docs/coordination/handoffs/20261008-ab-split/A-cloud.md",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "7788eb5c1221d8413fe5204ead97763339fd4117",
+      "reason": "Expired named-agent launch/dispatch instructions; lasting findings transferred to retention/scientific owner."
+    },
+    {
+      "path": "docs/coordination/handoffs/20261008-ab-split/B-harness.md",
+      "commit": "844fc5be3884c12a93dabd795d0a0d12a92b2815",
+      "blob": "9fabf6f6a5fa0790fd480a87744b8a367db9723d",
+      "reason": "Expired named-agent launch/dispatch instructions; lasting findings transferred to retention/scientific owner."
     }
   ]
 }

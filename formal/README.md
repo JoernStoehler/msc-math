@@ -1,5 +1,10 @@
 # Formal proof development
 
+For how these arguments relate, read the [research guide](../docs/research-guide.md).
+The [inventory](../meta-topics/repository-organization/inventory/README.md) separates statements, proof routes,
+readability evidence and unreviewed gaps.
+
+
 This directory develops mathematical statements and proof routes. It is not
 the publication surface. `main.tex` builds the proof-development document and
 shows which `.tex` files are currently included; inclusion does not itself
@@ -9,13 +14,14 @@ mean that Jörn or Kai accepted the statement or that the active thesis uses it.
 
 | Group | Principal files |
 | --- | --- |
+| Ordinary exact polytope foundations | `exact-polar-geometry.tex` (polar, boundedness, vertices, qualified irredundancy and rational determinant predicates) |
 | Symplectic/polytope foundations | `symplectic-polytope-geometry.tex`, `combinatorial-boundary-regularity.tex` |
 | HK2017/QP conventions and core | `hk2017-qp-conventions.tex`, `hk2017-qp-core.tex`, `hk2017-qp-precision.tex`, `ehz-kkt-system.tex` |
-| Capacity and orbit algorithms | `capacity-algorithms.tex`, `billiard-capacity-algorithm.tex`, `reeb-orbit-recovery.tex`, `finite-reeb-orbit-verification.tex` |
+| Capacity and orbit algorithms | `capacity-algorithms.tex`, `billiard-capacity-algorithm.tex`, `product-qp-six-facet-reduction.tex`, `reeb-orbit-recovery.tex`, `finite-reeb-orbit-verification.tex` |
 | Flow graph | `flow-graph-real-algorithm.tex`, `flow-graph-capacity.tex`, `flow-graph-ch2021-comparison.tex`, `flow-graph-proof-risk.tex` |
 | First-order behavior | `capacity-derivatives.tex`, `capacity-smoothness-classification.tex`, `capacity-boundary-subdifferential.tex`, `active-orbit-facet-coverage.tex`, `sys-first-order-local-behavior.md` |
 | HKO local maximality | `hko-symmetry-gradient-structure.tex`, `hko-feasible-section-upper-branches.tex`, `hko-local-maximality-conditions.tex` |
-| Lagrangian products | `lagrangian-product-rotation-symmetry.tex`, `product-two-bounce-class.tex`, `product-triangle-bounce-classification.tex`; [pentagon proof routes and independent linear deformations](pentagon-affine-products/README.md) |
+| Lagrangian products | `lagrangian-product-rotation-symmetry.tex`, `product-two-bounce-class.tex`, `product-triangle-bounce-classification.tex`; [pentagon proof routes and independent linear deformations](../topics/products/pentagon-affine-products/README.md); [rotating out of symplectic product position](../topics/products/product-rotation/README.md) |
 | Numerical and representation audits | `f64-prefilter-bound.tex`, `f64-orientation-sign-filters.tex`, `f64-near-singular-vertices.tex`, `near-redundant-facet-removal-bounds.tex`, `rational-integer-scaling.tex`, `admissibility-precision-audit.tex` |
 | Search and canonization | `random-polytope-boundedness.tex`, `search-pruning-correctness.tex`, `generic-coordinate-canonization.tex` |
 
@@ -43,7 +49,7 @@ Known examples requiring care:
   current theorem-facing proof source. The selected
   [rotation chapter](../thesis/chapters/09-rotated-regular-polygons.tex) uses
   endpoint interpolation; the earlier exhaustive Sage certificate remains under
-  [regular-product experiments](../experiments/regular-products/README.md).
+  [regular-product experiments](../topics/products/regular-products/README.md).
 - `hko-local-maximality-conditions.tex` retains an older smooth-envelope proof
   sketch with unresolved hypotheses. The selected
   [HKO theorem](../thesis/chapters/07-hko.tex) uses feasible upper sections,

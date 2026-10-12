@@ -5,7 +5,7 @@ branch behavior that an optimizer must handle. The Cargo package name
 `exp-dev-gradient-ascent` predates the broader branch-behavior scope.
 
 Package availability is not an active development assignment. See
-[current work and ownership](../../docs/coordination/thesis-work.md). The retained
+[current work and ownership](../../meta-topics/project-management/thesis-work.md). The retained
 promotion notes preserve research context; they do not assign further
 runs, method promotion or thesis integration.
 
@@ -107,7 +107,7 @@ it is likewise not method evidence.
 ## Evidence and downstream boundaries
 
 - Generic endpoint checks here are finite and heuristic. HKO theorem-strength
-  local maximality belongs to `experiments/hko-local-maximum/`.
+  local maximality belongs to `topics/variation-and-local-maxima/hko-local-maximum/`.
 - Reusable algorithm code should leave this development package only after the
   retained method and its required interfaces are understood.
 - Fixed-`F` datascience conclusions require rerunning the relevant producer

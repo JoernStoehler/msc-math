@@ -1,0 +1,704 @@
+% Conditional perturbation analysis and retained historical diagnostics.
+% Input by the topic precision entry point; not a runtime certificate.
+%
+% Structure:
+%   (A) Perturbation chain: a_i -> C -> V -> H' -> gamma_j -> beta
+%   (B) Q error bounds (existing, from earlier work)
+%   (C) beta > 0 certification (the main open problem)
+
+
+% ── A. Perturbation chain ────────────────────────────────────────────
+
+\begin{remark}[Conditioning precondition]\label{rem:conditioning-precondition}
+All bounds in the perturbation chain
+(Lemmas~\ref{lem:link-assembly}--\ref{lem:link-beta})
+have $\sigma_{\min}(C)$ in their denominators.
+When $\sigma_{\min}(C)$ is small:
+\begin{itemize}
+  \item The null-space basis error $\|\delta V\|$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$
+    (Lemma~\ref{lem:link-svd});
+  \item The particular solution error $\|\delta\beta_0\|$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)^2)$
+    (Lemma~\ref{lem:link-beta0});
+  \item The eigenvalue perturbation $\varepsilon_\gamma$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,
+    potentially exceeding $|\gamma_j|$ for all eigenvalues.
+\end{itemize}
+The f64 solver checks $\tilde\sigma_{\min}(C) > \varepsilon_C$
+as a precondition.
+If the check fails, the solver returns \textsc{Indeterminate}
+for the entire $\sigma$-node, because no downstream bound
+can certify anything.
+
+The threshold $\varepsilon_C$ is not a single derived value.
+Rather, $\sigma_{\min}(C)$ enters all downstream bounds, and the
+solver computes those bounds using the observed $\tilde\sigma_{\min}(C)$.
+If all resulting bounds are too large to certify
+(eigenvalue signs, $\beta > 0$, or Q~error), the outcome is
+\textsc{Indeterminate} regardless of any fixed threshold.
+The precondition $\tilde\sigma_{\min}(C) > \varepsilon_C$ is
+a fast short-circuit: skip the chain when the bounds are
+guaranteed to be useless.
+
+% [GAP - The value of eps_C is determined empirically: choose
+% the smallest value such that no certified (TRUE/FALSE) verdict
+% is overturned by exact arithmetic.  The perturbation chain
+% bounds are valid for any sigma_min(C) > 0; the question is
+% whether they are tight enough to certify.]
+\end{remark}
+
+
+\begin{remark}[Perturbation chain overview]\label{rem:perturbation-chain}
+The f64 solver computes a chain of quantities, each depending
+on the previous.
+At each link, errors from f64 arithmetic and from perturbed
+inputs accumulate.
+We bound the error at each link using standard backward
+stability results for the f64 primitives (SVD, eigendecomposition)
+and perturbation theory (Weyl, Davis--Kahan).
+
+The chain, with the key bound at each link:
+\[
+  a_i
+  \;\xrightarrow{\text{assemble}}\;
+  C, H
+  \;\xrightarrow{\text{SVD}}\;
+  V, \beta_0
+  \;\xrightarrow{V^\top H V}\;
+  H'
+  \;\xrightarrow{\text{eig}}\;
+  \gamma_j
+  \;\xrightarrow{(H')^{-1} g}\;
+  \alpha^*
+  \;\xrightarrow{\beta_0 + V\alpha^*}\;
+  \beta^*.
+\]
+\end{remark}
+
+
+\begin{lemma}[Link 1: Assembly]\label{lem:link-assembly}
+$H$ and $C$ are assembled from the dual vertices $a_i$ by
+$O(m^2)$ elementary f64 operations
+($\omega_0$ evaluations, copies).
+The computed $\tilde C$ and $\tilde H$ satisfy
+\[
+  \|\tilde C - C\| \leq c_1\, \varepsilon_{\mathrm{mach}}\, \|C\|,
+  \qquad
+  \|\tilde H - H\| \leq c_2\, \varepsilon_{\mathrm{mach}}\, \|H\|,
+\]
+where $c_1, c_2$ are small constants depending on~$m$
+(at most $O(m)$), and $\varepsilon_{\mathrm{mach}} \approx 1.1 \times 10^{-16}$.
+% [TODO: JÖRN - verify constants; the assembly involves
+% a subtraction (omega_0 = q1*p2 - q2*p1) which could cause
+% cancellation if a_i are nearly aligned.  For our polytopes,
+% a_i are O(1) with no near-cancellation, so this is safe.]
+
+In our setting, $\|C\|$ and $\|H\|$ are $O(1)$
+(dual vertices $a_i$ are $O(1)$),
+so $\|\delta C\|$ and $\|\delta H\|$ are $O(\varepsilon_{\mathrm{mach}})$.
+\end{lemma}
+
+
+\begin{lemma}[Link 2: Null-space basis via SVD]\label{lem:link-svd}
+% Citation: Golub \& Van Loan (2013), §8.6 (Computing the SVD) for backward stability.
+%   Exact theorem number within §8.6 not confirmed — verify at library if needed.
+The SVD of~$\tilde C$ is backward stable: the computed
+$\tilde U \tilde\Sigma \tilde V_{\mathrm{full}}^\top$
+is the exact SVD of $\tilde C + \delta C_{\mathrm{SVD}}$
+where $\|\delta C_{\mathrm{SVD}}\| \leq c_3\, \varepsilon_{\mathrm{mach}}\, \|\tilde C\|$.
+
+The null-space basis $\tilde V$ (the last $k$ right singular vectors)
+approximates the exact null space of~$C$.
+The angle between the computed and exact null spaces is bounded by
+the \textbf{Davis--Kahan $\sin\theta$ theorem}:
+\[
+  \|\sin\Theta(\tilde V, V)\|
+  \leq \frac{\|\delta C_{\mathrm{total}}\|}
+       {\sigma_p(C) - \sigma_{p+1}(C)}
+  = \frac{\|\delta C_{\mathrm{total}}\|}
+       {\sigma_{\min}(C)},
+\]
+where $\delta C_{\mathrm{total}}$ combines assembly and SVD errors,
+$\sigma_p(C) = \sigma_{\min}(C)$ is the smallest nonzero singular
+value ($C$ has full row rank~$p = 5$),
+and $\sigma_{p+1}(C) = 0$ (the gap to the null space).
+
+% [GAP - The sin(Theta) bound requires sigma_min(C) >> 0.
+% If sigma_min(C) is small, the null space of C is
+% ill-conditioned: a small perturbation of C changes V
+% significantly.  In the EHZ setting, sigma_min(C) depends
+% on the geometry of the dual vertices a_{sigma(i)}.
+% Empirically, sigma_min(C) < 0.01 is associated with
+% boundary-case beta (margin ~ 1e-12), so ill-conditioned
+% null spaces coincide with cases the solver should return
+% INDETERMINATE anyway.]
+\end{lemma}
+
+
+\begin{lemma}[Link 2b: Particular solution]\label{lem:link-beta0}
+The particular solution $\beta_0 = C^+ d$ (minimum-norm solution
+of $C\beta = d$) is computed from the SVD of~$C$.
+Write $\tilde\beta_0 = \tilde C^+ d$ for the computed value.
+Since $C$ has full row rank, $C^+ = C^\top(C C^\top)^{-1}$
+and $\|C^+\| = 1/\sigma_{\min}(C)$.
+The standard pseudoinverse perturbation bound
+for full-row-rank matrices gives:
+% Citation: Wedin (1973), "Perturbation theory for pseudo-inverses", BIT 13, 217--232.
+%   Also Stewart (1977), SIAM Review 19, 634--662 (survey). The sqrt(2) bound is Wedin's central result.
+%   NOTE: This is NOT the Wedin (1972) BIT 12:99--111 paper in bibliography.bib (that one is
+%   about singular value perturbation bounds). A separate bib entry for Wedin 1973 may be needed.
+\[
+  \|\delta\beta_0\|
+  = \|\tilde\beta_0 - \beta_0\|
+  \leq \frac{c_6\,\|\delta C_{\mathrm{total}}\| \cdot \|d\|}
+       {\sigma_{\min}(C)^2}
+  + O(\text{second order}),
+\]
+where $c_6$ is a small constant.
+Using $\|\delta C_{\mathrm{total}}\| = O(\varepsilon_{\mathrm{mach}} \cdot \|C\|)$
+from Lemmas~\ref{lem:link-assembly}--\ref{lem:link-svd}:
+\begin{equation}\label{eq:beta0-perturbation}
+  \|\delta\beta_0\|
+  = O\!\left(
+    \frac{\varepsilon_{\mathrm{mach}} \cdot \|C\| \cdot \|d\|}
+         {\sigma_{\min}(C)^2}
+  \right).
+\end{equation}
+The $1/\sigma_{\min}(C)^2$ scaling is one power worse than the
+null-space error ($1/\sigma_{\min}(C)$ from Lemma~\ref{lem:link-svd}),
+because $\beta_0$ depends on the inverses of the singular values of~$C$,
+not just their separation from zero.
+
+We also record $\|\beta_0\| \leq \|C^+\| \cdot \|d\|
+= \|d\| / \sigma_{\min}(C)$, which enters subsequent bounds.
+\end{lemma}
+
+
+\begin{lemma}[Link 2c: Reduced gradient]\label{lem:link-gradient}
+The reduced gradient $g = V^\top H \beta_0$ is computed as
+$\tilde g = \tilde V^\top \tilde H\, \tilde\beta_0$.
+Write $\delta g = \tilde g - g$.  Expanding to first order:
+\begin{align*}
+  \delta g
+  &= (V + \delta V)^\top (H + \delta H)(\beta_0 + \delta\beta_0)
+     - V^\top H \beta_0 \\
+  &= V^\top H\, \delta\beta_0
+     + \delta V^\top H\, \beta_0
+     + V^\top \delta H\, \beta_0
+     + O(\text{second order}).
+\end{align*}
+Each term is bounded by:
+\begin{enumerate}
+  \item $\|V^\top H\, \delta\beta_0\|
+    \leq \|H\| \cdot \|\delta\beta_0\|$
+    \quad (Lemma~\ref{lem:link-beta0}).
+  \item $\|\delta V^\top H\, \beta_0\|
+    \leq \|H\| \cdot \|\delta V\| \cdot \|\beta_0\|$
+    \quad (Lemma~\ref{lem:link-svd}).
+  \item $\|V^\top \delta H\, \beta_0\|
+    \leq \|\delta H\| \cdot \|\beta_0\|$
+    \quad (Lemma~\ref{lem:link-assembly}).
+\end{enumerate}
+Substituting:
+$\|\delta\beta_0\| = O(\varepsilon_{\mathrm{mach}} \cdot \|C\| / \sigma_{\min}(C)^2)$,\;
+$\|\delta V\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,\;
+$\|\beta_0\| \leq \|d\| / \sigma_{\min}(C)$,\;
+$\|\delta H\| = O(\varepsilon_{\mathrm{mach}})$:
+\begin{equation}\label{eq:gradient-perturbation}
+  \|\delta g\|
+  = O\!\left(
+    \frac{(\|H\| \cdot \|C\| + \|H\| + 1) \cdot
+          \varepsilon_{\mathrm{mach}} \cdot \|d\|}
+         {\sigma_{\min}(C)^2}
+  \right).
+\end{equation}
+In the EHZ setting ($\|H\|$, $\|C\|$, $\|d\|$ all $O(1)$),
+this simplifies to $\|\delta g\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)^2)$.
+\end{lemma}
+
+
+\begin{lemma}[Link 3: Reduced Hessian]\label{lem:link-reduced-hessian}
+The reduced Hessian $H' = V^\top H V$ is computed as
+$\tilde H' = \tilde V^\top \tilde H\, \tilde V$.
+Write $\tilde V = V + \delta V$ where $\|\delta V\|$ is bounded
+by Lemma~\ref{lem:link-svd}. Then:
+\begin{align*}
+  \tilde H'
+  &= (V + \delta V)^\top (H + \delta H) (V + \delta V) \\
+  &= V^\top H V
+     + V^\top H\, \delta V
+     + \delta V^\top H V
+     + V^\top \delta H\, V
+     + O(\|\delta V\|^2, \|\delta H\| \cdot \|\delta V\|) \\
+  &= H' + \Delta H',
+\end{align*}
+where the first-order perturbation satisfies
+\[
+  \|\Delta H'\|
+  \leq 2\,\|H\|\,\|\delta V\| + \|\delta H\| + O(\text{second order}).
+\]
+Using $\|\delta H\| = O(\varepsilon_{\mathrm{mach}})$
+and $\|\delta V\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$
+from Lemmas~\ref{lem:link-assembly}--\ref{lem:link-svd}:
+\[
+  \|\Delta H'\|
+  = O\!\left(
+    \frac{\|H\|\, \varepsilon_{\mathrm{mach}}}{\sigma_{\min}(C)}
+  \right).
+\]
+\end{lemma}
+
+
+\begin{lemma}[Link 4: Eigenvalues of the reduced Hessian]%
+\label{lem:link-eigenvalues}
+% Citation: Weyl (1912), Math. Annalen 71, 441--479. Modern: Horn \& Johnson (2013),
+%   Matrix Analysis, Theorem 4.3.1. For singular values: follows from eigenvalue version.
+By Weyl's eigenvalue perturbation theorem,
+the computed eigenvalues $\tilde\gamma_j$ of~$\tilde H'$
+satisfy
+\[
+  |\tilde\gamma_j - \gamma_j|
+  \leq \|\tilde H' - H'\|
+  \leq \|\Delta H'\| + c_4\, \varepsilon_{\mathrm{mach}}\, \|\tilde H'\|,
+\]
+where the second term accounts for f64 rounding in the
+eigendecomposition itself (backward stable).
+Combining with Lemma~\ref{lem:link-reduced-hessian}:
+\begin{equation}\label{eq:eigenvalue-perturbation}
+  |\tilde\gamma_j - \gamma_j|
+  = O\!\left(
+    \frac{\|H\|\, \varepsilon_{\mathrm{mach}}}{\sigma_{\min}(C)}
+  \right).
+\end{equation}
+
+\textbf{Eigenvalue sign reliability:}
+if $|\tilde\gamma_j| > \varepsilon_\gamma$
+where
+$\varepsilon_\gamma = c_5 \cdot \|H\|\, \varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)$,
+then $\operatorname{sign}(\tilde\gamma_j) = \operatorname{sign}(\gamma_j)$.
+The trinary classification threshold is derived, not heuristic.
+\end{lemma}
+
+
+\begin{remark}[Unproved Link 5 proposal for $\beta > 0$]%
+\label{lem:link-beta}
+Assume all retained eigenvalues of~$\tilde H'$ are negative:
+$\tilde\gamma_j < -\varepsilon_\gamma$ for $j = 1, \ldots, k$
+(no null eigenvalues; the semidefinite case with null directions
+is treated separately via the LP search in the f64 algorithm).
+By Lemma~\ref{lem:link-eigenvalues}, the exact eigenvalues
+satisfy $\gamma_j < 0$, so $H'$ is negative definite
+and the unique critical point is
+$\alpha^* = -(H')^{-1} g$ with $\beta^* = \beta_0 + V\alpha^*$.
+
+Let $w_1, \ldots, w_k$ be orthonormal eigenvectors of~$H'$
+(so $H' w_j = \gamma_j w_j$, $g_j = w_j^\top g$,
+$\alpha^*_j = -g_j / \gamma_j$).
+The computed $\tilde\alpha = -(\tilde H')^{-1} \tilde g$ has
+first-order error:
+% Citation: GVL (2013), §2.6 (Sensitivity of Square Systems) confirmed.
+%   Higham §7.2 is componentwise; the normwise identity is in §7.1. Use GVL §2.6 as primary.
+\begin{equation}\label{eq:alpha-perturbation}
+  \delta\alpha
+  = \tilde\alpha - \alpha^*
+  = -(H')^{-1}\bigl(\Delta H' \cdot \alpha^* + \delta g\bigr)
+  + O(\text{second order}).
+\end{equation}
+
+\textbf{Direction-dependent amplification.}
+In the eigenbasis of~$H'$, the $j$-th component is:
+\begin{equation}\label{eq:alpha-component-error}
+  (\delta\alpha)_j
+  = -\frac{e_j + f_j}{\gamma_j},
+  \qquad
+  e_j = w_j^\top \Delta H'\, \alpha^*,
+  \quad
+  f_j = w_j^\top \delta g.
+\end{equation}
+The amplification $1/|\gamma_j|$ makes the error large for
+eigenvalues near zero.
+
+\textbf{Full $\beta$ error.}
+The error in component~$i$ of $\beta$ ($i = 1, \ldots, m$) has three sources:
+\begin{equation}\label{eq:beta-error-decomposition}
+  (\delta\beta)_i
+  = \underbrace{\sum_j (Vw_j)_i \cdot (\delta\alpha)_j}_{%
+      \text{critical-point shift}}
+  + \underbrace{(\delta V \cdot \alpha^*)_i}_{%
+      \text{null-space rotation}}
+  + \underbrace{(\delta\beta_0)_i}_{%
+      \text{particular-solution shift}}
+  + O(\text{second order}).
+\end{equation}
+
+\textbf{Componentwise bound.}
+Each term in~\eqref{eq:beta-error-decomposition} is bounded by:
+\begin{itemize}
+  \item $|e_j| \leq \|\Delta H'\| \cdot \|\alpha^*\|$
+    (Cauchy--Schwarz; Lemma~\ref{lem:link-reduced-hessian}).
+  \item $|f_j| \leq \|\delta g\|$
+    (Lemma~\ref{lem:link-gradient}).
+  \item $|(\delta V \cdot \alpha^*)_i|
+    \leq \|\delta V\| \cdot \|\alpha^*\|$
+    (Lemma~\ref{lem:link-svd}).
+  \item $|(\delta\beta_0)_i| \leq \|\delta\beta_0\|$
+    (Lemma~\ref{lem:link-beta0}).
+\end{itemize}
+Combining (for each component $i = 1, \ldots, m$):
+\begin{equation}\label{eq:beta-certification-bound}
+  |(\delta\beta)_i|
+  \leq \bigl(\|\Delta H'\| \cdot \|\alpha^*\| + \|\delta g\|\bigr)
+       \sum_{j=1}^{k} \frac{|(Vw_j)_i|}{|\gamma_j|}
+  + \|\delta V\| \cdot \|\alpha^*\|
+  + \|\delta\beta_0\|.
+\end{equation}
+
+\textbf{Computable proxy.}
+Since exact quantities ($V$, $w_j$, $\gamma_j$, $\alpha^*$)
+are unavailable, the f64 solver substitutes computed values.
+For retained eigenvalues ($|\tilde\gamma_j| > \varepsilon_\gamma$),
+Lemma~\ref{lem:link-eigenvalues} gives
+$|\gamma_j| \geq |\tilde\gamma_j| - \varepsilon_\gamma > 0$.
+Define the computable bound (for each $i = 1, \ldots, m$;
+the sum runs over retained eigenvalues only,
+i.e.\ those with $|\tilde\gamma_j| > \hat E_{\Delta H'}$):
+\begin{equation}\label{eq:eta-computable}
+  \eta_i
+  = \bigl(\hat E_{\Delta H'} \|\tilde\alpha\|
+    + \hat E_{\delta g}\bigr)
+    \sum_{j=1}^{k}
+      \frac{|(\tilde V \tilde w_j)_i|}
+           {|\tilde\gamma_j|}
+  + \hat E_{\delta V} \|\tilde\alpha\|
+  + \hat E_{\delta\beta_0},
+\end{equation}
+where $\eta_i = \infty$ if any retained eigenvalue has
+$|\tilde\gamma_j| \leq \hat E_{\Delta H'}$ (perturbation
+dominates the eigenvalue; first-order analysis invalid).
+Using $|\tilde\gamma_j|$ instead of the proved lower bound
+$|\tilde\gamma_j|-\varepsilon_\gamma$ is not valid for an upper error bound.
+The displayed implementation proxy therefore remains heuristic even before
+the unresolved constants below are considered.
+where the constants are computable upper bounds from
+Lemmas~\ref{lem:link-svd}--\ref{lem:link-gradient}:
+\begin{align*}
+  \hat E_{\Delta H'}
+  &= c_{\Delta H'}\,
+     \frac{\|\tilde H\|\, \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)},
+  &
+  \hat E_{\delta g}
+  &= c_{\delta g}\,
+     \frac{\|\tilde H\| \cdot \|\tilde C\| \cdot
+           \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)^2}, \\
+  \hat E_{\delta V}
+  &= c_{\delta V}\,
+     \frac{\varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)},
+  &
+  \hat E_{\delta\beta_0}
+  &= c_{\delta\beta_0}\,
+     \frac{\|\tilde C\| \cdot
+           \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)^2}.
+\end{align*}
+Tildes denote computed (f64) values; the substitution
+of computed for exact quantities introduces $O(\varepsilon_{\mathrm{mach}})$
+relative errors, absorbed into the constants.
+All quantities ($\tilde V$, $\tilde w_j$, $\tilde\gamma_j$,
+$\tilde\alpha$, $\tilde H$, $\tilde C$,
+$\tilde\sigma_{\min}(C)$) are available from the solver.
+
+\medskip\noindent
+\textbf{Trinary $\beta > 0$ certification.}
+\begin{itemize}
+  \item \textsc{True}
+    ($\tilde\beta_i - \eta_i > 0$ for all~$i$):
+    then $\beta^*_i \geq \tilde\beta_i - |(\delta\beta)_i|
+    \geq \tilde\beta_i - \eta_i > 0$.
+    Interior solution certified.
+  \item \textsc{False}
+    ($\tilde\beta_i + \eta_i < 0$ for some~$i$):
+    then $\beta^*_i \leq \tilde\beta_i + \eta_i < 0$.
+    Infeasible $\beta$ certified.
+  \item \textsc{Indeterminate}: otherwise.
+    Cannot determine the sign of~$\beta^*_i$.
+\end{itemize}
+
+% [GAP - The constants c_{DeltaH'}, c_{delta g}, c_{delta V},
+% c_{delta beta_0} are not derived from first principles.
+% In the implementation, we use c = m^2 as a safety factor.
+% Empirical validation: zero violations on 364 I1 natural polytope
+% problems and all synthetic well-conditioned problems.
+% 39 violations on null-eigenvalue cases (|gamma_j| < eps_gamma)
+% where the bound does not apply — these are INDETERMINATE.]
+\end{remark}
+
+
+\begin{remark}[Per-eigendirection error structure]%
+\label{rem:eigendirection-error}
+From~\eqref{eq:alpha-component-error},
+$|(\delta\alpha)_j| \leq (|e_j| + |f_j|) / |\gamma_j|$
+where $|e_j|, |f_j| = O(\varepsilon_{\mathrm{mach}})$
+(Lemmas~\ref{lem:link-reduced-hessian}--\ref{lem:link-gradient}).
+This gives
+\begin{equation}\label{eq:eigendirection-scaling}
+  |(\delta\alpha)_j|
+  = O\!\left(\frac{\varepsilon_{\mathrm{mach}}}{|\gamma_j|}\right).
+\end{equation}
+
+\textbf{Empirical confirmation}
+(364 natural polytope problems in case~I1, all $\gamma_j < 0$):
+the product $|(\delta\alpha)_j| \cdot |\gamma_j|$ is
+$10^{-17}$--$10^{-16}$ across 15 orders of magnitude of~$|\gamma_j|$
+($10^{-5}$ to $10^0$), confirming~\eqref{eq:eigendirection-scaling}
+with proportionality constant $\approx \varepsilon_{\mathrm{mach}}$.
+The $\eta_i$ bound~\eqref{eq:eta-computable} uses $c = m^2$
+as a safety factor; zero violations on all well-conditioned problems.
+
+\textbf{Limitation:}
+When $|\gamma_j| \lesssim \varepsilon_\gamma$
+($= O(\|H\| \varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,
+Lemma~\ref{lem:link-eigenvalues}),
+the first-order analysis breaks down:
+$\|\Delta H'\| \gtrsim |\gamma_j|$, so the perturbation
+is not small relative to the eigenvalue.
+Empirically, $|(\delta\alpha)_j| = O(1)$ for $|\gamma_j| \approx 10^{-15}$.
+These cases must be classified as \textsc{Indeterminate}.
+
+% Empirical data: verify-numerics experiment, filter_poly_diverse,
+% 364 I1 problems from 307 polytopes (max 8 facets).
+% Diagnostic fields: proj_delta_alpha, proj_eigenvalues in results.jsonl.
+\end{remark}
+
+
+% ── B. Q error bounds (existing) ─────────────────────────────────────
+
+% The lemmas below were proven before the perturbation chain above.
+% They bound |Q(tilde beta) - Q(beta^*)| using the KKT residual r,
+% without going through the chain.  This is a complementary approach:
+% the chain gives componentwise understanding, while the residual
+% bound gives a single scalar bound on Q error.
+%
+% The KKT system M x = b where M = [H, C^T; C, 0] is the augmented
+% form of the per-sigma problem.  The residual r = M tilde x - b
+% measures how well the computed solution satisfies the KKT conditions.
+
+\begin{lemma}[First-order Q error bound]\label{lem:q-error-first-order}
+Let $Q(\beta) = \tfrac{1}{2}\beta^\top H \beta$ where
+$H \in \mathbb{R}^{m \times m}$ is symmetric.
+Let $C \in \mathbb{R}^{p \times m}$ have full row rank,
+$d \in \mathbb{R}^p$, and
+$M = \bigl[\begin{smallmatrix} H & C^\top \\ C & 0 \end{smallmatrix}\bigr]$.
+Suppose $\beta^* > 0$ solves the interior KKT system $M(\beta^*,\lambda^*)^\top = (0,d)^\top$,
+and $(\tilde\beta, \tilde\lambda)$ is a computed solution with residual
+$r = M(\tilde\beta,\tilde\lambda)^\top - (0,d)^\top$.
+Write $\delta\beta = \tilde\beta - \beta^*$ and
+$r_\lambda = C\tilde\beta - d = C\,\delta\beta$ for the
+constraint residual (the last $p$ components of~$r$).
+Then
+\[
+  |Q(\tilde\beta) - Q(\beta^*)|
+  \;\leq\;
+  \frac{\|H\|\,\|\beta^*\|}{\sigma_{\min}(C)}\,\|r\|
+  \;+\; \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2,
+\]
+where $\|\cdot\|$ denotes the spectral norm for matrices and the
+Euclidean norm for vectors, and $\sigma_{\min}(C)$ is the smallest
+singular value of~$C$.
+\end{lemma}
+
+\begin{proof}
+Taylor expansion at $\beta^*$:
+\begin{equation}\label{eq:q-taylor}
+  Q(\tilde\beta) - Q(\beta^*)
+  = (H\beta^*)^\top \delta\beta + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\end{equation}
+
+\emph{First-order term.}
+Since $\beta^* > 0$, the interior KKT stationarity condition gives
+$H\beta^* + C^\top\lambda^* = 0$, i.e.,
+$H\beta^* = -C^\top\lambda^*$. Substituting:
+\begin{equation}\label{eq:first-order-rewrite}
+  (H\beta^*)^\top\delta\beta
+  = -(C^\top\lambda^*)^\top\delta\beta
+  = -\lambda^{*\top} C\,\delta\beta
+  = -\lambda^{*\top} r_\lambda.
+\end{equation}
+Since $C$ has full row rank~$p$, $C^\top \in \mathbb{R}^{m \times p}$
+is injective (its null space is trivial). Therefore
+$\|C^\top y\| \geq \sigma_{\min}(C^\top)\|y\| = \sigma_{\min}(C)\|y\|$
+for all $y \in \mathbb{R}^p$. Applying this to $C^\top\lambda^* = -H\beta^*$:
+\[
+  \sigma_{\min}(C)\,\|\lambda^*\|
+  \leq \|C^\top\lambda^*\|
+  = \|H\beta^*\|
+  \leq \|H\|\,\|\beta^*\|.
+\]
+Thus $\|\lambda^*\| \leq \|H\|\,\|\beta^*\| / \sigma_{\min}(C)$.
+Since $r_\lambda$ is a sub-vector of $r$ (Euclidean norm),
+$\|r_\lambda\| \leq \|r\|$.
+Therefore
+\[
+  |(H\beta^*)^\top\delta\beta|
+  = |\lambda^{*\top} r_\lambda|
+  \leq \|\lambda^*\|\,\|r_\lambda\|
+  \leq \frac{\|H\|\,\|\beta^*\|}{\sigma_{\min}(C)}\,\|r\|.
+\]
+
+\emph{Second-order term.}
+$|\tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta|
+  \leq \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2$.
+
+Combining with \eqref{eq:q-taylor} by the triangle inequality:
+\[
+  |Q(\tilde\beta) - Q(\beta^*)|
+  \leq \frac{\|H\|\,\|\beta^*\|}{\sigma_{\min}(C)}\,\|r\|
+  + \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2. \qedhere
+\]
+\end{proof}
+
+
+\begin{lemma}[Q correction is second-order]\label{lem:q-correction-second-order}
+Under the same assumptions as Lemma~\ref{lem:q-error-first-order},
+define the \emph{Q correction} as $\Delta Q = \tilde\lambda^\top r_\lambda$,
+where $\tilde\lambda$ is the computed Lagrange multiplier and
+$r_\lambda = C\tilde\beta - d$.
+Then the corrected Q value
+$Q_{\mathrm{corr}} = Q(\tilde\beta) + \Delta Q$ satisfies
+\[
+  Q_{\mathrm{corr}} - Q(\beta^*)
+  = \delta\lambda^\top r_\lambda
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta,
+\]
+where $\delta\lambda = \tilde\lambda - \lambda^*$.
+In particular,
+$|Q_{\mathrm{corr}} - Q(\beta^*)|
+  \leq \|\delta\lambda\|\,\|r_\lambda\|
+    + \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2$.
+\end{lemma}
+
+\begin{proof}
+From \eqref{eq:q-taylor} and \eqref{eq:first-order-rewrite}:
+$Q(\tilde\beta) - Q(\beta^*) = -\lambda^{*\top} r_\lambda
++ \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta$. Adding the correction:
+\begin{align*}
+  Q_{\mathrm{corr}} - Q(\beta^*)
+  &= Q(\tilde\beta) + \tilde\lambda^\top r_\lambda - Q(\beta^*) \\
+  &= -\lambda^{*\top} r_\lambda + \tilde\lambda^\top r_\lambda
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta \\
+  &= (\tilde\lambda - \lambda^*)^\top r_\lambda
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta \\
+  &= \delta\lambda^\top r_\lambda
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\end{align*}
+The bound follows from the triangle inequality and
+$|\delta\beta^\top H\,\delta\beta| \leq \|H\|\,\|\delta\beta\|^2$.
+\end{proof}
+
+
+\begin{remark}[Legacy runtime Q diagnostic]\label{rem:runtime-q-bound}
+At runtime, the exact $\beta^*$ is unknown.
+The first-order term of Lemma~\ref{lem:q-error-first-order}
+can be computed using the solver output $\tilde\beta$
+as a proxy for~$\beta^*$:
+\[
+  E_1 = \frac{\|H\|\,\|\tilde\beta\|}{\sigma_{\min}(C)}\,\|r\|.
+\]
+This does not in general bound the first-order part of the Q~error: replacing
+\(\beta^*\) by \(\tilde\beta\) introduces an uncontrolled term, and an ordinary
+rounded residual is not an exact residual enclosure.
+The second-order term $\tfrac{1}{2}\|H\|\,\|\delta\beta\|^2$
+cannot be computed directly (since $\delta\beta$ is unknown),
+It may be small on well-conditioned problems, but the current implementation
+does not prove the required conditioning and rounding hypotheses.
+
+% [GAP - The claim "||delta_beta|| is small when ||r|| is small" requires
+% bounding ||delta_beta|| in terms of ||r|| via the conditioning of M.
+% The naive bound ||delta_beta|| <= ||M^+|| * ||r|| is valid but
+% ||M^+|| can be very large (up to 10^16 in experiments). A tighter
+% analysis via the block structure of M is needed to make this rigorous.]
+
+All quantities in $E_1$ are available from the solver:
+$\|H\|$ from the eigendecomposition (largest $|\lambda_i(H)|$),
+$\|\tilde\beta\|$ from the solution vector,
+$\|r\|$ from the KKT residual, and
+$\sigma_{\min}(C)$ from the SVD of~$C$
+(already computed by the constraint solver).
+
+% [TODO: JÖRN - Empirical validation shows max ratio
+%   |Q_err| / E_1 = 0.196 across 477 test problems from 15 matrix families.
+%   The constant 1 in the bound is not tight; the proof gives an upper
+%   bound, not an equality.  Whether a tighter constant can be proven
+%   (e.g., involving dimension m) is open.]
+\end{remark}
+
+
+\begin{lemma}[Pseudoinverse orthogonality]\label{lem:pseudoinverse-orthogonality}
+Let $M$ be symmetric and $\tilde x = M^+ b$ the pseudoinverse solution.
+Let $x^*$ satisfy $M x^* = b$ with $x^* \in \mathrm{col}(M)$.
+Define $\delta x = \tilde x - x^*$ and $r = M\tilde x - b$.
+Then $\delta x^\top M\, \delta x = 0$.
+\end{lemma}
+
+\begin{proof}
+Since $M$ is symmetric, $M^+$ maps into $\mathrm{col}(M) = \mathrm{row}(M)$,
+so $\tilde x \in \mathrm{col}(M)$. By assumption $x^* \in \mathrm{col}(M)$,
+hence $\delta x \in \mathrm{col}(M)$.
+From $M\tilde x = b + r$ and $M x^* = b$, we get $M\,\delta x = r$.
+The residual satisfies $r \perp \mathrm{col}(M)$ (standard pseudoinverse property).
+Therefore $\delta x^\top r = 0$ (since $\delta x \in \mathrm{col}(M)$), and
+\[
+  \delta x^\top M\,\delta x = \delta x^\top r = 0. \qedhere
+\]
+\end{proof}
+
+
+\begin{corollary}[Taylor structure of Q error]\label{cor:taylor-structure}
+Under the assumptions of Lemma~\ref{lem:q-error-first-order} and
+Lemma~\ref{lem:pseudoinverse-orthogonality}, the uncorrected Q~error satisfies
+\[
+  Q(\tilde\beta) - Q(\beta^*)
+  = (H\beta^*)^\top\delta\beta + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta
+\]
+with $(H\beta^*)^\top\delta\beta = -\delta\beta^\top H\,\delta\beta$,
+i.e., the first-order term is exactly $-2$ times the second-order term.
+Consequently, $Q(\tilde\beta) - Q(\beta^*) = -\tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta$.
+\end{corollary}
+
+\begin{proof}
+Expanding $\delta x^\top M\,\delta x = 0$ in blocks:
+\[
+  \delta\beta^\top H\,\delta\beta + 2\,\delta\beta^\top C^\top\delta\lambda = 0.
+\]
+From $x^{*\top} M\,\delta x = 0$ (same argument with $x^*$ in place of $\delta x$):
+\[
+  \beta^{*\top} H\,\delta\beta + d^\top\delta\lambda + \lambda^{*\top} r_\lambda = 0,
+\]
+using $C\beta^* = d$ and $C\,\delta\beta = r_\lambda$.
+Subtracting gives
+$(H\beta^*)^\top\delta\beta - \delta\beta^\top H\,\delta\beta
+= d^\top\delta\lambda + \lambda^{*\top} r_\lambda - 2\,r_\lambda^\top\delta\lambda$.
+% [GAP - The identity (Hβ*)^T δβ = -δβ^T H δβ is verified empirically
+% (ratio = 2.0000 across 95 rank-deficient cases) but the algebraic
+% proof above yields extra terms d^T δλ + λ*^T r_λ - 2 r_λ^T δλ
+% that need to cancel. This cancellation follows from x*^T r = 0
+% (since x* ∈ col(M)), giving β*^T r_β + λ*^T r_λ = 0, combined
+% with the block expansion. Full derivation needs Jörn.]
+\end{proof}
+
+
+\begin{corollary}[Exact correction in exact arithmetic]\label{cor:exact-correction}
+Under the same assumptions,
+\[
+  Q_{\mathrm{corr}} - Q(\beta^*)
+  = \delta\lambda^\top r_\lambda + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\]
+From Lemma~\ref{lem:pseudoinverse-orthogonality},
+$\tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta = -r_\lambda^\top\delta\lambda$
+(expanding $\delta x^\top M\,\delta x = 0$).
+Since $\delta\lambda^\top r_\lambda$ and $r_\lambda^\top\delta\lambda$ are
+both scalars and equal, $Q_{\mathrm{corr}} - Q(\beta^*) = 0$.
+\end{corollary}

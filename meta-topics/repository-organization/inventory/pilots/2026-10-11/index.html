@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Thirty-minute pilot: results and next decision</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body{font:17px/1.6 Georgia,serif;max-width:840px;margin:2.5rem auto;padding:0 1.5rem;color:#15212c;background:#fff}h1,h2,h3{font-family:system-ui,sans-serif;color:#173a51;line-height:1.25}h1{font-size:2rem}h2{font-size:1.4rem;margin-top:2rem}a{color:#075684}p{margin:.9rem 0}table{border-collapse:collapse;width:100%;font:15px/1.45 system-ui,sans-serif}th,td{border:1px solid #c9d6de;padding:.55rem;vertical-align:top}th{background:#edf4f7;text-align:left}blockquote{border-left:3px solid #8eacbd;padding-left:1rem;color:#435763}code{font-size:.9em;background:#f0f3f4;padding:.1rem .25rem}img{max-width:100%}math[display=block]{overflow-x:auto;padding:.5rem 0}
+</style>
+</head>
+<body>
+<h1 id="thirty-minute-pilot-results-and-next-decision">Thirty-minute
+pilot: results and next decision</h1>
+<p>Jörn authorized this run on 11 October 2026 at 16:39 UTC, with root
+check-in by 17:09 UTC. The integrated changes are in the f7e0 worktree
+and are not committed or merged. The selected manuscript was not edited.
+This is a bounded execution of the <a href="../../parallel-plan.md">parallel plan</a>, not an overnight
+launch.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Unit</th>
+<th>Result</th>
+<th>Boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="geometry.md">Geometry</a></td>
+<td>Shared incidence and generic vertex enumeration in the Euclidean
+crate, with symplectic adapters; ordered simplex, cube and algebraic HKO
+fixtures preserved.</td>
+<td>Duplicate-row and rank-error policies remain distinct. No measured
+speedup or whole-constructor equivalence.</td>
+</tr>
+<tr class="even">
+<td><a href="data.md">Data</a></td>
+<td>One table builder with explicit retained/run-local formats and
+compatibility commands; frozen small inputs produce the same JSONL bytes
+and malformed failures.</td>
+<td>Historical unknown metadata remains absent. No full retained table
+or capacity producer rerun.</td>
+</tr>
+<tr class="odd">
+<td><a href="foundations.md">Polar foundations</a> and <a href="conventions.md">QP conventions</a></td>
+<td>One ordinary-geometry proof owner, corrected rank/duplicate/endpoint
+qualifications, and an explicit full-permutation/subset-word
+bridge.</td>
+<td>Separate agent mathematical reviews passed; modified text does not
+inherit earlier human approval.</td>
+</tr>
+<tr class="even">
+<td><a href="writing/report.md">Writing comparison</a> and <a href="calibration/README.md">review calibration</a></td>
+<td>A blinded reviewer preferred the new-account draft over a strong
+existing-account draft; known historical failure was distinguished from
+a provisional control.</td>
+<td>Several actual human objections were missed. One pair establishes
+neither human usability nor a general speed/quality gain.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-to-read">What to read</h2>
+<p>Start with the <a href="writing/context-preview.html">contextual
+preview</a>: the repaired passage between unchanged Chapter 8 excerpts.
+It is <strong>not ready to replace the existing section</strong>. The <a href="writing/placement-note.md">placement note</a> identifies current
+results, figures and live labels that a wholesale replacement would
+lose. The <a href="writing/repaired-passage.html">standalone passage</a>
+isolates the proposed explanation. The <a href="writing/account.html">nested technical account</a> supplied one
+writing arm. Both original drafts, prompts, input snapshots, anonymous
+reviews and allocation plans are retained in the <a href="writing/report.md">comparison record</a>. The repaired passage is
+a later version, not a rewritten experiment result.</p>
+<p>The <a href="writing/render-check.md">render check</a> records a
+material failure caught by viewing the actual page: display equations
+were broken despite successful link/markup checks. The renderer and
+narrow-screen equation layout were repaired; desktop, narrow and
+expanded-figure captures are retained. Human readability and
+assembled-PDF integration remain untested.</p>
+<h2 id="checks-and-independent-review">Checks and independent
+review</h2>
+<p>Focused geometry tests include 19 Euclidean polar tests, four exact
+constructor tests, six face tests, policy diagnostics, retained ordering
+and an external <code>qp-retained-exact</code> consumer compile. Data
+commands and both compatibility wrappers were compared with pre-edit
+byte baselines on two geometries; three malformed cases preserved
+failures. These are contract checks, not broad mathematical
+validation.</p>
+<p>The formal document builds (114 pages), moved labels are unique, and
+independent Sol reviewers checked consequential proof changes. Root
+<code>cargo check --workspace</code> passed in 6.04 seconds and global
+<code>cargo fmt --all -- --check</code> passed. No broad benchmark
+campaign ran. Inventory and coordination projections are checked
+separately for structure and source links.</p>
+<p>Astra’s <a href="assembled-review.md">assembled review</a> approved
+this bounded pilot, including the final repaired Markdown, and
+recommended contextual prose review before expanding authoring. It did
+not rerun passed tests or certify human acceptance. Astra also approved
+the contextual preview for reading judgment, with its explicit
+nonreplacement caveat; its recommendation is now a content-preserving
+integration proposal, an assembled PDF, and a human reading judgment
+before broader authoring.</p>
+<h2 id="decision-supported-by-this-pilot">Decision supported by this
+pilot</h2>
+<p>The cleanup route produced useful integrated code and proof units.
+The early contract check changed its implementation route: share the
+enumeration, keep validation policies explicit. The writing route still
+needs a contextual human judgment. More topic accounts should answer
+demonstrated missing-context needs; the strong existing account already
+supported reconstruction.</p>
+<p>The most useful next decision is whether the repaired explanation
+earns its place in the intended chapter. Actual integration must map
+existing content to retained, moved or summarized locations and preserve
+live references; the short passage omits substantive current results, so
+a wholesale swap is unsupported. Broad overnight prose scaling, a
+seven-day forecast, full geometry-policy unification and the remaining
+larger plan packages are not established by these results. Allocation
+plans’ proposed durations are unmeasured estimates.</p>
+<p><a href="../../../../../docs/coordination/current.json">Current coordination</a>
+owns assignment and resource status. No billed-spend or remaining-quota
+estimate is available; native usage observation has an invalid-counter
+gap and is not a billing record. The pilot does not authorize an
+automatic extension beyond the agreed check-in.</p>
+</body>
+</html>

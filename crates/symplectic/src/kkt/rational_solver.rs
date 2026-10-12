@@ -59,15 +59,16 @@ pub struct ExactKktResult {
 
 /// Solve the KKT system exactly for a single (S, sigma) combinatorics.
 ///
-/// Given exact rational dual vertices y_i = n_i / h_i and a
+/// Given exact rational dual vertices y_i = n_i / h_i and an
 /// active traversal word `perm` (the sigma in the thesis), builds the (m+5) x
 /// (m+5) KKT matrix over Q and solves via the shared exact linear solver with
 /// null-space handling.
 ///
 /// The dual vertex representation {y_i . x <= 1} has implicit height h_i = 1,
-/// so the eta block of the KKT matrix is all ones. This is mathematically
-/// equivalent to the f64 system (which uses separate n_i and h_i with eta_i = h_i):
-/// the change of variable beta_rational_i = beta_f64_i * h_i preserves Q(beta).
+/// so the normalization block of the KKT matrix is all ones, as in the current
+/// dual-vertex f64 assembly. Both use dual-vertex weights. Translation from a
+/// separate normals/heights formulation is documented in the topic convention
+/// proof; it is not a difference between these two current solver interfaces.
 ///
 /// Returns `None` if exact arithmetic certifies that:
 /// - the KKT system is inconsistent, or

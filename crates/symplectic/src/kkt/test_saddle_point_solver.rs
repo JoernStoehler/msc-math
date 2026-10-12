@@ -292,7 +292,7 @@ fn two_facet_permutation() {
 /// The KKT matrix eigenvalues shift from null (at the symmetric point) to small-but-
 /// retained (at the perturbed point), making |λ_min| tiny and the diagnostic huge.
 /// This is a regression test: when the deferred numerical-certificate work recorded in
-/// formal/hk2017-qp-precision.tex and experiments/dev-quadratic-program/README.md
+/// formal/hk2017-qp-precision.tex and topics/capacity-and-qp/development/README.md
 /// is resolved, this test should be updated to expect the new behavior.
 #[test]
 fn perturbed_lp44_degenerate_orbit() {

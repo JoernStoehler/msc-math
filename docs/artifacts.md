@@ -1,10 +1,21 @@
 # Shared Artifacts
 
-Git is the source and reproducibility record. Large generated datasets and
-pipeline caches are immutable directory snapshots in the Cloudflare R2 Standard
-bucket `msc-math-artifacts`. Pipelines continue to read and write ordinary
+Git is the source and reproducibility record for code, manifests, and
+deliberately retained small datasets and fixtures. Git LFS is not used. Large
+retained datasets and pipeline caches are immutable directory snapshots in the
+Cloudflare R2 Standard bucket `msc-math-artifacts`. Pipelines continue to read and write ordinary
 local paths: materialization downloads a registered snapshot to a cache and
 creates ignored symlinks at its established repository paths.
+
+Agent-created inputs, outputs and metadata are working material until their
+owner deliberately selects a lasting result. Put each run under
+`/tmp/msc-math/<task>/<run>/`, where subagents in different worktrees can access
+it and multiple outputs can coexist. Use a producer-owned ignored directory
+only if mutable output must persist in an active workspace. Do not put a run in
+the active worktree or shared long-term storage merely because it was generated;
+discard unpromoted material when the task closes. Keep any promoted
+small packet with its source/evidence owner in Git; publish a promoted large
+packet through the R2 snapshot contract below and record its identity in Git.
 
 `artifacts/registry.json` is the reviewed map from a logical artifact name to
 one content-addressed snapshot and its local paths. A snapshot id is the SHA-256
@@ -14,7 +25,7 @@ published snapshot, and publishing changed bytes creates a different prefix.
 
 ## Setup
 
-[INSTALL.md](../INSTALL.md#r2-data) owns rclone installation, private R2
+[the installation workflow](../meta-topics/development-environment/installation-workflow.md#r2-data) owns rclone installation, private R2
 configuration and the initial download check. This file owns artifact storage,
 materialization and publication contracts.
 
@@ -62,10 +73,9 @@ The same cache-root overrides apply to both commands.
 ## Publish a finalized snapshot
 
 Publishing is a deliberate retention step, not part of an ordinary producer
-run. Use `/tmp` for disposable debugging and quick iteration. Use a
-producer-owned ignored directory only when mutable output should remain with the
-active workspace. After performing the producer's declared checks, decide which
-outputs deserve a durable packet and publish only that directory:
+run. Use a distinct task/run directory in `/tmp/msc-math/` for working material.
+After performing the producer's declared checks, decide which large outputs
+deserve a durable packet and publish only that directory:
 
 ```bash
 scripts/artifacts.py publish my-artifact path/to/my-final-packet

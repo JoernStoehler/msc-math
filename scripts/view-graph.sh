@@ -6,14 +6,14 @@ usage() {
 Usage: scripts/view-graph.sh [FILE]
        scripts/view-graph.sh --list
 
-FILE defaults to tasks.dot. A basename or docs/coordination/graphs/FILE resolves in
+FILE defaults to tasks.dot. A basename or meta-topics/project-management/graphs/FILE resolves in
 the live graph directory; an existing path is used directly.
-The old docs/task-graph/FILE and codex/task-graph/FILE spellings are compatibility aliases.
+The old docs/coordination/graphs/FILE, docs/task-graph/FILE and codex/task-graph/FILE spellings are compatibility aliases.
 EOF
 }
 
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-graph_dir="$repo_root/docs/coordination/graphs"
+graph_dir="$repo_root/meta-topics/project-management/graphs"
 
 case "${1:-}" in
   -h|--help)
@@ -38,6 +38,8 @@ fi
 requested=${1:-tasks.dot}
 if [[ -f "$requested" ]]; then
   source_file=$requested
+elif [[ "$requested" == meta-topics/project-management/graphs/* ]]; then
+  source_file="$graph_dir/${requested#meta-topics/project-management/graphs/}"
 elif [[ "$requested" == docs/coordination/graphs/* ]]; then
   source_file="$graph_dir/${requested#docs/coordination/graphs/}"
 elif [[ "$requested" == docs/task-graph/* ]]; then

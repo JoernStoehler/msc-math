@@ -13,12 +13,13 @@ use tracing::{info, info_span};
 const F64_DOT_ERROR_SAFETY_FACTOR: f64 = 32.0;
 const F64_DET_ERROR_SAFETY_FACTOR: f64 = 256.0;
 
-use crate::linalg::{combinations4, dot4_exact, solve4_exact};
+use crate::linalg::{combinations4, determinant_4d_integer as det4_int, dot4_exact, solve4_exact};
 use crate::predicates::{
     gamma_f64, origin_in_interior_of_conv_exact, origin_in_interior_of_conv_exact_rational,
 };
 
-/// Exact vertices of a normalized polar polytope and their input-facet incidence.
+/// Finite exact vertices of a normalized halfspace intersection and their
+/// input-row incidence. The intersection may be unbounded for raw callers.
 #[derive(Clone, Debug, PartialEq)]
 pub struct PolarVerticesExact<T: ExactScalar + 'static> {
     pub vertices: Vec<Vector4<T>>,
@@ -47,7 +48,7 @@ pub fn polar_vertices_exact<T: ExactScalar + 'static>(
         "polar_vertices_exact requires 0 in int conv(vertices)"
     );
 
-    polar_vertices_exact_generic_impl(vertices, validation_ms)
+    polar_vertices_exact_generic_impl(vertices, validation_ms, true)
 }
 
 /// Enumerate polar vertices exactly after a trusted origin-interior boundary.
@@ -69,12 +70,32 @@ pub fn polar_vertices_exact_assuming_origin_interior<T: ExactScalar + 'static>(
     );
     let _span_guard = span.enter();
 
-    polar_vertices_exact_generic_impl(vertices, 0.0)
+    polar_vertices_exact_generic_impl(vertices, 0.0, true)
+}
+
+/// Enumerate finite vertices of `{ y in R^4 : <v_i, y> <= 1 }` exactly.
+///
+/// This raw geometry operation accepts redundant, duplicate and unbounded
+/// inputs. It preserves input row indices in the incidence columns and returns
+/// an empty vertex list when there are no finite vertices. It does not validate
+/// boundedness, `0 in int conv(input rows)`, or facet irredundancy. Callers
+/// that need those policies must check them separately.
+pub fn vertices_from_normalized_halfspaces_exact<T: ExactScalar + 'static>(
+    vertices: &[Vector4<T>],
+) -> PolarVerticesExact<T> {
+    let span = info_span!(
+        "vertices_from_normalized_halfspaces_exact",
+        input_points = vertices.len()
+    );
+    let _span_guard = span.enter();
+
+    polar_vertices_exact_generic_impl(vertices, 0.0, false)
 }
 
 fn polar_vertices_exact_generic_impl<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
     validation_ms: f64,
+    require_nonempty: bool,
 ) -> PolarVerticesExact<T> {
     let one = T::one();
     let rhs = Vector4::new(one.clone(), one.clone(), one.clone(), one.clone());
@@ -127,10 +148,12 @@ fn polar_vertices_exact_generic_impl<T: ExactScalar + 'static>(
     }
     let enumeration_ms = ms(enumeration_start);
 
-    assert!(
-        !polar_vertices.is_empty(),
-        "origin-interior polar input produced no exact vertices"
-    );
+    if require_nonempty {
+        assert!(
+            !polar_vertices.is_empty(),
+            "origin-interior polar input produced no exact vertices"
+        );
+    }
 
     let incidence_start = Instant::now();
     let vertex_facet_incidence =
@@ -749,24 +772,6 @@ fn padded_positive_error_bound(error_bound: f64) -> Option<f64> {
 
 fn dot4_int(left: &[BigInt; 4], right: &[BigInt; 4]) -> BigInt {
     &left[0] * &right[0] + &left[1] * &right[1] + &left[2] * &right[2] + &left[3] * &right[3]
-}
-
-fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
-    let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
-
-    let m01 = &b[0] * &c[1] - &b[1] * &c[0];
-    let m02 = &b[0] * &c[2] - &b[2] * &c[0];
-    let m03 = &b[0] * &c[3] - &b[3] * &c[0];
-    let m12 = &b[1] * &c[2] - &b[2] * &c[1];
-    let m13 = &b[1] * &c[3] - &b[3] * &c[1];
-    let m23 = &b[2] * &c[3] - &b[3] * &c[2];
-
-    let c00 = &d[1] * &m23 - &d[2] * &m13 + &d[3] * &m12;
-    let c01 = &d[0] * &m23 - &d[2] * &m03 + &d[3] * &m02;
-    let c02 = &d[0] * &m13 - &d[1] * &m03 + &d[3] * &m01;
-    let c03 = &d[0] * &m12 - &d[1] * &m02 + &d[2] * &m01;
-
-    &a[0] * c00 - &a[1] * c01 + &a[2] * c02 - &a[3] * c03
 }
 
 #[cfg(test)]

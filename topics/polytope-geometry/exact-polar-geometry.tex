@@ -1,0 +1,453 @@
+% topics/polytope-geometry/exact-polar-geometry.tex — ordinary exact normalized H-geometry
+% Imported once by formal/main.tex. Labels moved from
+% symplectic-polytope-geometry.tex, random-polytope-boundedness.tex and
+% rational-integer-scaling.tex retain their identifiers.
+% Provenance: the boundedness proposition and original proof were
+% Jörn-reviewed (57e73d9). Its interval-endpoint argument below is corrected
+% in this consolidation and awaits Jörn's review. The other agent-written
+% geometry and scaling notes remain unverified unless independently marked.
+
+\subsection{Normalized polar geometry}
+
+\begin{unverified}
+\begin{definition}[Polytope dual / polar body]\label{def:polytope-dual}
+% [TODO: JÖRN - verify statement]
+% Source: polytope.rs doc comment
+Let $K \subset \mathbb{R}^4$ be a polytope with $0 \in \operatorname{int}(K)$
+given in $H$-representation $K = \{x : \langle a_i, x\rangle \leq 1\}_{i=1}^F$.
+The \emph{polar body} (or \emph{dual}) is
+\[
+  K^\circ \coloneqq \{y \in \mathbb{R}^4 : \langle x, y \rangle \leq 1
+    \text{ for all } x \in K\}
+  = \operatorname{conv}(a_1, \ldots, a_F).
+\]
+\end{definition}
+\end{unverified}
+
+% Agent note: def:polar-body used in some .rs files is an alias
+% for def:polytope-dual. The label below provides this as a cross-reference target.
+\phantomsection\label{def:polar-body}% alias for cross-references from .rs files
+
+\begin{unverified}
+\begin{definition}[Cross product in $\mathbb{R}^4$]\label{def:cross-product-4d}
+% [TODO: JÖRN - verify statement]
+% Source: cross_product_4d.rs doc comment
+The \emph{cross product} of three vectors $u, v, w \in \mathbb{R}^4$
+is the unique vector $u \times v \times w \in \mathbb{R}^4$
+perpendicular to all three, with magnitude equal to the volume
+of the parallelepiped spanned by $u, v, w$, and orientation
+determined by the right-hand rule.
+Equivalently,
+\[
+  (u \times v \times w)_i
+  = (-1)^{i+1} \det\bigl(M_i\bigr),
+\]
+where $M_i$ is the $3 \times 3$ matrix obtained by deleting
+row~$i$ from the $4 \times 3$ matrix $(u \mid v \mid w)$.
+\end{definition}
+\end{unverified}
+
+\subsection{Boundedness and exact vertex predicates}
+
+\begin{unverified}
+\begin{proposition}[Boundedness check]\label{prop:boundedness-iff}
+Let $K = \{x : \langle a_\ell, x \rangle \le 1,\; \ell = 1, \ldots, F\}$
+with $0 \in \operatorname{int} K$, and let $A$ be the $F \times 4$ matrix
+with rows $a_1, \ldots, a_F$. Then $K$ is
+bounded if and only if
+\textup{(i)}~the dual vertices $a_1, \ldots, a_F$ span~$\mathbb{R}^4$, and
+\textup{(ii)}~for every triple~$(i,j,k)$ whose dual vertices have a 1-dimensional
+kernel direction~$d$, some $a_\ell$ has positive inner product with~$d$ and some
+has negative inner product with~$d$.
+% When rank(A) <= 2, no triple has a 1D kernel, so the triple check is
+% vacuously true but K is unbounded. The "span R^4" clause handles this.
+\end{proposition}
+
+\begin{proof}
+The recession cone $\operatorname{rec}(K) = \{d : \langle a_\ell, d \rangle \le 0\;\forall \ell\}$ satisfies
+$\operatorname{rec}(K) \subset K$ (since $0 \in K$, any $d \in
+\operatorname{rec}(K)$ gives a ray $\{td : t \ge 0\} \subset K$).
+Conversely, if~$K$ is unbounded it contains a ray $\{x_0 + td : t \ge 0\}$
+for some nonzero~$d$; substituting into $\langle a_\ell, x_0 + td \rangle \le 1$ and letting
+$t \to \infty$ forces $\langle a_\ell, d \rangle \le 0$, so $d \in \operatorname{rec}(K)$.  Hence
+\[
+  K \text{ bounded}
+  \;\Longleftrightarrow\;
+  \operatorname{rec}(K) = \{0\}.
+\]
+Now $\operatorname{rec}(K) = \{0\}$ means there is no nonzero~$d$ with
+$a_\ell \cdot d \le 0$ for all~$\ell$; equivalently, for every nonzero~$d$,
+some $a_\ell \cdot d > 0$.  This is exactly the condition that the dual vertices
+\emph{positively span}~$\mathbb{R}^4$.  It remains to show that positive span
+is equivalent to the conjunction of~\textup{(i)} and~\textup{(ii)}.
+
+\medskip\noindent\emph{($\Rightarrow$) Positive span implies both conditions.}
+Positive span implies span~$\mathbb{R}^4$ (a fortiori). For the triple check:
+let~$d$ be a kernel direction of triple~$(i,j,k)$, so $a_i \cdot d = a_j
+\cdot d = a_k \cdot d = 0$. By positive span, some~$a_\ell$ has $a_\ell \cdot
+d > 0$; since the triple's own dual vertices have zero dot product with~$d$, this
+$a_\ell$ lies outside the triple. Applying the same argument to~$-d$ gives a
+dual vertex with negative inner product.
+% QC: The kernel is 1-dimensional by hypothesis, so d is determined up to
+% sign. The condition "some positive, some negative" is sign-symmetric,
+% hence independent of the choice of generator.
+
+\medskip\noindent\emph{($\Leftarrow$) Span~$\mathbb{R}^4$ and all triples
+pass implies positive span.}
+We prove the contrapositive: if positive span fails but the dual vertices
+span~$\mathbb{R}^4$, some triple fails.
+
+Suppose $\operatorname{rec}(K) \neq \{0\}$, i.e., there exists a nonzero~$d$
+with $a_\ell \cdot d \le 0$ for all~$\ell$. We produce a triple~$(i,j,k)$
+whose kernel direction satisfies $a_\ell \cdot d \le 0$ for all~$\ell$
+(so no dual vertex blocks it).
+
+Among all unit vectors in~$\operatorname{rec}(K)$, pick~$d$ maximizing the
+number of orthogonal dual vertices $S_0 = \{\ell : a_\ell \cdot d = 0\}$.  We claim
+that~$\{a_\ell : \ell \in S_0\}$ contains three linearly independent vectors.
+If not, $\{a_\ell : \ell \in S_0\}$ spans a subspace of dimension~$\le 2$,
+so its orthogonal complement~$W$ has $\dim W \ge 4 - 2 = 2$.  Since
+$a_\ell \cdot d = 0$ for every $\ell \in S_0$, we have $d \in W$.  Because
+$\dim W \ge 2$ and $d \ne 0$, there exists $v \in W$ not parallel to~$d$.
+Since $v \perp a_\ell$ for all $\ell \in S_0$, we have
+\[
+  a_\ell \cdot (d + tv) = a_\ell \cdot d + t\,(a_\ell \cdot v)
+  = \begin{cases}
+    0 + t \cdot 0 = 0 & \text{if } \ell \in S_0, \\
+    \underbrace{a_\ell \cdot d}_{<\,0} + t\,(a_\ell \cdot v) < 0
+    & \text{if } \ell \notin S_0, \text{ for small } |t|.
+  \end{cases}
+\]
+% QC: ℓ ∉ S₀ is non-empty because dual vertices span R^4 ⟹ rank(A) = 4
+% ⟹ ker(A) = {0}, so the nonzero vector d cannot satisfy a_ℓ · d = 0 for all ℓ.
+(The case $\ell \notin S_0$ is non-empty: since the dual vertices span~$\mathbb{R}^4$,
+the matrix~$A$ has trivial kernel, so~$d \ne 0$ cannot be orthogonal to all
+dual vertices.)
+So $d + tv \in \operatorname{rec}(K)$ for small~$|t|$.
+
+Consider increasing~$|t|$ from zero.  The set
+$T = \{t \in \mathbb{R} : a_\ell \cdot (d + tv) \le 0 \;\forall \ell\}$ is
+a closed interval containing~$0$ (the intersection of half-lines
+$\{t : a_\ell \cdot d + t\,a_\ell \cdot v \le 0\}$).  This interval has
+at least one finite endpoint: if it extended indefinitely in both directions,
+then $a_\ell\cdot v=0$ for every~$\ell$, contradicting
+$\operatorname{rank}(A)=4$.  It contains a neighborhood of zero, so any
+finite endpoint~$t^*$ is nonzero.  At $t = t^*$, some new index
+$\ell^* \notin S_0$ satisfies $a_{\ell^*} \cdot (d + t^* v) = 0$.  Set
+$d' = d + t^* v$; this is nonzero because $d$ and~$v$ are not parallel.
+Since $v \in W$, we still have $a_\ell \cdot d' = a_\ell \cdot d = 0$
+for every $\ell \in S_0$.  Thus
+$\{\ell : a_\ell \cdot d' = 0\} \supseteq S_0 \cup \{\ell^*\}$,
+a strict superset of~$S_0$.  Since $d' \in \operatorname{rec}(K)$, the unit
+vector $d' / \|d'\|$ contradicts the choice of~$d$ as maximizing~$|S_0|$.
+
+So~$\{a_\ell : \ell \in S_0\}$ contains three linearly independent vectors;
+pick such a triple~$(i,j,k)$ from~$S_0$.  Since $a_i, a_j, a_k$ are linearly
+independent in~$\mathbb{R}^4$, their common kernel $\ker(a_i, a_j, a_k)$ is
+$(4 - 3)$-dimensional, so the triple falls under condition~\textup{(ii)}.
+The direction~$d$ spans this kernel, and $d \in \operatorname{rec}(K)$ gives
+$a_\ell \cdot d \le 0$ for all~$\ell$.  In particular, no dual vertex has positive
+inner product with~$d$, so triple~$(i,j,k)$ fails condition~\textup{(ii)}.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Positive span implies boundedness]\label{lem:positive-span}
+% [TODO: JÖRN - verify statement and proof]
+% Source: check_bounded_f64_first in vertex_enumeration/boundedness.rs
+% Proof compressed here by reference to the preceding recession argument;
+% this edited lemma remains unverified.
+Let $a_1, \ldots, a_F \in \mathbb{R}^4 \setminus \{0\}$ and
+$K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1 \;\forall i\}$.
+Then $K$ is bounded if and only if $\{a_1, \ldots, a_F\}$ positively
+spans~$\mathbb{R}^4$, i.e., for every $d \in \mathbb{R}^4 \setminus \{0\}$
+there exists $i$ with $\langle a_i, d \rangle > 0$.
+\end{lemma}
+
+\begin{proof}
+The recession-cone argument in Proposition~\ref{prop:boundedness-iff} shows
+that $K$ is bounded exactly when there is no nonzero $d$ with
+$\langle a_i,d\rangle\leq 0$ for every~$i$.  This is precisely the stated
+positive-spanning condition.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Algorithmic bounded check via triples]\label{lem:bounded-triples}
+% [TODO: JÖRN - verify statement and proof]
+% Source: check_bounded_f64_first in vertex_enumeration/boundedness.rs
+Under the hypotheses of Lemma~\ref{lem:positive-span}, assume
+$\operatorname{rank}\{a_1, \ldots, a_F\} = 4$.
+Then $\{a_i\}$ positively spans $\mathbb{R}^4$ if and only if for every
+linearly independent triple $\{a_i,a_j,a_k\}$ and every
+$d \in \ker(a_i, a_j, a_k) \setminus \{0\}$, there exist $l, m$ with
+$\langle a_l, d \rangle > 0$ and $\langle a_m, d \rangle < 0$.
+\end{lemma}
+
+\begin{proof}
+This is the triple part of Proposition~\ref{prop:boundedness-iff}, whose
+recession-cone proof also covers redundant listed rows.  The rank assumption
+and restriction to independent triples are essential: a dependent triple has
+a kernel of dimension at least two, so there is no single triple-normal
+direction to test.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Exact vertex enumeration]\label{lem:vertex-enumeration}
+% [TODO: JÖRN - verify statement and proof]
+% Source: enumerate_vertices_int in vertex_enumeration/enumerate.rs
+Let $K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1 \;\forall i\}$
+be a bounded polytope with $0 \in \operatorname{int}(K)$.
+A point $v \in \mathbb{R}^4$ is a vertex of~$K$ if and only if there exists
+a subset $S \subset \{1,\ldots,F\}$ with $|S| \geq 4$ such that:
+\begin{enumerate}
+  \item the matrix $(a_s)_{s \in S'}$ is nonsingular for some
+    $S' \subset S$ with $|S'| = 4$,
+  \item $\langle a_s, v \rangle = 1$ for all $s \in S$ (the defining
+    constraints are tight), and
+  \item $\langle a_i, v \rangle \leq 1$ for all $i \notin S$ (the
+    remaining constraints are satisfied).
+\end{enumerate}
+The algorithm iterates over all $\binom{F}{4}$ four-element subsets $S'$,
+solves $\langle a_{s_k}, v \rangle = 1$ ($k = 1,\ldots,4$) via Cramer's
+rule, checks feasibility, and records the full incidence set
+$S = \{i : \langle a_i, v \rangle = 1\}$.
+\end{lemma}
+
+\begin{proof}
+($\Rightarrow$) Let $v$ be a vertex of~$K$. Then $v$ is an extreme point:
+$v$ cannot be written as a convex combination of two distinct points in~$K$.
+Let $S = \{i : \langle a_i, v \rangle = 1\}$ be the active set.
+The active constraints must have $\operatorname{rank}\{a_s : s \in S\} = 4$,
+since otherwise $v$ would not be an extreme point (one could perturb $v$
+within the nullspace while remaining feasible). So $|S| \geq 4$ and some
+4-element subset $S' \subset S$ has nonsingular coefficient matrix.
+Feasibility of $v$ gives condition (3).
+
+($\Leftarrow$) If conditions (1)--(3) hold, then $v$ is the unique solution
+of the $4 \times 4$ nonsingular system $\langle a_{s_k}, v \rangle = 1$,
+so $v$ cannot be written as a convex combination of two distinct feasible
+points (they would also need to satisfy the 4 tight constraints, forcing
+them to equal~$v$). Hence $v$ is an extreme point, i.e., a vertex.
+
+The algorithm finds all vertices because every vertex has at least one
+4-element subset of active constraints with nonsingular coefficient matrix
+(by the rank argument above), and the algorithm tests all such subsets.
+Deduplication handles non-simple vertices found via multiple subsets.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Irredundancy check]\label{lem:irredundancy}
+% [TODO: JÖRN - verify statement and proof]
+% Source: check_irredundancy_f64_first in vertex_enumeration/irredundancy.rs
+Let $K$ be a bounded, full-dimensional normalized $H$-polytope as in
+Lemma~\ref{lem:vertex-enumeration}, with vertices $V$ and vertex-facet incidence
+$V_i = \{v \in V : \langle a_i, v \rangle = 1\}$.
+Assume $a_i\ne a_j$ for every $j\ne i$.  Then the $i$-th listed constraint
+is irredundant if and only if
+$\operatorname{aff}(V_i)$ is a hyperplane, equivalently
+$\operatorname{affrank}(V_i) = 3$.
+Without the uniqueness assumption, affine rank three still says that the
+supporting hyperplane defines a facet, but duplicate copies of its inequality
+are individually redundant.
+\end{lemma}
+
+\begin{proof}
+The $i$-th constraint defines the face
+$F_i = K \cap \{x : \langle a_i, x \rangle = 1\}$.
+The vertices of $F_i$ are exactly $V_i$ (the vertices of~$K$ that lie
+on the hyperplane $\langle a_i, x \rangle = 1$).
+
+If $\operatorname{affrank}(V_i)=3$, choose a point in the relative interior
+of $F_i$ away from the finitely many intersections with distinct listed
+hyperplanes.  Every other listed inequality is strict there, so a small
+outward displacement violates only the $i$-th inequality.  Removing it
+strictly enlarges~$K$.
+
+Conversely, if removing the $i$-th inequality enlarges~$K$, take a point
+that satisfies all other inequalities and violates the $i$-th.  A small
+convex combination with the origin still violates the $i$-th and makes
+every other inequality strict.  The segment from the origin to this point
+crosses the $i$-th supporting hyperplane where all other inequalities are
+strict, giving a relatively open three-dimensional patch of $F_i$.  Thus
+$\operatorname{affrank}(V_i)=3$.
+\end{proof}
+\end{unverified}
+
+The affine-rank check alone certifies a facet-supporting row.  A validator
+that admits duplicate listed rows cannot infer irredundancy of each listed
+inequality from that check alone.
+
+
+\begin{unverified}
+\begin{proposition}[Integer-scaled Cramer's rule]\label{prop:integer-cramer}
+% [TODO: JÖRN - verify statement and proof]
+% Source: optimized vertex enumeration in vertex_enumeration/enumerate.rs
+Let $a_1, \ldots, a_F \in \mathbb{Q}^4$ be the dual vertices defining
+$K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1\}$.
+Let $D = \operatorname{lcm}$ of all denominators of all components of
+$a_1, \ldots, a_F$, and set $A_i = D \cdot a_i \in \mathbb{Z}^4$.
+
+For a four-element subset $S = \{s_0, s_1, s_2, s_3\}$, let $M_S$ be the
+$4 \times 4$ matrix with rows $A_{s_k}$, and let $\delta = \det(M_S)$.
+If $\delta \neq 0$, the candidate vertex~$v$ solving
+$\langle a_{s_k}, v \rangle = 1$ for all $k$ has coordinates
+\[
+  v^{(j)} = \frac{D \cdot \nu_j}{\delta},
+  \qquad
+  \nu_j = \det\!\bigl(M_S \text{ with column } j
+    \text{ replaced by } \mathbf{1}\bigr),
+\]
+where $\mathbf{1} = (1,1,1,1)^\top$.
+
+The feasibility gap for facet $i \notin S$ is
+\[
+  1 - \langle a_i, v \rangle
+  = \frac{g_i}{\delta},
+  \qquad
+  g_i = \delta - \sum_{j=0}^{3} A_i^{(j)} \nu_j \;\in\; \mathbb{Z}.
+\]
+Hence $1 - \langle a_i, v \rangle \geq 0$ if and only if
+$\operatorname{sign}(g_i) = \operatorname{sign}(\delta)$ or $g_i = 0$,
+and all intermediate computations are in~$\mathbb{Z}$.
+\end{proposition}
+
+\begin{proof}
+The system $\langle a_{s_k}, v \rangle = 1$ for $k = 0, \ldots, 3$
+is equivalent to $M_S\,v = D\mathbf{1}$.
+By Cramer's rule,
+\[
+  v^{(j)} = \frac{\det(M_S^{(j)})}{\delta},
+\]
+where $M_S^{(j)}$ is $M_S$ with column~$j$ replaced by
+$D \cdot \mathbf{1}$.
+By multilinearity of the determinant in the $j$-th column,
+$\det(M_S^{(j)}) = D \cdot \nu_j$.
+
+For the feasibility gap:
+\[
+  1 - \langle a_i, v \rangle
+  = 1 - \sum_{j=0}^{3} \frac{A_i^{(j)}}{D} \cdot \frac{D\, \nu_j}{\delta}
+  = 1 - \frac{1}{\delta} \sum_{j=0}^{3} A_i^{(j)} \nu_j
+  = \frac{\delta - \sum_j A_i^{(j)} \nu_j}{\delta}
+  = \frac{g_i}{\delta}.
+\]
+Since $A_i^{(j)}, \nu_j, \delta \in \mathbb{Z}$, we have $g_i \in \mathbb{Z}$.
+The sign condition follows: $g_i / \delta \geq 0$ iff
+$\operatorname{sign}(g_i) = \operatorname{sign}(\delta)$ or $g_i = 0$.
+\end{proof}
+\end{unverified}
+
+% Moved from formal/rational-integer-scaling.tex; exact integer scaling for
+% rational polytope predicates.
+%
+% Labels defined here:
+%   lem:rational-common-denominator-signs,
+%   lem:integer-scaled-origin-interior-test,
+%   lem:integer-scaled-polar-candidates,
+%   lem:integer-scaled-feasibility-gap
+%
+% Status: mechanical agent-written proof note, unapproved by Jorn. It records
+% the proof obligation used by the BigRational specializations in
+% crates/euclidean-polytopes/src/predicates.rs and
+% crates/euclidean-polytopes/src/polar.rs.
+
+\subsection{Common-denominator scaling}
+
+Let $v_1,\ldots,v_N \in \mathbb{Q}^4$.  Choose any positive integer $D$
+such that $p_i := Dv_i \in \mathbb{Z}^4$ for all $i$.  These lemmas need only
+the common-denominator property; the referenced Rust paths choose the least
+common multiple of the component denominators.
+
+\begin{lemma}[Common-denominator scaling preserves signs]
+\label{lem:rational-common-denominator-signs}
+For every $x \in \mathbb{Q}^4$ and every integer $D > 0$,
+\[
+  \operatorname{sign}\langle v_i,x\rangle
+  =
+  \operatorname{sign}\langle Dv_i,x\rangle .
+\]
+Moreover, for any three indices $i,j,k$, the $4$-dimensional cross product
+normal satisfies
+\[
+  n(Dv_i,Dv_j,Dv_k) = D^3 n(v_i,v_j,v_k),
+\]
+so its dot products against scaled points satisfy
+\[
+  \langle Dv_\ell,n(Dv_i,Dv_j,Dv_k)\rangle
+  =
+  D^4\langle v_\ell,n(v_i,v_j,v_k)\rangle .
+\]
+\end{lemma}
+
+\begin{proof}
+The first identity is multiplication by the positive scalar $D$.  The cross
+product formula is trilinear in its three arguments, hence contributes a factor
+$D^3$.  The final identity adds the fourth factor $D$ from the tested point.
+All factors are positive, so signs are unchanged.
+\end{proof}
+
+\begin{lemma}[Integer-scaled origin-interior test]
+\label{lem:integer-scaled-origin-interior-test}
+The rational triple-normal positive-spanning test for
+$0 \in \operatorname{int}\operatorname{conv}\{v_i\}$ returns the same answer
+after replacing all $v_i$ by $p_i = Dv_i$.
+\end{lemma}
+
+\begin{proof}
+The rank precondition is unchanged by multiplication by the invertible scalar
+$D$.  For every tested triple, Lemma~\ref{lem:rational-common-denominator-signs}
+shows that the normal is zero before scaling if and only if it is zero after
+scaling, and that every point-normal dot-product sign is unchanged.  Therefore
+each separating-triple clause has the same truth value in the rational and
+integer-scaled tests.
+\end{proof}
+
+\begin{lemma}[Integer-scaled polar candidates]
+\label{lem:integer-scaled-polar-candidates}
+Let $A$ be the $4 \times 4$ rational matrix with rows $v_{i_1},\ldots,v_{i_4}$,
+and let $P = DA$.  If $\det P \neq 0$, then the exact solution of
+$Ay=\mathbf{1}$ is recovered by solving $Pz=D\mathbf{1}$ and setting $y=z$.
+Equivalently, Cramer's rule may be evaluated over integers using $P$ and the
+right-hand side $D\mathbf{1}$.
+\end{lemma}
+
+\begin{proof}
+Since $P=DA$, the equation $Ay=\mathbf{1}$ is equivalent to $Py=D\mathbf{1}$.  Cramer's
+rule for $Py=D\mathbf{1}$ uses only integer determinants.  The implementation
+chooses the least common multiple for $D$, while the argument holds for any
+positive common denominator.  Thus determinant zeros are exact rational
+ones, not rounded approximations.
+\end{proof}
+
+\begin{lemma}[Integer-scaled feasibility and incidence gap]
+\label{lem:integer-scaled-feasibility-gap}
+Let $v=p/D$ with $p\in\mathbb{Z}^4$ and $D>0$.  Let a rational candidate be
+stored as $y=n/d$, where $n\in\mathbb{Z}^4$ and $d>0$.  Then
+\[
+  G(p,n,d,D) := Dd-\langle p,n\rangle
+\]
+has the same sign as $1-\langle v,y\rangle$.  In particular,
+$G(p,n,d,D) > 0$ is exact strict feasibility for that row,
+$G(p,n,d,D) = 0$ is exact incidence, and $G(p,n,d,D) < 0$ is exact violation
+of the half-space inequality $\langle v,y\rangle \le 1$.
+\end{lemma}
+
+\begin{proof}
+By substituting $v=p/D$ and $y=n/d$,
+\[
+  1-\langle v,y\rangle
+  =
+  1-\frac{\langle p,n\rangle}{Dd}
+  =
+  \frac{Dd-\langle p,n\rangle}{Dd}.
+\]
+The denominator $Dd$ is positive, so the numerator and the rational gap have
+the same sign.  The three sign cases are exactly the half-space interior,
+boundary, and exterior cases.
+\end{proof}

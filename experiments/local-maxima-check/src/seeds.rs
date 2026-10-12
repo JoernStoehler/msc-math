@@ -38,7 +38,7 @@ pub(crate) fn known_equality_seeds() -> Vec<Seed> {
         product_seed(
             "triangle_hexagon_theta0",
             "target",
-            "experiments/regular-products/rotated-regular-products/lagrangian-products-3x6-6deg.jsonl",
+            "topics/products/regular-products/rotated-regular-products/lagrangian-products-3x6-6deg.jsonl",
             3,
             6,
             0.0,
@@ -46,7 +46,7 @@ pub(crate) fn known_equality_seeds() -> Vec<Seed> {
         product_seed(
             "square_square_pi_over_4",
             "target",
-            "experiments/regular-products/rotated-regular-products/lagrangian-products-4x4-6deg.jsonl",
+            "topics/products/regular-products/rotated-regular-products/lagrangian-products-4x4-6deg.jsonl",
             4,
             4,
             std::f64::consts::FRAC_PI_4,

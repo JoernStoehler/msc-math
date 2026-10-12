@@ -1,0 +1,973 @@
+{
+  "scope": "Repository-local guidance, agent capabilities, operational script contracts, knowledge/history/coordination routing, paper and administrative reference collections. Source edits owned only within .agents/skills.",
+  "coverage": "Read all seven local SKILL.md bodies, .codex config and scout role, root README/ARCHITECTURE, docs/knowledge index and five substantive notes, docs/history and coordination indexes, selected audit/reviewer/report excerpts, scripts/README and selected implementation headers, paper/submission indexes and note excerpts. Searched maintained Markdown/JSON callers for local skills, graph renderers, receipt verifier and usage/feature helpers; inspected Claude adapter targets. Discovered 604 history files without reading most. Operational scripts mostly contract/header inspection; no producers, remote services, credentials, daemon/config changes, release builds, account mutations or full theorem audits. Historical records, currently selected state and unselected proposals are intentionally distinct. Installed skill copy comparison limited to existence/content equality for names shared with agent-skills package; global/plugin guidance not edited.",
+  "items": [
+    {
+      "id": "guidance-domain-routing",
+      "kind": "collection",
+      "title": "Domain ownership and evidence routing",
+      "summary": "Root and docs entry points route readers among scientific topics, literature, meta-topics, supporting packets and current coordination. Repository-organization contracts define domain boundaries and the evidence chain; docs/README routes support packets rather than defining another work queue.",
+      "state": "Maintained entry points; inspected routing only.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "README.md",
+          "supports": "Project topic/meta entry routes and unfinished-manuscript status"
+        },
+        {
+          "path": "meta-topics/repository-organization/README.md",
+          "supports": "Current topic ownership, domain boundaries, evidence chain, producer attribution and local-entry requirements"
+        },
+        {
+          "path": "docs/README.md",
+          "supports": "Scientific support-packet and historical-evidence routes"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "The root README, documentation router and repository-organization contract serve distinct discovery consumers while pointing to shared canonical topic owners and current coordination.",
+      "uncertainties": []
+    },
+    {
+      "id": "guidance-project-facts",
+      "kind": "reference",
+      "title": "Attributed user-confirmed scope and choices",
+      "summary": "Central fact sheet preserves thesis areas, deadline/submission uncertainty, user choices and archive direction with attribution.",
+      "state": "Attribution and uncertainty visible; facts not independently refreshed.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "docs/project-facts.md",
+          "supports": "Numbered confirmed choices, source sessions and date/use boundaries"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Preserve attribution and unresolved administrative facts rather than promoting old deadline notes into current assignments.",
+      "uncertainties": []
+    },
+    {
+      "id": "guidance-pro-handoff",
+      "kind": "workflow",
+      "title": "Human-mediated ChatGPT Pro dossier exchange",
+      "summary": "Focused GOAL.md ZIP, Chromebook Taildrop delivery, inbound inbox handling and independent integration. Distinct from native subagent delegation.",
+      "state": "Local reusable skill; dated successful pentagon handoff reported.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "Skill reports Jörn observed Astra Pro latency of 40–90 minutes; historical observation, no runtime guarantee.",
+      "code_quality": "No executable package resources; procedure only.",
+      "sources": [
+        {
+          "path": ".agents/skills/chatgpt-pro/SKILL.md",
+          "supports": "Outbound/inbound procedures and September 18 user experience"
+        },
+        {
+          "path": "meta-topics/development-environment/development-environments.md",
+          "supports": "Maintained caller links the Pro workflow"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Purposeful transfer and recovery constraints; local skill differs from installed agent-skills:chatgpt-pro and has its own project scope.",
+      "uncertainties": [
+        "Installed same-name skill is separately discoverable; no convergence or deletion authorized here.",
+        "Current target availability and transfer behavior not exercised.",
+        "Compared installed plugin body: it contains explicit host-only transfer/bridge guidance absent from local body; shared name does not merge contracts. Local host commands and upstream share-files dependency differ."
+      ]
+    },
+    {
+      "id": "guidance-shell-codex",
+      "kind": "workflow",
+      "title": "Persistent Codex threads from a shell client",
+      "summary": "Installer/dependency setup, per-grant device login, daemon socket client and create/read/follow-up/fork/wait/archive operations; supports agents without native TUI tools.",
+      "state": "Host 0.161.0 lifecycle checks and 13 offline tests retained; fresh Claude cloud use unverified.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "Design notes report tiny host create/follow-up turns of 4351 ms and 2339 ms; transport smoke durations, not research-workload estimates.",
+      "code_quality": "Design notes document 13 offline regression tests and shell/frontmatter checks; not rerun here.",
+      "sources": [
+        {
+          "path": ".agents/skills/codex-app-server/SKILL.md",
+          "supports": "Operational contract, lifecycle and authority boundaries"
+        },
+        {
+          "path": ".agents/skills/codex-app-server/references/design-notes.md",
+          "supports": "Protocol choices, rejected JSON-lines framing, dated live and offline evidence"
+        },
+        {
+          "path": ".agents/skills/codex-app-server/scripts/codex-session.py",
+          "supports": "WebSocket client implementation"
+        },
+        {
+          "path": "meta-topics/development-environment/development-environments.md",
+          "supports": "Current capability caller"
+        },
+        {
+          "path": ".claude/skills/codex-app-server",
+          "supports": "Claude adapter points to same local owner"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain working capability and costly framing/polling/auth assumptions; one-shot installed codex-usage is a different contract.",
+      "uncertainties": [
+        "Cloud network/login/detached process survival not tested.",
+        "Current protocol compatibility requires release-matched checks."
+      ]
+    },
+    {
+      "id": "guidance-session-messaging",
+      "kind": "workflow",
+      "title": "Cross-session delivery and handoff semantics",
+      "summary": "Requires actual transport and clear recipient/action/reply route; distinguishes saved files, delivered messages, receipts, acceptance and authorization.",
+      "state": "Active local protocol linked by coordination README.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": ".agents/skills/cross-session-messaging/SKILL.md",
+          "supports": "Reusable transport and authority distinctions"
+        },
+        {
+          "path": "docs/coordination/README.md",
+          "supports": "Maintained protocol caller"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Different audience and trigger from native private child replies and prepared user-visible review; no redundant skill found.",
+      "uncertainties": []
+    },
+    {
+      "id": "guidance-human-annotations",
+      "kind": "workflow",
+      "title": "Frozen prose review through Hypothesis",
+      "summary": "Serves PDF/HTML/Markdown with annotation controls and retrieves document-scoped user annotations, retaining original reviewed inputs and raw feedback.",
+      "state": "Local capability with scripts; no fresh live annotation check.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": ".agents/skills/human-prose-review/SKILL.md",
+          "supports": "Freeze, presentation and feedback-use contract"
+        },
+        {
+          "path": ".agents/skills/human-prose-review/scripts/open_review.py",
+          "supports": "Artifact/page preparation implementation"
+        },
+        {
+          "path": ".agents/skills/human-prose-review/scripts/fetch_review.py",
+          "supports": "Scoped annotation retrieval implementation"
+        },
+        {
+          "path": "docs/history/coordination-map-review/README.md",
+          "supports": "Historical consumer names this reusable workflow"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Annotation workflow has provenance and feedback capability beyond view-only review-files.",
+      "uncertainties": [
+        "Current external Hypothesis API and viewer availability not tested.",
+        "Runtime credential or service state not inspected."
+      ]
+    },
+    {
+      "id": "guidance-view-only-review",
+      "kind": "workflow",
+      "title": "Expiring artifact review links",
+      "summary": "Host index and configured sandbox route serve only explicitly selected files; eight-hour lifetime, append/replace behavior and file-format display conventions.",
+      "state": "Local capability; maintained live-task-graph consumer.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": ".agents/skills/review-files/SKILL.md",
+          "supports": "Review-link contract and environment distinctions"
+        },
+        {
+          "path": ".agents/skills/review-files/scripts/review-open",
+          "supports": "Entrypoint"
+        },
+        {
+          "path": ".agents/skills/review-files/scripts/review-server",
+          "supports": "Narrow host serving implementation"
+        },
+        {
+          "path": ".agents/skills/live-task-graph/SKILL.md",
+          "supports": "Consumer for optional SVG review"
+        },
+        {
+          "path": "docs/file-viewer.md",
+          "supports": "Current caller explicitly retains expiring review-files beside broad workstation viewer"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Narrow expiring publication has a different capability/security lifetime from broad workstation serve-files and Hypothesis review.",
+      "uncertainties": [
+        "Skill mentions share-files, which is absent from seven local packages; conditional external/host availability not established.",
+        "Configured sandbox mapping and host service state not tested."
+      ]
+    },
+    {
+      "id": "guidance-prepared-message-review",
+      "kind": "workflow",
+      "title": "Exact prepared-message review with a separate agent",
+      "summary": "Sender and reviewer share one contextual standard; separate approval of frozen complete text, private native returns exempt, retained candidates/context/returns.",
+      "state": "Active project instruction gate; not a platform pre-delivery enforcement mechanism.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Current prose has no required receipt schema; old Python verifier is separate historical capability.",
+      "sources": [
+        {
+          "path": ".agents/skills/message-review/SKILL.md",
+          "supports": "Current gate and contextual standard"
+        },
+        {
+          "path": ".agents/skills/message-review/references/design-notes.md",
+          "supports": "User-selected design and successive rejected schema/checklist approaches"
+        },
+        {
+          "path": "AGENTS.md",
+          "supports": "Maintained project-wide trigger"
+        },
+        {
+          "path": "meta-topics/agent-workflow/message-review-retention.md",
+          "supports": "Evidence packet owner and runtime boundary"
+        },
+        {
+          "path": ".claude/skills/message-review",
+          "supports": "Claude adapter shares local source"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Preserve selected gate and non-enforcement limits; no deletion based on convenience or historical rejected versions.",
+      "uncertainties": [
+        "Future adherence, reviewer quality and net latency benefit are unestablished."
+      ]
+    },
+    {
+      "id": "guidance-historical-review-verifier",
+      "kind": "workflow",
+      "title": "Historical exact-message receipt verifier",
+      "summary": "Python verifier and tests validate former schema/hash receipts; current message-review explicitly no longer requires them.",
+      "state": "Retained obsolete-protocol implementation, labeled historical at source.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": "scripts/check-message-review.py",
+          "supports": "Header identifies historical status; functions validate exact normalized text and contextual receipts"
+        },
+        {
+          "path": "scripts/test_check_message_review.py",
+          "supports": "Regression consumers"
+        },
+        {
+          "path": "meta-topics/agent-workflow/message-review-retention.md",
+          "supports": "Current standard preserves initial verifier and packets as evidence"
+        }
+      ],
+      "relationships": [],
+      "action": "investigate",
+      "rationale": "Candidate for relocating historical executable/test pair with their evidence; deleting would require checking retained packet consumers and archival replay value.",
+      "uncertainties": [
+        "No current non-test caller found in bounded maintained-document searches; full historical/code caller audit not completed."
+      ]
+    },
+    {
+      "id": "guidance-task-graph",
+      "kind": "workflow",
+      "title": "Coordination projections and decision-branch graph design",
+      "summary": "current.json owns assignments; generated DOT/SVG summarizes dependencies. Local skill also retains optional manual crux/overlay modeling, failure/partial/timeout branches and attention limits.",
+      "state": "Source conflict corrected: local skill now generates overview from registry rather than editing generated tasks.dot.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Edited skill passed bundled quick_validate.py and git diff --check; generator inspected but not executed by worker.",
+      "sources": [
+        {
+          "path": ".agents/skills/live-task-graph/SKILL.md",
+          "supports": "Updated generator route plus retained decision-model rationale"
+        },
+        {
+          "path": "docs/coordination/README.md",
+          "supports": "Canonical registry and generated projection contract"
+        },
+        {
+          "path": "scripts/render-workflow-graph.py",
+          "supports": "Generated-file warning, validation and state digest check"
+        },
+        {
+          "path": "scripts/view-graph.sh",
+          "supports": "Manual terminal projection viewer"
+        }
+      ],
+      "relationships": [],
+      "action": "keep; clarify",
+      "rationale": "Direct editing of generated overview could overwrite or lose selected state; corrected without removing optional branch-model rationale.",
+      "uncertainties": [
+        "No fresh behavioral forwarding test; currently loaded instructions do not implicitly reload.",
+        "Installed skills outside local owner were not updated."
+      ]
+    },
+    {
+      "id": "guidance-conceptual-goal-map",
+      "kind": "workflow",
+      "title": "Retired conceptual goal map",
+      "summary": "The separate provisional discussion/goal map and renderer were retired after Jörn reported not using that surface (Q11). Exact original files remain recoverable from pinned Git entries.",
+      "state": "Retired 10 October 2026; not current navigation or an executable task graph.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Jörn reported that keeping such messages in the repository was unhelpful; no broader readability judgment inferred.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": "docs/history/retired-paths.json",
+          "supports": "Exact commit/blob recovery entries for model, rendered map and renderer"
+        },
+        {
+          "path": "docs/history/README.md",
+          "supports": "Q11 retirement scope and recovery instructions"
+        }
+      ],
+      "relationships": [],
+      "action": "retired",
+      "rationale": "User no longer uses the provisional conceptual map; current work needs executable task dependencies rather than another discussion store.",
+      "uncertainties": []
+    },
+    {
+      "id": "guidance-coordination-store",
+      "kind": "collection",
+      "title": "Assignments, backlog, proposals and handoffs",
+      "summary": "current.json owns selected assignments/resources; thesis-work owns detailed obligations; handoff owns continuation constraints; proposal/prompt packets retain unselected alternatives.",
+      "state": "Active ownership contract; temporal liveness and balances not inferred from stored state.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "Data contract inspected; state validator not rerun by worker.",
+      "sources": [
+        {
+          "path": "docs/coordination/README.md",
+          "supports": "Authority/update semantics and read-only check commands"
+        },
+        {
+          "path": "docs/coordination/current.json",
+          "supports": "Current shared registry"
+        },
+        {
+          "path": "docs/coordination/thesis-work.md",
+          "supports": "Detailed thesis obligation owner"
+        },
+        {
+          "path": "docs/coordination/handoff.md",
+          "supports": "Continuation boundary"
+        },
+        {
+          "path": "docs/coordination/skill-migration-plan.md",
+          "supports": "Dated unactivated migration proposal and alternatives"
+        }
+      ],
+      "relationships": [],
+      "action": "keep; investigate",
+      "rationale": "Keep canonical state; evaluate older proposals separately rather than reading them as active assignments or deleting decision rationale.",
+      "uncertainties": [
+        "All proposal/prompt packets not individually read; selected/unselected status must be reconciled by integrating coordinator."
+      ]
+    },
+    {
+      "id": "guidance-codex-config",
+      "kind": "collection",
+      "title": "Project Codex overrides and preliminary explorer role",
+      "summary": "Config records user-owned model/effort boundaries, explicit delegation ceilings, approved time/context trials and disabled legacy skills. Scout role supplies read-only high-recall evidence retrieval.",
+      "state": "Current project override files; no config mutation or live activation performed.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "TOML text inspected; parser/runtime compatibility not tested.",
+      "sources": [
+        {
+          "path": ".codex/config.toml",
+          "supports": "Exact overrides, provenance and explicit edit approval boundary"
+        },
+        {
+          "path": ".codex/agents/preliminary_explorer.toml",
+          "supports": "Configured Luna scout role and read-only responsibility"
+        },
+        {
+          "path": "meta-topics/development-environment/codex-reference.md",
+          "supports": "Release-specific implementation interpretation"
+        },
+        {
+          "path": "docs/codex-config-proposals.md",
+          "supports": "Trial/rejected-candidate provenance"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Comments explain non-obvious intentional defaults, experimental uncertainty and authority; not redundant syntax narration.",
+      "uncertainties": [
+        "Current daemon-effective settings not inspected.",
+        "Historical 0.160.0 implementation notes are not universal current product claims."
+      ]
+    },
+    {
+      "id": "guidance-codex-feature-reference",
+      "kind": "reference",
+      "title": "Release-matched Codex feature inventory",
+      "summary": "Source-matched generator produces flags, implementation consumers and project screening; current docs retain dated release snapshots and refresh/check routes.",
+      "state": "Generated release-bound documentation; freshness not independently checked here.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": "scripts/codex-feature-inventory.py",
+          "supports": "Generator and explicitly provisional screening groups"
+        },
+        {
+          "path": "scripts/update-codex-source.sh",
+          "supports": "Installed-release source refresh route"
+        },
+        {
+          "path": "meta-topics/development-environment/codex-reference.md",
+          "supports": "Implementation navigation and version boundary"
+        },
+        {
+          "path": "docs/codex-features.md",
+          "supports": "Maintained generated inventory and check command"
+        },
+        {
+          "path": "meta-topics/development-environment/codex-feature-analysis.md",
+          "supports": "Retained knowledge entry"
+        },
+        {
+          "path": "meta-topics/development-environment/codex-features/0.160.0-linux-2026-10-02/feature-catalog.json",
+          "supports": "Dated full catalog"
+        }
+      ],
+      "relationships": [],
+      "action": "keep; investigate",
+      "rationale": "Preserve release/source provenance; distinguish dated snapshots from current regenerated owner before consolidating.",
+      "uncertainties": [
+        "Installed CLI and generator freshness not checked; root discovery may have independent stale evidence.",
+        "Detailed implementation consumer coverage not reread."
+      ]
+    },
+    {
+      "id": "guidance-workload-observation",
+      "kind": "workflow",
+      "title": "Read-only local/native workload and usage diagnostics",
+      "summary": "coordination-load separates selected root, native descendants and other scoped sessions; subtree-usage repairs fork/counter ownership; usage-awareness retains on-demand count-up and withdrawn hook prototype.",
+      "state": "Dated scoped tests/live accounting retained; no permanent monitoring or verified quota conversion.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Documentation reports 20 focused native-reader and 35 local-reader tests; historical evidence, not rerun here.",
+      "sources": [
+        {
+          "path": "scripts/subtree-usage.md",
+          "supports": "Accounting contract, observed failures and repaired checks"
+        },
+        {
+          "path": "scripts/coordination-load.py",
+          "supports": "Native/local diagnostic implementation"
+        },
+        {
+          "path": "scripts/subtree-usage.py",
+          "supports": "Local response-ownership reader"
+        },
+        {
+          "path": "scripts/usage-awareness.py",
+          "supports": "Usable on-demand route; withdrawn hook labeled"
+        },
+        {
+          "path": "docs/coordination/README.md",
+          "supports": "Current supervision caller and missing-telemetry boundaries"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Keep useful on-demand readers and rejected-hook provenance; do not reactivate prototype from its source presence.",
+      "uncertainties": [
+        "Native export deduplication remains unverified in retained contract.",
+        "No current workload, account quota or billing measurement performed."
+      ]
+    },
+    {
+      "id": "guidance-browser-views",
+      "kind": "workflow",
+      "title": "Coordination and scientific browser views",
+      "summary": "Dashboard reads selected state; thesis view synthesizes promoted claims with source hash baselines; broad absolute-path viewer supports checkout/artifact Markdown and files.",
+      "state": "Two human projections with explicit authority and freshness limits; source/HTTP runtime not exercised here.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": "docs/dashboard/README.md",
+          "supports": "Distinct browser views and dated listener observations"
+        },
+        {
+          "path": "docs/dashboard/index.html",
+          "supports": "Coordination browser consumer"
+        },
+        {
+          "path": "docs/dashboard/thesis.html",
+          "supports": "Scientific synthesis consumer"
+        },
+        {
+          "path": "docs/dashboard/thesis-sources.json",
+          "supports": "Bounded baseline"
+        },
+        {
+          "path": "scripts/serve-project-dashboard.py",
+          "supports": "Narrow dashboard server and check route"
+        },
+        {
+          "path": "scripts/serve-files.py",
+          "supports": "Workstation file viewer"
+        },
+        {
+          "path": "docs/file-viewer.md",
+          "supports": "Maintained route and URL contract"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "View-only review, dashboard and workstation viewer overlap presentation but differ in exposure, lifetime, content and authority.",
+      "uncertainties": [
+        "Current listeners and human acceptance not established.",
+        "Root is editing server; worker inventory does not validate its final version."
+      ]
+    },
+    {
+      "id": "guidance-repro-and-release",
+      "kind": "workflow",
+      "title": "Reproduction claims and closure-only release builder",
+      "summary": "Reproducibility contract links result producers, retained figure/data checks and release boundary; build-release requires exact reviewed commit, clean tree, checked thesis and verified payload.",
+      "state": "Documented closure capability; no release package or new publication created.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "docs/reproducibility.md reports 22.64 seconds for one dependency-repaired cross-environment setup/build; not current release runtime.",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": "docs/reproducibility.md",
+          "supports": "Source-only and cross-environment checks plus reproduction promises"
+        },
+        {
+          "path": "scripts/build-release.py",
+          "supports": "Closure builder implementation"
+        },
+        {
+          "path": "scripts/README.md",
+          "supports": "Current caller and closure-only boundary"
+        },
+        {
+          "path": "meta-topics/thesis-submission/archive-closure-checklist.md",
+          "supports": "Accepted release/data/rights checks"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain concrete release safety and truthful reproduction limits; release is not ordinary inventory verification.",
+      "uncertainties": [
+        "Complete script and all data claims not audited; scientific-topic workers own producer evidence."
+      ]
+    },
+    {
+      "id": "guidance-artifact-and-cloud-setup",
+      "kind": "workflow",
+      "title": "Immutable artifact materialization and cloud environment setup",
+      "summary": "Shared R2 registry separates bulk retention from Git; scripts configure/materialize snapshots and cloud prerequisites/cache refresh.",
+      "state": "Maintained setup/storage capability; no external download, publication or credentials accessed.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": "scripts/artifacts.py",
+          "supports": "Artifact implementation"
+        },
+        {
+          "path": "docs/artifacts.md",
+          "supports": "Storage and cache/remote contract"
+        },
+        {
+          "path": "scripts/bootstrap-cloud.sh",
+          "supports": "Cloud setup"
+        },
+        {
+          "path": "scripts/maintain-cloud.sh",
+          "supports": "Resume maintenance"
+        },
+        {
+          "path": "meta-topics/development-environment/development-environments.md",
+          "supports": "Environment prerequisites and credential lifecycle owner"
+        },
+        {
+          "path": "meta-topics/development-environment/installation-workflow.md",
+          "supports": "Setup entry point"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Purposeful environment/retention boundary; large producer and remote effects remain outside this read-only script inspection.",
+      "uncertainties": [
+        "Full scripts not audited and authenticated materialization not tested."
+      ]
+    },
+    {
+      "id": "guidance-dated-status",
+      "kind": "workflow",
+      "title": "Applicability of dated build/test evidence",
+      "summary": "repo-status-summary compares current changes with dated check records and distinguishes code, orientation and high-risk generated evidence.",
+      "state": "Read-only helper; dated May 31 report retained.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": "scripts/repo-status-summary.sh",
+          "supports": "Read-only applicability implementation"
+        },
+        {
+          "path": "scripts/README.md",
+          "supports": "Maintained invocation caller"
+        },
+        {
+          "path": "scripts/repo-status/repo-status-smoke-and-core-2026-05-31.md",
+          "supports": "Dated check baseline"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Preserve old checks as bounded evidence, not current confidence.",
+      "uncertainties": [
+        "Old report contents and current applicability not fully evaluated."
+      ]
+    },
+    {
+      "id": "guidance-reusable-interpretation",
+      "kind": "collection",
+      "title": "Reusable mathematical and collaboration interpretation",
+      "summary": "Knowledge index routes HKO feasible-section versus optimizing-branch reasoning, seven-policy evaluator interpretation, feature/config sources, dated failure lessons and optional user working card.",
+      "state": "Source/date/use boundaries explicit; no fresh mathematical proof or behavioral validation.",
+      "agent_readability": "Read notes explicitly distinguish current manuscript from historical route names and provide recheck triggers.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "docs/knowledge/README.md",
+          "supports": "Decision-based retrieval and domain ownership"
+        },
+        {
+          "path": "topics/variation-and-local-maxima/hko-author-context.md",
+          "supports": "Local chart/slice/certificate explanation and recheck conditions"
+        },
+        {
+          "path": "topics/variation-and-local-maxima/optimizer-review-route.md",
+          "supports": "Historical comparison semantics and precise checked-layer boundary"
+        },
+        {
+          "path": "meta-topics/agent-workflow/codex-collaboration.md",
+          "supports": "Attributed continuation and guidance ownership choices"
+        },
+        {
+          "path": "meta-topics/project-management/optional-working-card.md",
+          "supports": "Explicitly optional habit aid"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain cross-source why explanations and scope limits; date alone does not make interpretation disposable.",
+      "uncertainties": [
+        "Historical source route names require migration map/current-source verification before application.",
+        "Full source mathematics not independently audited."
+      ]
+    },
+    {
+      "id": "guidance-failure-investigations",
+      "kind": "collection",
+      "title": "Observed process/session failures and counterexamples",
+      "summary": "September sprint audit and October eight-root postmortem retain exact evidence, decisions, ineffective repairs, counterexamples and causal uncertainty; knowledge note routes relevant sections.",
+      "state": "Historical observational findings; interventions and acceptance separate.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "meta-topics/agent-workflow/process-audit/REPORT.md",
+          "supports": "Two-root/seven-child audit and scope limits"
+        },
+        {
+          "path": "meta-topics/agent-workflow/session-postmortem-2026-10-04/REPORT.md",
+          "supports": "Eight-root frozen investigation"
+        },
+        {
+          "path": "meta-topics/agent-workflow/session-postmortem-2026-10-04/OUTPUTS.md",
+          "supports": "Historical result/continuation map"
+        },
+        {
+          "path": "meta-topics/agent-workflow/session-failures-2026-10-03.md",
+          "supports": "Reusable explanatory route with counterevidence"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Preserve costly incident context and rejected remedies; do not promote diagnoses into enforced current rules.",
+      "uncertainties": [
+        "Raw corpus inaccessible portions and encrypted assignments limit attribution.",
+        "Only report/indexed sections read, not whole corpus."
+      ]
+    },
+    {
+      "id": "guidance-historical-review-evidence",
+      "kind": "collection",
+      "title": "Matched human reviews, writing trials and source adoption evidence",
+      "summary": "History retains exact reviewed prose/PDFs, user judgments, agent experiments, whole-thesis assessments, source adoption maps and corrected findings; history index distinguishes old next steps from current obligations.",
+      "state": "Frozen records; 604 files discovered in history at survey time, not 604 substantive results.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "README records actual bounded user judgments; no global acceptance/readability verdict transfers to current thesis.",
+      "runtime": "Reviewer trial README reports subjective 3–12 minutes for sixteen passage judgments plus incidental reading/coordination; not measured per-record runtime.",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "docs/history/README.md",
+          "supports": "Question-based routes and frozen-status contract"
+        },
+        {
+          "path": "docs/history/reviewer-trial/README.md",
+          "supports": "Matched review trial, human-time observations and inference limits"
+        },
+        {
+          "path": "docs/history/assembly-source-map/README.md",
+          "supports": "Source adoption evidence route"
+        },
+        {
+          "path": "docs/history/retired-paths.json",
+          "supports": "Pinned Git-only retired-material index"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain exact judgments with reviewed inputs; removing old evidence would lose empirical/recovery meaning.",
+      "uncertainties": [
+        "Most 604 discovered history files not read; no completeness/quality judgment.",
+        "Current value of every retained duplicate snapshot not established."
+      ]
+    },
+    {
+      "id": "guidance-preservation-recovery",
+      "kind": "collection",
+      "title": "Migration, branch and source recovery manifests",
+      "summary": "Resume collection retains preserved dirty inputs, branch/session identities, frozen diagnostic PDF, link repair, layout migration and integrity checks.",
+      "state": "Historical September preservation evidence; not live continuation instructions.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "unknown; not executed in this survey",
+      "code_quality": "Unassessed implementation quality; documentation/caller inspection only.",
+      "sources": [
+        {
+          "path": "docs/resume/layout-migration.json",
+          "supports": "Original/current path interpretation"
+        },
+        {
+          "path": "docs/resume/final-check.json",
+          "supports": "Dated preservation and link/check baseline"
+        },
+        {
+          "path": "docs/resume/verify.py",
+          "supports": "Integrity verification capability"
+        },
+        {
+          "path": "docs/history/source-recovery/README.md",
+          "supports": "Baseline replay route"
+        },
+        {
+          "path": "docs/README.md",
+          "supports": "Explicit recovery-status owner boundary"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Preserve source recovery and baseline context; old absolute paths are provenance rather than current broken capability.",
+      "uncertainties": [
+        "Verifier not rerun and external archive availability unknown.",
+        "Most preservation manifests not deeply inspected."
+      ]
+    },
+    {
+      "id": "guidance-friction-records",
+      "kind": "collection",
+      "title": "Canonical collaboration friction and linked human overview",
+      "summary": "F01–F16 records preserve observations, mitigation status, trial evidence and Pages reconciliation contract; external overview is deliberately concise.",
+      "state": "Active record contract with dated imported evidence; no Page mutation or reconciliation performed.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "meta-topics/project-management/friction/README.md",
+          "supports": "Record identity, disposition semantics, update and Page ownership"
+        },
+        {
+          "path": "meta-topics/project-management/friction/trial.md",
+          "supports": "Retained capability-trial evidence"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Keep detailed evidence in repository, distinguish frozen Page legacy detail from canonical records.",
+      "uncertainties": [
+        "Individual F records not reread; current external Page state not checked."
+      ]
+    },
+    {
+      "id": "guidance-source-papers",
+      "kind": "reference",
+      "title": "Cached HK2017, CH2021 and HKO2024 source literature",
+      "summary": "Paper sources and figures plus citation-number index establish cited source content; local-only/paywalled materials are explicitly separated.",
+      "state": "Literature inputs, not project theorem or code validity; dated numbering notes.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "topics/literature/sources/README.md",
+          "supports": "Physical source coverage and immutable-input contract"
+        },
+        {
+          "path": "topics/literature/sources/citation-index.md",
+          "supports": "May 3 source availability and numbering checks"
+        },
+        {
+          "path": "topics/literature/sources/hk2017/EHZ-polytopes.tex",
+          "supports": "HK source"
+        },
+        {
+          "path": "topics/literature/sources/ch2021/systolic_paper.tex",
+          "supports": "CH source"
+        },
+        {
+          "path": "topics/literature/sources/hko2024/counterexample.tex",
+          "supports": "HKO source"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Useful retained source inputs; redistribution closure governed separately, not cause for deleting during inventory.",
+      "uncertainties": [
+        "Published versions, numbering and rights not newly verified.",
+        "Source PDFs/TeX not deeply read in this survey."
+      ]
+    },
+    {
+      "id": "guidance-paper-interpretation",
+      "kind": "reference",
+      "title": "MATLAB reference analysis and sign-convention check",
+      "summary": "Project-authored notes recover HK MATLAB algorithm flow, barycenter meaning, rank/constraint decisions and coordinate/symplectic sign identities.",
+      "state": "Analysis inputs with source pointers; no independent full re-audit.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "topics/literature/sources/matlab-extraction.md",
+          "supports": "Pinned reference implementation interpretation"
+        },
+        {
+          "path": "topics/literature/sources/sign_convention_verification.md",
+          "supports": "Coordinate/J/symplectic-form derivation"
+        },
+        {
+          "path": "topics/literature/sources/README.md",
+          "supports": "Notes distinguished from cached source papers"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Keep the project-authored analyses visibly distinct from cached source-paper text; follow their mathematical claims to the capacity/QP or geometry topic owners.",
+      "uncertainties": [
+        "Correspondence to current Rust contracts not rechecked by this worker."
+      ]
+    },
+    {
+      "id": "guidance-submission-and-archive",
+      "kind": "reference",
+      "title": "Official forms and accepted archive/licensing direction",
+      "summary": "April 24 downloaded MNTF forms and Markdown conversions support administration; archive notes preserve accepted dual-license/mixed-payload boundaries and remaining publication checks.",
+      "state": "Historical administrative inputs; current submission/registration status unknown. Local archive preparation does not authorize publication.",
+      "agent_readability": "Entry point and scoped sources inspected; no independent behavior evaluation.",
+      "human_readability": "Unknown; no new human readability or acceptance evidence.",
+      "runtime": "not applicable",
+      "code_quality": "not applicable",
+      "sources": [
+        {
+          "path": "meta-topics/thesis-submission/README.md",
+          "supports": "Form sources/download dates and accepted archive direction"
+        },
+        {
+          "path": "meta-topics/thesis-submission/archive-rights-and-exclusions.md",
+          "supports": "Accepted licensing rationale, alternatives and rights boundaries"
+        },
+        {
+          "path": "meta-topics/thesis-submission/archive-closure-checklist.md",
+          "supports": "Remaining third-party/data/payload disposition checks"
+        },
+        {
+          "path": "docs/project-facts.md",
+          "supports": "No current deadline/status inferred from old notes"
+        }
+      ],
+      "relationships": [],
+      "action": "keep",
+      "rationale": "Retain source forms while need/rights disposition unresolved; preserve project-authored audit even when later excluding third-party files.",
+      "uncertainties": [
+        "Current official requirements not refreshed; inventory makes no current legal/submission advice.",
+        "Final redistribution cleanup and administrative completion not established."
+      ]
+    }
+  ],
+  "changes": [
+    {
+      "path": ".agents/skills/live-task-graph/SKILL.md",
+      "change": "Corrected stale portfolio editing procedure: update canonical current.json and run render-workflow-graph.py plus --check; optional manual components skip generated tasks.dot. Preserved crux modeling, correlated failure reasoning, bounded hedges, review/access constraints and terminal-view rationale.",
+      "reason": "docs/coordination/README.md and render-workflow-graph.py establish generated overview ownership; old skill instructed direct tasks.dot mutation.",
+      "verification": [
+        "Bundled skill-creator quick_validate.py: Skill is valid!",
+        "git diff --check -- .agents/skills: passed",
+        "Inspected generator header/state-digest check and README command route; no graph mutation or execution by worker."
+      ],
+      "activation": "Changing this local file affects future reads through its repository catalog path. Already-loaded instructions remain in force; installed same-name copies and live config were not modified."
+    }
+  ],
+  "surveyed_at_utc": "2026-10-10T16:41:00Z"
+}

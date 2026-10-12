@@ -18,14 +18,14 @@ branch becomes capacity-minimizing after a perturbation.
 ## Input, output, and command
 
 The default input is the table produced at
-`experiments/polytope-invariant-table/polytope-table.jsonl`.
+`topics/empirical-studies/polytope-invariant-table/polytope-table.jsonl`.
 
 ```bash
 scripts/artifacts.py materialize polytope-invariant-table
 
 cargo run -p exp-dev-sys-prediction --release \
   --bin dev-sysext-beta-boundary-scan -- \
-  --polytope-table experiments/polytope-invariant-table/polytope-table.jsonl \
+  --polytope-table topics/empirical-studies/polytope-invariant-table/polytope-table.jsonl \
   --out /tmp/dev-sysext-beta-boundary-scan.jsonl \
   --max-rows 1
 ```

@@ -13,19 +13,25 @@ editing the graph concurrently.
 ## Storage
 
 Keep graph sources and their rendered views with project coordination.
-`docs/coordination/current.json` owns selected assignments and resource observations;
+`meta-topics/project-management/current.json` owns selected assignments and resource observations;
 the graph projects dependencies and decision branches without creating a second
 assignment authority. The coordinating agent reconciles both when using a graph.
 Resolve the location from the current checkout with:
 
 ```bash
-graph_dir="$(git rev-parse --show-toplevel)/docs/coordination/graphs"
+graph_dir="$(git rev-parse --show-toplevel)/meta-topics/project-management/graphs"
 mkdir -p "$graph_dir"
 ```
 
-Use `$graph_dir/tasks.dot` as the portfolio overview. When one graph would hide
-important outcomes or become awkward in a terminal, add ordered component
-sources such as `10-thesis.dot` and `20-software.dot`; do not make the overview
+The portfolio overview `$graph_dir/tasks.dot` and its SVG are generated from
+`current.json` by `scripts/render-workflow-graph.py`; edit the registry rather
+than these generated files. See `meta-topics/project-management/coordination.md` for its fields,
+selection and authorization semantics. The semantic dashboard is Jörn's primary
+view; DOT/SVG is an optional export.
+
+When one graph would hide important outcomes or become awkward in a terminal,
+an explicitly selected manual component can use ordered sources
+such as `10-thesis.dot` and `20-software.dot`; do not make the overview
 a duplicate of every detail. Render each source beside it as `.svg`. These
 files belong to the project and follow its normal version-control workflow;
 different worktrees do not implicitly share updates. Recover existing graphs;
@@ -33,7 +39,8 @@ never replace them merely because a new agent session started. When a completed
 execution window leaves stale assignments or deadlines, preserve its components
 under a dated `history/` directory and update the live overview and overlay.
 
-For a multi-hour execution window, use `00-now.dot` as a small disposable
+If a multi-hour execution window needs an additional manual overlay, use
+`00-now.dot` as a small disposable
 overlay containing only the selected live portfolio, owners, timeboxes, hedges,
 kill/fan-in conditions, and reserved integration capacity. It is not another
 backlog. Keep durable domain outcomes in the later component files.
@@ -102,15 +109,26 @@ that no longer affects the graph.
 
 ## Update points
 
-Patch `tasks.dot` after a material state change: work starts or finishes, a
+Update `current.json` after a material state change: work starts or finishes, a
 dependency is discovered or removed, evidence changes a decision branch, a
 branch becomes reviewable, or work is explicitly dropped. Do not churn the
 file for routine progress messages.
 
-After each patch, validate and render:
+Regenerate and check the portfolio projection after registry changes:
+
+```bash
+python3 scripts/render-workflow-graph.py
+python3 scripts/render-workflow-graph.py --check
+```
+
+The check compares the generated DOT and the SVG's embedded state hash; it
+establishes projection freshness, not mathematical validity or owner liveness.
+If separately owned manual components exist, validate and render those sources
+without overwriting the generated portfolio overview:
 
 ```bash
 for source in "$graph_dir"/*.dot; do
+  [ "${source##*/}" = tasks.dot ] && continue
   dot -Tsvg "$source" -o "${source%.dot}.svg"
 done
 ```

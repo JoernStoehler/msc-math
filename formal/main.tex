@@ -1,6 +1,6 @@
 % main.tex — root mathematical documentation for the migrated developer math tree
 %
-% Compiles the developer-facing formalization packets under `formal/` into one PDF
+% Compiles topic-owned proofs and the remaining `formal/` packets into one PDF
 % so cross-references resolve across library and experiment material.
 %
 % Build: `cd formal/ && latexmk` (produces `main.pdf`)
@@ -30,11 +30,14 @@
 
 \part{Foundations and Capacity Algorithms}
 
+\section{Exact Polar Geometry}
+\input{../topics/polytope-geometry/exact-polar-geometry}
+
 \section{Symplectic Polytope Geometry}
 \input{symplectic-polytope-geometry}
 
 \section{HK2017 QP Conventions}
-\input{hk2017-qp-conventions}
+\input{../topics/capacity-and-qp/proofs/hk2017-qp-conventions}
 
 \section{f64 Prefilter Bound}
 \input{f64-prefilter-bound}
@@ -48,11 +51,8 @@
 \section{Near-Redundant Facet Removal Bounds}
 \input{near-redundant-facet-removal-bounds}
 
-\section{Integer-Scaled Rational Predicates}
-\input{rational-integer-scaling}
-
 \section{EHZ KKT System}
-\input{ehz-kkt-system}
+\input{../topics/capacity-and-qp/proofs/ehz-kkt-system}
 
 \section{Capacity Algorithms}
 \label{sec:algorithms}
@@ -65,25 +65,25 @@
 \input{billiard-capacity-algorithm}
 
 \section{Product QP Six-Facet Reduction}
-\input{product-qp-six-facet-reduction}
+\input{../topics/products/product-qp-six-facet-reduction}
 
 \section{Product Two-Bounce Class}
-\input{product-two-bounce-class}
+\input{../topics/products/product-two-bounce-class}
 
 \section{Product Triangle Bounce Classification}
-\input{product-triangle-bounce-classification}
+\input{../topics/products/product-triangle-bounce-classification}
 
 \section{Flow-Graph Real Algorithm}
-\input{flow-graph-real-algorithm}
+\input{../topics/flow-graphs/flow-graph-real-algorithm}
 
 \section{Flow-Graph Semantic Capacity Contract}
-\input{flow-graph-capacity}
+\input{../topics/flow-graphs/flow-graph-capacity}
 
 \section{Flow-Graph CH2021 Comparison}
-\input{flow-graph-ch2021-comparison}
+\input{../topics/flow-graphs/flow-graph-ch2021-comparison}
 
 \section{Flow-Graph Proof-Risk Ledger}
-\input{flow-graph-proof-risk}
+\input{../topics/flow-graphs/flow-graph-proof-risk}
 
 \section{Capacity Derivatives}
 \input{capacity-derivatives}
@@ -114,10 +114,10 @@
 \part{Numerical Certification}
 
 \section{HK2017 QP Core}
-\input{hk2017-qp-core}
+\input{../topics/capacity-and-qp/proofs/hk2017-qp-core}
 
 \section{HK2017 QP Precision Bounds}
-\input{hk2017-qp-precision}
+\input{../topics/capacity-and-qp/proofs/hk2017-qp-precision}
 
 \section{Admissibility Precision Audit}
 \input{admissibility-precision-audit}
@@ -131,7 +131,7 @@
 \input{random-polytope-boundedness}
 
 \section{Search Pruning Correctness}
-\input{search-pruning-correctness}
+\input{../topics/capacity-and-qp/proofs/search-pruning-correctness}
 
 \section{Finite Reeb Orbit Verification}
 \input{finite-reeb-orbit-verification}

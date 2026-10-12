@@ -68,7 +68,7 @@ fn load_shared_cache(manifest_dir: &Path) -> HashMap<DualVerticesKey, PolytopeRe
     let paths = [
         manifest_dir.join("orbit-recovery/polytopes.jsonl"),
         manifest_dir.join("../combinatorial-cells/polytopes.jsonl"),
-        manifest_dir.join("../sys-landscape/cache.jsonl"),
+        manifest_dir.join("../../topics/empirical-studies/sys-landscape/cache.jsonl"),
     ];
     let refs = paths.iter().map(PathBuf::as_path).collect::<Vec<_>>();
     database::load_many(&refs).unwrap_or_else(|err| {

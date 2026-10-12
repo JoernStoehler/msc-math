@@ -11,7 +11,7 @@ predictive for nearby, semi-local, or effectively unrelated points `a`.
 
 This is the current development and reference surface for optimizer-facing
 branch cartography. The former source-stratified
-`experiments/sys-datascience/methods/local-behavior-prediction/` packet was
+`topics/empirical-studies/sys-datascience/methods/local-behavior-prediction/` packet was
 deleted when the active data-science table was restricted to random/product
 rows; its run-local outputs are not current evidence. A future
 source-stratified data-science study would be a new retained packet rather than
