@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-12T14:57:42Z",
+  "updated_at": "2026-10-12T16:00:08Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Main185155fe reconciled into the topic branch: later research/evidence, scientific-value preferences, client discovery and review-sharing outcomes retained; landscape retrieval/freshness defects repaired. Focused checks and bounded independent review passed. Main unchanged; no push or new research.",
+  "summary": "Reviewed topic reorganization and main-checkpoint reconciliation adopted into main after Jörn approval. The readable review is retained and main-checkout inventory/source links and workflow graph are refreshed. Focused adoption checks passed. Existing thesis/evidence limits remain at their owners.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2633,7 +2633,7 @@
       ],
       "updated_at": "2026-10-12T12:06:18Z",
       "blocker": null,
-      "next_step": "Old sibling cleanup is now handled by old-worktree-cleanup-20261012. Later main/migration merge remains deferred."
+      "next_step": "Main adoption is now completed by main-adoption-20261012; recovery and historical scope remain documented."
     },
     {
       "id": "old-worktree-cleanup-20261012",
@@ -2653,7 +2653,7 @@
       ],
       "updated_at": "2026-10-12T13:29:50Z",
       "blocker": null,
-      "next_step": "Later merge migration branch into preserved main; old checkout/branch cleanup is complete. Recovery is documented in migration ledger."
+      "next_step": "Main adoption is now completed by main-adoption-20261012; recovery and historical scope remain documented."
     },
     {
       "id": "catch22-diagnosis-20261010",
@@ -2765,6 +2765,25 @@
       "updated_at": "2026-10-12T14:56:09Z",
       "blocker": null,
       "next_step": "Return completed comparison to review thread. Adoption into main remains deferred; no pending integration worker."
+    },
+    {
+      "id": "main-adoption-20261012",
+      "title": "Adopt reviewed topic branch into main",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "depends_on": [],
+      "outcome": "Main fast-forwarded to f09eeff5, including main-checkpoint reconciliation and rewritten adoption review. Main-checkout views regenerated; coordination/source checks passed. Preserved 26 installed-cache symlinks at the migrated producer locations; cache targets unchanged and readable, with no downloads or payload rewrite.",
+      "authorization": "Direct Jörn approval at 2026-10-12 15:57 UTC: we can finally merge. Commit readable review and adopt f7e0 into main; no new scientific work or push.",
+      "sources": [
+        "meta-topics/repository-organization/main-reconciliation-2026-10-12.md",
+        "meta-topics/project-management/handoff.md"
+      ],
+      "updated_at": "2026-10-12T16:00:08Z",
+      "blocker": null,
+      "next_step": "Adoption complete. Use main for subsequent selected work; existing thesis/evidence obligations remain."
     }
   ],
   "decisions": [
@@ -3131,6 +3150,14 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-12T16:00:08Z",
+      "text": "Completed approved main adoption and main-checkout view regeneration. Readable comparison retained; old deferred-adoption next steps dispositioned. Existing scientific/PDF review limits remain unchanged."
+    },
+    {
+      "at": "2026-10-12T15:59:16Z",
+      "text": "Jörn approved main adoption; main fast-forwarded to f09eeff5. Coordinator owns checkout-bound view regeneration and completion checks."
+    },
     {
       "at": "2026-10-12T13:29:50Z",
       "text": "Closed old-branch cleanup: verified recoverability, integrated useful evidence, reconciled F17 Page link and removed three worktrees/six branches. Only main and migration checkout remain."

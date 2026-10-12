@@ -68,7 +68,10 @@ thesis acceptance. My recommendation concerns the working repository.
 
 ## Supporting sources
 
-This review is of f7e0 `ad88f728` against main `185155fe`. Main is unchanged.
+This comparison concerns f7e0 `ad88f728` and the former main checkpoint
+`185155fe`. Jörn approved adoption at 15:57 UTC; main now includes the reviewed
+branch and this rewritten comparison. The evidence and maintenance limits above
+remain unchanged.
 The earlier technical reconciliation report is preserved in Git at
 `ad88f728:meta-topics/repository-organization/main-reconciliation-2026-10-12.md`.
 

@@ -1,5 +1,24 @@
 # Current handoff
 
+## 12 October: reviewed branch adopted into main
+
+Jörn approved merging at 15:57 UTC after reviewing the rewritten comparison.
+Main fast-forwarded to `f09eeff5`, including the topic reorganization, reconciled
+main checkpoint and readable adoption review. Main-checkout inventory links and
+workflow projections were regenerated; focused source/coordination checks passed.
+Twenty-six existing cached-artifact symlinks were relocated to the migrated
+producer paths, preserving their targets without downloads or payload changes.
+The former main snapshot `185155fe` remains in history. The f7e0 worktree remains
+available; no branch/worktree deletion or push was selected.
+
+Adoption is complete. Use main for subsequent selected work. The
+[comparison](../repository-organization/main-reconciliation-2026-10-12.md)
+retains the maintenance tradeoffs and outstanding evidence limits. The working
+PDF's review baseline remains visibly unreconciled; adoption does not resolve
+thesis acceptance or restart scientific production. Historical deferred-merge
+statements below are superseded by this adoption.
+
+
 ## 12 October: main checkpoint reconciled into f7e0
 
 The later 14:44 UTC request supersedes the earlier deferred-integration status
