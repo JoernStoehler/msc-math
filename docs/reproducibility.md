@@ -133,9 +133,10 @@ before applying the retained-data rule below; creating a run does not require a
 Git commit or R2 snapshot. [The artifact contract](artifacts.md) describes the
 active-workspace exception and publication steps.
 
-At closure, commit small data useful for immediate interpretation, validation,
-or continuation. Put bulk generated data and expensive producer caches in
-immutable R2 snapshots registered by `artifacts/registry.json`. Remove
+Under the current retention route, commit small data useful for immediate
+interpretation, validation, or continuation. Put bulk generated data and
+expensive producer caches in immutable R2 snapshots registered by
+`artifacts/registry.json`. Remove
 disposable smoke output, superseded intermediates, and cheap caches without a
 consumer. See `docs/artifacts.md` for explicit materialization and publication.
 

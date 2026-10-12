@@ -30,10 +30,13 @@ checkouts. These are workstation locations, not required paths on another machin
 Keep lasting project results with their source/evidence owner. Scratch notes and
 review files are not their only retained copy. See [environment docs](meta-topics/development-environment/development-environments.md)
 for host/sandbox setup and [Codex reference](meta-topics/development-environment/codex-reference.md) for Codex state and recovery.
+
 Agent-created inputs, outputs and metadata start in task/run scratch space; creation
-does not promote them into the active worktree or shared long-term state. Deliberately
-retain small datasets and fixtures in ordinary Git, and use the registered R2
-snapshot route for large retained data; do not introduce Git LFS. See
+does not promote them into the active worktree or shared long-term state. The
+current retention route uses ordinary Git for selected small datasets and fixtures
+and registered R2 snapshots for selected large data. Jörn's GitHub LFS experience
+had quota, speed and agent-workflow problems; alternative storage designs and the
+best transient location have not been compared. See
 [artifact contracts](docs/artifacts.md) before publishing or replacing evidence.
 
 File links for Jörn: `/absolute/path` → `https://joern-pc.tailc5e761.ts.net/files/absolute/path` (expand `~`; URL-encode each path segment).

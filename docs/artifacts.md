@@ -1,11 +1,16 @@
 # Shared Artifacts
 
 Git is the source and reproducibility record for code, manifests, and
-deliberately retained small datasets and fixtures. Git LFS is not used. Large
-retained datasets and pipeline caches are immutable directory snapshots in the
-Cloudflare R2 Standard bucket `msc-math-artifacts`. Pipelines continue to read and write ordinary
-local paths: materialization downloads a registered snapshot to a cache and
+deliberately retained small datasets and fixtures. Large retained datasets and
+pipeline caches currently use immutable directory snapshots in the
+Cloudflare R2 Standard bucket `msc-math-artifacts`. Pipelines continue to read
+and write ordinary local paths: materialization downloads a registered snapshot to a cache and
 creates ignored symlinks at its established repository paths.
+
+This is the selected practical route, not a finding that R2 or the temporary
+directory layout is best among storage designs. Jörn's adverse experience was
+specifically with GitHub LFS quotas, speed and agent habits; other approaches
+have not been evaluated here.
 
 Agent-created inputs, outputs and metadata are working material until their
 owner deliberately selects a lasting result. Put each run under
