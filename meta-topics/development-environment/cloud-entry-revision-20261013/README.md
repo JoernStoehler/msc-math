@@ -66,3 +66,15 @@ remains open; no Rust/PDF workload ran during this entry-revision stage.
 
 The further approved check and current browser/relay blocker are owned by
 [the Rust validation record](../cloud-rust-validation-20261013/README.md).
+
+Jörn challenged the eleven-minute finalization account at 19:05 UTC. Further
+inspection shows the shell batches in that interval generally completed within
+seconds, with long root-response intervals between them; the finalization label
+is elapsed accounting, not a necessary sequential dependency chain. Distinct
+root last-response accounting events from 18:35:15 through 18:45:03 reported
+15,457 output tokens, including 9,452 reasoning tokens (children excluded;
+not billing or a causal latency measurement). Mechanical path/reference checks
+could have used compact parallel assignments. Semantic review also had
+independent owners. Coordinator assessment: repeated root reconsideration,
+inspection of settled material and oversized wrap-up made the root a bottleneck;
+the source revision alone does not repair that execution behavior.
