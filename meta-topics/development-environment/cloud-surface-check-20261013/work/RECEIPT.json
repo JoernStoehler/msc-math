@@ -1,0 +1,2431 @@
+{
+  "schema_version": 1,
+  "status": "draft_for_coordinator",
+  "surface": "ChatGPT Work Mode with Codex agent, functions orchestration, shell and connectors",
+  "model": "GPT-6 family per runtime role; precise deployed model ID/effort unobserved",
+  "source": {
+    "repository": "https://github.com/JoernStoehler/msc-math",
+    "branch": "codex/cloud-support-20261013-1532",
+    "expected_revision": "2c88aaa58b63acbafc0a81c7046508051f607875",
+    "observed_revision": "2c88aaa58b63acbafc0a81c7046508051f607875",
+    "revision_matches": true,
+    "access_mode": "fresh shallow Git checkout; direct curl pinned-file read and GitHub connector reads also succeeded",
+    "checkout": "/workspace/scratch/dc9f1a34b269/msc-surface-check",
+    "worktree_clean": true
+  },
+  "discovery": {
+    "interface": "ALL_TOOLS plus directly exposed tool namespaces",
+    "registry_entries": 318,
+    "additional_direct_entries": 11,
+    "deferred": "All current registry names/descriptions enumerated; only relevant schemas read. No separate tool_search exposed. Runtime tools may change; backend tools outside current registry unknown.",
+    "scope": "Current agent only, not account-wide or product-wide capability",
+    "source_correspondence": "unknown; no release-matched source comparison"
+  },
+  "timing": {
+    "timer_started_utc": "2026-10-13T16:19:29.523Z",
+    "package_freeze_utc": "2026-10-13T16:21:26.717Z",
+    "measured_seconds_to_package_freeze": 117.193,
+    "measurement_scope": "Starts within first orchestration call after initial local inventory; excludes initial response/read overhead and subsequent ZIP upload. Total hard cap 300 seconds."
+  },
+  "probes": [
+    {
+      "command": "git clone --depth 1 --single-branch --branch codex/cloud-support-20261013-1532 https://github.com/JoernStoehler/msc-math msc-surface-check",
+      "result": "exit 0; fresh checkout created"
+    },
+    {
+      "command": "git rev-parse HEAD; git branch --show-current; git status --short",
+      "result": "expected SHA; assigned branch; empty status output; exit 0"
+    },
+    {
+      "command": "curl --fail --location --max-time 12 <supplied direct runbook URL>",
+      "result": "exit 0; 3767 bytes read"
+    },
+    {
+      "tool": "mcp__codex_apps__github_fetch",
+      "result": "pinned runbook and AGENTS.md successful; encoded branch API URL rejected"
+    },
+    {
+      "tool": "mcp__codex_apps__github_fetch_file",
+      "result": "README.md and cloud-workflow.md at pinned ref successful"
+    },
+    {
+      "tool": "mcp__codex_apps__github_search_branches",
+      "result": "exact branch found; result has no commit SHA; pagination not exhausted"
+    },
+    {
+      "command": "rg --files instruction lookup; cat focused instructions; shutil.which selected shell programs",
+      "result": "successful; nested example AGENTS not applicable; no task-directory override found"
+    },
+    {
+      "command": "initial rg filename inventory outside assigned task root and ps process check",
+      "result": "successful but unnecessarily broad; unrelated names/process details omitted from handoff"
+    },
+    {
+      "command": "python3 zipfile report return packaging",
+      "result": "local archive creation/CRC/content validation required before carrier upload"
+    }
+  ],
+  "actual_errors": [
+    {
+      "tool": "mcp__codex_apps__github_fetch",
+      "input": "https://api.github.com/repos/JoernStoehler/msc-math/branches/codex%2Fcloud-support-20261013-1532",
+      "literal_error": "HTTPError: 400: GitHub Fetch URL contains an invalid repository path. (Response: None)",
+      "classification": "connector URL validation failure; unintended invalid-path attempt, not proof branch or GitHub access is absent"
+    }
+  ],
+  "instructions_read": [
+    "README.md",
+    "AGENTS.md",
+    "meta-topics/development-environment/cloud-surface-runbook.md",
+    "meta-topics/development-environment/cloud-workflow.md",
+    ".agents/skills/message-review/SKILL.md",
+    ".agents/skills/external-agent-communication/SKILL.md (output partially truncated)",
+    "meta-topics/project-management/coordination.md (output partially truncated)"
+  ],
+  "review": {
+    "owner": "coordinator",
+    "requested_marker": "/root/research_routes_review",
+    "status": "pending; user assigns independent review and human delivery to coordinator; no reviewer invoked or approval claimed"
+  },
+  "artifact": {
+    "file": "msc-handoff-return.zip",
+    "members": [
+      "REPORT.md",
+      "RECEIPT.json"
+    ],
+    "transfer_status": "local downloadable artifact prepared; persistent upload attempted after package freeze; see carrier response",
+    "receiver_receipt": "unverified"
+  },
+  "constraints": {
+    "no_packages_installed": true,
+    "no_publication": true,
+    "no_account_changes": true,
+    "no_additional_model_session": true,
+    "no_goal": true,
+    "no_scientific_producers": true
+  },
+  "remaining_unknowns": [
+    "Recipient download/extraction and coordinator review",
+    "Tool availability/permissions and reliability beyond safe source/report probes",
+    "Unexpanded irrelevant schemas and backend tools outside registry",
+    "Precise model ID, reasoning effort, cost and usage",
+    "Persistence of checkout/dependencies after inactivity",
+    "Release-matched source correspondence",
+    "Whole cloud workflow correctness or efficiency"
+  ],
+  "shell_programs": {
+    "bash": "/usr/bin/bash",
+    "git": "/usr/local/bin/git",
+    "curl": "/usr/bin/curl",
+    "rg": "/opt/codex/codex-path/rg",
+    "cat": "/usr/bin/cat",
+    "head": "/usr/bin/head",
+    "ps": "/usr/bin/ps",
+    "python3": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+  },
+  "tool_inventory": [
+    {
+      "name": "functions.exec",
+      "description": "JavaScript orchestration, ALL_TOOLS discovery, and result forwarding.",
+      "status": "exposed and used successfully",
+      "provider": "functions",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "functions.wait",
+      "description": "Resume a yielded orchestration cell.",
+      "status": "exposed but untested",
+      "provider": "functions",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "functions.request_user_input",
+      "description": "Optional short user-input questions.",
+      "status": "exposed but untested",
+      "provider": "functions",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "collaboration.spawn_agent",
+      "description": "Create a child agent.",
+      "status": "exposed but untested",
+      "provider": "collaboration",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "collaboration.followup_task",
+      "description": "Assign follow-up work to an existing child.",
+      "status": "exposed but untested",
+      "provider": "collaboration",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "collaboration.interrupt_agent",
+      "description": "Interrupt an existing agent.",
+      "status": "exposed but untested",
+      "provider": "collaboration",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "collaboration.list_agents",
+      "description": "List agents in the current tree.",
+      "status": "exposed but untested",
+      "provider": "collaboration",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "collaboration.send_message",
+      "description": "Send a message to an existing agent.",
+      "status": "exposed but untested",
+      "provider": "collaboration",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "collaboration.wait_agent",
+      "description": "Wait for agent updates.",
+      "status": "exposed but untested",
+      "provider": "collaboration",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "mcp__cua_repl.js",
+      "description": "Browser UI automation through a persistent JavaScript runtime; native computer APIs disabled in this interface.",
+      "status": "exposed but untested",
+      "provider": "mcp__cua_repl",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "mcp__cua_repl.js_reset",
+      "description": "Reset browser-control JavaScript bindings.",
+      "status": "exposed but untested",
+      "provider": "mcp__cua_repl",
+      "source_correspondence": "unknown; source not inspected"
+    },
+    {
+      "name": "apply_patch",
+      "provider": "functions nested core",
+      "description": "The `apply_patch` tool can be used to edit files.",
+      "status": "exposed and used successfully",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "exec_command",
+      "provider": "functions nested core",
+      "description": "Runs a command in a PTY, returning output or a session ID for ongoing interaction.",
+      "status": "exposed and used successfully",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "image_gen__imagegen",
+      "provider": "image_gen",
+      "description": "Tools in the image_gen namespace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "list_mcp_resource_templates",
+      "provider": "functions nested core",
+      "description": "Lists resource templates provided by MCP servers.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "list_mcp_resources",
+      "provider": "functions nested core",
+      "description": "Lists resources provided by MCP servers.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__automations_create",
+      "provider": "mcp__codex_apps__automations",
+      "description": "Scheduling clarification:",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__automations_discover_webhook_schema",
+      "provider": "mcp__codex_apps__automations",
+      "description": "Scheduling clarification:",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__automations_list",
+      "provider": "mcp__codex_apps__automations",
+      "description": "Scheduling clarification:",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__automations_list_event_sources",
+      "provider": "mcp__codex_apps__automations",
+      "description": "Scheduling clarification:",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__automations_peek",
+      "provider": "mcp__codex_apps__automations",
+      "description": "Scheduling clarification:",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__automations_run_now",
+      "provider": "mcp__codex_apps__automations",
+      "description": "Scheduling clarification:",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__automations_update",
+      "provider": "mcp__codex_apps__automations",
+      "description": "Scheduling clarification:",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_attach_automation_to_page",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Attach an existing hosted automation you own to a writable Page.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_create_canvas",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Recover an earlier canvas creation after an uncertain response.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_create_controller_automation",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Create a hosted automation managed by a Page's current auto-update controller.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_create_page",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Create a text Page.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_create_page_visualization",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Upload HTML (maximum 256 KiB UTF-8) to a Page's authorized Library container, Project Files, or personal Library and insert a standalone ![title](visualize:file_id) embed.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_create_presentation",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Recover an earlier presentation creation after an uncertain response.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_create_space",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Create a new Drive Space with a new root Page when enabled for your workspace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_create_spreadsheet",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Recover an earlier spreadsheet creation after an uncertain response.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_edit_page",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Edit an accessible Page.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_execute_artifact_code",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Edit an existing Spaces native artifact with an async JavaScript callback using the @oai/artifact-tool API.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_find_pages",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Find accessible Pages matching a query, optionally within one Space.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_get_artifact_execution_status",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Check whether an earlier execute_artifact_code request committed its changes.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_get_page_auto_update",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Read a Page's attached auto-update controller and whether you can enable or disable it.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_get_page_sharing",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Read a Page's sharing policy and your permissions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_get_sharing_availability",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Check whether sharing management is enabled for the active account.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_get_space",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Read an accessible Drive-backed Space and its canonical metadata.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_get_space_sharing",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Call get_sharing_availability first.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_inspect_artifact",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Inspect an existing Spaces native spreadsheet, presentation, or Canvas with an async JavaScript callback using the @oai/artifact-tool API.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_inspect_page_reference",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Inspect an exact Page file reference before reading when its format or size is uncertain.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_list_page_automations",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "List the canonical automations attached to an accessible Page, including its controller and workers.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_list_page_comments",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "List collaborator comments and thread/message IDs for an accessible Page.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_list_pages",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "List accessible Pages, optionally within a Space.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_list_spaces",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "List Drive-backed Spaces available to your authenticated ChatGPT account.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_manage_page_comment",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "For replies, prefer reply_page_comment.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_move_page",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Move an existing Page beneath another Page only when requested.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_patch_page",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Replace literal text in ordinary Markdown blocks.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_progress_update",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Show a short progress message at observed block IDs while working on an open Page.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_read_page",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Read an accessible Page's current content.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_read_page_changes",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Read Page changes as markdown_diff with block IDs, hashes, actors and optional comments.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_read_page_reference",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Read an exact project-file:, library-file:, or visualize: reference from an accessible Page.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_read_page_transcript",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Read the best available source transcript for a Page with namespace meeting_notes, including during recording.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_reply_page_comment",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Post a reply to an existing Page comment thread.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_run_page_auto_update",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Request a run of an enabled Page auto-update controller.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_search_sharing_recipients",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Call get_sharing_availability first.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_set_page_auto_update",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Enable or disable Page auto-update when necessary.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_trash_page",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Move a Page and its nested Pages to Trash.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_update_page_sharing",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Call get_sharing_availability first.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_update_space_sharing",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Call get_sharing_availability first.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_upload_artifact_images",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Upload images from this task's environment to an existing writable Spaces spreadsheet, presentation, or Canvas before inserting them.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__chatgpt_space_write_page_reference",
+      "provider": "mcp__codex_apps__chatgpt_space",
+      "description": "Upload a selected file (up to 10 MiB) to a writable Page's canonical Files destination.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_bootstrap",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_environments_list",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_environments_search",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_findings_close",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_findings_get",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_findings_list",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_github_access",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_github_get",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_github_repositories",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_github_search",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_usage_get",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_workflow_cancel",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_workflow_definition",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_workflow_get",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_workflow_launch",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_workflow_list",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_workflow_output",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_defense_factory_workflow_repositories",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__codex_security_cloud_open_defense_factory",
+      "provider": "mcp__codex_apps__codex_security_cloud",
+      "description": "Only use for an explicitly requested Codex Security Cloud task.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_add_comment_to_issue",
+      "provider": "mcp__codex_apps__github",
+      "description": "Create a top-level PR Conversation comment (Issue comment).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_add_issue_assignees",
+      "provider": "mcp__codex_apps__github",
+      "description": "Add assignees to an issue or pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_add_issue_labels",
+      "provider": "mcp__codex_apps__github",
+      "description": "Add labels to an issue or pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_add_reaction_to_issue_comment",
+      "provider": "mcp__codex_apps__github",
+      "description": "Add a reaction to an issue comment.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_add_reaction_to_pr",
+      "provider": "mcp__codex_apps__github",
+      "description": "Add a reaction to a GitHub pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_add_reaction_to_pr_review_comment",
+      "provider": "mcp__codex_apps__github",
+      "description": "Add a reaction to a pull request review comment.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_add_review_to_pr",
+      "provider": "mcp__codex_apps__github",
+      "description": "Add a review to a GitHub pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_compare_commits",
+      "provider": "mcp__codex_apps__github",
+      "description": "Compare two commits/refs and return per-file stats plus compare metadata.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_convert_pull_request_to_draft",
+      "provider": "mcp__codex_apps__github",
+      "description": "Convert an open pull request back to draft state.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_create_blob",
+      "provider": "mcp__codex_apps__github",
+      "description": "Create a blob in the repository and return its SHA.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_create_branch",
+      "provider": "mcp__codex_apps__github",
+      "description": "Create a new branch from exactly one existing commit SHA or base ref.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_create_commit",
+      "provider": "mcp__codex_apps__github",
+      "description": "Create a commit pointing to tree_sha with one or more parents.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_create_file",
+      "provider": "mcp__codex_apps__github",
+      "description": "Create a new UTF-8 text file through GitHub's contents API.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_create_issue",
+      "provider": "mcp__codex_apps__github",
+      "description": "Create a GitHub issue.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_create_pull_request",
+      "provider": "mcp__codex_apps__github",
+      "description": "Open a pull request in the repository.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_create_tree",
+      "provider": "mcp__codex_apps__github",
+      "description": "Create a tree object in the repository from the given elements.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_delete_file",
+      "provider": "mcp__codex_apps__github",
+      "description": "Delete a file through GitHub's contents API.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_dismiss_pull_request_review",
+      "provider": "mcp__codex_apps__github",
+      "description": "Dismiss a submitted pull request review.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_download_user_content",
+      "provider": "mcp__codex_apps__github",
+      "description": "Download a GitHub private user image attachment URL.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_download_workflow_artifact",
+      "provider": "mcp__codex_apps__github",
+      "description": "Download a GitHub Actions workflow artifact ZIP archive.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_enable_auto_merge",
+      "provider": "mcp__codex_apps__github",
+      "description": "Enable auto-merge for a pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch approved public GitHub repository resources and repository files.",
+      "status": "exposed and used successfully",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_blob",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch blob content by SHA from the given repository.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_commit",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch a commit with its metadata, diff, and canonical URL.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_commit_workflow_runs",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch GitHub Actions workflow runs associated with a commit SHA.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_file",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch file content by repository path, using the default branch when ref is omitted.",
+      "status": "exposed and used successfully",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_issue",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch a GitHub issue.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_issue_comments",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch comments for a GitHub issue across all pages.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_pr",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch a pull request with its diff, metadata, and optionally comments.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_pr_comments",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch a merged PR discussion timeline.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_pr_file_patch",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch the patch for one validated changed file in an accessible pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_pr_patch",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch the patch for a GitHub pull request across all changed-file pages.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_workflow_job_logs",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch decoded logs for a GitHub Actions workflow job.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_workflow_job_steps",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch steps for a GitHub Actions workflow job.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_workflow_run_artifacts",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch artifacts for a GitHub Actions workflow run.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_fetch_workflow_run_jobs",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch jobs for a GitHub Actions workflow run.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_commit_combined_status",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch the combined CI status and individual status checks for a commit.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_issue_comment_reactions",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch reactions for an issue comment.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_pr_diff",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch just the diff or patch text for a pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_pr_info",
+      "provider": "mcp__codex_apps__github",
+      "description": "Get metadata (title, description, refs, and status) for a pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_pr_reactions",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch reactions for a GitHub pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_pr_review_comment_reactions",
+      "provider": "mcp__codex_apps__github",
+      "description": "Fetch reactions for a pull request review comment.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_profile",
+      "provider": "mcp__codex_apps__github",
+      "description": "Retrieve the GitHub profile for the authenticated user.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_repo",
+      "provider": "mcp__codex_apps__github",
+      "description": "Retrieve metadata for a GitHub repository.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_repo_collaborator_permission",
+      "provider": "mcp__codex_apps__github",
+      "description": "Return the collaborator permission level for a user on a repository.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_user_login",
+      "provider": "mcp__codex_apps__github",
+      "description": "Return the GitHub login for the authenticated user.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_get_users_recent_prs_in_repo",
+      "provider": "mcp__codex_apps__github",
+      "description": "List the user's recent GitHub pull requests in a repository.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_label_pr",
+      "provider": "mcp__codex_apps__github",
+      "description": "Label a pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_installations",
+      "provider": "mcp__codex_apps__github",
+      "description": "List installations, optionally limited to managed setup account types.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_installed_accounts",
+      "provider": "mcp__codex_apps__github",
+      "description": "List all accounts that the user has installed our GitHub app on.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_pr_changed_filenames",
+      "provider": "mcp__codex_apps__github",
+      "description": "List changed filenames for a PR across all paginated file-list pages.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_pull_request_review_threads",
+      "provider": "mcp__codex_apps__github",
+      "description": "List inline review threads on a pull request, including resolved state.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_pull_request_reviews",
+      "provider": "mcp__codex_apps__github",
+      "description": "List review submissions on a pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_recent_issues",
+      "provider": "mcp__codex_apps__github",
+      "description": "Return the most recent GitHub issues the user can access.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_repositories",
+      "provider": "mcp__codex_apps__github",
+      "description": "List repositories accessible to the authenticated user.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_repositories_by_affiliation",
+      "provider": "mcp__codex_apps__github",
+      "description": "List repositories accessible to the authenticated user filtered by affiliation.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_repositories_by_installation",
+      "provider": "mcp__codex_apps__github",
+      "description": "List repositories accessible to the authenticated user.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_user_org_memberships",
+      "provider": "mcp__codex_apps__github",
+      "description": "List the authenticated user's organization memberships.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_list_user_orgs",
+      "provider": "mcp__codex_apps__github",
+      "description": "List organizations the authenticated user is a member of.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_lock_issue_conversation",
+      "provider": "mcp__codex_apps__github",
+      "description": "Lock an issue or pull request conversation.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_mark_pull_request_ready_for_review",
+      "provider": "mcp__codex_apps__github",
+      "description": "Mark a draft pull request as ready for review.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_merge_pull_request",
+      "provider": "mcp__codex_apps__github",
+      "description": "Merge a pull request immediately.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_remove_issue_assignees",
+      "provider": "mcp__codex_apps__github",
+      "description": "Remove assignees from an issue or pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_remove_issue_label",
+      "provider": "mcp__codex_apps__github",
+      "description": "Remove one label from an issue or pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_remove_pull_request_reviewers",
+      "provider": "mcp__codex_apps__github",
+      "description": "Remove individual or team reviewer requests from a pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_remove_reaction_from_issue_comment",
+      "provider": "mcp__codex_apps__github",
+      "description": "Remove a reaction from an issue comment.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_remove_reaction_from_pr",
+      "provider": "mcp__codex_apps__github",
+      "description": "Remove a reaction from a GitHub pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_remove_reaction_from_pr_review_comment",
+      "provider": "mcp__codex_apps__github",
+      "description": "Remove a reaction from a pull request review comment.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_reply_to_review_comment",
+      "provider": "mcp__codex_apps__github",
+      "description": "Reply to an inline review comment on a PR (Files changed thread).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_request_pull_request_reviewers",
+      "provider": "mcp__codex_apps__github",
+      "description": "Request individual or team reviewers on a pull request.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_rerun_failed_workflow_run_jobs",
+      "provider": "mcp__codex_apps__github",
+      "description": "Re-run all failed jobs in a GitHub Actions workflow run.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_rerun_workflow_job",
+      "provider": "mcp__codex_apps__github",
+      "description": "Re-run one GitHub Actions workflow job.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_resolve_review_thread",
+      "provider": "mcp__codex_apps__github",
+      "description": "Resolve an inline pull request review thread.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_search",
+      "provider": "mcp__codex_apps__github",
+      "description": "Search GitHub files and return matching excerpts when available.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_search_branches",
+      "provider": "mcp__codex_apps__github",
+      "description": "Search GitHub branches within a repository.",
+      "status": "exposed and used successfully",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_search_commits",
+      "provider": "mcp__codex_apps__github",
+      "description": "Search GitHub commits globally, by organization, or optionally by repository.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_search_installed_repositories_streaming",
+      "provider": "mcp__codex_apps__github",
+      "description": "Search for a repository (not a file) by name or description.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_search_installed_repositories_v2",
+      "provider": "mcp__codex_apps__github",
+      "description": "Search repositories within the user's installations using GitHub search.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_search_issues",
+      "provider": "mcp__codex_apps__github",
+      "description": "Search one repository or every repository the linked account can access.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_search_prs",
+      "provider": "mcp__codex_apps__github",
+      "description": "Search GitHub pull requests globally, by organization, or optionally by repository.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_search_repositories",
+      "provider": "mcp__codex_apps__github",
+      "description": "Search for a repository (not a file) by name or description.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_unlock_issue_conversation",
+      "provider": "mcp__codex_apps__github",
+      "description": "Unlock an issue or pull request conversation.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_unresolve_review_thread",
+      "provider": "mcp__codex_apps__github",
+      "description": "Mark an inline pull request review thread as unresolved.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_update_file",
+      "provider": "mcp__codex_apps__github",
+      "description": "Replace a UTF-8 text file through GitHub's contents API.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_update_issue",
+      "provider": "mcp__codex_apps__github",
+      "description": "Update a GitHub issue, including title/body, state, labels, assignees, or milestone.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_update_issue_comment",
+      "provider": "mcp__codex_apps__github",
+      "description": "Update a top-level PR Conversation comment (Issue comment).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_update_pull_request",
+      "provider": "mcp__codex_apps__github",
+      "description": "Update PR metadata, base branch, or open/closed state.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_update_ref",
+      "provider": "mcp__codex_apps__github",
+      "description": "Move a branch ref to a commit, rejecting a mismatched expected_sha.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__github_update_review_comment",
+      "provider": "mcp__codex_apps__github",
+      "description": "Update an inline review comment (or a reply) on a PR.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_apply_labels_to_emails",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_archive_emails",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_batch_modify_email",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_batch_read_email",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_batch_read_email_threads",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_bulk_label_matching_emails",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_create_draft",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_create_label",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_delete_emails",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_forward_emails",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_get_profile",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_list_drafts",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_list_labels",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_read_attachment",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_read_email",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_read_email_thread",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_search_email_ids",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_search_emails",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_send_draft",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_send_email",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__gmail_update_draft",
+      "provider": "mcp__codex_apps__gmail",
+      "description": "Gmail tools for label counts, searching and reading emails/threads/attachments, reviewing drafts, and explicit mail changes like send, draft, forward, archive, Trash, and label actions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_batch_read_event",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Read multiple Google Calendar events by ID.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_create_event",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Create a new Google Calendar event and return its details.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_delete_event",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Remove a Google Calendar event.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_fetch",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Get details for a single Google Calendar event.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_get_availability",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Look up busy windows on one or more calendars before scheduling a meeting.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_get_colors",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Return Google Calendar calendar and event color palettes.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_get_profile",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Return the current Google Calendar user's profile information.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_list_calendars",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "List calendars visible to the authenticated user.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_list_event_labels",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "List named event labels defined on the requested calendar.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_read_event",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Read a Google Calendar event by ID.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_respond_event",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Respond to a Google Calendar event invitation on behalf of the authenticated user.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_search",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Search Google Calendar events within a time window.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_search_events",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Look up Google Calendar events using various filters.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_set_event_label_silently",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Set only a primary-calendar event's private label without notifying attendees.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_calendar_update_event",
+      "provider": "mcp__codex_apps__google_calendar",
+      "description": "Update an existing Google Calendar event.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_contacts_get_profile",
+      "provider": "mcp__codex_apps__google_contacts",
+      "description": "Return the authenticated Google account profile.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_contacts_read_contact",
+      "provider": "mcp__codex_apps__google_contacts",
+      "description": "Read one contact by resource ID.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_contacts_search_contacts",
+      "provider": "mcp__codex_apps__google_contacts",
+      "description": "Search Google Contacts and directory entries matching ``query``.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_batch_update_document",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Apply raw Google Docs batchUpdate requests to document content, not Drive file metadata.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_batch_update_presentation",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Apply raw Google Slides batchUpdate requests to presentation content, not Drive file metadata.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_batch_update_spreadsheet",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Apply raw Google Sheets batchUpdate requests to spreadsheet content, not Drive file metadata.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_bulk_update_file_comments",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Create, reply to, and resolve Drive file comments in one bulk tool call.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_copy_file",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Copy a Drive file and return the URL of the new copy.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_create_file",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Create a native Google Doc, Sheet, or Slide file.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_create_folder",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Create a folder in Google Drive, optionally under a parent folder.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_create_presentation_from_template",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Copy a Google Slides template to create a new deck.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_delete_file",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Permanently delete a Drive file.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_duplicate_sheet_in_new_spreadsheet",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Duplicate an existing sheet into a newly created spreadsheet file.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_export_file",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Export a native Google Doc, Sheet, or Slide to the requested MIME type.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_fetch",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "With default options, return readable file text.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_fetch_file_revision",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Fetch text and revision-level author metadata from one Drive revision.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_find_document_text_range",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Find the index range of an exact text match in a Google Doc.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_document",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Get a native Google Doc, including tab content.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_document_comments",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Read user comments and replies on a Google Doc for additional review context.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_document_paragraph_range",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Resolve the paragraph range containing a given document index.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_document_tables",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Return table structures and cell text from a Google Doc.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_document_text",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Return text and indexes from a native Google Doc.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_file_comments",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Read comments and replies on an arbitrary Drive file.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_file_metadata",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Return metadata for a Google Drive file or folder without downloading contents.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_presentation",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Get a native Google Slides presentation.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_presentation_comments",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Read user comments and replies on a Google Slides deck for additional review context.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_presentation_outline",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Return a compact slide outline for stable slide targeting.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_presentation_tables",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Return Google Slides table structures with row and column coordinates preserved.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_presentation_text",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Get text from a native Google Slides presentation.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_profile",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Return the current Google Drive user's profile information.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_slide",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Get a single slide by object ID.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_slide_thumbnail",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Return slide metadata plus an inline thumbnail image for visual layout questions.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_spreadsheet_cells",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Read CellData from bounded native Google Sheets ranges.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_spreadsheet_comments",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Read user comments and replies on a Google Sheets spreadsheet for additional review context.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_spreadsheet_metadata",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Get metadata for a native Google Sheet.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_get_spreadsheet_range",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Read plain cell values from a native Google Sheet.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_import_document",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Upload a local DOC/DOCX/ODT/RTF/HTML/TXT file to Drive, defaulting to native Google Docs.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_import_presentation",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Upload a local PPT/PPTX/ODP file to Drive, defaulting to native Google Slides.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_import_spreadsheet",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Upload a spreadsheet file to Drive, defaulting to native Google Sheets conversion.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_list_drives",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "List shared drives accessible to the user.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_list_file_revisions",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "List version-history revisions for a Google Drive file.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_list_folder",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "List the items directly contained in a Google Drive folder.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_recent_documents",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Return the most recently modified documents accessible to the user.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_search",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Search Google Drive and return file or folder metadata.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_search_spreadsheet_rows",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Search a native Google Sheet's existing cell bounds.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_share_file",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Share a Drive file with a user or anyone at the company.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_update_file",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Update an existing Drive file.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__google_drive_upload_file",
+      "provider": "mcp__codex_apps__google_drive",
+      "description": "Upload a file reference as a new Google Drive file, not rename or move an existing file.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__hotline_get_local_hotline",
+      "provider": "mcp__codex_apps__hotline",
+      "description": "Look up local helpline information for the user based on country inferred from the conversation.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_create_library_file",
+      "provider": "mcp__codex_apps__library",
+      "description": "Create persistent ChatGPT Library files from local Codex files.",
+      "status": "exposed but untested at package freeze; upload result belongs to carrier receipt",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_finalize_uploads",
+      "provider": "mcp__codex_apps__library",
+      "description": "Finalize a batch of completed upload sessions into ChatGPT Library create or replace writes.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_find",
+      "provider": "mcp__codex_apps__library",
+      "description": "Find Library text.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_list",
+      "provider": "mcp__codex_apps__library",
+      "description": "List persistent ChatGPT Library file and folder metadata.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_manage_library",
+      "provider": "mcp__codex_apps__library",
+      "description": "Mutate persistent ChatGPT Library state.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_prepare_materialize",
+      "provider": "mcp__codex_apps__library",
+      "description": "Copy known Library files into the model workspace for programmatic use.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_prepare_uploads",
+      "provider": "mcp__codex_apps__library",
+      "description": "Prepare local files that will become new Library items or versions of existing items.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_read",
+      "provider": "mcp__codex_apps__library",
+      "description": "Read Library.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_replace_library_file",
+      "provider": "mcp__codex_apps__library",
+      "description": "Replace an existing ChatGPT Library file with a local Codex file.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_search",
+      "provider": "mcp__codex_apps__library",
+      "description": "Search Library.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__library_share",
+      "provider": "mcp__codex_apps__library",
+      "description": "Share one native ChatGPT Library file or folder you own or can edit with one eligible recipient by email or everyone in the current workspace, or set revoke=true to remove an existing share.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__personal_context_search",
+      "provider": "mcp__codex_apps__personal_context",
+      "description": "The personal_context tool retrieves user-specific personal context gathered from multiple underlying sources (e.g., linked accounts, prior interactions, and other personal context streams).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_adopt",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_create_pet",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_delete_pet",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_get_pet_download_link",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_list_pets",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_prepare_pet_upload",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_select_pet",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_share_pet",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_unshare_pet",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_update_pet",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__pets_validate_pet_spritesheet",
+      "provider": "mcp__codex_apps__pets",
+      "description": "Create and manage the user's animated companion pets inside ChatGPT Work mode.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_creator_create_plugin",
+      "provider": "mcp__codex_apps__plugin_creator",
+      "description": "Use create_plugin to create a PRIVATE plugin in the authenticated user's active workspace, or a personal plugin without an active workspace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_creator_get_owned_plugin_archive",
+      "provider": "mcp__codex_apps__plugin_creator",
+      "description": "Use create_plugin to create a PRIVATE plugin in the authenticated user's active workspace, or a personal plugin without an active workspace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_creator_get_plugin_files",
+      "provider": "mcp__codex_apps__plugin_creator",
+      "description": "Use create_plugin to create a PRIVATE plugin in the authenticated user's active workspace, or a personal plugin without an active workspace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_creator_get_plugin_metadata",
+      "provider": "mcp__codex_apps__plugin_creator",
+      "description": "Use create_plugin to create a PRIVATE plugin in the authenticated user's active workspace, or a personal plugin without an active workspace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_creator_list_owned_personal_plugins",
+      "provider": "mcp__codex_apps__plugin_creator",
+      "description": "Use create_plugin to create a PRIVATE plugin in the authenticated user's active workspace, or a personal plugin without an active workspace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_creator_list_plugin_releases",
+      "provider": "mcp__codex_apps__plugin_creator",
+      "description": "Use create_plugin to create a PRIVATE plugin in the authenticated user's active workspace, or a personal plugin without an active workspace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_creator_update_plugin",
+      "provider": "mcp__codex_apps__plugin_creator",
+      "description": "Use create_plugin to create a PRIVATE plugin in the authenticated user's active workspace, or a personal plugin without an active workspace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_management_get_app_permissions",
+      "provider": "mcp__codex_apps__plugin_management",
+      "description": "Manage plugins, settings, permissions, and connections.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_management_get_plugin_dependencies",
+      "provider": "mcp__codex_apps__plugin_management",
+      "description": "Manage plugins, settings, permissions, and connections.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_management_search_plugins",
+      "provider": "mcp__codex_apps__plugin_management",
+      "description": "Manage plugins, settings, permissions, and connections.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_management_suggest_plugins",
+      "provider": "mcp__codex_apps__plugin_management",
+      "description": "Manage plugins, settings, permissions, and connections.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_management_uninstall_app",
+      "provider": "mcp__codex_apps__plugin_management",
+      "description": "Manage plugins, settings, permissions, and connections.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__plugin_management_update_app_permissions",
+      "provider": "mcp__codex_apps__plugin_management",
+      "description": "Manage plugins, settings, permissions, and connections.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__safety_settings_get_family_info",
+      "provider": "mcp__codex_apps__safety_settings",
+      "description": "For ChatGPT Parental Controls (your child or teen's settings, features, Study Mode, quiet hours, family setup) and Trusted Contact (setup, status, privacy).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__safety_settings_get_parental_controls",
+      "provider": "mcp__codex_apps__safety_settings",
+      "description": "For ChatGPT Parental Controls (your child or teen's settings, features, Study Mode, quiet hours, family setup) and Trusted Contact (setup, status, privacy).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__safety_settings_get_trusted_contact",
+      "provider": "mcp__codex_apps__safety_settings",
+      "description": "For ChatGPT Parental Controls (your child or teen's settings, features, Study Mode, quiet hours, family setup) and Trusted Contact (setup, status, privacy).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__safety_settings_prepare_parental_control_update",
+      "provider": "mcp__codex_apps__safety_settings",
+      "description": "For ChatGPT Parental Controls (your child or teen's settings, features, Study Mode, quiet hours, family setup) and Trusted Contact (setup, status, privacy).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__safety_settings_update_parental_control",
+      "provider": "mcp__codex_apps__safety_settings",
+      "description": "For ChatGPT Parental Controls (your child or teen's settings, features, Study Mode, quiet hours, family setup) and Trusted Contact (setup, status, privacy).",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__search_service_web_run",
+      "provider": "mcp__codex_apps__search_service",
+      "description": "Tool for accessing the internet.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_add_custom_domain",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Add a custom domain to a published site.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_change_site_slug",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Change a site's public URL label.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_create_schedule",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Create and link a cloud task for a published Site when the user has requested scheduling.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_create_site",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Create a site only when .openai/hosting.json has no project_id.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_create_source_repository_write_credential",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Create a short-lived source repository write credential when the credential returned by create_site is missing or no longer usable.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_deploy_private_site_version",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Deploy a saved site version to production for a site created in the current flow whose owner-only access has not changed, or an existing site already known to be owner-private for the selected account.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_deploy_site_version",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Deploy a saved site version to production when the site is shared, public, cannot be verified as owner-only, or private deployment is unavailable.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_generate_siwc_bypass_token",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Generate a bearer token for identity-less API requests that bypasses a site's Sign in with ChatGPT gate.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_get_deployment_status",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Get the current status of a production deployment.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_get_environment_variables",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Get the production runtime environment variables for a site.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_get_site",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Get a site and its current access configuration, including external visitors.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_get_site_version",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Get a saved site version and its source provenance.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_get_site_worker_logs",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Read recent production Cloudflare Worker logs for a Site when diagnosing why a deployed website is crashing, returning an error, or failing after a click or tap.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_list_custom_domains",
+      "provider": "mcp__codex_apps__sites",
+      "description": "List custom domains attached to a site.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_list_site_versions",
+      "provider": "mcp__codex_apps__sites",
+      "description": "List saved site versions in newest-first order for history, deployment, or rollback selection.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_list_sites",
+      "provider": "mcp__codex_apps__sites",
+      "description": "List Sites you own in the selected account, including personal accounts.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_read_database_overview",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Inspect the user tables in a deployed site's live Cloudflare D1 database before reading rows.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_read_database_table_rows",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Read one bounded page of rows from a user table in a deployed site's live Cloudflare D1 database.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_refresh_custom_domain_status",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Refresh custom domain validation status for a site.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_remove_custom_domain",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Remove a custom domain from a site.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_save_site_version",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Save a version of the site's pushed source without deploying it.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_save_version_and_deploy_private",
+      "provider": "mcp__codex_apps__sites",
+      "description": "For a site created in the current flow whose owner-only access has not changed, or an existing site already known to be owner-private for the selected account, use this instead of save_site_version followed by deploy_private_site_version.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_update_environment_variables",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Update production runtime environment variables for a site.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_update_site_access",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Update who can visit a site only when the user asks to change access.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "mcp__codex_apps__sites_update_site_metadata",
+      "provider": "mcp__codex_apps__sites",
+      "description": "Update a site's display title.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "read_mcp_resource",
+      "provider": "functions nested core",
+      "description": "Read a specific resource from an MCP server given the server name and resource URI.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "skills__list",
+      "provider": "skills",
+      "description": "Tools in the skills namespace.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "skills__read",
+      "provider": "skills",
+      "description": "Tools in the skills namespace.",
+      "status": "exposed and used successfully",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "update_plan",
+      "provider": "functions nested core",
+      "description": "Updates the task plan.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "view_image",
+      "provider": "functions nested core",
+      "description": "View a local image file from the filesystem when visual inspection is needed.",
+      "status": "exposed but untested",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    },
+    {
+      "name": "write_stdin",
+      "provider": "functions nested core",
+      "description": "Writes characters to an existing unified exec session and returns recent output.",
+      "status": "exposed and used successfully",
+      "source_correspondence": "unknown; release-matched Codex source not inspected"
+    }
+  ]
+}

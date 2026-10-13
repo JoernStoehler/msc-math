@@ -1,5 +1,18 @@
 # Current handoff
 
+## 13 October: bounded cloud support window ended
+
+Source and received reference skill retained at `2c88aaa5`; broad cloud outcome
+and cumulative efficiency remain open. Two disclosed Git-source/report checks
+returned downloaded ZIPs; Claude omitted required reading. See
+[dated evidence](../development-environment/cloud-surface-check-20261013/README.md).
+Work chat archived; Claude offered no Archive and is retained. Browser cleanup hit a connection
+failure; remaining trial tabs may need manual closure.
+Temporary remote branch removed; local source retained, remote main unchanged.
+No further execution allowance or external skill deployment selected.
+The60-minute window ended16:32:21UTC; last quota observation15:55UTC1%used
+is historical, not current spending. No /goal was used.
+
 ## 13 October: cloud attempt failed; fresh session requested
 
 At 12:20:53 UTC Jörn rejected continuing this thread and requested a postmortem

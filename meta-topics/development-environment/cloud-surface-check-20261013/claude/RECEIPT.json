@@ -1,0 +1,49 @@
+{
+  "surface": "Claude (claude.ai chat with Claude Code-based harness)",
+  "model": "Sonnet 5.5 (claude-sonnet-5-5)",
+  "date": "2026-10-13",
+  "source_access_mode": "shell git clone over HTTPS (real checkout)",
+  "repository": "https://github.com/JoernStoehler/msc-math",
+  "branch": "codex/cloud-support-20261013-1532",
+  "expected_revision": "2c88aaa58b63acbafc0a81c7046508051f607875",
+  "observed_revision": "2c88aaa58b63acbafc0a81c7046508051f607875",
+  "revision_match": true,
+  "tool_discovery": {
+    "scope": "tool list as presented in session plus harness deferred-tool name list; ToolSearch not run",
+    "deferred_tools_expanded": false
+  },
+  "probes": [
+    {
+      "cmd": "git clone --branch <branch> <repo>",
+      "result": "ok, 6836 files"
+    },
+    {
+      "cmd": "git rev-parse HEAD",
+      "result": "2c88aaa58b63acbafc0a81c7046508051f607875"
+    },
+    {
+      "cmd": "cat runbook; head -c AGENTS.md, cloud-workflow.md, CLAUDE.md",
+      "result": "ok, partial reads of AGENTS.md and cloud-workflow.md"
+    },
+    {
+      "cmd": "command -v <selected programs>",
+      "result": "codex absent; git python3 zip unzip tar gh curl rg jq node npm cargo rustc claude gcloud bq gsutil present"
+    },
+    {
+      "cmd": "write REPORT.md, RECEIPT.json; zip",
+      "result": "see zip creation below"
+    }
+  ],
+  "actual_errors": [],
+  "elapsed_seconds_measured": 28,
+  "elapsed_note": "start to PATH probe only; report writing and zip time not measured",
+  "return_attempt": "SendUserFile of msc-handoff-return.zip; outcome reported in chat, not known when this receipt was written",
+  "review": "pending; none performed; /root/research_routes_review not accessed",
+  "remaining_unknowns": [
+    "SendUserFile delivery outcome",
+    "Rust/PDF tooling not tested",
+    "AGENTS.md and cloud-workflow.md only partly read",
+    "README.md not read",
+    "automatic AGENTS.md loading not demonstrated"
+  ]
+}

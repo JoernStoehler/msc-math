@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13T12:23:19Z",
+  "updated_at": "2026-10-13T16:32:00Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "13 October cloud-enablement attempt rejected by Jörn as a route to success. Small bootstrap repair accepted and merged into local main; unnecessary PR #41 closed. Actual cloud outcome, whole-route efficiency and task framing remain unresolved. This thread is ending with a bounded postmortem and fresh-session prompt, without an active native goal or further cloud execution.",
+  "summary": "Cloud source support and received reference skill retained. Two disclosed surface checks returned downloaded ZIPs at the expected Git revision; Claude required reading incomplete. Whole useful-work outcome and cumulative efficiency remain open. Execution window ended; no further launch or allowance selected. Work chat archived; remote temporary branch deleted. Browser cleanup failed with Debugger unattached; remaining tabs unconfirmed. Claude retained because Archive was unavailable.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2833,19 +2833,59 @@
       "project": "workflows",
       "kind": "task",
       "selection": "selected",
-      "status": "blocked",
+      "status": "parked",
       "owner": null,
-      "outcome": "Original cloud goal remains unfinished. Jörn rejected continuing this thread and requested a postmortem plus a new context/session. Efficiency must account for the whole route, failed/abandoned sessions, human effort and time to actual completion. Exact completion framing and map/territory objection remain unresolved.",
+      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified.",
       "depends_on": [],
-      "blocker": "Fresh ordinary conversation and current resource/task-framing decisions needed; this failed execution thread is not an active worker.",
-      "authorization": "Original 13 October goal remains selected; user rejected this thread as execution route and selected bounded postmortem/handoff. No new substantial execution allowance, cloud launch or broad publication.",
+      "blocker": null,
+      "authorization": "Fresh60minutes15:32:21–16:32:21UTC; original+4weekly quota points ceiling retained. User authorized temporary GitHub branch and cleanup, brief cloud checks and repo skill source adoption. No further execution allowance.",
       "sources": [
         "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
         "meta-topics/agent-workflow/cloud-continuation-prompt-20261013.txt",
-        "meta-topics/project-management/handoff.md"
+        "meta-topics/project-management/handoff.md",
+        "meta-topics/development-environment/cloud-surface-check-20261013/README.md"
       ],
-      "next_step": "Use fresh-session prompt; ask cheap present-day consequential questions, recover relevant known evidence independently, and agree current allowance/approach before substantial work. Do not activate /goal or impose a new exclusive cloud-target choice.",
-      "updated_at": "2026-10-13T12:23:19Z"
+      "next_step": "Inspect retained source and evidence with Jörn; select any further useful-work acceptance route and allowance in ordinary chat. No automatic continuation or external skill deployment.",
+      "updated_at": "2026-10-13T16:32:00Z"
+    },
+    {
+      "id": "agent-platform-reference-20261013",
+      "title": "Received platform-reference skill: assessment and maintained use",
+      "project": "workflows",
+      "kind": "task",
+      "selection": "selected",
+      "status": "done",
+      "owner": null,
+      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Fresh60minutes15:32:21–16:32:21UTC; original+4weekly quota points ceiling retained. User authorized temporary GitHub branch and cleanup, brief cloud checks and repo skill source adoption. No further execution allowance.",
+      "sources": [
+        "meta-topics/project-management/handoff.md",
+        "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
+        "meta-topics/development-environment/cloud-surface-check-20261013/README.md"
+      ],
+      "next_step": "Inspect retained source and evidence with Jörn; select any further useful-work acceptance route and allowance in ordinary chat. No automatic continuation or external skill deployment.",
+      "updated_at": "2026-10-13T16:32:00Z"
+    },
+    {
+      "id": "cloud-live-handoff-trial-20261013",
+      "title": "Authorized live source/instruction/artifact handoff",
+      "project": "workflows",
+      "selection": "selected",
+      "status": "done",
+      "owner": null,
+      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Fresh60minutes15:32:21–16:32:21UTC; original+4weekly quota points ceiling retained. User authorized temporary GitHub branch and cleanup, brief cloud checks and repo skill source adoption. No further execution allowance.",
+      "sources": [
+        "meta-topics/development-environment/cloud-workflow.md",
+        "scripts/cloud-handoff.py",
+        "meta-topics/development-environment/cloud-surface-check-20261013/README.md"
+      ],
+      "next_step": "Inspect retained source and evidence with Jörn; select any further useful-work acceptance route and allowance in ordinary chat. No automatic continuation or external skill deployment.",
+      "updated_at": "2026-10-13T16:32:00Z"
     }
   ],
   "decisions": [
@@ -3147,6 +3187,30 @@
       "value": "Jörn estimated 60% of the wall-time allowance consumed around 11:55 UTC; total allowance/remaining minutes were not established. Second goal snapshot before clearing: 48752 tokensUsed, 285 seconds. Not final total, billed spend or quota. At 12:20:53 user selected bounded postmortem and fresh context/session; no new execution extension granted. Native goal cleared and later read null.",
       "observed_at": "2026-10-13T12:23:19Z",
       "basis": "User turns and actual goal get/clear responses in thread 01a134f1-035a-76c0-8e90-402599520a38; bounded postmortem retains scope."
+    },
+    {
+      "label": "13 October fresh interactive cloud planning",
+      "value": "Current numerical quota and billed spending unknown. Current execution allowance unresolved; Jörn available for short exchanges. An hour-long check-in interval was discussed with a concern about wrong work consuming quota, not treated as launch approval.",
+      "observed_at": "2026-10-13T13:13:14Z",
+      "basis": "Direct user turns in thread 01a13542-e2b7-77f0-bee7-c4b57e29d5a5."
+    },
+    {
+      "label": "13 October cloud-restart account availability",
+      "value": "At13:36:08UTC account-wide Codex primary weekly quota used1%, remaining99%, duration10080min, resets20October08:00:07UTC. Secondary window not returned. Task-attributed quota and billed spending unknown. First20min/+2pp stage proposed, not approved. No reset used.",
+      "observed_at": "2026-10-13T13:36:08.077468+00:00",
+      "basis": "Fresh allowlisted scripts/codex-quota-status.py --json, account/rateLimits/read; not session attribution."
+    },
+    {
+      "label": "13 October stage approval and end observation",
+      "value": "Approved stage up to60min and +4weekly quota percentage points; root derived stop14:54:54UTC from13:54:54UTC reminder. Fresh account-wide primary weekly reading14:56:06UTC still1% used,99% remaining, same reset20October08:00:07UTC. Secondary unreturned; task attribution/billing unknown. Live trial permission arrived near the elapsed stop; +20min time clarification pending, original quota ceiling retained.",
+      "observed_at": "2026-10-13T14:56:06.065490+00:00",
+      "basis": "User budget approval and later authorization; clock tool and fresh scripts/codex-quota-status.py --json."
+    },
+    {
+      "label": "13 October renewed cloud-support window",
+      "value": "Fresh60-minute stage granted at15:32:21UTC; hard stop16:32:21UTC. Original +4weekly percentage-point ceiling retained (baseline1%, stop5%used in reset20October08:00:07UTC). Fresh15:34:15UTC primary weekly used1%,remaining99%; task attribution,billing and secondary window unknown. User available multitasking; no reset consumed.",
+      "observed_at": "2026-10-13T15:34:15.506866+00:00",
+      "basis": "Direct user new-window/availability messages and fresh scripts/codex-quota-status.py --json."
     }
   ],
   "links": [
