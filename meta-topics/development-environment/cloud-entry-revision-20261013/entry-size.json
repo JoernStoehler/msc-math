@@ -1,0 +1,11 @@
+{
+  "original": {
+    "bytes": 11860,
+    "lines": 188
+  },
+  "candidate": {
+    "bytes": 7131,
+    "lines": 98
+  },
+  "scope": "Measured source size, not behavioral quality or cloud readiness."
+}

@@ -31,6 +31,12 @@ Relative links retain their filesystem meaning. Absolute links within a
 document remain absolute web paths; the viewer does not rewrite document
 contents. The project dashboards use relative paths to their own checkout.
 
+For dashboard links, resolve `docs/dashboard/index.html` (coordination) or
+`docs/dashboard/thesis.html` (thesis) against the intended checkout's absolute
+root, then apply the URL rule above. Its data and source links must resolve
+within that same checkout; do not link a sibling worktree's page as this task's
+current state.
+
 ## Run locally
 
 ```bash

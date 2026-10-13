@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13T17:59:00Z",
+  "updated_at": "2026-10-13T18:45:02+00:00",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Cloud-support parent remains unfinished; narrow source/manual-reading/return check and reference-source changes retained. Root acknowledged premature component-level turn ending. Concrete repository-entry revision/review proposed across all intended surfaces; fresh30-minute continuation window pending Jörn after earlier cutoff.17:56UTC accountweekly2%used; whole-workflow outcome/cumulativeefficiency unverified.",
+  "summary": "Repository-entry revision delivered with independent preservation and surface-contract reviews. Root AGENTS98lines/7131bytes; conditional details retained at canonical owners. Dashboard source registrations/resource schema repaired and live HTTP current. Parent cloud-support goal remains open; proposed five-minute live Rust setup validation stage pending Jörn.18:37UTC accountweekly2%used; no cloud runtime/behavioral success claimed.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2834,20 +2834,21 @@
       "kind": "task",
       "selection": "selected",
       "status": "blocked",
-      "owner": "Codex thread 01a13542-e2b7-77f0-bee7-c4b57e29d5a5 (awaiting continuation decision)",
-      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified. Claude later supplied a received full-reading correction; counts matched pinned input, without validating whole-workflow success.",
+      "owner": "Codex thread 01a13542-e2b7-77f0-bee7-c4b57e29d5a5 (receiving continuation decision)",
+      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified. Claude later supplied a received full-reading correction; counts matched pinned input, without validating whole-workflow success. Entry revision delivered: root AGENTS now 98 lines / 7131 bytes with rule preservation and surface-contract reviews; owner procedures routed explicitly. Coordination serving/source record repair passed checks and live HTTP. No automatic-loading, Rust/PDF or behavioral benefit established.",
       "depends_on": [],
-      "blocker": "Earlier explicit60-minute window expired16:32:21UTC. Fresh30-minute source-entry revision/review window with prior5%account weeklyusedceiling proposed; Jörn approval pending. No new substantive stage started.",
-      "authorization": "Fresh60minutes15:32:21–16:32:21UTC; original+4weekly quota points ceiling retained. User authorized temporary GitHub branch and cleanup, brief cloud checks and repo skill source adoption. No further execution allowance.",
+      "blocker": "Selected entry-revision stage complete. Next five-minute live Rust setup validation stage and source/return route selection pending Jörn; no new cloud assignment launched.",
+      "authorization": "Jörn approved another30-minute source-entry revision/review window at18:17:54UTC, ending18:47:54UTC or5%accountweeklyused, whicheverfirst. Smallboundedparallelpreservation/independentreviewswithinthissameallowance; rootowns integrationandcleanup. UserhalfAFK: endturnwithrequiredquestiontoping. Noautomaticextension/cloudmodellaunch/reset.",
       "sources": [
         "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
         "meta-topics/agent-workflow/cloud-continuation-prompt-20261013.txt",
         "meta-topics/project-management/handoff.md",
         "meta-topics/development-environment/cloud-surface-check-20261013/README.md",
-        "meta-topics/development-environment/cloud-entry-revision-proposal-20261013.txt"
+        "meta-topics/development-environment/cloud-entry-revision-proposal-20261013.txt",
+        "meta-topics/development-environment/cloud-entry-revision-20261013/README.md"
       ],
-      "next_step": "Present exact cloud-entry-revision-proposal-20261013.txt in chat and wait for Jörn. On approval, revise root bootstrap with semantic preservation/owner routing and independent entry-contract review for all intended surfaces; ordinary ChatGPT source access is distinct from checkout/autoload.",
-      "updated_at": "2026-10-13T17:59:00Z"
+      "next_step": "Ask the actual final question about a five-minute locked Rust workspace check in an existing cloud session, retaining 5% weekly-used ceiling. If authorized, verify direct route or prepare a truthful human-relay task; retain source/version/log and stop at cap/blocker. Parent objective remains open.",
+      "updated_at": "2026-10-13T18:45:02+00:00"
     },
     {
       "id": "agent-platform-reference-20261013",
@@ -2890,6 +2891,27 @@
       ],
       "next_step": "Bounded return assessed and retained. No further cloud launch selected. Manual instruction loading/ZIP return demonstrated; full setup, scientific work and cumulative efficiency remain unverified.",
       "updated_at": "2026-10-13T17:38:00Z"
+    },
+    {
+      "id": "cloud-entry-bootstrap-20261013",
+      "title": "Repository bootstrap and conditional-owner revision",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "outcome": "AGENTS root reduced from 188 lines / 11860 bytes to 98 / 7131 with independently reviewed preservation and conditional-owner routing. Cloud source/review-return preflight clarified. Dashboard whitelist/resource-schema repair, focused HTTP checks and live state/source checks passed. No runtime cloud-loading or behavioral-quality claim.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Jörn approved source-entry revision/review 18:17:54–18:47:54 UTC, account weekly-used ceiling5%. Root integration/cleanup; two bounded native read-only reviewers. No additional cloud model launch, reset or external deployment.",
+      "sources": [
+        "AGENTS.md",
+        "meta-topics/development-environment/cloud-entry-revision-20261013/README.md",
+        "meta-topics/project-management/coordination.md",
+        "meta-topics/development-environment/cloud-workflow.md"
+      ],
+      "next_step": "Preserve delivered source and review evidence; cloud-support parent owns the next live-workload selection. Existing clients may need source reload.",
+      "updated_at": "2026-10-13T18:45:02+00:00"
     }
   ],
   "decisions": [
@@ -3215,6 +3237,13 @@
       "value": "Fresh60-minute stage granted at15:32:21UTC; hard stop16:32:21UTC. Original +4weekly percentage-point ceiling retained (baseline1%, stop5%used in reset20October08:00:07UTC). Fresh15:34:15UTC primary weekly used1%,remaining99%; task attribution,billing and secondary window unknown. User available multitasking; no reset consumed.",
       "observed_at": "2026-10-13T15:34:15.506866+00:00",
       "basis": "Direct user new-window/availability messages and fresh scripts/codex-quota-status.py --json."
+    },
+    {
+      "label": "13 October entry-revision window",
+      "value": "Source-entry revision/review complete within18:47:54UTC/5%used cap. Root integrates locally; reviewers released. New five-minute cloud Rust validation stage pending selection; no new cloud launch/reset.",
+      "updated_at": "2026-10-13T18:19:30Z",
+      "observed_at": "2026-10-13T18:37:23Z",
+      "basis": "Jörn approved 30-minute stage at18:17:54UTC. Quota helper18:37:23UTC reports primaryweekly2%used/98%remaining, reset20October08:00:08UTC; secondary unreturned. Shared quota, not task billing."
     }
   ],
   "links": [
@@ -3292,6 +3321,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-13T18:45:02+00:00",
+      "text": "Delivered reviewed root bootstrap revision and explicit conditional-owner/cloud preflight routes; repaired coordination serving/schema validation. Parent remains open with actual next-stage decision pending."
+    },
     {
       "at": "2026-10-13T12:23:19Z",
       "text": "Recorded rejected cloud attempt, authorized local-main repair integration and closed unnecessary PR #41. Preserved cumulative-efficiency and interaction corrections without claiming the cloud outcome or task framing settled; fresh-session handoff replaces current execution."

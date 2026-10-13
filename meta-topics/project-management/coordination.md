@@ -33,6 +33,17 @@ editing and preserve other sessions' entries. Split into per-topic files only
 when real editing conflicts or size warrant it; the present single registry
 keeps discovery and rendering simple.
 
+Within selected work, bounded subagents and independent sessions can help
+discovery, planning or execution. Respect the actual transport's authorization
+requirements. Each assignment names its owned output, scope, resource allowance,
+stop/review point and receiving owner. Review ownership does not imply
+implementing fixes: agree who integrates, commits and cleans up. The coordinator
+checks pending messages/reviews, owners and dependencies alongside available
+usage telemetry. Missing telemetry and quiet threads do not establish idle
+capacity; token counters alone do not measure coordination burden. A bounded
+periodic observer is an option within selected ongoing work, not standing
+monitoring; see [workload supervision](#workload-supervision).
+
 For each selected task record its outcome, status (`ready`, `running`, `blocked`,
 `done`, `parked`, or `dropped`), owner (or null), source paths, and dependencies
 by ID. A blocked task names the concrete reason. An owner names a current thread
@@ -210,6 +221,22 @@ Nested tool events can describe the same failure twice. Quiet telemetry can
 mean waiting, in-flight work or missing export. Review actual pending work and
 act on bottlenecks; never turn absent queue measurements into a zero backlog.
 
+## Thesis synthesis
+
+When thesis-source or planning work materially changes selected claims, scope
+decisions, uncertainty or route, the changing agent owns reconciliation of
+`docs/dashboard/thesis.html` against its sources. With several contributing
+agents, the integrating agent owns it. Keep the synthesis concise rather than
+an activity log; unrelated changes do not require refreshing this view.
+
+If a discrepancy cannot be reconciled promptly, mark the affected claim visibly
+stale and hand off its status. Before calling the view current, cross-check
+Jörn's required thesis areas and PASS threshold, the selected manuscript's
+promoted claims, current work and evidence owners. A promoted claim needs a
+thesis location, caveat and PDF/evidence check; show unresolved coverage gaps.
+Refresh `docs/dashboard/thesis-sources.json` only after that source reconciliation.
+Changed hashes are warnings, not proof of correctness or completeness.
+
 ## Knowledge and human views
 
 Reusable interpretation belongs in [../knowledge/](../../docs/knowledge/README.md),
@@ -217,12 +244,9 @@ with sources, limitations and triggers for rechecking. Proofs, implementations,
 data and review evidence retain their domain owners. Do not create a parallel
 `memories/` or `knowledge/` tree at the root.
 
-[../dashboard/thesis.html](../../docs/dashboard/thesis.html) is a human-facing scientific
-synthesis, separate from live work accounting. Before calling it current, check
-Jörn's scope and PASS threshold, selected manuscript claims, caveats, evidence
-owners and rendered PDF. Update its source baseline only after reconciliation;
-until then show the affected claim or view as stale. Changed source hashes are
-only a warning, not proof of correctness or completeness.
+[../dashboard/thesis.html](../../docs/dashboard/thesis.html) is a human-facing
+scientific synthesis, separate from live work accounting. Its reconciliation
+contract is [thesis synthesis](#thesis-synthesis) above.
 
 Historical stopped runs and replaced planning views are indexed at
 [../history/coordination-surface-migration/](../../docs/history/coordination-surface-migration/README.md).

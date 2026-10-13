@@ -1,0 +1,56 @@
+{
+  "observed_at": "2026-10-13T18:35:15.754374+00:00",
+  "scope": "Existing workstation dashboard HTTP, after same-service restart; not cloud-agent behavior.",
+  "paths": [
+    {
+      "path": "meta-topics/project-management/current.json",
+      "status": 200,
+      "bytes": 186681,
+      "matches_local_bytes": false,
+      "matches_local_json": true,
+      "serialization_note": "The state endpoint re-serializes JSON; semantic equality was asserted in the live check, so whitespace bytes differ."
+    },
+    {
+      "path": "AGENTS.md",
+      "status": 200,
+      "bytes": 7131,
+      "matches_local_bytes": true
+    },
+    {
+      "path": "meta-topics/development-environment/cloud-workflow.md",
+      "status": 200,
+      "bytes": 9488,
+      "matches_local_bytes": true
+    },
+    {
+      "path": "meta-topics/development-environment/cloud-surface-check-20261013/README.md",
+      "status": 200,
+      "bytes": 2230,
+      "matches_local_bytes": true
+    },
+    {
+      "path": "meta-topics/development-environment/cloud-surface-check-20261013/claude-reading-followup/assessment.md",
+      "status": 200,
+      "bytes": 2632,
+      "matches_local_bytes": true
+    },
+    {
+      "path": ".agents/skills/agent-platform-reference/references/instruction-design.md",
+      "status": 200,
+      "bytes": 7207,
+      "matches_local_bytes": true
+    },
+    {
+      "path": "meta-topics/development-environment/cloud-entry-revision-proposal-20261013.txt",
+      "status": 200,
+      "bytes": 1686,
+      "matches_local_bytes": true
+    },
+    {
+      "path": "scripts/cloud-handoff.py",
+      "status": 200,
+      "bytes": 18416,
+      "matches_local_bytes": true
+    }
+  ]
+}

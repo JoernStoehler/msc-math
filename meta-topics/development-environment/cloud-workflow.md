@@ -37,6 +37,15 @@ The helper does not classify private material or distinguish code from datasets.
 Ignored credentials, build outputs and machine caches are not selected by its
 working-tree inventory; tracked private material still needs deliberate omission.
 
+Before sending a selected packet, check the owners that its actual task triggers.
+For example, guidance/delegation design may need `AGENTS.md.commentary.md`;
+research needs its topic sources, and publishing evidence needs `docs/artifacts.md`.
+Include those sources or identify an accessible retrieval route. If a needed
+owner is unavailable, name the dependency and its receiving owner; defer the
+dependent work while continuing any independent authorized work. The example
+above does not supply that closure for every task, and this check does not
+require sending or reading the whole repository.
+
 Extract with `tar -xzf source.tar.gz` into a fresh directory. Follow the packaged
 `FIRST-STEPS.txt` and standalone verifier; tar preserves the relative skill links
 that an ordinary Python ZIP extraction would flatten. Verify after the archive
@@ -51,6 +60,11 @@ receiving owner. A narrow packet states its omissions. A shell agent can locate
 its checkout with Git; an extracted packet may have no `.git` directory.
 Start at `README.md` and read `AGENTS.md` explicitly when the destination does
 not demonstrate automatic instruction loading.
+
+Where shell or `rg` is unavailable, use the surface's source/search tools and
+report the inspected source, revision if verified, and access limits. Supplied
+excerpts or connector context are not proof of a checkout or exhaustive search.
+Product names alone do not determine whether shell/Git access exists.
 
 Repository skills live in `.agents/skills`. `.claude/skills` contains relative
 discovery links and `CLAUDE.md` imports the project instructions for Claude Code.
@@ -127,6 +141,13 @@ Establish the independent review route available to the recipient; if required
 review is unavailable, preserve the draft and its pending delivery instead of
 inventing an approval. A setup check does not accept a mathematical result or
 establish the broader efficiency of the cloud workflow.
+
+Name the review/integration owner and demonstrated return route in the assignment
+before work begins. A standalone chat without a suitable separate reviewer can
+return a clearly identified draft to its coordinator for review; supply that
+route explicitly rather than assuming a cloud path or a copied reviewer marker
+reaches the coordinator. The coordinator's receipt, assessment and prepared
+human delivery remain distinct obligations.
 
 Archive disposable trial conversations after receiving their artifacts. Close
 agent-created browser tabs and remove unselected scratch outputs when safe;

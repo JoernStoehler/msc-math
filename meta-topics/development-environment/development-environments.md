@@ -1,5 +1,27 @@
 # Working environments and access paths
 
+## Workstation locations
+
+Use the checkout assigned to the task. `git rev-parse --show-toplevel` and
+`git worktree list` identify its root and sibling checkouts; their files and
+uncommitted changes are separate. These locations belong to this workstation,
+not to a fresh cloud machine.
+
+| Location | Use |
+| --- | --- |
+| `/workspaces/msc-math/` | Main workstation checkout; other worktrees have separate changes. |
+| `~/.codex/worktrees/` | Codex-created worktrees; locate this project through Git. |
+| `/tmp/msc-math/<task>/<run>/` | Shared-across-worktrees working inputs, outputs and metadata for one run; distinct runs coexist. |
+| `~/.codex/artifacts/` | Files prepared for Jörn to view, review or download; use a project/task subdirectory. |
+| `.agents/skills/` in the checkout | Project-owned skill sources and helpers; installed plugins are separate. |
+| `~/.cache/msc-math/artifacts/` | Downloaded research snapshots; [artifact contracts](../../docs/artifacts.md) own cache overrides and links. |
+| `/data/msc-math/` | Candidate future bundle location; no relocation selected. |
+
+Creation does not promote working material into lasting state. Keep selected
+results with their source/evidence owner under the [artifact contract](../../docs/artifacts.md).
+The [file viewer](../../docs/file-viewer.md) owns human-facing file/dashboard URL
+construction; the [Codex reference](codex-reference.md) owns client recovery.
+
 ## Current intended setup
 
 For Codex TUI features, project/host configuration ownership and release-matched

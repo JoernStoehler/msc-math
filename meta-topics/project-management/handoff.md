@@ -1,16 +1,23 @@
 # Current handoff
 
-## 13 October: parent continuation decision pending
+## 13 October: entry revision delivered; next live stage pending
 
-Jörn challenged component-level turn closure. Root acknowledged that the broad
-cloud-support task remains unfinished and prepared a concrete
-[entry-revision proposal](../development-environment/cloud-entry-revision-proposal-20261013.txt).
-The proposed30-minute window retains the previous5%weekly-used ceiling; it is
-pending explicit approval after the earlier16:32UTC cutoff. No new substantive
-entry-revision stage has started. Current server observation17:56UTC: primary
-weekly2%used,98%remaining,reset20October08:00:07UTC; secondary unavailable,
-billing/task attribution unknown. No /goal or reset. Root retains the pending
-decision; do not infer approval from silence or this source record.
+Jörn approved the 30-minute source-entry revision/review stage at18:17:54UTC,
+ending18:47:54UTC or5%weeklyused. The reviewed source is delivered in this
+checkout; [entry revision](../development-environment/cloud-entry-revision-20261013/README.md)
+owns the exact diff, disposition, independent reviews and checks. Root keeps
+critical rules, with conditional procedures at existing owners. Workstation
+coordination serving/source/schema repair passed tests and live HTTP after
+same-service reload. No external source publication or new cloud assignment.
+
+The cloud-support parent remains unfinished. The actual pending question is
+whether to take a five-minute locked Rust workspace check in an existing cloud
+session and return versions/log, retaining the5%weekly-used ceiling. Direct
+browser availability must be checked; if unavailable, a prepared user relay is
+not an executed check. Root receives that decision; no automatic continuation.
+
+Server quota18:37:23UTC: primaryweekly2%used,98%remaining, reset20October08:00:08UTC;
+secondary unreturned, billing/task attribution unknown. No /goal or reset.
 
 ## 13 October: bounded cloud support window ended
 

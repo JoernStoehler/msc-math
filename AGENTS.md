@@ -1,188 +1,98 @@
-# Project guidance
+# msc-math: agent entry point
 
-## Purpose
+Jörn Stöhler's MSc thesis probes Viterbo's conjecture through computational
+symplectic geometry: proofs, Rust code, experiments, data and a reader-facing
+manuscript. Several related results need their own claims and caveats.
 
-This is Jörn Stöhler's MSc thesis repository on probing Viterbo's conjecture through
-computational symplectic geometry. It combines mathematical arguments,
-proof-by-computation, reusable Rust code, experiments, data and a reader-facing thesis.
-The project has several related results rather than one forced narrative.
+## Start from the task
 
-A finished thesis needs claims and caveats that match their mathematical and computational
-support, resolvable code/data/figure/certificate references, and truthful reproduction
-promises. Compilation and tests cover only parts of that outcome.
+Use the assigned checkout; sibling worktrees have separate changes. The
+workstation is the default, with cloud work only when explicitly assigned.
+Start at `README.md`, retrieve task-relevant context, and follow summaries to
+sources. Search claims, symbols, paths and synonyms with `rg`, or the available
+source/search tools when shell access is absent. State the inspected source and
+access limits; excerpts do not establish a checkout or exhaustive search. Avoid
+broad legacy/generated-tree tours.
 
-## Workstation locations
-
-The workstation is the default execution location. An explicitly assigned cloud
-session works in its own checkout; [cloud work and handoff](meta-topics/development-environment/cloud-workflow.md)
-owns delivery, setup and return. Use the checkout assigned to the task;
-`git rev-parse --show-toplevel` and `git worktree list` identify its root and sibling
-checkouts. These are workstation locations, not required paths on another machine.
-
-| Location | Use |
+| Work | Entry |
 | --- | --- |
-| `/workspaces/msc-math/` | Main checkout. Other worktrees have separate files and changes. |
-| `~/.codex/worktrees/` | Codex-created worktrees; locate this project's checkout through Git. |
-| `/tmp/msc-math/<task>/<run>/` | Shared-across-worktrees working inputs, outputs and metadata for one agent run; distinct runs can coexist. |
-| `~/.codex/artifacts/` | Files prepared for Jörn to view, review or download; use a project/task subdirectory. |
-| `.agents/skills/` in the checkout | Project-owned skills and their helpers. Installed plugin skills are separate. |
-| `~/.cache/msc-math/artifacts/` | Downloaded research snapshots; [docs/artifacts.md](docs/artifacts.md) owns cache overrides and data links. |
-| `/data/msc-math/` | Candidate future home for a project bundle to copy or mount; no relocation is selected yet. |
+| Research, proofs, code or experiments | `docs/research-guide.md` → `topics/` READMEs; shared interfaces remain in `crates/`, `formal/`, `experiments/` |
+| Manuscript and selected scope | `thesis/README.md`; `docs/project-facts.md` owns attributed Jörn-confirmed scope |
+| Setup or cloud work | `meta-topics/development-environment/installation-workflow.md` and `cloud-workflow.md` in that directory |
+| Coordination or continuation | `meta-topics/project-management/coordination.md` → `current.json`, `handoff.md`, `thesis-work.md` |
+| Placement, retention or publishing evidence | `meta-topics/repository-organization/README.md` and `docs/artifacts.md` |
+| Interpretation or historical evidence | `docs/knowledge/README.md`; `docs/history/` is provenance, not current assignments |
 
-Keep lasting project results with their source/evidence owner. Scratch notes and
-review files are not their only retained copy. See [environment docs](meta-topics/development-environment/development-environments.md)
-for host/sandbox setup and [Codex reference](meta-topics/development-environment/codex-reference.md) for Codex state and recovery.
+Project skills live in `.agents/skills/`; installed plugins are separate owners.
+Select skills from discovered descriptions. If the catalog is unavailable, read
+skill frontmatter for selection, then the relevant SKILL.md body; recipients
+without file access need the selected guidance supplied through their supported
+source route. `.agents/skills/README.md` owns provenance, not the catalog.
+Source delivery does not establish automatic instruction loading.
 
-Agent-created inputs, outputs and metadata start in task/run scratch space; creation
-does not promote them into the active worktree or shared long-term state. The
-current retention route uses ordinary Git for selected small datasets and fixtures
-and registered R2 snapshots for selected large data. Jörn's GitHub LFS experience
-had quota, speed and agent-workflow problems; alternative storage designs and the
-best transient location have not been compared. See
-[artifact contracts](docs/artifacts.md) before publishing or replacing evidence.
+## Quick commands
 
-File links for Jörn: `/absolute/path` → `https://joern-pc.tailc5e761.ts.net/files/absolute/path` (expand `~`; URL-encode each path segment).
-
-For dashboard links, resolve `docs/dashboard/index.html` (coordination) or
-`docs/dashboard/thesis.html` (thesis) against the intended checkout's absolute
-root, then apply that URL rule. The page's data and source
-links must resolve within the same checkout.
-
-## Find the relevant source
-
-Start from the task, then retrieve only the context it needs:
-
-- `README.md` is the entry point; [repository organization](meta-topics/repository-organization/README.md)
-  owns placement and cross-domain contracts.
-- `thesis/README.md` identifies the active reader-facing source and build. `topics/`
-  owns scientific accounts and their coherent proof, code, producer and evidence
-  packages. Conventional `crates/`, `formal/` and `experiments/` interfaces remain
-  where their build or shared consumers require them; topic READMEs identify sources.
-- `meta-topics/project-management/coordination.md` explains the agent-facing coordination store:
-  `current.json` owns selected assignments/resources, `thesis-work.md` owns the
-  detailed thesis backlog, and `handoff.md` owns continuation constraints.
-  Read that account when coordinating or handing off work. `docs/project-facts.md`
-  owns attributed Jörn-confirmed scope; `docs/knowledge/README.md` routes reusable
-  interpretation. `docs/history/` owns historical evidence, not current assignments.
-- [Installation workflow](meta-topics/development-environment/installation-workflow.md) owns tool setup. Topic READMEs own reproduction commands and local caveats;
-  [Literature](topics/literature/README.md) owns source collection and search;
-  [thesis submission](meta-topics/thesis-submission/README.md) owns release/admin.
-- [The Codex reference](meta-topics/development-environment/codex-reference.md) routes configuration, daemon restart/thread recovery,
-  subagent persistence and official documentation or release-matched source lookup.
-
-Search claims, symbols, artifact paths and likely synonyms with `rg` before concluding that
-work is absent. Follow summaries to their sources. Legacy and generated trees are poor
-broad orientation surfaces unless a task specifically needs them.
-
-When assignments, owners, dependencies, decisions or resource constraints materially
-change, update `meta-topics/project-management/current.json`. Jörn's browser view at
-`docs/dashboard/index.html` renders that state. Timestamp observations and show unknown
-quota/spending as unknown; old panes, deadlines and balances are not live state.
-The coordinating agent integrates updates from its workers; preserve other sessions' work.
-
-When thesis-source or planning work materially changes selected claims, scope decisions,
-uncertainty or route, reconcile `docs/dashboard/thesis.html` against its sources. If a
-discrepancy cannot be reconciled promptly, mark the affected claim visibly stale and hand
-off its status. The agent making the material change owns reconciliation; when several
-agents contribute, the integrating agent owns it. Keep the synthesis concise, not an
-activity log, and do not refresh it for unrelated changes.
-
-Before calling that view current, cross-check Jörn's required thesis areas and PASS threshold,
-the selected manuscript's promoted claims, current work and evidence owners. A promoted claim
-needs a thesis location, caveat and PDF/evidence check; show any unresolved coverage gap.
-Refresh `docs/dashboard/thesis-sources.json` only after that source reconciliation.
-
-## Collaboration friction
-
-Detailed workflow friction is owned by `meta-topics/project-management/friction/README.md` and its individual
-records; the linked Pages overview is the concise human view. When relevant authorized
-work changes material friction or its disposition, update the record and reconcile that
-Page without waiting for Jörn to request it. Keep diagnostics and handoffs in the repository.
-If a surface cannot be updated, report its stale or unsaved state in the handoff. This does
-not restart paused thesis work or establish ongoing monitoring.
-## Collaboration and planning
-
-Before sending a prepared user-visible message, use the
-[message-review workflow](.agents/skills/message-review/SKILL.md) to obtain a separate
-subagent's approval of the exact complete text, including `[review: REVIEWER]`.
-Substantive changes require renewed review. Direct synchronous conversation and
-private native agent messages are exempt; the skill owns the boundaries and procedure.
-If required review is unavailable, keep prepared delivery pending. New exact review
-packets belong in `/tmp/msc-math/message-reviews/`; lasting findings belong with
-their scientific or meta-topic owner, not in the disposable packet.
-
-Keep the Codex+user workflow moving: during unfinished authorized work, treat
-brief acknowledgments such as "thx" as acknowledgment, not a stop, pause or scope
-change. Continue the work rather than ending with a courtesy-only reply and
-requiring Jörn to restart it. Finish when the requested work is complete, Jörn
-explicitly stops it, or a required decision/input is clearly presented as pending;
-do not invent additional work after completion.
-
-Within selected work, use bounded subagent assignments and independent sessions
-when they help discovery, planning or execution. Respect the actual tool's
-authorization requirements. A delegation names its owned output, scope,
-resource allowance, stopping/review point and receiving owner. Review ownership
-does not imply implementing fixes; agree who integrates, commits and cleans up.
-
-The coordinator owns workload supervision: check pending messages/reviews,
-ownership and dependencies alongside available usage telemetry. During ongoing
-multi-agent work, delegate a bounded periodic watch when useful; do not leave
-Jörn to discover overload or abandoned work. The coordination README documents
-the local checker. Missing telemetry and quiet threads do not establish idle
-capacity; token counters alone do not measure coordination burden.
-
-Obtain Jörn's explicit approval before large budget expenditure. Fund useful
-preliminary exploration and comparison of approaches within the authorized
-scope; present a concrete plan, alternatives, expected outcomes, uncertainty and
-resource expectations before committing to substantial execution. Thresholds
-are not yet agreed: do not invent a dollar/token allowance or a gate for every
-small task. Splitting work across agents, sessions or stages does not enlarge
-the approved scope or budget.
-
-The async question tool is disabled by project instruction pending verified
-delivery: on 30 September it reported accepted submissions that Jörn says he
-never received. Put questions directly in chat. A submission acknowledgment is
-not evidence of user receipt; do not silently wait behind an undelivered
-question. For a required approval, keep the dependent package waiting through
-ownership changes and record the decision in coordination. Silence, automatic
-action approval and elapsed time are not Jörn's plan approval. An optional
-clarification does not create a new approval gate; preserve its stated fallback.
-
-Read [the collaboration commentary](AGENTS.md.commentary.md) when choosing an
-experiment/research programme, preparing a spending proposal, or designing
-delegation and human review. It owns curated rationale and open choices, not a
-second task list. [The knowledge index](docs/knowledge/README.md) routes further
-process and domain knowledge by the decision being made.
-
-## Respect evidence boundaries
-
-```text
-paper -> formal statement/proof -> implementation/experiment -> thesis prose
-```
-
-Check every relevant arrow. A paper note is not a project result; a formal argument is not
-automatically in the thesis; a test or finite experiment does not prove an unrestricted
-theorem; exact arithmetic does not supply a missing implication; and a LaTeX build does not
-validate mathematics or prose. State conclusions at the strength their sources support.
-
-Generated evidence is owned by its producer. Commands using `--full`, many `cargo run`
-producers and certificate workflows can be expensive or replace retained evidence; inspect
-their inputs and write effects before rerunning them.
-
-## Commands
-
-Run from the repository root unless a local README says otherwise. Choose the relevant entry
-point rather than treating this as one test suite:
+When a checkout and shell are available, run from the repository root unless a
+local README says otherwise. Choose relevant checks; this is not one mandatory
+test suite.
 
 ```bash
-scripts/repo-status-summary.sh  # whether dated checks still apply
-cargo fmt --all -- --check      # Rust formatting
-cargo check --workspace         # root-workspace compile smoke
-uv run path/to/script.py        # ordinary Python with inline dependencies
-sh thesis/build.sh               # selected thesis
-(cd formal && latexmk)           # proof-development document
+git rev-parse --show-toplevel    # this checkout
+git worktree list               # sibling checkouts
+rg --files topics crates thesis # source entry points
+rg -n '^description:' .agents/skills/*/SKILL.md # if skill catalog is absent
+scripts/repo-status-summary.sh  # applicability of dated checks
+cargo fmt --all -- --check
+cargo check --workspace --locked
+uv run path/to/script.py        # ordinary Python + inline dependencies
+sh thesis/build.sh              # selected thesis → thesis/build/main.pdf
+(cd formal && latexmk)          # proof-development build
 ```
 
-`docs/algorithm-testing.md` maps focused Rust checks to stronger confidence layers. Local
-READMEs own theorem certificates, Sage commands, full producers and comparison contracts.
-Sage uses its separate environment.
+`docs/algorithm-testing.md` owns focused Rust check scope. Topic/local READMEs
+own reproduction, Sage, certificates and producer comparisons. Sage has a
+separate environment; setup installs only the selected workload's tools.
+
+## Repository-wide rules
+
+- Match conclusions to support across `paper → proof → implementation/experiment
+  → thesis prose`. Tests and finite experiments do not prove unrestricted
+  theorems; exact arithmetic does not fill missing implications; LaTeX builds
+  do not validate mathematics or prose. Finished thesis claims need matching
+  caveats, resolvable evidence references and truthful reproduction promises.
+- New inputs, outputs and metadata start in `/tmp/msc-math/<task>/<run>/` until
+  deliberately retained. Keep lasting results with their source/evidence owner.
+  Inspect inputs and write effects before expensive/replacing producers
+  (`--full`, many `cargo run` commands, certificate workflows).
+- Before prepared user-visible delivery, use `.agents/skills/message-review/SKILL.md`
+  for a separate subagent's approval of the exact complete text, including
+  `[review: REVIEWER]`. Substantive changes need renewed review. Direct synchronous
+  conversation and private native messages are exempt; the skill owns the boundary.
+  If review is unavailable, keep delivery pending. Packets go in
+  `/tmp/msc-math/message-reviews/`; lasting findings stay with their domain owner.
+- During unfinished authorized work, “thx” and similar acknowledgments do not
+  stop, pause or change scope. Continue until the intended work is complete,
+  Jörn stops it, or required input is explicitly pending. Component completion
+  does not close the parent objective; do not invent work after completion.
+- Before large expenditure, present the concrete plan, alternatives, outcomes,
+  uncertainty and resources, and get Jörn's explicit approval. Fund useful bounded
+  preliminary exploration within scope. Do not invent thresholds or gates for
+  small authorized tasks. Splitting work never enlarges scope or budget.
+- The async question tool is disabled pending verified delivery. Ask directly in
+  chat; end the turn with a self-contained required question to notify Jörn.
+  Silence, elapsed time, submission acknowledgments and automatic action approval
+  do not answer it. Preserve pending approval across ownership changes; optional
+  clarification does not create a gate and keeps its stated fallback.
+
+## Conditional obligations
+
+Read the named owner when its trigger applies:
+
+| Trigger | Obligation and owner |
+| --- | --- |
+| Delegation, human-review design, spending proposal or research/experiment selection | Read `AGENTS.md.commentary.md`. Delegate when useful within selected work. When delegating, name owned output, scope, resources, stop/review point and receiving owner; agree integration, commit and cleanup ownership. The coordinator supervises messages/reviews, dependencies and available telemetry. Details: `meta-topics/project-management/coordination.md`. |
+| Material assignment, owner, dependency, decision or resource change | Update `meta-topics/project-management/current.json`, timestamp observations and preserve other sessions' work. Unknown quota/spending stays unknown; old balances/deadlines are not live state. |
+| Material thesis-source/planning change to selected claims, scope, uncertainty or route | Reconcile `docs/dashboard/thesis.html` under `meta-topics/project-management/coordination.md#thesis-synthesis`. Mark unresolved discrepancies visibly stale and hand them off; refresh `thesis-sources.json` only after source/PDF/PASS reconciliation. Avoid unrelated refreshes. |
+| Material collaboration-friction change | Follow `meta-topics/project-management/friction/README.md`: update the record and linked Pages overview; report stale/unsaved status in handoff. This selects no monitoring or resumed thesis work. |
+| Host paths, file/dashboard links, caches or client recovery | `meta-topics/development-environment/development-environments.md#workstation-locations`, `docs/file-viewer.md`, `meta-topics/development-environment/codex-reference.md`. Workstation paths are not prerequisites elsewhere. |
+| Literature collection or release/admin | `topics/literature/README.md` or `meta-topics/thesis-submission/README.md`. |
