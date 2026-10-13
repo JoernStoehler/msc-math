@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13T17:38:00Z",
+  "updated_at": "2026-10-13T17:59:00Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Cloud source support and received reference skill retained. Two disclosed surface checks returned downloaded ZIPs at the expected Git revision; Claude required reading incomplete. Whole useful-work outcome and cumulative efficiency remain open. Execution window ended; no further launch or allowance selected. Work chat archived; remote temporary branch deleted. Browser cleanup failed with Debugger unattached; remaining tabs unconfirmed. Claude retained because Archive was unavailable. Claude third-version correction received through Taildrop and assessed at17:38UTC; reported full entry reads have matching pinned-input counts. No new cloud assignment.",
+  "summary": "Cloud-support parent remains unfinished; narrow source/manual-reading/return check and reference-source changes retained. Root acknowledged premature component-level turn ending. Concrete repository-entry revision/review proposed across all intended surfaces; fresh30-minute continuation window pending Jörn after earlier cutoff.17:56UTC accountweekly2%used; whole-workflow outcome/cumulativeefficiency unverified.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2833,20 +2833,21 @@
       "project": "workflows",
       "kind": "task",
       "selection": "selected",
-      "status": "parked",
-      "owner": null,
+      "status": "blocked",
+      "owner": "Codex thread 01a13542-e2b7-77f0-bee7-c4b57e29d5a5 (awaiting continuation decision)",
       "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified. Claude later supplied a received full-reading correction; counts matched pinned input, without validating whole-workflow success.",
       "depends_on": [],
-      "blocker": null,
+      "blocker": "Earlier explicit60-minute window expired16:32:21UTC. Fresh30-minute source-entry revision/review window with prior5%account weeklyusedceiling proposed; Jörn approval pending. No new substantive stage started.",
       "authorization": "Fresh60minutes15:32:21–16:32:21UTC; original+4weekly quota points ceiling retained. User authorized temporary GitHub branch and cleanup, brief cloud checks and repo skill source adoption. No further execution allowance.",
       "sources": [
         "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
         "meta-topics/agent-workflow/cloud-continuation-prompt-20261013.txt",
         "meta-topics/project-management/handoff.md",
-        "meta-topics/development-environment/cloud-surface-check-20261013/README.md"
+        "meta-topics/development-environment/cloud-surface-check-20261013/README.md",
+        "meta-topics/development-environment/cloud-entry-revision-proposal-20261013.txt"
       ],
-      "next_step": "Inspect retained source and evidence with Jörn; select any further useful-work acceptance route and allowance in ordinary chat. No automatic continuation or external skill deployment.",
-      "updated_at": "2026-10-13T17:38:00Z"
+      "next_step": "Present exact cloud-entry-revision-proposal-20261013.txt in chat and wait for Jörn. On approval, revise root bootstrap with semantic preservation/owner routing and independent entry-contract review for all intended surfaces; ordinary ChatGPT source access is distinct from checkout/autoload.",
+      "updated_at": "2026-10-13T17:59:00Z"
     },
     {
       "id": "agent-platform-reference-20261013",
@@ -3181,7 +3182,7 @@
     },
     {
       "label": "13 October cloud preparation",
-      "value": "Bounded first repair and draft PR preparation only. No numeric spending allowance or live cloud execution selected; current quota and billed spend unknown. Earlier dated grants remain historical. Goal completion snapshot: 141715 tokensUsed and 785 seconds; no tokenBudget. This is the goal tool counter, not billed cost or account-wide quota consumption.",
+      "value": "Bounded first repair and draft PR preparation only. No numeric spending allowance or live cloud execution selected; current quota and billed spend unknown. Earlier dated grants remain historical. Goal completion snapshot: 141715 tokensUsed and 785 seconds; no tokenBudget. This is the goal tool counter, not billed cost or account-wide quota consumption. Fresh account server observation17:56:31UTC: primaryweeklyused2%,remaining98%,reset20October08:00:07UTC; secondaryunreturned. Shared account quota, not task-attributed/billed spend. Proposednew30minsource-stage awaiting explicit answer; no reset.",
       "observed_at": "2026-10-13T11:22:30Z",
       "basis": "Current user goal and completed local source/command-stub work; no fresh account telemetry queried. Completion goal-tool structured result."
     },

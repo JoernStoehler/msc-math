@@ -1,5 +1,17 @@
 # Current handoff
 
+## 13 October: parent continuation decision pending
+
+Jörn challenged component-level turn closure. Root acknowledged that the broad
+cloud-support task remains unfinished and prepared a concrete
+[entry-revision proposal](../development-environment/cloud-entry-revision-proposal-20261013.txt).
+The proposed30-minute window retains the previous5%weekly-used ceiling; it is
+pending explicit approval after the earlier16:32UTC cutoff. No new substantive
+entry-revision stage has started. Current server observation17:56UTC: primary
+weekly2%used,98%remaining,reset20October08:00:07UTC; secondary unavailable,
+billing/task attribution unknown. No /goal or reset. Root retains the pending
+decision; do not infer approval from silence or this source record.
+
 ## 13 October: bounded cloud support window ended
 
 Source and received reference skill retained at `2c88aaa5`; broad cloud outcome
