@@ -7,7 +7,7 @@ The native browser inventory returned no connected browsers, so no cloud model
 assignment or compile command was submitted. The prepared fallback and exact
 retained Claude chat are in
 [the validation record](../development-environment/cloud-rust-validation-20261013/README.md).
-Jörn's relay and log ZIP are pending; root owns receipt, assessment and retention.
+Jörn's relay and concise text return are pending; root owns receipt, assessment and retention. The 19:09 UTC request supersedes ZIP attachments: relay is 389 characters, return at most 900 characters.
 Missing checkout/tools are bounded outcomes. No new cloud session or install,
 external source publication or reset is selected. Account observation 18:59:44
 UTC: primary weekly 2% used / 98% remaining; original 5% ceiling remains.

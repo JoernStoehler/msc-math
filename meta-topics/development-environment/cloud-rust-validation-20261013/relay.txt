@@ -1,10 +1,1 @@
-From: workstation Codex coordinator, thread 01a13542-e2b7-77f0-bee7-c4b57e29d5a5.
-To: this retained Claude cloud session.
-
-Jörn approved a five-minute Rust setup check. Use the existing full msc-math checkout from the earlier clone/return trial. Do not choose a research programme or run scientific producers.
-
-Locate that checkout; report its absolute root, git HEAD and git status. If it no longer exists, report that and stop. Do not create a new clone or fetch the removed temporary branch. The previous trial input was 2c88aaa58b63acbafc0a81c7046508051f607875; report any discrepancy rather than assuming its identity. Explicitly read crates/README.md and meta-topics/development-environment/installation-workflow.md for the Rust prerequisites only.
-
-Write outputs under a fresh /tmp/msc-math/cloud-rust-validation/<run>/ directory. Record UTC start/end, OS, rustc --version, cargo --version, the exact command and exit status. Run cargo check --workspace --locked from the repository root with a four-minute subprocess limit. Use existing tools; if cargo/rustc are unavailable, report the missing prerequisite and stop. Preserve the complete stdout/stderr log, including failures or timeout. Do not edit source/lockfiles, install the PDF stack, run the full bootstrap, or update coordination files.
-
-Return in this chat a brief result plus one downloadable ZIP containing the log and metadata. Jörn will relay that ZIP to the workstation Codex thread named above, which owns review, retention and final delivery. Treat this as a pending draft for coordinator review; do not copy a reviewer approval marker. A passing compile check establishes this dated tool/dependency setup only, not mathematical correctness or the whole cloud objective. Stop within five minutes.
+Use the existing msc-math checkout. Within 5 minutes, record git HEAD and rustc/cargo versions, then run cargo check --workspace --locked with a 4-minute command timeout. If checkout or tools are absent, stop. Make no source edits or installations. Reply here in at most 900 characters: commit, versions, exit code or timeout, elapsed time, and first useful error. No files or attachments.
