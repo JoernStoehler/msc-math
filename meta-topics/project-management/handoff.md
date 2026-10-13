@@ -1,5 +1,29 @@
 # Current handoff
 
+## 13 October: cloud attempt failed; fresh session requested
+
+At 12:20:53 UTC Jörn rejected continuing this thread and requested a postmortem
+plus a fresh context/session. The [bounded postmortem](../agent-workflow/cloud-session-failure-20261013.md)
+retains actual failures and uncertainty; the [new-session prompt](../agent-workflow/cloud-continuation-prompt-20261013.txt)
+is a starting point, not an accepted implementation plan. The cloud objective
+and whole-route efficiency remain unresolved. Do not inherit the earlier
+small-repair completion as achievement of that objective, or treat the last
+paraphrase/map-territory exchange as an accepted completion criterion.
+
+Jörn accepted the small setup repair from its description and authorized a
+local-main merge. Main fast-forwarded to `f028d202`; unnecessary public draft
+PR #41 is closed, while its branch remains. Later local source history remains
+unpublished. No actual cloud run was performed. The native goal was cleared
+through the app-server and later native get returned null. Jörn reported goal
+mode interfered with question pings; after the eventual turn end he confirmed
+a ping but found the question missing from that final message. Exact UI cause
+is unestablished. Use ordinary conversation and end with the actual question
+when a reply is needed. Current budget and approach must be developed cheaply
+with Jörn; no extension or substantial new execution is authorized here.
+
+The following earlier 13 October repair report is superseded for delivery,
+main integration, selected next action and overall task disposition.
+
 ## 13 October: first cloud repair ready for review
 
 Jörn selected cloud progress with one branch/PR as a success proxy, bounded

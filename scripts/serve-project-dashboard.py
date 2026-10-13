@@ -65,6 +65,8 @@ FILES = {
     "meta-topics/project-management/expired-window-retention-2026-10-12.md",
     "meta-topics/project-management/handoff.md",
     "meta-topics/project-management/thesis-work.md",
+    "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
+    "meta-topics/agent-workflow/cloud-continuation-prompt-20261013.txt",
     "scripts/bootstrap-cloud.sh", "scripts/test_bootstrap_cloud.py", "scripts/README.md",
     "docs/history/coordination/cleanup-design-2026-10-10/structure.md",
     "docs/history/coordination/cleanup-design-2026-10-10/discovery.md",

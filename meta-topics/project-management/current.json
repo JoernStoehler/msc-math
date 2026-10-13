@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13T11:22:30Z",
+  "updated_at": "2026-10-13T12:23:19Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "13 October: first bounded cloud repair published as three-file draft PR #41 against the existing GitHub baseline. Current local baseline retains later skills/topic work and the same repair on a separate local branch. Live cloud execution and broader workflow acceptance remain open; no installation, authentication or scientific producer was run.",
+  "summary": "13 October cloud-enablement attempt rejected by Jörn as a route to success. Small bootstrap repair accepted and merged into local main; unnecessary PR #41 closed. Actual cloud outcome, whole-route efficiency and task framing remain unresolved. This thread is ending with a bounded postmortem and fresh-session prompt, without an active native goal or further cloud execution.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2814,7 +2814,7 @@
       "selection": "selected",
       "status": "done",
       "owner": null,
-      "outcome": "Draft PR #41 adds explicit --without-r2 setup mode; existing default remains credentialed. Six isolated command-stub tests, shell syntax and diff checks pass; independent implementation/message review approved. Remote branch is based on GitHub main 01aba0a3, avoiding publication of accumulated local source history. Same three-file repair cherry-picked onto current local baseline. This establishes a source repair and review delivery, not fresh cloud installation or useful autonomous cloud behavior.",
+      "outcome": "Small opt-out setup repair accepted by Jörn from its description and integrated into local main at f028d202 on 13 October. Six isolated command-stub tests and independent code/message review covered the repair only. Unnecessary draft PR #41 closed at Jörn’s workflow correction. No actual useful cloud execution or broader success demonstrated.",
       "depends_on": [],
       "blocker": null,
       "sources": [
@@ -2824,8 +2824,28 @@
         "meta-topics/project-management/handoff.md"
       ],
       "authorization": "Jörn selected cloud progress and branch/PR review as a success proxy on 13 October. Bounded preliminary investigation, one source repair and a small draft PR; no substantial cloud run, broad baseline publication or runtime configuration change.",
-      "next_step": "Jörn can reject or redirect PR #41. A proposed next acceptance check uses one fresh supported image without R2 secrets/cache, opt-out setup and locked Cargo check, returning exact commit/results and stopping at an unresolved environment/access failure. Actual cloud route and substantial execution allowance must be established before running; broader targets remain as already supplied, not a new target-selection gate.",
-      "updated_at": "2026-10-13T11:20:17Z"
+      "next_step": "Retain the accepted repair. Do not reopen PR #41 or present source repair as cloud-goal achievement. Fresh session develops remaining cloud objective and efficiency case with Jörn.",
+      "updated_at": "2026-10-13T12:23:19Z"
+    },
+    {
+      "id": "cloud-enablement-20261013",
+      "title": "Actual efficient msc-math cloud work",
+      "project": "workflows",
+      "kind": "task",
+      "selection": "selected",
+      "status": "blocked",
+      "owner": null,
+      "outcome": "Original cloud goal remains unfinished. Jörn rejected continuing this thread and requested a postmortem plus a new context/session. Efficiency must account for the whole route, failed/abandoned sessions, human effort and time to actual completion. Exact completion framing and map/territory objection remain unresolved.",
+      "depends_on": [],
+      "blocker": "Fresh ordinary conversation and current resource/task-framing decisions needed; this failed execution thread is not an active worker.",
+      "authorization": "Original 13 October goal remains selected; user rejected this thread as execution route and selected bounded postmortem/handoff. No new substantial execution allowance, cloud launch or broad publication.",
+      "sources": [
+        "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
+        "meta-topics/agent-workflow/cloud-continuation-prompt-20261013.txt",
+        "meta-topics/project-management/handoff.md"
+      ],
+      "next_step": "Use fresh-session prompt; ask cheap present-day consequential questions, recover relevant known evidence independently, and agree current allowance/approach before substantial work. Do not activate /goal or impose a new exclusive cloud-target choice.",
+      "updated_at": "2026-10-13T12:23:19Z"
     }
   ],
   "decisions": [
@@ -3121,6 +3141,12 @@
       "value": "Bounded first repair and draft PR preparation only. No numeric spending allowance or live cloud execution selected; current quota and billed spend unknown. Earlier dated grants remain historical. Goal completion snapshot: 141715 tokensUsed and 785 seconds; no tokenBudget. This is the goal tool counter, not billed cost or account-wide quota consumption.",
       "observed_at": "2026-10-13T11:22:30Z",
       "basis": "Current user goal and completed local source/command-stub work; no fresh account telemetry queried. Completion goal-tool structured result."
+    },
+    {
+      "label": "13 October failed cloud session continuation",
+      "value": "Jörn estimated 60% of the wall-time allowance consumed around 11:55 UTC; total allowance/remaining minutes were not established. Second goal snapshot before clearing: 48752 tokensUsed, 285 seconds. Not final total, billed spend or quota. At 12:20:53 user selected bounded postmortem and fresh context/session; no new execution extension granted. Native goal cleared and later read null.",
+      "observed_at": "2026-10-13T12:23:19Z",
+      "basis": "User turns and actual goal get/clear responses in thread 01a134f1-035a-76c0-8e90-402599520a38; bounded postmortem retains scope."
     }
   ],
   "links": [
@@ -3198,6 +3224,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-13T12:23:19Z",
+      "text": "Recorded rejected cloud attempt, authorized local-main repair integration and closed unnecessary PR #41. Preserved cumulative-efficiency and interaction corrections without claiming the cloud outcome or task framing settled; fresh-session handoff replaces current execution."
+    },
     {
       "at": "2026-10-13T11:20:17Z",
       "text": "Published narrow draft PR #41 for data-free Codex setup on existing remote baseline, retained current local source history separately and recorded missing live-cloud validation. Shared multi-surface support requirements remain unchanged."

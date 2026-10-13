@@ -25,6 +25,11 @@ skills remain discoverable in [`.agents/skills/`](../../.agents/skills/).
 
 ## What the retained evidence supports
 
+[13 October cloud-session failure](cloud-session-failure-20261013.md) records
+the rejected bootstrap-first attempt, interaction-mode and budget failures,
+actual local-main integration, and a fresh-session prompt. It leaves the cloud
+outcome and the unresolved map/territory objection open.
+
 The [September process audit](process-audit/REPORT.md) and
 [October session-failure account](session-failures-2026-10-03.md), with its
 [matched postmortem evidence](session-postmortem-2026-10-04/README.md), explain
