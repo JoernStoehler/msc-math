@@ -13,7 +13,9 @@ promises. Compilation and tests cover only parts of that outcome.
 
 ## Workstation locations
 
-Work directly on the workstation for now. Use the checkout assigned to the task;
+The workstation is the default execution location. An explicitly assigned cloud
+session works in its own checkout; [cloud work and handoff](meta-topics/development-environment/cloud-workflow.md)
+owns delivery, setup and return. Use the checkout assigned to the task;
 `git rev-parse --show-toplevel` and `git worktree list` identify its root and sibling
 checkouts. These are workstation locations, not required paths on another machine.
 

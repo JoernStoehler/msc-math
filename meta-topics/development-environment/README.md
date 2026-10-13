@@ -6,6 +6,10 @@ point for building the selected thesis, checking the Rust workspace, using
 Python and Sage, and retrieving registered R2 data. The
 [environment guide](development-environments.md) records which execution
 surfaces are intended, what has been checked, and where access and state live.
+For agent work away from the workstation, [cloud work and handoff](cloud-workflow.md)
+connects those sources to revision delivery, instruction discovery, conditional
+dependencies, continuation and integration. It applies across research questions;
+the selected task determines which scientific tools and inputs are needed.
 
 The [Codex reference](codex-reference.md) owns the project/host configuration
 and release-matched behavior notes. Its maintained

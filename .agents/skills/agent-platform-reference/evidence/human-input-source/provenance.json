@@ -1,0 +1,122 @@
+[
+  {
+    "evidence_file": "request-user-input-mode-availability.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tools/src/tool_config.rs",
+    "source_range": "17-26",
+    "source_sha256": "1cb8ecfd0d0721bb9b30e82492128e7fd1f2aa85faa12a607e01cfdd144c3d95",
+    "excerpt_sha256": "3069bb580b8cdbd635119de87ccdfcd5686028b26c10daae49ade62525703feb",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tools/src/tool_config.rs"
+  },
+  {
+    "evidence_file": "request-user-input-feature-gate.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/core/src/tools/spec_plan.rs",
+    "source_range": "1244-1251",
+    "source_sha256": "db040c0c07160af64bebd5a7a5071658cb7ff58db341edd70e2795958b1d07f3",
+    "excerpt_sha256": "d513607cf26486f2606867b18b07e1f96e6d52b81d7ff039832c52a1cc81972a",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/core/src/tools/spec_plan.rs"
+  },
+  {
+    "evidence_file": "request-user-input-blocking-and-await.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/core/src/tools/handlers/request_user_input.rs",
+    "source_range": "67-100",
+    "source_sha256": "f4975978234d0ff7c143e6a5616d5523b9bddac044a6e39f8a0a32dcf0f56a38",
+    "excerpt_sha256": "297e5e410bffe3e1c9e0cfed0e020d5988632a00125b19c7d972111ba60e9b2a",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/core/src/tools/handlers/request_user_input.rs"
+  },
+  {
+    "evidence_file": "request-user-input-response-wait.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/core/src/session/mod.rs",
+    "source_range": "3088-3124",
+    "source_sha256": "5e94b4e8fc9fea7314169e7e29e88a96acbe7f9d0ec5e50a6a60de2d7ffc88df",
+    "excerpt_sha256": "f868fc318f9840f8f0f5340a4d3e165da39e27b5fe9a31e95e4740974803ad59",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/core/src/session/mod.rs"
+  },
+  {
+    "evidence_file": "async-question-item-route.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/chatwidget/streaming.rs",
+    "source_range": "415-424",
+    "source_sha256": "6b987ed2b3815a12867c1e634d62ac859abf849a3063b67640a7ec21c71a601a",
+    "excerpt_sha256": "215bf3959458f10411dbd569a6875eaa87eb386cd06c0b2fb1ec8a48fd2bfd3e",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/chatwidget/streaming.rs"
+  },
+  {
+    "evidence_file": "async-question-notification.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/chatwidget/questions.rs",
+    "source_range": "19-37",
+    "source_sha256": "0df97746f97297f283466512d3bfdd79013eeefbc9f39595c6a93917eb4d3084",
+    "excerpt_sha256": "03e3ad36a3a46041a0a156a0c85f44e18124cbb5ddc91bba3e571cfb5f4390b1",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/chatwidget/questions.rs"
+  },
+  {
+    "evidence_file": "blocking-question-notification.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/chatwidget/tool_requests.rs",
+    "source_range": "449-465",
+    "source_sha256": "b40527c4014b8f7d35f7a6dd08339f089b66da01533c79de3229a86d590db129",
+    "excerpt_sha256": "eeb9bb305ed28b6af5eaef5b014356d8e1090d20f84f174292ec32864d820393",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/chatwidget/tool_requests.rs"
+  },
+  {
+    "evidence_file": "notification-delivery-settings.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/chatwidget/notifications.rs",
+    "source_range": "5-23",
+    "source_sha256": "98bdd1d4136f107e67950007ab0273abe77d2be30be0742afa370e927a955d38",
+    "excerpt_sha256": "46cbea301b48987bcaeea2e6b246dd48b32b03aa93e4dc9f6f6053f007bb0c84",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/chatwidget/notifications.rs"
+  },
+  {
+    "evidence_file": "notification-types-and-settings.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/chatwidget/notifications.rs",
+    "source_range": "60-99",
+    "source_sha256": "98bdd1d4136f107e67950007ab0273abe77d2be30be0742afa370e927a955d38",
+    "excerpt_sha256": "61bb643eb7cadee951aa4f8720ff23edb51f193844a5ec5caea141e40cad3d41",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/chatwidget/notifications.rs"
+  },
+  {
+    "evidence_file": "mode-blocking-semantics.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/protocol/src/config_types.rs",
+    "source_range": "674-703",
+    "source_sha256": "ce9b26223db7cc4b5cf474e571e4509e8cc52536e159510f153f94de0fcd37e8",
+    "excerpt_sha256": "0e959a659cea9a3aa969569e26dca64dc3a5f7f030a7f10e61ee44dd66fe1791",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/protocol/src/config_types.rs"
+  },
+  {
+    "evidence_file": "blocking-overlay-pauses-main-input.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/bottom_pane/mod.rs",
+    "source_range": "1885-1911",
+    "source_sha256": "31d34f075b652b8b229e5988c9b601d46b9e102f05ac71c0cbfa8eaa96d2fb2d",
+    "excerpt_sha256": "21fbd471c257cc3e3988ef12f755f01e357367f8dc6a827298ac7e4f07403700",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/bottom_pane/mod.rs"
+  },
+  {
+    "evidence_file": "default-request-auto-resolution.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/bottom_pane/request_user_input/mod.rs",
+    "source_range": "263-289",
+    "source_sha256": "5f0d5412425b07a651dd4633e1f0befa6e2374fc5473ddd9f0be29bb8c184579",
+    "excerpt_sha256": "c9e35d6376ccedcfde7e63195045e7e4b074617d94013cebe891c2d6510ffbd1",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/bottom_pane/request_user_input/mod.rs"
+  }
+]

@@ -1,0 +1,4 @@
+method	seconds	on_disk_bytes	git_bytes	archive_compressed_bytes	status
+archive	17.494	117190656	0	17186816	ok
+shallow	10.983	138485760	21295104	0	ok
+sparse	21.753	27734016	5672960	0	ok

@@ -1,0 +1,27 @@
+{
+  "cases": [
+    {
+      "id": "questions-after-steer",
+      "diagnosis": "The async question was accepted but did not establish that the user saw it, answered it, or that dependent work paused. The later concision steer changed reporting style only. It did not satisfy the required deployment-target dependency. Proceeding with a guessed alert target would convert an unanswered prerequisite into an unsupported decision.",
+      "evidence": [
+        "agent-platform-reference/references/user-input-lifecycle.md: required input requires a visible supported question route and dependent execution must remain paused; async acceptance is not a pause or answer",
+        "agent-platform-reference/references/user-input-lifecycle.md: 2026-10-13 reported TUI queue/commentary visibility failure, with queue corroborated by pinned source but UI rendering not independently run",
+        "agent-platform-reference/references/corrective-maintenance.md: notification/queue loss belongs to agent question-state procedure and, if needed, harness pause/notification fix"
+      ],
+      "correction": "Added a repo-local input-and-goal recovery guide and AGENTS.md discovery pointer. It requires reconciliation after steering, preservation of the gated action, and re-asking through a visible supported route. The target remains unresolved; only independent work can proceed.",
+      "runtime_limit": "The repo instruction cannot restore a disappeared TUI question or guarantee notification. No live TUI replay was performed."
+    },
+    {
+      "id": "goal-missing-input",
+      "diagnosis": "The trace supports an unintended create_goal invocation after an ordinary `Goal:` heading; the heading itself is not the slash command. Diagnose activation separately from later behavior. At inspected source tag rust-v0.162.1, an active goal may continue on idle and the ordinary completion notification is suppressed, but separate question-attention paths exist: async questions can notify independently, and request_user_input can notify and block while the current collaboration mode is Plan if the feature is enabled and the tool is exposed. Default-mode request_user_input is conditional and may auto-resolve, so empty resolution is not an answer or consent. The trace does not reveal which path/configuration was available or used. Do not infer that all input requires ending the goal; inspect the actual mode, tool exposure, and notification settings, then ask through a verified available path and keep target-dependent migration work paused.",
+      "evidence": [
+        "agent-platform-reference/references/goal-loops.md: activation, continuation, completion alert, question routes and conditional intervention choices",
+        "agent-platform-reference/evidence/human-input-source-review.md: pinned source for AsyncQuestion and PlanModePrompt notification routes, request_user_input flags/modes, blocking semantics, and remaining unknown workstation configuration",
+        "agent-platform-reference/evidence/goal-source-review.md: pinned-source review of goal activation, continuation and completion notification",
+        "agent-platform-reference/evidence/model-catalog-review.md: catalog override limits; relevant only if effective schema proves a misleading description is overridable"
+      ],
+      "correction": "Updated the repo-local conditional guide to distinguish ordinary completion notification from independent question notifications; it specifies Plan-mode request_user_input blocking behavior and feature/mode requirements, keeps async questions distinct, and prohibits interpreting Default-mode auto-resolution as consent. If a verified route exists, ask the user for the deployment target through it; otherwise report the specific unavailable route and use exposed user pause/interrupt controls as appropriate. No global skill, catalog override, or account setting was installed or changed.",
+      "runtime_limit": "Pinned source establishes conditional mechanisms only. The live build, collaboration mode, question-tool exposure, notification preferences, and route actually used are unknown; no behavior can be asserted for this workstation without inspecting them."
+    }
+  ]
+}

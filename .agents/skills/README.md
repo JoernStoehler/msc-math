@@ -37,3 +37,7 @@ Jörn requested actionable communication guidance: prepared messages identify a 
 ## Shell app-server client, 8 October 2026
 
 Jörn requested [codex-app-server](codex-app-server/SKILL.md) for Claude-cloud and other shell agents lacking `codex_tui.*` tools. Its daemon-backed client supports persistent thread operations with explicit setup and per-grant device login. The Claude discovery link points to this owner; no plugin or host settings are installed. The existing one-shot `codex-cli-claude-cloud` workflow remains available. [Design/validation notes](codex-app-server/references/design-notes.md) distinguish workstation integration and offline tests from the untested fresh-cloud install/login/lifetime.
+
+## Agent-platform reference, 13 October 2026
+
+Jörn authorized [agent-platform-reference](agent-platform-reference/SKILL.md) as the repository-owned products reference. It retains the acquired corpus, provenance, curated corrections, disclosed-case demonstrations and negative evidence; `.claude/skills/agent-platform-reference` links to this owner. [The adoption record](agent-platform-reference/evidence/repository-adoption-20261013.json) identifies the received capsule and bounded tooling/retention changes. [REVIEW.md](agent-platform-reference/REVIEW.md) owns demonstrated usefulness and its limits. No deployment outside this repository is included.

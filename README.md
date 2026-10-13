@@ -23,6 +23,10 @@ been submitted for final grading.
 - **Set up or reproduce:** [development environment](meta-topics/development-environment/README.md),
   [installation workflow](meta-topics/development-environment/installation-workflow.md),
   [artifact contracts](docs/artifacts.md), and [test scope](docs/algorithm-testing.md).
+- **Continue with a cloud agent:** [cloud work and handoff](meta-topics/development-environment/cloud-workflow.md)
+  covers source delivery, instruction discovery, task-specific setup, continuation
+  and returned work. Product mechanics belong to the repository's
+  [agent-platform reference](.agents/skills/agent-platform-reference/SKILL.md).
 - **Coordinate or continue:** [project management](meta-topics/project-management/README.md)
   routes lasting decisions and current [coordination](docs/coordination/README.md).
   Open this checkout's `docs/dashboard/index.html` through the

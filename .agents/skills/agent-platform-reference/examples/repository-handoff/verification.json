@@ -1,0 +1,72 @@
+[
+  {
+    "case": "baseline",
+    "head": "e4bd78589dc13bef64ab7a5ff8e3ed9c57f0f341",
+    "remote_head": "e4bd78589dc13bef64ab7a5ff8e3ed9c57f0f341",
+    "pushed": true,
+    "clean": true,
+    "cargo_available": false,
+    "live_cowork_run": false,
+    "relocated_wrapper_exit": 0,
+    "report_generated": true,
+    "script_stderr": "",
+    "cache_capture": {
+      "cwd": "/tmp/handoff-relocated-iki5labf/different/checkout",
+      "args": [
+        "build",
+        "--target-dir",
+        "/tmp/handoff-relocated-iki5labf/different-cache/cargo/project-alpha"
+      ],
+      "cache": "/tmp/handoff-relocated-iki5labf/different-cache/cargo/project-alpha"
+    },
+    "cargo_test": "protocol stub validates path and invocation only; not real Rust compilation",
+    "archive_contains_contract": true,
+    "archive_files": [
+      ".gitignore",
+      "AGENTS.md",
+      "Cargo.toml",
+      "README.md",
+      "scripts/build.sh",
+      "scripts/report.py",
+      "src/main.rs",
+      "report.html"
+    ]
+  },
+  {
+    "case": "assisted",
+    "head": "b60860c8fdc3416fb07f4f665eaea22f561dc6fb",
+    "remote_head": "b60860c8fdc3416fb07f4f665eaea22f561dc6fb",
+    "pushed": true,
+    "clean": true,
+    "cargo_available": false,
+    "live_cowork_run": false,
+    "relocated_wrapper_exit": 0,
+    "report_generated": true,
+    "script_stderr": "",
+    "cache_capture": {
+      "cwd": "/tmp/handoff-relocated-668o78hu/different/checkout",
+      "args": [
+        "build",
+        "--target-dir",
+        "/tmp/handoff-relocated-668o78hu/different-cache/handoff-example/cargo-target"
+      ],
+      "cache": "/tmp/handoff-relocated-668o78hu/different-cache/handoff-example/cargo-target"
+    },
+    "cargo_test": "protocol stub validates path and invocation only; not real Rust compilation",
+    "archive_contains_contract": true,
+    "archive_files": [
+      "repository/",
+      "repository/.gitignore",
+      "repository/AGENTS.md",
+      "repository/Cargo.toml",
+      "repository/README.md",
+      "repository/docs/",
+      "repository/docs/cache-policy.md",
+      "repository/scripts/",
+      "repository/scripts/build.sh",
+      "repository/scripts/report.py",
+      "repository/src/",
+      "repository/src/main.rs"
+    ]
+  }
+]

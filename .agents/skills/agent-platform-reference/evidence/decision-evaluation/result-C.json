@@ -1,0 +1,182 @@
+[
+  {
+    "id": "P01",
+    "decision": "You can change an existing personal project; recreation is unnecessary. Open project settings, choose Project-only memory under Memory, and save.",
+    "caveats": "The setting may take a few hours to take effect. Shared projects already use project-only memory and cannot be changed to default memory. Availability can depend on plan/workspace memory settings.",
+    "evidence": [
+      {
+        "path": "corpus/views/openai/chatgpt/chatgpt-projects.md",
+        "quote": "Yes. Open the project’s settings, select Project-only memory under **Memory**, and save your changes. It may take a few hours for the new setting to take effect."
+      },
+      {
+        "path": "corpus/views/openai/chatgpt/chatgpt-projects.md",
+        "quote": "Shared projects already use project-only memory and cannot be switched to default memory."
+      }
+    ]
+  },
+  {
+    "id": "P02",
+    "decision": "No. Deleting the conversation alone does not establish that ChatGPT forgot the fact. If it was saved as memory, delete that saved memory as well as the chat where it was shared; remove copies from other sources too.",
+    "caveats": "Deleting saved memory stops future personalization from using it but does not erase mentions in existing conversations. The documentation describes controls, not a live account audit.",
+    "evidence": [
+      {
+        "path": "corpus/views/openai/chatgpt/chatgpt-memory.md",
+        "quote": "Deleting a chat alone does not necessarily delete a separate saved memory created from that chat."
+      },
+      {
+        "path": "corpus/views/openai/chatgpt/chatgpt-memory.md",
+        "quote": "To remove information saved as a memory, delete the saved memory and the chat where you first shared it."
+      }
+    ]
+  },
+  {
+    "id": "P03",
+    "decision": "Do not expect a custom GPT to inherit saved memory, global Custom Instructions, or prior chats. Put important reusable instructions into the GPT's own configuration (its instructions); if the work belongs in a project, use project instructions there.",
+    "caveats": "A GPT conversation starts fresh and only uses its configured instructions/knowledge and the current conversation. This is documented behavior; verify the active GPT configuration.",
+    "evidence": [
+      {
+        "path": "corpus/views/openai/chatgpt/chatgpt-gpts.md",
+        "quote": "GPTs do not use saved memory, custom instructions, or previous conversations. Each conversation starts fresh."
+      },
+      {
+        "path": "corpus/views/openai/chatgpt/chatgpt-gpts.md",
+        "quote": "You can configure a GPT with instructions, knowledge, and capabilities."
+      }
+    ]
+  },
+  {
+    "id": "P04",
+    "decision": "The agent's claim is wrong: the article says Custom Instructions updates apply immediately across all chats, including existing conversations. Operationally, edit/save in Settings and test in the open chat.",
+    "caveats": "The source has potentially conflicting wording: it says instructions are applied immediately to all chats, then explicitly says updates apply immediately across existing conversations, while separately saying edits/deletion are for future conversations. The explicit update statement resolves this case; don't generalize the latter line to mean existing chats are excluded.",
+    "evidence": [
+      {
+        "path": "corpus/views/openai/chatgpt/chatgpt-custom-instructions.md",
+        "quote": "Your custom instructions are applied immediately to all chats."
+      },
+      {
+        "path": "corpus/views/openai/chatgpt/chatgpt-custom-instructions.md",
+        "quote": "Updates to custom instructions settings are applied immediately across all chats (including existing conversations)."
+      }
+    ]
+  },
+  {
+    "id": "P05",
+    "decision": "No, do not assume Claude Code combines both files by default. Check Claude Code version and /config Project instructions. To require both, select `claude-md-and-agents-md`; inspect effective files with /memory or /context. Alternatively import AGENTS.md from CLAUDE.md with `@AGENTS.md`.",
+    "caveats": "Current documentation describes native AGENTS.md support beginning v2.1.277, but some sessions require v2.1.281+ and the built-in AGENTS.md plugin can be disabled. A CLAUDE.md or CLAUDE.local.md in scope causes AGENTS.md to be skipped under the default mode.",
+    "evidence": [
+      {
+        "path": "corpus/views/anthropic/claude-code/claude-code-memory.md",
+        "quote": "`claude-md-or-agents-md` | Your `CLAUDE.md` files, or your `AGENTS.md` files when you have no `CLAUDE.md` or `CLAUDE.local.md` in your working directory or above it. This is the default"
+      },
+      {
+        "path": "corpus/views/anthropic/claude-code/claude-code-memory.md",
+        "quote": "`claude-md-and-agents-md` | Your `CLAUDE.md` and `AGENTS.md` files together, each directory's `CLAUDE.md` files first and its `AGENTS.md` after them."
+      }
+    ]
+  },
+  {
+    "id": "P06",
+    "decision": "No. With `settingSources: []`, filesystem skills are not loaded merely because the file exists. Include `project` in `settingSources` (and `user` for user skills), or use the plugins option for a specific path. Omitting settingSources uses the default user and project sources, so the project skill is discoverable when it is in the SDK's project search scope.",
+    "caveats": "Ensure the SDK's cwd is the repository or an applicable parent/added directory. Discovery enables the skill; the `skills` option can still restrict which discovered skills are invokable.",
+    "evidence": [
+      {
+        "path": "corpus/views/anthropic/claude-code/claude-code-docs-en-agent-sdk-skills.md",
+        "quote": "If you set `settingSources` explicitly, include 'project' to keep project and added-directory skills and 'user' to keep your personal skills"
+      },
+      {
+        "path": "corpus/views/anthropic/claude-code/claude-code-docs-en-agent-sdk-skills.md",
+        "quote": "With default `query()` options, the SDK loads user and project sources"
+      }
+    ]
+  },
+  {
+    "id": "P07",
+    "decision": "The setting can be enforced, but the declared owner is wrong: `allow_managed_hooks_only = true` belongs in managed `requirements.toml`, not user `config.toml`. Put it in the managed requirements layer; pair `[features].hooks = true` if hooks must remain enabled, configure managed hooks there, and deploy their scripts through MDM/device management.",
+    "caveats": "The local runtime enforces hook configuration from requirements.toml, but does not distribute scripts placed in managed_dir. Managed defaults in managed_config.toml are distinct from enforced requirements.",
+    "evidence": [
+      {
+        "path": "corpus/views/openai/chatgpt-work/chatgpt-work-docs-enterprise-managed-configuration.md",
+        "quote": "To skip user, project, session, and plugin hooks while still allowing managed hooks, set allow_managed_hooks_only = true."
+      },
+      {
+        "path": "corpus/views/openai/chatgpt-work/chatgpt-work-docs-enterprise-managed-configuration.md",
+        "quote": "The local runtime enforces the hook configuration from requirements.toml, but it doesn't distribute the scripts in managed_dir."
+      }
+    ]
+  },
+  {
+    "id": "P08",
+    "decision": "The described 21.7 MB / 2,640-file ZIP cannot be uploaded as one Responses API Skill version: the documented limit is 500 files, despite the ZIP byte size being under the 50 MB cap. Deploy a thin Skill ZIP with focused instructions/references, then make the full corpus separately addressable through a retrieval/file-search service or a sandbox-mounted corpus with an explicit search tool. Do not claim the thin Skill contains or exposes all 636 articles.",
+    "caveats": "The API also limits uncompressed content to 25 MB. Confirm actual ZIP contents and API version; a thin skill's file references are not automatically mounted. Agents API has sandbox directory discovery rather than the Responses API Skill attachment mechanism.",
+    "evidence": [
+      {
+        "path": "corpus/views/openai/api/openai-skills-api.md",
+        "quote": "The maximum ZIP size is 50 MB, with a maximum of 500 files per version and a maximum uncompressed file size of 25 MB."
+      },
+      {
+        "path": "corpus/views/openai/api/openai-skills-api.md",
+        "quote": "Agents API sessions discover skills from directories in their sandbox."
+      }
+    ]
+  },
+  {
+    "id": "P09",
+    "decision": "For application control, use OpenAI Agents SDK or Claude Agent SDK: your application owns deployment and tool implementations/state, while the SDK runs the loop and calls configured tools; Claude Agent SDK additionally supplies Claude Code's tools, permissions, sessions, and context handling. For a provider-managed harness/session, choose OpenAI Agents API, which manages agent sessions and sandbox environments while you configure agents/tools and provide or select environment. Responses API is the direct model/tool API: your app owns the loop and tool execution/state, unless using the hosted shell tool for compute. Choose based on loop/state/compute ownership: SDKs for code-first control, Agents API for managed sessions, Responses for direct API control.",
+    "caveats": "These distinctions are based on vendor documentation, not runtime probes. Tools may execute on provider or application side depending on tool type; persistent session/state behavior must be confirmed in the selected API's session configuration. API naming alone does not establish who owns compute.",
+    "evidence": [
+      {
+        "path": "references/api-agents.md",
+        "quote": "A code-first library track for an application that owns deployment, tool implementations, state storage, and approval decisions; the SDK runs the agent loop and invokes the configured tools."
+      },
+      {
+        "path": "corpus/views/anthropic/claude-code/claude-code-docs-en-agent-sdk-agent-loop.md",
+        "quote": "The Agent SDK lets you embed Claude Code's autonomous agent loop in your own applications."
+      }
+    ]
+  },
+  {
+    "id": "P10",
+    "decision": "For the benchmark's complete pinned source, the depth-1 shallow clone won on elapsed time at 10.983 s versus archive at 17.494 s and sparse checkout at 21.753 s. For the smallest initial worktree when docs and codex-rs/core suffice, sparse checkout wins by retaining only 1,031 files and about 19.5 MB logical checkout contents (but is not complete). GitHub repository `size` metadata cannot tell wire-transfer cost.",
+    "caveats": "Single serial benchmark on one tag, includes checkout/extraction, with shared-cache effects; times are not universal. Git transfer bytes were not instrumented. Sparse checkout may fetch omitted blobs later.",
+    "evidence": [
+      {
+        "path": "evidence/benchmark-verification.md",
+        "quote": "Shallow tag clone | 9,017 regular + 1 symlink | 89,296,870 total path bytes"
+      },
+      {
+        "path": "evidence/benchmark-verification.md",
+        "quote": "Git pack and `.git` sizes describe local stored metadata after checkout, not exact network traffic. No wire-byte instrumentation was enabled."
+      }
+    ]
+  },
+  {
+    "id": "P11",
+    "decision": "No. `docs/skills.md` is only a pointer to hosted Skills guidance, so cloning the repository does not provide all operational documentation offline. Acquire and preserve the hosted Codex Skills guide Markdown separately (and other redirected hosted docs needed, such as AGENTS/configuration guides).",
+    "caveats": "The repo is version-pinned implementation evidence; user-facing hosted documentation is separate and can change over time. This addresses documentation completeness, not whether the code itself is present.",
+    "evidence": [
+      {
+        "path": "corpus/views/openai/codex/codex-skills.md",
+        "quote": "For the full guide, including how to create a skill, write effective instructions, and share it with your team, see the hosted Codex Skills documentation."
+      },
+      {
+        "path": "references/codex.md",
+        "quote": "At this tag, `docs/skills.md` is only a short pointer to hosted Skills documentation"
+      }
+    ]
+  },
+  {
+    "id": "P12",
+    "decision": "Do not categorically refuse project instructions for a Free user. The Projects page explicitly says Free users can create projects, while the personalization page separately says project instructions are for paid plans only. Because the vendor pages conflict, qualify the action and check the Free account's live project UI; if the instructions field is available, use it, otherwise use project knowledge/context or another supported personalization route.",
+    "caveats": "The docs do not resolve whether instructions are gated for all Free accounts or whether the wording is stale/inconsistent; availability may vary by rollout. Do not state as a verified entitlement from these pages alone.",
+    "evidence": [
+      {
+        "path": "corpus/views/anthropic/claude-chat/claude-chat-projects.md",
+        "quote": "Projects are available to all users, including those with free Claude accounts. Free users can create a maximum of five projects."
+      },
+      {
+        "path": "corpus/views/anthropic/claude-chat/claude-personalization.md",
+        "quote": "Use project instructions when you need specific guidance or context for a particular project (paid plans only)."
+      }
+    ]
+  }
+]

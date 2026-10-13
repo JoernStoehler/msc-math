@@ -1,0 +1,30 @@
+[
+  {
+    "path": "instructions/mod.rs",
+    "upstream_path": "codex-rs/codex-home/src/instructions/mod.rs",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "sha256": "5f900d536d2a085345178e4311ab55c801ce90df50db49f15d05c4525a3b5c2e",
+    "bytes": 4248
+  },
+  {
+    "path": "docs/config.md",
+    "upstream_path": "docs/config.md",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "sha256": "745768b4da6cd73e414fc49c5c6ef3d6bf8a0c08289fab23a7dd79776ab31d9d",
+    "bytes": 726
+  },
+  {
+    "path": "docs/skills.md",
+    "upstream_path": "docs/skills.md",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "sha256": "e59789d09692310bbf94e2ef8db0aaf00d97f2226982c8c5330d2d260583a97d",
+    "bytes": 115
+  },
+  {
+    "path": "codex-rs/config/defaults.toml",
+    "upstream_path": "codex-rs/config/defaults.toml",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "sha256": "c669759d7422f378c724256737eda9613b4b4a6760c59a1715ed6e7813bf7214",
+    "bytes": 554
+  }
+]

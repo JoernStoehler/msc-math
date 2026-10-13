@@ -12,6 +12,12 @@ credentials belong to the host's `~/.dotfiles/memories/host-estate.md`
 
 ## Minimal workflow
 
+A fresh machine or cloud session uses its assigned checkout and the
+[cloud handoff contract](cloud-workflow.md). Workstation paths, existing homes,
+installed personal skills and downloaded caches are not transferred prerequisites.
+Choose the tools for the selected task from the sections below; a source-reading
+task does not require every scientific environment.
+
 A checkout contains the complete selected thesis source and its figure inputs.
 It does not need Sage or external datasets to build the PDF:
 
@@ -59,8 +65,11 @@ script. Keep Sage's Python separate from this ordinary environment.
 ## LaTeX and Biber
 
 On Ubuntu, the thesis build needs the following package set. It is also used
-by `scripts/bootstrap-cloud.sh`; that cloud bootstrap additionally requires
-its private R2 credentials and is not a prerequisite for a local PDF build:
+by `scripts/bootstrap-cloud.sh`. That script targets the configured x86_64
+Codex universal image with preinstalled runtimes; it is not a generic cloud
+installer. Its default configures private R2 access, while `--without-r2`
+supports code/PDF setup without those credentials. Neither invocation is a
+prerequisite for a local PDF build:
 
 ```bash
 sudo apt-get update

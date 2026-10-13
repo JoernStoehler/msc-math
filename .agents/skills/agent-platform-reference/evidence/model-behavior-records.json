@@ -1,0 +1,36 @@
+[
+  {
+    "id": "MB-2026-10-13-GOAL",
+    "evidence_class": "user-reported observation with partially corroborating pinned source",
+    "surface": "Codex TUI on user workstation",
+    "model": "not supplied",
+    "client_version": "not supplied",
+    "observation": "User reported an ordinary Goal heading followed by goal-loop activation, missing ordinary completion pings and speculative continuation despite required missing input.",
+    "evidence": [
+      "goal-source-review.md",
+      "human-input-source-review.md",
+      "model-catalog-review.md"
+    ],
+    "interpretation": "Pinned source explains ordinary completion suppression and active continuation. Separate question notifications exist; live mode/flags/settings and activation cause remain unknown.",
+    "alternatives": [
+      "model interpretation of heading",
+      "local configuration",
+      "different client version",
+      "question-tool or notification selection"
+    ],
+    "next_test": "Inspect live activation event, effective mode/tools/notification settings and replay required-input behavior.",
+    "maintained_consumer": "references/goal-loops.md",
+    "review_status": "Mechanism partially explained; live session not reproduced"
+  },
+  {
+    "id": "MB-2026-10-13-MATH",
+    "evidence_class": "disclosed example use case, not a measured incident",
+    "surface": "not specified",
+    "model": "not specified",
+    "observation": "User describes expected serial-walltime, context overload and sanity-check failures during BSc-scale theory work.",
+    "interpretation": "Capabilities for independent contexts, model/effort selection, worktrees, compaction and tracing are available on specific documented surfaces; no cause or best concurrency is established.",
+    "next_test": "Collect complete parent/worker traces and proof-review outcomes before comparing interventions.",
+    "maintained_consumer": "references/research-execution.md",
+    "review_status": "Technical capability map; no mathematical-performance experiment"
+  }
+]

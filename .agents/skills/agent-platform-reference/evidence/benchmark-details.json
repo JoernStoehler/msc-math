@@ -1,0 +1,92 @@
+{
+  "repository": "https://github.com/openai/codex",
+  "latest_release_check": {
+    "checked_utc_date": "2026-10-13",
+    "endpoint": "https://api.github.com/repos/openai/codex/releases/latest",
+    "http_result": "success",
+    "tag": "rust-v0.162.1",
+    "published_at": "2026-10-09T19:44:51Z",
+    "release_url": "https://github.com/openai/codex/releases/tag/rust-v0.162.1",
+    "tag_ref_endpoint": "https://api.github.com/repos/openai/codex/git/ref/tags/rust-v0.162.1",
+    "annotated_tag_object": "7a078f6bb4ce0dc2a81408b334ce52979d92c603",
+    "checkout_commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "benchmark_tag_matches_latest": true,
+    "fresh_benchmark_needed": false,
+    "raw_response_file": "codex-latest-release.json",
+    "tag_ref_response_file": "codex-release-tag-ref.json"
+  },
+  "measurement_source": {
+    "run_log": "benchmark-run.log",
+    "results_tsv": "benchmark-original.tsv",
+    "run_date": "2026-10-13",
+    "method_order": [
+      "archive",
+      "shallow",
+      "sparse"
+    ],
+    "notes": "One recorded serial run; elapsed time includes transfer and extraction/checkout. TSV on_disk_bytes and archive_compressed_bytes are du -sk allocations rounded to 1 KiB. Checkout metrics were independently recomputed from retained worktrees with lstat: regular-file bytes and symlink path bytes are distinguished; allocation is st_blocks*512.",
+    "archive_file": "codex.tar.gz in benchmark workspace; size and integrity verified 2026-10-13"
+  },
+  "methods": [
+    {
+      "method": "archive",
+      "source": "https://github.com/openai/codex/archive/refs/tags/rust-v0.162.1.tar.gz",
+      "elapsed_seconds": 17.494,
+      "checkout_files": 9018,
+      "checkout_logical_bytes": 89296870,
+      "checkout_allocated_bytes": 112951296,
+      "git_metadata_logical_bytes": 0,
+      "git_metadata_allocated_bytes": 0,
+      "compressed_archive_logical_bytes": 17186781,
+      "status": "ok",
+      "checkout_regular_files": 9017,
+      "checkout_symlinks": 1,
+      "checkout_regular_file_logical_bytes": 89296863,
+      "checkout_symlink_path_bytes": 7,
+      "compressed_archive_allocated_bytes": 17186816,
+      "archive_integrity": "tar -tzf succeeded; 9017 regular file entries, all bytes matched retained extracted tree"
+    },
+    {
+      "method": "shallow",
+      "source": "depth-1, single-branch clone, pinned tag rust-v0.162.1",
+      "elapsed_seconds": 10.983,
+      "checkout_files": 9018,
+      "checkout_logical_bytes": 89296870,
+      "checkout_allocated_bytes": 112951296,
+      "git_metadata_files": 25,
+      "git_metadata_logical_bytes": 21175692,
+      "git_metadata_allocated_bytes": 21254144,
+      "git_pack_logical_bytes": 19641622,
+      "status": "ok",
+      "checkout_regular_files": 9017,
+      "checkout_symlinks": 1,
+      "checkout_regular_file_logical_bytes": 89296863,
+      "checkout_symlink_path_bytes": 7
+    },
+    {
+      "method": "sparse",
+      "source": "depth-1, blob:none, sparse paths docs and codex-rs/core, pinned tag rust-v0.162.1",
+      "elapsed_seconds": 21.753,
+      "checkout_files": 1031,
+      "checkout_logical_bytes": 19510343,
+      "checkout_allocated_bytes": 21794816,
+      "git_metadata_files": 36,
+      "git_metadata_logical_bytes": 5531416,
+      "git_metadata_allocated_bytes": 5632000,
+      "git_pack_logical_bytes": 4111713,
+      "status": "ok",
+      "checkout_regular_files": 1031,
+      "checkout_symlinks": 0,
+      "checkout_regular_file_logical_bytes": 19510343,
+      "checkout_symlink_path_bytes": 0
+    }
+  ],
+  "limitations": [
+    "Network bytes were not captured by an independent interface or process monitor. Archive size is the local compressed response file; Git metadata/pack size is not a wire-transfer measurement.",
+    "All cases ran serially in a shared environment; proxy, DNS, GitHub CDN, and OS cache state may affect elapsed times. The numbers are one observation, not a stable performance guarantee.",
+    "Sparse checkout has intentionally incomplete worktree content. It is not a full source mirror and Git may fetch promised blobs later when requested.",
+    "GitHub's annotated tag reference object SHA differs from the peeled commit checked out; the benchmark checkout resolves to 092d3acd6bec3e3a14bdc7e7a2810ab628ab759d.",
+    "Archive compressed byte length is confirmed from the retained codex.tar.gz (17,186,781 bytes); its tar listing and integrity test passed, and every regular file matched the retained extracted tree.",
+    "Checkout logical bytes count regular-file payloads and report symlink path bytes separately; this avoids counting symlink target contents as if they were duplicated in the archive."
+  ]
+}

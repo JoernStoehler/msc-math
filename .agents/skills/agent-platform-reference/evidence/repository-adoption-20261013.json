@@ -1,0 +1,88 @@
+{
+  "adopted_on": "2026-10-13",
+  "owner": "msc-math/.agents/skills/agent-platform-reference",
+  "received_capsule": {
+    "filename": "agent-platform-reference.zip",
+    "receipt_location": "/home/joern/.codex/artifacts/agent-platform-reference/received-20261013/agent-platform-reference.zip",
+    "sha256": "0281da66505bedd99ab04eaf1fa3ef18ef68a1ae03ac7a0c11164b11730949ee",
+    "files": 2742,
+    "uncompressed_bytes": 78972123,
+    "source_integrity_index_sha256": "ac06794b752b3660271f17c02b2229785a1d73b28ac7b6b9550e0791e77bec62",
+    "source_integrity_index_copy": "evidence/received-package-integrity-20261013.json"
+  },
+  "authorization": "J\u00f6rn selected repository ownership; external deployment remains separate.",
+  "preserved": "Entire received corpus, snapshots, history, curation, source excerpts, demonstrations, negative evidence, and thin ZIP.",
+  "source_changes": [
+    {
+      "path": ".gitignore",
+      "change": "Retain the received thin ZIP in Git; ignore other dist outputs."
+    },
+    {
+      "path": "scripts/refresh.py",
+      "change": "Use double quotes inside the error-summary f-string to avoid the Python 3.12-only same-quote syntax in a declared Python 3.10+ script."
+    },
+    {
+      "path": "README.md",
+      "change": "Record maintained repository ownership and link this receipt."
+    },
+    {
+      "path": "evidence/package-integrity.json",
+      "change": "Re-index adopted source hashes separately from the preserved received index."
+    }
+  ],
+  "discovery": ".claude/skills/agent-platform-reference -> ../../.agents/skills/agent-platform-reference",
+  "evaluation_owner": "REVIEW.md",
+  "checks": {
+    "received_archive": {
+      "crc": "passed",
+      "unsafe_archive_paths": 0,
+      "files_byte_matched_to_extraction": 2742,
+      "executable_modes_restored": [
+        "scripts/benchmark_codex.sh",
+        "scripts/refresh.py",
+        "scripts/validate.py"
+      ]
+    },
+    "offline_suite": {
+      "command": "python -m pytest -q -p no:cacheprovider --basetemp <task-scratch>/pytest tests",
+      "result": "23 passed in 1.04s",
+      "python": "3.13.3",
+      "environment": "temporary task-scratch virtual environment with unchanged requirements.txt"
+    },
+    "strict_offline_validation": {
+      "command": "python scripts/validate.py --require-mirrors",
+      "result": "638 sources; 638 mirrored; 19 references; passed article/raw snapshot hashes"
+    },
+    "skill_frontmatter": {
+      "command": "python3 <skill-creator>/scripts/quick_validate.py <skill-directory>",
+      "result": "passed"
+    },
+    "refresh_summary": {
+      "method": "Offline main() probes using one mocked successful/failed fetch and mocked manifest writes",
+      "result": "Success reports 0 errors and exits 0; failure reports 1 error and exits 2; each checkpoints twice."
+    },
+    "consult_route": {
+      "command": "python3 scripts/consult.py handoff --measure",
+      "result": {
+        "path": "references/repository-handoff.md",
+        "bytes": 4645,
+        "words": 648
+      }
+    },
+    "relative_markdown_links": {
+      "scope": "SKILL.md, README.md, REVIEW.md, VERIFICATION.md and references/*.md",
+      "links_checked": 19,
+      "broken": 0
+    },
+    "discovery_link": "Claude symlink resolves to the canonical repository owner; live client catalog not checked.",
+    "retention": "git check-ignore confirms the received dist/agent-platform-reference-thin.zip is not ignored.",
+    "shell_syntax": {
+      "command": "bash -n scripts/benchmark_codex.sh",
+      "result": "passed; acquisition not executed"
+    }
+  },
+  "limitations": [
+    "No new acquisition, benchmark, held-out behavior evaluation, live client discovery or notification test, account change, or deployment outside this repository.",
+    "Python 3.10 execution is not independently checked; the bounded syntax fix is checked on the available interpreter."
+  ]
+}

@@ -1,0 +1,22 @@
+# Codex operational reference
+
+**Reviewed:** 2026-10-13 against the measured `openai/codex` acquisition and current local documentation mirrors. Distinguish Codex CLI, IDE extension, desktop, cloud, and ChatGPT Work. Repository code and docs describe only their own scope; they do not define all ChatGPT behavior.
+
+## Repository and acquisition evidence
+
+The GitHub API repo metadata reported `size=677,170` KiB (~661 MiB). That field is not shallow-clone transfer size, checkout disk use, or time. The latest-release endpoint was checked 2026-10-13 and returned tag `rust-v0.162.1`, commit `092d3acd6bec3e3a14bdc7e7a2810ab628ab759d`. This is time-bound and should be rechecked before use. A reproducible local benchmark exists in `evidence/benchmark-verification.md`, `evidence/benchmark-details.json`, and `evidence/benchmark-original.tsv`; it compares serial archive, shallow clone, and sparse filtered checkout. Reported elapsed times were 17.494s / 10.983s / 21.753s. The compressed archive was 17,186,781 logical bytes; the original TSV records its 1-KiB-rounded `du -sk` allocation as 17,186,816. The archive tree contained 9,017 regular files plus one symlink; regular files totaled 89,296,863 bytes, with 7 symlink-path bytes and 112,951,296 allocated bytes under lstat accounting; shallow checkout matched the tree and added Git metadata; sparse checkout covered only `docs` and `codex-rs/core`. See the verification table for exact logical/allocated counts. Git transfer bytes were not instrumented; times include fetch and extraction/checkout and may reflect warm caches. These measurements are specific to this run and tag, not universal download guarantees.
+
+Source: local benchmark record plus `https://github.com/openai/codex/releases/latest`. The Codex hosted Skills and AGENTS.md docs are available locally at `corpus/articles/openai/codex/codex-skills.md` and `corpus/articles/openai/codex/codex-agents-md.md`. Repository snapshots are in `benchmark-run/` outside this reference package.
+
+## Instruction and skill mechanisms
+
+- Codex documentation describes `AGENTS.md` discovery across global and repository scopes, including `AGENTS.override.md`, nested directories, and a default combined instruction limit. Exact precedence and availability are version-dependent. Source: [Codex AGENTS.md](https://developers.openai.com/codex/guides/agents-md); local mirror records redirect to `https://learn.chatgpt.com/docs/agent-configuration/agents-md`.
+- Codex Skills use a directory with a `SKILL.md` containing `name` and `description`, plus optional resources. Codex documentation lists repository `.agents/skills` and user `$HOME/.agents/skills` locations, among others; see the current doc for exact discovery and invocation semantics. Source: [Codex Skills](https://developers.openai.com/codex/skills); local mirror: `corpus/articles/openai/codex/codex-skills.md`.
+- The tagged source tree is not the full user-facing reference: current hosted docs carry operational details and the Git checkout should be treated as implementation evidence only for the version acquired. At this tag, `docs/skills.md` is only a short pointer to hosted Skills documentation and `docs/config.md` primarily redirects to hosted configuration docs, with a managed-hooks caveat. Prefer hosted docs for user guidance, then label code observations by tag/commit. Source: `https://github.com/openai/codex/blob/rust-v0.162.1/docs/skills.md` and `benchmark-run/shallow/docs/skills.md`.
+- OpenAI guidance recommends keeping broad, unconditional instruction loads small and using conditional skill discovery where suitable. Source: [Rethinking skills and prompts](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra); local mirror: `corpus/articles/openai/codex/codex-prompt-rethink.md`.
+
+## Evidence limits
+
+Benchmark numbers are locally measured; behavior in this reference is otherwise documentation-based. No Codex CLI/IDE/desktop runtime probe was performed as part of these notes. Work and Codex have distinct permission/environment behavior; see [chatgpt.md](chatgpt.md).
+
+For goal-loop or lost-question incidents, consult `goal-loops.md` and `user-input-lifecycle.md`. Source evidence includes ordinary prompt acceptance clearing pending async question UI, active goals suppressing completion notifications, explicit pause restrictions and catalog override boundaries; these are tagged observations, not a live workstation replay.

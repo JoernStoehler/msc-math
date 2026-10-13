@@ -1,0 +1,55 @@
+{
+  "method": "deterministic presence of fixed topical phrases in indexed text; this is not an LLM/model retrieval evaluation. A and B contain identical source bodies under different layouts; C wraps those same bodies in generated views.",
+  "source_context_correction_visibility": {
+    "A_references_only": {
+      "linked_source_correction_pairs_total": 24,
+      "linked_source_correction_pairs_visible": 0
+    },
+    "B_articles_plus_references": {
+      "linked_source_correction_pairs_total": 24,
+      "linked_source_correction_pairs_visible": 0
+    },
+    "C_generated_views_plus_references": {
+      "linked_source_correction_pairs_total": 24,
+      "linked_source_correction_pairs_visible": 24
+    }
+  },
+  "systems": {
+    "A_all_material_consolidated_under_references": {
+      "factual_term_queries_hit": [
+        "project instructions",
+        "custom gpts",
+        "agents.md",
+        "cowork",
+        "skills",
+        "custom instructions"
+      ],
+      "factual_term_queries_total": 6,
+      "factual_term_query_count": 6
+    },
+    "B_corpus_plus_references": {
+      "factual_term_queries_hit": [
+        "project instructions",
+        "custom gpts",
+        "agents.md",
+        "cowork",
+        "skills",
+        "custom instructions"
+      ],
+      "factual_term_queries_total": 6,
+      "factual_term_query_count": 6
+    },
+    "C_generated_views_plus_references": {
+      "factual_term_queries_hit": [
+        "project instructions",
+        "custom gpts",
+        "agents.md",
+        "cowork",
+        "skills",
+        "custom instructions"
+      ],
+      "factual_term_queries_total": 6,
+      "factual_term_query_count": 6
+    }
+  }
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "P01",
+    "request": "An existing personal ChatGPT project uses default memory. I want isolation now. Can I switch it to project-only, or must I recreate it? Give the concrete action and constraints."
+  },
+  {
+    "id": "P02",
+    "request": "I deleted the ChatGPT conversation containing a personal fact. Can I now assert that ChatGPT has forgotten it? What operation is still necessary if it was saved as memory?"
+  },
+  {
+    "id": "P03",
+    "request": "I configured global ChatGPT Custom Instructions and saved memory, then use a custom GPT. Should I expect the same preferences and history? What deployment change would make the important instructions available?"
+  },
+  {
+    "id": "P04",
+    "request": "I edited Custom Instructions while an existing ChatGPT conversation is open. An agent says the change only affects newly created conversations. Audit that claim against the article, including any conflicting wording, and give an operational decision."
+  },
+  {
+    "id": "P05",
+    "request": "Current Claude Code sees both CLAUDE.md and AGENTS.md. Will it combine them by default? If I require both, what must I inspect or configure? Do not transfer Codex semantics."
+  },
+  {
+    "id": "P06",
+    "request": "A Claude Agent SDK query runs with settingSources: [], while the repository contains .claude/skills/reference/SKILL.md. Will filesystem installation alone make it available? What about omitting settingSources instead?"
+  },
+  {
+    "id": "P07",
+    "request": "A maintainer set allow_managed_hooks_only=true in Codex config.toml and declared unmanaged hooks disabled. Is that enforced? Give the correct owning file and evidence."
+  },
+  {
+    "id": "P08",
+    "request": "We have a 21.7 MB reference ZIP with about 2640 files, containing a 636-article corpus. Can I upload this directly as an OpenAI Responses API Skill? If not, specify a usable deployment without promising the entire corpus is available from a thin skill."
+  },
+  {
+    "id": "P09",
+    "request": "I want autonomous multi-step tool work and persistent sessions. Compare OpenAI Responses API, OpenAI Agents SDK, OpenAI Agents API and Claude Agent SDK by who owns the loop, tools, state and compute. Recommend based on control vs managed operation, not product names."
+  },
+  {
+    "id": "P10",
+    "request": "I need complete pinned Codex source as quickly as possible according to this benchmark; separately I want the smallest initial worktree if docs and core are enough. Which method wins each objective? Can GitHub repository size tell me wire transfer cost?"
+  },
+  {
+    "id": "P11",
+    "request": "An agent cloned openai/codex and says it now has all operational documentation offline because docs/skills.md exists. Is that sufficient? State a concrete missing acquisition step."
+  },
+  {
+    "id": "P12",
+    "request": "Claude personalization says project instructions are paid-only in its summary, but project documentation says Free users can create projects. Should a workflow refuse project instructions on a Free account? Inspect the actual instruction sections and qualify the action."
+  }
+]

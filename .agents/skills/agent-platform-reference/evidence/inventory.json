@@ -1,0 +1,95 @@
+{
+  "generated_utc": "2026-10-13T12:56:21+00:00",
+  "sources": 638,
+  "available_verified": 638,
+  "mirror_bytes": 19690995,
+  "raw_snapshot_bytes": 35363420,
+  "mirror_files": 638,
+  "formats": {
+    "markdown": 584,
+    "html": 53,
+    "plain": 1
+  },
+  "products": {
+    "agent-skills": {
+      "sources": 10,
+      "ok": 10,
+      "bytes": 149953
+    },
+    "api": {
+      "sources": 4,
+      "ok": 4,
+      "bytes": 46807
+    },
+    "chatgpt": {
+      "sources": 11,
+      "ok": 11,
+      "bytes": 393048
+    },
+    "chatgpt-work": {
+      "sources": 180,
+      "ok": 180,
+      "bytes": 2407580
+    },
+    "claude-api": {
+      "sources": 54,
+      "ok": 54,
+      "bytes": 2789206
+    },
+    "claude-chat": {
+      "sources": 11,
+      "ok": 11,
+      "bytes": 125733
+    },
+    "claude-code": {
+      "sources": 198,
+      "ok": 198,
+      "bytes": 9914414
+    },
+    "codex": {
+      "sources": 4,
+      "ok": 4,
+      "bytes": 43659
+    },
+    "openai-agents-sdk": {
+      "sources": 28,
+      "ok": 28,
+      "bytes": 503070
+    },
+    "openai-api": {
+      "sources": 108,
+      "ok": 108,
+      "bytes": 2832568
+    },
+    "openai-plugins": {
+      "sources": 30,
+      "ok": 30,
+      "bytes": 484957
+    }
+  },
+  "duplicate_content_groups": [
+    [
+      "openai-agents-api",
+      "openai-api-api-docs-guides-agents"
+    ],
+    [
+      "openai-agents-config",
+      "openai-api-api-docs-guides-agents-api-configuration"
+    ],
+    [
+      "openai-api-api-docs-guides-tools-skills",
+      "openai-skills-api"
+    ],
+    [
+      "openai-plugin-skills",
+      "openai-plugins-plugins-concepts-skills"
+    ]
+  ],
+  "gaps": [],
+  "refresh_failures": [],
+  "fidelity": {
+    "native_markdown": "No content rewrite; CRLF and outer whitespace normalized. Code, tables, links retained.",
+    "html": "Article/main extraction using BeautifulSoup and markdownify. Representative tests preserve headings, links, tables and code; not a claim of universal lossless HTML conversion."
+  },
+  "versioning": "URL/resolved URL, retrieval time, ETag/Last-Modified, normalized SHA256, immutable raw snapshots and per-content metadata history. Conditional HTTP refresh. Vendor code pinned separately by tag/commit."
+}

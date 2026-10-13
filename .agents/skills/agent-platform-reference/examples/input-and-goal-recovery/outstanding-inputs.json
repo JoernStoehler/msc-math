@@ -1,0 +1,20 @@
+[
+  {
+    "case_id": "questions-after-steer",
+    "input": "deployment target for the alert-routing change",
+    "required": true,
+    "status": "unresolved",
+    "gated_action": "implement/configure target-specific alert routing",
+    "why_not_answered": "The user asked for a concise final report; that steer does not identify a deployment target."
+  },
+  {
+    "case_id": "goal-missing-input",
+    "input": "deployment target for the pipeline migration",
+    "required": true,
+    "status": "unresolved",
+    "gated_action": "choose target-specific migration behavior and deployment steps",
+    "why_not_answered": "No target was supplied in the request or event trace.",
+    "next_message": "goal-next-user-message.txt",
+    "question_route": "Use request_user_input only if exposed and current mode is Plan (blocking); if only async question delivery is available, it can alert but does not block. Verify actual route and notification settings; do not assume a tool or mode."
+  }
+]

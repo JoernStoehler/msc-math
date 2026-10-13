@@ -1,0 +1,186 @@
+[
+  {
+    "id": "P01",
+    "decision": "You can switch the existing personal project in place: open it, choose \u2022\u2022\u2022 > Project settings > Memory > Project-only memory > Save. You do not need to recreate it.",
+    "caveats": "The setting may take a few hours to take effect. Project-only excludes personal saved memories and outside-project context; project chats/files remain usable. Memory must be enabled in applicable account/workspace settings for the option to appear. Shared projects are already project-only and cannot be switched to default.",
+    "evidence": [
+      {
+        "path": "references/vendor/openai/chatgpt/chatgpt-projects.md",
+        "quote": "If I made a project before project-only memory was introduced, can I change it? Yes. Open the project\u2019s settings, select Project-only memory under Memory, and save your changes."
+      },
+      {
+        "path": "references/vendor/openai/chatgpt/chatgpt-projects.md",
+        "quote": "When you switch a project to project-only memory, information from that project is removed from memory used outside the project. The project\u2019s chats and files remain in the project"
+      }
+    ]
+  },
+  {
+    "id": "P02",
+    "decision": "No. Deleting the conversation alone does not establish that ChatGPT has forgotten a fact saved as a separate memory. Delete the saved memory in Memory settings (or ask ChatGPT to forget it) and delete the original chat; remove it from other sources too.",
+    "caveats": "Deletion and memory updates may take time to propagate. OpenAI says logs of deleted saved memories may be retained up to 30 days for safety/debugging. The source describes documented behavior, not verification of this account.",
+    "evidence": [
+      {
+        "path": "references/vendor/openai/chatgpt/chatgpt-memory.md",
+        "quote": "Deleting a chat alone does not necessarily delete a separate saved memory created from that chat."
+      },
+      {
+        "path": "references/vendor/openai/chatgpt/chatgpt-memory.md",
+        "quote": "To remove information saved as a memory, delete the saved memory and the chat where you first shared it."
+      }
+    ]
+  },
+  {
+    "id": "P03",
+    "decision": "Do not expect a custom GPT to inherit saved memories, global Custom Instructions, or prior conversation history. Put the essential instructions in the GPT's own configuration (or explicitly in the conversation); if you need persistent project-specific context, use project instructions in a regular project chat.",
+    "caveats": "GPT behavior is documented at the product level; it does not establish live account configuration. A custom GPT used inside an existing project chat is a supported special case, but its general memory/history inheritance should not be assumed.",
+    "evidence": [
+      {
+        "path": "references/vendor/openai/chatgpt/chatgpt-gpts.md",
+        "quote": "GPTs do not use saved memory, custom instructions, or previous conversations. Each conversation starts fresh."
+      },
+      {
+        "path": "references/vendor/openai/chatgpt/chatgpt-gpts.md",
+        "quote": "When building a GPT, you can add instructions, knowledge, and capabilities to customize its behavior."
+      }
+    ]
+  },
+  {
+    "id": "P04",
+    "decision": "The agent's claim is wrong: the article says edits apply immediately to all chats, including existing conversations. Operationally, save the change and continue/retry in the open chat; if the UI appears stale, verify the saved setting and test behavior.",
+    "caveats": "The article itself has conflicting wording: one passage says instructions are applied immediately to all chats; another specifically says updates are applied immediately across all chats including existing conversations, but contains an extra closing parenthesis. Documentation cannot prove a particular open session's observed state.",
+    "evidence": [
+      {
+        "path": "references/vendor/openai/chatgpt/chatgpt-custom-instructions.md",
+        "quote": "Your custom instructions are applied immediately to all chats."
+      },
+      {
+        "path": "references/vendor/openai/chatgpt/chatgpt-custom-instructions.md",
+        "quote": "Updates to custom instructions settings are applied immediately across all chats (including existing conversations)."
+      }
+    ]
+  },
+  {
+    "id": "P05",
+    "decision": "No, do not expect both files to be combined by default. With current Claude Code docs, if a CLAUDE.md/CLAUDE.local.md is in scope, AGENTS.md is skipped under the default claude-md-or-agents-md setting. To require both, use /config > Project instructions > claude-md-and-agents-md, then inspect the effective loaded files via /memory or /context and confirm the installed version.",
+    "caveats": "Native AGENTS.md support is documented from v2.1.277; some sessions require v2.1.281+, and the built-in AGENTS.md plugin can be disabled. This is Claude Code behavior and should not be replaced with Codex semantics.",
+    "evidence": [
+      {
+        "path": "references/vendor/anthropic/claude-code/claude-code-memory.md",
+        "quote": "An AGENTS.md and a CLAUDE.md or CLAUDE.local.md in your working directory or above it | Your CLAUDE.md files only"
+      },
+      {
+        "path": "references/vendor/anthropic/claude-code/claude-code-memory.md",
+        "quote": "claude-md-and-agents-md | Your CLAUDE.md and AGENTS.md files together"
+      }
+    ]
+  },
+  {
+    "id": "P06",
+    "decision": "With settingSources: [], filesystem installation alone will not make the project skill available. Include 'project' in settingSources (and 'user' if user skills are needed); for an SDK query with settingSources omitted, defaults load user and project sources, so the skill can be discovered if cwd is in the repository scope. Check the init message's skills array.",
+    "caveats": "Discovery depends on cwd and skills option/invocation. An explicitly empty settingSources disables filesystem settings; a filesystem path alone is not sufficient. Documentation snapshot, not runtime test.",
+    "evidence": [
+      {
+        "path": "references/vendor/anthropic/claude-code/claude-code-docs-en-agent-sdk-skills.md",
+        "quote": "With default query() options, the SDK loads user and project sources"
+      },
+      {
+        "path": "references/vendor/anthropic/claude-code/claude-code-docs-en-agent-sdk-skills.md",
+        "quote": "If you set settingSources/setting_sources explicitly and omit those sources, the SDK doesn't load skills"
+      }
+    ]
+  },
+  {
+    "id": "P07",
+    "decision": "The unmanaged-hooks-disabled claim is enforceable when configured in the owning managed policy layer: put allow_managed_hooks_only = true in requirements.toml (managed configuration), alongside [features].hooks = true and the managed [hooks] declarations. A user/project config.toml declaration is not the documented organization enforcement mechanism.",
+    "caveats": "The flag skips user, project, session and plugin hooks while permitting managed hooks. It does not itself create or enable hook definitions; verify the effective managed configuration and runtime. The vendor config reference also has an implementation/config schema entry, but policy ownership is specified by the hooks guide.",
+    "evidence": [
+      {
+        "path": "references/vendor/openai/chatgpt-work/chatgpt-work-docs-hooks.md",
+        "quote": "To enforce managed hooks even for users who disabled hooks locally, pin [features].hooks = true in requirements.toml alongside [hooks]."
+      },
+      {
+        "path": "references/vendor/openai/chatgpt-work/chatgpt-work-docs-hooks.md",
+        "quote": "To ignore user, project, session, and plugin hooks while still allowing administrator managed hooks, set allow_managed_hooks_only = true."
+      }
+    ]
+  },
+  {
+    "id": "P08",
+    "decision": "Do not upload the 2,640-file archive as one Responses API Skill version: it exceeds the documented 500-file limit. Use a thin ZIP with the entry SKILL.md and selected supporting references, then keep the full 636-article corpus in a separately accessible store and expose retrieval/search through the chosen runtime; alternatively, mount the corpus in an Agents API sandbox capability directory with read access. The thin skill must explain that it can retrieve only what the external store/tool exposes.",
+    "caveats": "The cited API docs state 50 MB maximum ZIP, 500 files per version, and 25 MB uncompressed. The stated 21.7 MB alone doesn't establish whether the archive is under the uncompressed ceiling; file count already rules out direct upload. A thin skill does not make all corpus contents available automatically.",
+    "evidence": [
+      {
+        "path": "references/vendor/openai/openai-api/openai-api-api-docs-guides-tools-skills.md",
+        "quote": "The maximum ZIP file size is 50 MB, the maximum number of files in a Skill version is 500, and the maximum uncompressed size is 25 MB."
+      },
+      {
+        "path": "references/vendor/openai/openai-api/openai-api-api-docs-guides-tools-skills.md",
+        "quote": "To use skills in the Agents API, put the skill directories in the sandbox and register their parent directories in environment.capability_directories"
+      }
+    ]
+  },
+  {
+    "id": "P09",
+    "decision": "For maximum application control, use an application-owned SDK loop: OpenAI Agents SDK runs the loop while your app owns deployment, tool implementations, state storage, approvals and compute; Claude Agent SDK runs Claude Code's loop/tools/context/permissions/sessions, while your app operates the process and supplies credentials/environment. For managed operation, OpenAI Agents API owns sessions, orchestration, compaction and recovery, while you configure tools and choose hosted/self-hosted compute. Responses API is a lower-level model/tool-call interface: your app owns continuation/tool execution and durable state; it is not a managed persistent autonomous harness by itself. Choose SDK/manual loop for control; Agents API for managed session orchestration.",
+    "caveats": "Tool execution and filesystem/compute ownership vary with configured tools and environment; do not infer those details from product names. The local set does not contain verified Anthropic Managed Agents operational documentation, so this comparison concerns Claude Agent SDK only. Validate deployed versions/configuration.",
+    "evidence": [
+      {
+        "path": "references/vendor/openai/openai-api/openai-api-api-docs-guides-agents-sdk.md",
+        "quote": "your server owns deployment, tool implementations, state storage, and approval decisions, while the SDK runs the agent loop and invokes those tools."
+      },
+      {
+        "path": "references/vendor/openai/api/openai-agents-api.md",
+        "quote": "OpenAI docs describe a managed Codex harness, with OpenAI handling sessions, orchestration, context compaction, and recovery"
+      }
+    ]
+  },
+  {
+    "id": "P10",
+    "decision": "For complete pinned source fastest by this benchmark, the depth-1 tag clone wins at 10.983 s (vs release archive 17.494 s and sparse checkout 21.753 s). For smallest initial checkout where docs and codex-rs/core suffice, sparse checkout wins: 1,031 files and 19,510,343 logical checkout bytes. GitHub repository size metadata cannot tell wire-transfer bytes or elapsed time.",
+    "caveats": "These are one serial environment-specific measurement for rust-v0.162.1, not a guarantee or current latest-release result. Sparse checkout is incomplete and may fetch omitted blobs later. No network byte counter was enabled, so actual wire transfer was not measured.",
+    "evidence": [
+      {
+        "path": "evidence/benchmark-verification.md",
+        "quote": "The copied benchmark-run.log and benchmark-original.tsv record successful serial timings: archive 17.494 s, depth-1 clone 10.983 s, sparse blob-filtered checkout 21.753 s."
+      },
+      {
+        "path": "evidence/benchmark-verification.md",
+        "quote": "No wire-byte instrumentation was enabled."
+      }
+    ]
+  },
+  {
+    "id": "P11",
+    "decision": "No. docs/skills.md is only a pointer and does not provide the operational documentation offline. Acquire the hosted Codex Skills guide separately (and likewise the AGENTS.md guide if needed), preserving it locally; verify the online guide's content is actually present rather than treating the repository pointer as the docs.",
+    "caveats": "The repository checkout may contain implementation notes, but it is not a complete mirror of user-facing hosted docs. Keep source/tag and hosted documentation evidence distinct.",
+    "evidence": [
+      {
+        "path": "references/vendor/openai/codex/codex-skills.md",
+        "quote": "For instructions on how to install and use skills, see the Codex skills documentation."
+      },
+      {
+        "path": "references/vendor/openai/codex/codex-agents-md.md",
+        "quote": "For more information on AGENTS.md, see the Codex documentation."
+      }
+    ]
+  },
+  {
+    "id": "P12",
+    "decision": "Do not refuse project instructions solely because the account is Free. The Projects page says Free users can create up to five projects and describes adding project instructions; the personalization page's project-instructions section also says projects are available to all users, but its later summary contradictorily labels project instructions paid-plans-only. Treat availability as documented but internally inconsistent: try the project UI on the account and qualify any limitation based on observed controls/rollout.",
+    "caveats": "The evidence supports project access/instructions generally, not guaranteed availability in every live account or rollout. Resolve the conflict through actual UI/account state rather than asserting either universal prohibition or guaranteed entitlement.",
+    "evidence": [
+      {
+        "path": "references/vendor/anthropic/claude-chat/claude-chat-projects.md",
+        "quote": "Projects are available to all users, including those with free Claude accounts. Free users can create a maximum of five projects."
+      },
+      {
+        "path": "references/vendor/anthropic/claude-chat/claude-chat-projects.md",
+        "quote": "Claude will use these instructions for all the chats within the project."
+      },
+      {
+        "path": "references/vendor/anthropic/claude-chat/claude-personalization.md",
+        "quote": "Use project instructions when you need specific guidance or context for a particular project (paid plans only)."
+      }
+    ]
+  }
+]

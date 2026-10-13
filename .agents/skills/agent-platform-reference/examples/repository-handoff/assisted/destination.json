@@ -1,0 +1,9 @@
+{
+  "surface": "claude.ai chat/Cowork",
+  "available_input": "uploaded repository ZIP or explicit git checkout",
+  "home": "/home/cloud-user",
+  "repository_path": "/mnt/session/work/repository",
+  "browser_port_forwarding": false,
+  "cargo": "not established; verify destination prerequisites",
+  "automatic_repo_instruction_loading": "not established"
+}

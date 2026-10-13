@@ -24,6 +24,7 @@ Use the supported route for the operation and execution environment. These defau
 | Bounded Codex task launched from a shell (including Claude where Codex is available) | `codex exec`; return the final message/file and exit status to the launcher |
 | Native child in this agent tree | Exposed `collaboration.*` contract; native return to its parent |
 | Human-operated ChatGPT Pro | Focused ZIP, Taildrop through Jörn, established submission prompt and returned ZIP |
+| Authorized browser-operated ChatGPT/Claude session | Verified source attachment or available repository access; explicit artifact return, downloaded and integrated by its coordinator |
 | Destination with no accessible machine route | Explicit human relay of a ready-to-copy message, including its return path |
 
 The following sections give usage details. A fallback applies because its preferred route is unavailable in that environment, not merely because another route exists. Creating a thread, starting a CLI worker and messaging an existing thread are different operations; choose the operation from the actual assignment, not from a message-type taxonomy.
@@ -119,6 +120,18 @@ These paths carry material; they do not themselves send messages:
 For Jörn's workstation browser, map an absolute path to `https://joern-pc.tailc5e761.ts.net/files/absolute/path`, expanding `~` and URL-encoding path segments. [Review files](../review-files/SKILL.md) supplies expiring view-only links; retained device transfer and annotation use their own workflows. A local path or browser link does not guarantee another agent's filesystem access. Retain accepted project results with their source/evidence owner rather than only in scratch or artifact storage. [Environment docs](../../../meta-topics/development-environment/development-environments.md) own machine/access context; [AGENTS.md](../../../AGENTS.md) owns path and authorization rules.
 
 ### Taildrop and human-operated Pro
+
+For an authorized browser-operated cloud session, use the actual browser tools
+and file controls available in that session. Give one operator ownership of the
+tab/task. Verify the attachment/source identity at the destination, obtain a
+downloadable return and inspect it locally; a reply containing only cloud paths
+does not transfer files. Keep source delivery distinct from installed Skills,
+permissions and automatic instruction loading. The project
+[cloud handoff contract](../../../meta-topics/development-environment/cloud-workflow.md)
+owns its source bundle, setup and continuation. Archive disposable trials after
+receiving their work, and provide exact review clicks if Jörn should inspect them.
+This route requires the task's authorization and resource allowance; the
+human-operated Pro route below remains available when selected.
 
 Taildrop transfers files to a device; Jörn submits the packet in ChatGPT Pro and transfers the returned ZIP back. Taildrop completion is not evidence of ChatGPT submission or research completion.
 

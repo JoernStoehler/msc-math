@@ -1,0 +1,102 @@
+[
+  {
+    "evidence_file": "slash-only-parse.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/bottom_pane/prompt_args.rs",
+    "source_range": "1-24",
+    "source_sha256": "0a216a0ba62dc0fe8c8bfc83d8d27a4a9c1e665b8eb641f4ca3bad28f516fd5c",
+    "excerpt_sha256": "620843ee8be4fae91a6a8e878ce8b08bf0f3ef6442c184f3d21d6ae78a6501b4",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/bottom_pane/prompt_args.rs"
+  },
+  {
+    "evidence_file": "goal-tool-policies.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/ext/goal/src/spec.rs",
+    "source_range": "25-94",
+    "source_sha256": "db48400d291ecb642b0d1189c73eea81a412f4b13bc9f7d917dc0dbd3f7828ea",
+    "excerpt_sha256": "7f913cf660e5091f129b9b9c91ce2e8eb2c192a1e259db60a9b9bb7dacebd39c",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/ext/goal/src/spec.rs"
+  },
+  {
+    "evidence_file": "goal-slash-dispatch.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/chatwidget/slash_dispatch.rs",
+    "source_range": "965-1070",
+    "source_sha256": "60d7a072d7c2dbda275d81f363ffcf754e65ae2296c35bcd7aacc796fd7402f1",
+    "excerpt_sha256": "32ca27ca2f626024d982f2d045c71efcd6bcce623c1a44dfe7abe8c5b14df413",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/chatwidget/slash_dispatch.rs"
+  },
+  {
+    "evidence_file": "idle-goal-continuation.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/ext/goal/src/extension.rs",
+    "source_range": "180-193",
+    "source_sha256": "47fe789555dc082a7b9f1b9d67e2f084bde9fcce34aad1d61257a71c03a67055",
+    "excerpt_sha256": "23ad9f94fa49059a2c045c260131453aa98c88ca10adbc150af444c08bad0c32",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/ext/goal/src/extension.rs"
+  },
+  {
+    "evidence_file": "goal-continuation-runtime.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/ext/goal/src/runtime.rs",
+    "source_range": "425-486",
+    "source_sha256": "e5db4c95e5e1c6d5196998817c7c8507aa3f3ac52a4435ccbc6d13781742a902",
+    "excerpt_sha256": "9f23a178d1a05c0b38edb80abe4b3c0aba0e9fe7d03e172ab4e9831eeeab1093",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/ext/goal/src/runtime.rs"
+  },
+  {
+    "evidence_file": "turn-complete-notification-gate.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/chatwidget/turn_runtime.rs",
+    "source_range": "203-223",
+    "source_sha256": "537e60fac75d995a0ce662432d6186d04cabde727bc4d379d42fcbefe8d0d8a9",
+    "excerpt_sha256": "d82111853c0adda7257ed14c5d3b2ec488816e48487fb1e6a6cef0c4605f2f83",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/chatwidget/turn_runtime.rs"
+  },
+  {
+    "evidence_file": "interrupt-pauses-active-goal.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/chatwidget/interaction.rs",
+    "source_range": "648-667",
+    "source_sha256": "3f0687d4cd7b5bc912ec72b355e529a48011469586b4f83c29bf982a85a11d48",
+    "excerpt_sha256": "9f126a923926dc496ff754864f422a4a438d926240f221b103f900d197d8304e",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/chatwidget/interaction.rs"
+  },
+  {
+    "evidence_file": "goal-command-name.rs",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/tui/src/slash_command.rs",
+    "source_range": "137-140",
+    "source_sha256": "43ab51f82ea1ce9aec67b8e563fc9f8c750c0ea7c2119e009aede8ee2e5e7d79",
+    "excerpt_sha256": "88abf7a93c1fc766853685a7eb9e9ec73b9a7cf13c0587e84978561db94fa3c6",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/tui/src/slash_command.rs"
+  },
+  {
+    "evidence_file": "goal-continuation-hard-blocker-guidance.md",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/ext/goal/templates/goals/continuation.md",
+    "source_range": "7-27",
+    "source_sha256": "764b9c26b36013a21b687d74597e303be9bbf13776c359ec1fb185dbc0e7eac7",
+    "excerpt_sha256": "baaf4be3662e76a8bd86c2c41bd74a50ea61069ae958a2a2ffa23dd3ae2e7774",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/ext/goal/templates/goals/continuation.md"
+  },
+  {
+    "evidence_file": "goal-blocked-pause-audit.md",
+    "source_path": "/workspace/scratch/383d577c0424/benchmark-run/shallow/codex-rs/ext/goal/templates/goals/continuation.md",
+    "source_range": "48-56",
+    "source_sha256": "764b9c26b36013a21b687d74597e303be9bbf13776c359ec1fb185dbc0e7eac7",
+    "excerpt_sha256": "171f8eb6dcccdcf1b1ca44f7ddbc91697b5a035ed589ed774203640f02fc1ef5",
+    "tag": "rust-v0.162.1",
+    "commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "repository_path": "codex-rs/ext/goal/templates/goals/continuation.md"
+  }
+]
