@@ -25,3 +25,15 @@ The communication rollout exposed a review gap: technical accuracy and link/disc
 ## Contextual expert advice, 6 October 2026
 
 Jörn asked whether older situational advice is retained as evidence that can make an idea worth considering, followed by evaluation that promotes, retains or drops it for the current problem. The runtime heuristic now makes that transfer explicit. It preserves the difference between defeasible efficacy advice and authoritative instructions/preferences. A partial evaluation does not necessarily screen off everything the expert judgment supplied; the endorsement and evaluation must not be double counted. This is his articulated reasoning and a design synthesis, not reconstruction of his tacit judgment model or a measured optimum.
+
+## Product-reference ownership, 13 October 2026
+
+Jörn authorized considering whether harness-engineering should be subsumed into
+agent-platform-reference, while noting that a specialized design trigger may
+remain valuable. Retained harness-engineering's design/maintenance/evaluation
+workflow and trigger; replaced its duplicated product-loading account with
+conditional links to the new product reference. Its existing source URLs remain
+a fallback when the sibling package is unavailable. Jörn's bootstrap/retrieval
+advice is attributed in that reference, alongside vendor mechanics and limits.
+No broad skill retirement, external deployment or behavioral improvement is
+claimed. Link and structural checks cover this source change only.

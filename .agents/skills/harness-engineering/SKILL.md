@@ -86,23 +86,21 @@ metadata:
 **Suggestion:** Prefer the nearest durable owner. Promote guidance only when its consumers and truth genuinely span the wider scope.
 **Prevents:** irrelevant instructions loading into ordinary work, competing owners, and project-local knowledge silently becoming universal policy.
 
-## Know how Codex loads guidance
+## Consult product mechanics when they affect the design
 
-### `AGENTS.md`
+Use this skill for the design, maintenance and evaluation workflow. Use
+[agent-platform-reference](../agent-platform-reference/SKILL.md) for product
+mechanics and source interpretation when those affect the intervention. For
+AGENTS.md/CLAUDE.md placement, skill routing or subagent instruction receipt,
+start with its [instruction-design reference](../agent-platform-reference/references/instruction-design.md).
+It also retains Jörn's attributed bootstrap and retrieval advice.
 
-**Technical context:** Codex loads instruction files before doing work, normally once for a launched session. It first looks in `CODEX_HOME` for `AGENTS.override.md`, then `AGENTS.md`, and uses the first non-empty file. For project guidance it walks from the project root to the current working directory, checking `AGENTS.override.md`, `AGENTS.md`, then configured fallback names in each directory. It includes at most one file per directory; nearer files load later and override broader guidance.
-**Technical context:** Empty files are skipped. The combined project-instruction limit defaults to 32 KiB. Changing a loaded file does not imply that an already-running session has reloaded it.
-**Design consequence:** Put broad invariants high and narrow exceptions near their consumers. Avoid duplicating the same rule at several levels merely for visibility.
-
-### Skills
-
-**Technical context:** Codex initially exposes each discovered skill's name, description, and path, then reads `SKILL.md` when the skill is selected, and reads supporting resources only as needed. Repository skills are discovered from `.agents/skills` directories between the current working directory and repository root. Same-named skills are separate discoverable entries; they do not merge.
-**Technical context:** The initial skill catalog has a context budget, so long descriptions may be shortened and some skills may be omitted when the catalog is large. Automatic invocation is the default unless supported metadata changes it.
-**Design consequence:** Make the description discriminating: state the capability, when it applies, and only exclusions needed to prevent likely misrouting. Keep normally co-needed guidance together; move substantial conditional detail into references only when progressive loading has a real benefit.
-
-### Prompts and agent definitions
-
-**Technical context:** A prompt or agent definition affects a run because it is selected or passed to that run; merely storing the file does not activate it. Inherited context, available tools, model choice, reasoning controls, and environment are separate concerns. Prompt wording must not imply that it changed a control the execution surface did not provide.
+**Boundary:** This link is a conditional consultation, not a requirement to load
+both skills for every wording change. If the product reference is unavailable,
+use the relevant primary sources below. Verify the actual recipient's discovery,
+loaded instructions and activation mechanism; a stored file or description does
+not establish receipt or adherence. Keep specialized design triggers here and
+volatile loading/configuration facts with the product reference.
 
 ## Read relevant external guidance
 

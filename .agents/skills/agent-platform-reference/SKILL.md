@@ -1,6 +1,6 @@
 ---
 name: agent-platform-reference
-description: Technical reference and corrective expertise for OpenAI/Anthropic products, model behavior and agent harnesses. Use to diagnose platform failures, repository handoffs, instructions/skills, user questions, goal loops, research execution bottlenecks or traced-session behavior, and choose source-grounded maintained fixes. Keep measured behavior and hypotheses distinct.
+description: Reference for OpenAI/Anthropic products and agent harnesses. Use for tools, setup, handoffs, instruction loading, skills, permissions and lifecycle questions. Label implementation facts, model-behavior evidence and hypotheses separately; harness-engineering owns intervention design.
 ---
 
 # Agent-platform reference
@@ -19,7 +19,27 @@ Recover the actual task, failed action, effective product/surface/version, relev
 
 Report the mechanism, evidence, proposed owning surface, expected benefit and remaining uncertainty. Cite source paths actually inspected; label paraphrases and copy any claimed quote exactly. When authorized to implement, change that owner, test a representative continuation, and preserve the user's objective. Keep activation separate from a proposed correction; don't silently alter live settings or enable goal loops.
 
-## For product questions
+## For model behavior and intervention design
+
+Start with [model-evidence.md](references/model-evidence.md) for claims about
+attention, habits, reasoning, capability or why an agent behaved as it did. Keep
+vendor advice, attributed user judgments, executed observations and causal
+hypotheses distinct. A product implementation fact does not validate a theory of
+model cognition. These are overlapping consultation questions: one guide can
+contain both interface mechanics and behavioral advice. Label individual claims
+and trace how the recipient receives the material; don't force whole guides into
+disjoint technical/psychological categories. Do not initiate a costly experiment programme merely to answer
+a design question; propose only work that can distinguish consequential choices
+within the user's selected scope and allowance.
+
+For authoring or evaluating maintained guidance, use the specialized
+[harness-engineering](../harness-engineering/SKILL.md) workflow when available.
+For AGENTS.md/CLAUDE.md content, skill routing or subagent instruction receipt,
+consult [instruction-design.md](references/instruction-design.md). It bridges
+mechanics and design while labeling their evidence separately, including Jörn's
+attributed advice. A single discovery guide does not cover all these questions.
+
+## For technical product questions
 
 1. Disambiguate product and surface (ChatGPT ordinary chat vs Work vs Codex; Claude chat/Cowork vs Claude Code CLI/Desktop/cloud vs Agent SDK; API-hosted vs self-hosted). Do not assume features transfer between surfaces.
 2. Search the relevant `references/*.md` first. If the task environment has shell access and the downloaded corpus exists, search correction-enriched `corpus/views` with `rg -n -i 'TERM' references corpus/views`; use `corpus/articles` for normalized vendor text and `corpus/snapshots` for immutable response bytes.

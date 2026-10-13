@@ -1,6 +1,10 @@
 # Model behavior: evidence and open questions
 
-The same technical-reference skill holds product mechanics and model-behavior evidence. The certainty levels differ. Product documents describe interfaces and intended behavior; neither a vendor prompting guide nor an appealing explanation establishes why a model failed or predicts the effectiveness of a new workflow.
+This is the model-behavior evidence route. It overlaps the product and harness
+mechanics routes: the separation concerns claims and their support, not a natural
+partition of whole documents. The package currently retains both collections, with distinct
+consultation routes; a shared directory does not give them the same evidence
+standard. Attribution and uncertainty survive transfer into design guidance. Product documents describe interfaces and intended behavior; neither a vendor prompting guide nor an appealing explanation establishes why a model failed or predicts the effectiveness of a new workflow.
 
 ## Keep the system layers separate
 
@@ -25,3 +29,26 @@ A new record should include: ID/date; question/task; surface/model/version/confi
 It has primary-source mechanics, tagged source observations, acquired corpus/tooling validation and disclosed-case diagnosis/artifact demonstrations. It does not establish a model-wide failure rate, mathematical capability curve, optimal swarm size, a causal context-contamination mechanism or a reliable unattended research strategy. The user retains withheld acceptance cases. Subsequent traced work can extend this skill with measured findings and create other skills in parallel without replacing the one technical owner.
 
 For time attribution, consult [session-traces.md](session-traces.md). Classify measured spans and unobserved intervals; don't infer compute effort or cognitive quality from token count, message count or gaps between transcript entries.
+
+## Jörn's distinction, 13 October 2026
+
+Jörn proposed separating technical product knowledge from model psychology:
+technical mechanisms have more standard documentation and may be checked in
+implementation/source, while model behavior is an open, uncertain research area
+whose experiments can be costly and difficult to interpret. This is attributed
+methodological advice. It does not establish that every technical document is
+correct, or require reverse-engineering intelligence before making useful
+workflow decisions. Prefer direct task evidence and bounded comparisons where
+they can materially change a decision; do not promote a plausible psychological
+story into a mechanism demonstrated by source code.
+
+Jörn subsequently qualified the proposed split: guides often combine context
+loading with advice about what that content does to a model. His examples include
+file names, message tags, formatting, a live user message, a user statement
+recorded in Markdown, and PDF annotations. Retain this as an open interaction
+question. Distinguish the formal role/authority and actual context construction
+from the model's response to the representation; the same words need not arrive
+with the same role, attribution or surrounding context. A role rule states an
+intended priority, not a measurement of reliable adherence. Avoid reducing all
+differences to wording or treating every presentation effect as demonstrated
+intrinsic model psychology. No new experiments were selected by this discussion.

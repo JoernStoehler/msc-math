@@ -2,6 +2,8 @@
 
 Source review: 2026-10-13. All selected sources are locally acquired and hash validated. `evidence/inventory.json` records per-product counts, byte totals and duplicate content; `corpus/discovery.json` records index selections and exclusions. Read correction-enriched views under `corpus/views` or compare canonical vendor text under `corpus/articles`. Documentation establishes retrieved statements, not live account or product-runtime behavior.
 
+## Product and harness mechanics
+
 | Product/surface | Read first | Upstream evidence |
 | --- | --- | --- |
 | ChatGPT ordinary chat / custom instructions / memory | `chatgpt.md`, `corrections.md` | OpenAI Help Center: Custom Instructions, Projects, Memory, GPTs, models |
@@ -29,10 +31,19 @@ For a specific negative claim, require scope and a recent source. For a live acc
 
 For a known case, `python scripts/consult.py handoff`, `goal`, `questions` or `repair` reads just that page. See `REVIEW.md` for task demonstrations and negative results.
 
-Additional focused references:
+## Model behavior, evaluation and workflow design
+
+These consultation routes overlap the mechanics routes above. A guide can mix
+loading mechanics with recommendations about model behavior; label the claims
+individually. Vendor prompting advice, user observations and causal hypotheses
+retain those labels. Costly
+model research is not a prerequisite for ordinary documented-mechanics queries.
+`harness-engineering` remains the specialized intervention workflow; the pages
+below supply evidence and interpretation when it needs them.
 
 | Consultation | Reference |
 | --- | --- |
 | Research execution bottleneck / delegation/context/configuration | `research-execution.md` |
 | Fully traced session-time attribution | `session-traces.md` |
 | Model behavior, uncertainty and incremental findings | `model-evidence.md` |
+| AGENTS.md/CLAUDE.md design, skill routing, subagent instruction receipt and Jörn's advice | `instruction-design.md` |

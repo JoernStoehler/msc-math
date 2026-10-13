@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13T16:32:00Z",
+  "updated_at": "2026-10-13T17:21:00Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
   "summary": "Cloud source support and received reference skill retained. Two disclosed surface checks returned downloaded ZIPs at the expected Git revision; Claude required reading incomplete. Whole useful-work outcome and cumulative efficiency remain open. Execution window ended; no further launch or allowance selected. Work chat archived; remote temporary branch deleted. Browser cleanup failed with Debugger unattached; remaining tabs unconfirmed. Claude retained because Archive was unavailable.",
   "tasks": [
@@ -2856,17 +2856,19 @@
       "selection": "selected",
       "status": "done",
       "owner": null,
-      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified.",
+      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified. 13 October follow-up: compared instruction-design guides, retained attributed Jörn bootstrap/retrieval advice, added a focused consultation route and claim-level evidence distinctions. Harness-engineering retains its specialized workflow and consults the product reference for loading mechanics. Independent source/message review approved the bounded change; general behavioral improvement not established.",
       "depends_on": [],
       "blocker": null,
       "authorization": "Fresh60minutes15:32:21–16:32:21UTC; original+4weekly quota points ceiling retained. User authorized temporary GitHub branch and cleanup, brief cloud checks and repo skill source adoption. No further execution allowance.",
       "sources": [
         "meta-topics/project-management/handoff.md",
         "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
-        "meta-topics/development-environment/cloud-surface-check-20261013/README.md"
+        "meta-topics/development-environment/cloud-surface-check-20261013/README.md",
+        ".agents/skills/agent-platform-reference/references/instruction-design.md",
+        ".agents/skills/harness-engineering/SKILL.md"
       ],
       "next_step": "Inspect retained source and evidence with Jörn; select any further useful-work acceptance route and allowance in ordinary chat. No automatic continuation or external skill deployment.",
-      "updated_at": "2026-10-13T16:32:00Z"
+      "updated_at": "2026-10-13T17:21:00Z"
     },
     {
       "id": "cloud-live-handoff-trial-20261013",
@@ -2884,8 +2886,8 @@
         "scripts/cloud-handoff.py",
         "meta-topics/development-environment/cloud-surface-check-20261013/README.md"
       ],
-      "next_step": "Inspect retained source and evidence with Jörn; select any further useful-work acceptance route and allowance in ordinary chat. No automatic continuation or external skill deployment.",
-      "updated_at": "2026-10-13T16:32:00Z"
+      "next_step": "Jörn reports a second Claude message/ZIP after the focused reading rerun. Browser inventory has no connected surfaces in this turn; request attachment or Taildrop and the message. Original return remains retained. No new revision assessed yet.",
+      "updated_at": "2026-10-13T17:21:00Z"
     }
   ],
   "decisions": [

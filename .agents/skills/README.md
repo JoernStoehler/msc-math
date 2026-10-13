@@ -41,3 +41,12 @@ Jörn requested [codex-app-server](codex-app-server/SKILL.md) for Claude-cloud a
 ## Agent-platform reference, 13 October 2026
 
 Jörn authorized [agent-platform-reference](agent-platform-reference/SKILL.md) as the repository-owned products reference. It retains the acquired corpus, provenance, curated corrections, disclosed-case demonstrations and negative evidence; `.claude/skills/agent-platform-reference` links to this owner. [The adoption record](agent-platform-reference/evidence/repository-adoption-20261013.json) identifies the received capsule and bounded tooling/retention changes. [REVIEW.md](agent-platform-reference/REVIEW.md) owns demonstrated usefulness and its limits. No deployment outside this repository is included.
+
+The 13 October instruction-design follow-up adds a multi-guide consultation
+route and attributed Jörn advice to the product reference. Technical mechanism
+questions and model-behavior/design questions have overlapping routes with
+claim-level evidence labels. `harness-engineering` retains its specialized
+intervention workflow and conditionally consults that reference for mechanics;
+its duplicated loading account was removed. No separate model-psychology skill
+or external deployment is selected. Structural checks do not establish better
+agent behavior.

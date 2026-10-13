@@ -23,3 +23,25 @@ Codex CLI and Claude Code can use local corpus search when filesystem tools are 
 Large hosted bundles should use a thin entry point plus selected references, with the full corpus in an explicitly accessible store. Do not invent a portable size limit: check current client settings and documentation. Live-documentation lookup is the fallback for freshness, failed mirrors, unsupported scope or changed versions.
 
 The original lexical comparison is retained as an availability check only. See `REVIEW.md` and `evidence/decision-evaluation/` for the decision-level negative results and revised conclusions. Final measured corpus sizes are in `evidence/inventory.json`; old totals above describe the initial 636-source snapshot.
+
+## Consultation categories, 13 October 2026
+
+Jörn proposed distinguishing documented product mechanisms from model psychology
+and retaining a specialized harness-design trigger. The entry point and index
+now separate technical consultation from model-behavior evidence and
+intervention design. Existing references remain at stable paths; no wholesale
+corpus move or second auto-triggered model-psychology skill was created.
+Harness-engineering retains workflow-specific design/evaluation advice and
+conditionally consults this package for mechanics. The instruction-design page
+compares several guides and attributes Jörn's bootstrap/retrieval judgment.
+This is a source-organization choice, not a behavioral success claim. A future
+independent behavior-research consumer may justify a separate package; current
+behavior evidence and experiments do not establish a mature general psychology
+workflow. The agents.md format site's missing mirror is recorded as a specific
+coverage gap. Broad corpus completeness remains unverified.
+
+Jörn then qualified this as an unnatural document partition: loading mechanics
+and behavioral effects are often discussed together. The routes are therefore
+entry points for different questions, not disjoint subject silos. Claim-level
+provenance and uncertainty remain the main distinction, including interactions
+between formal message roles, material representation and model response.
