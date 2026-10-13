@@ -1,0 +1,22 @@
+# Codex 0.162.1 instant-steer sampling path (source investigation)
+
+Inspected official `openai/codex` tag `rust-v0.162.1`, peeled commit `092d3acd6bec3e3a14bdc7e7a2810ab628ab759d` (locally fetched shallow/sparse under `/tmp/msc-math/steer-causality/source-checkout`). This is release-matched to workstation CLI 0.162.1. It does not establish the Termux client's version or runtime feature configuration.
+
+## Finding
+
+**Yes, conditionally.** In this release, when `Feature::InstantInterrupt` is enabled for the turn, user input arriving during sampling triggers preemption of the current response wait. It is not simply held until the current model response completes. The active turn then follows its pending-input/follow-up path, so sampling can restart with updated history including the steer. The feature gate matters: StepContext only creates the cancellation token when `InstantInterrupt` is enabled. With it disabled, this specific preempt-on-input path is absent and input can remain pending for the ordinary loop boundary.
+
+## Source evidence
+
+- [StepContext preempt token is feature-gated](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7e7a2810ab628ab759d/codex-rs/core/src/session/mod.rs#L3867-L3874).
+- [Sampling registers a user-input watcher](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7e7a2810ab628ab759d/codex-rs/core/src/session/turn.rs#L1603-L1620). [Watcher cancels when queued input exists](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7e7a2810ab628ab759d/codex-rs/core/src/session/input_queue.rs#L293-L310).
+- [Stream wait selects on preemption](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7e7a2810ab628ab759d/codex-rs/core/src/session/turn.rs#L2627-L2644): cancellation leads to `needs_follow_up = true`; for this preemption branch the stream is drained normally before follow-up (the `responses_lite` conditional sends interruption, then replaces the token and continues draining). If preemption occurs while retrying a failed stream, [the retry wait resolves it as a follow-up](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7e7a2810ab628ab759d/codex-rs/core/src/session/turn.rs#L1705-L1724).
+- [Turn loop drains pending input](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7e7a2810ab628ab759d/codex-rs/core/src/session/turn.rs#L419-L448) and submits it to the next sampling request; comments say pending UI input is recorded before building the next request.
+- [Core classifies input against an active turn as a steer](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7e7a2810ab628ab759d/codex-rs/core/src/session/turn_input.rs#L319-L373); this is an accepted turn input, with reply after classification, not after sampling.
+- TUI ordinary queued-message handling is distinct from pending steers. [Normal queue insertion applies when rate-limit recovery/image prep is pending](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7a2810ab628ab759d/codex-rs/tui/src/chatwidget/input_submission.rs#L143-L189). TUI tracks pending steer receipts separately ([submission](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7a2810ab628ab759d/codex-rs/tui/src/chatwidget/input_submission.rs#L430-L450), [receipt reconciliation](https://github.com/openai/codex/blob/092d3acd6bec3e3a14bdc7e7a2810ab628ab759d/codex-rs/tui/src/chatwidget.rs#L1333-L1359)). The first link is sufficient for Core behavior; do not infer that visible UI queue items and Core pending turn input are identical.
+
+## Causal interpretation and limits
+
+This mechanism makes it plausible that repeated successful steers preempt/restart model work and defer the completed response until input stops arriving. It does **not** prove that this is the actual cause of Jörn's observed silence: that requires evidence that `InstantInterrupt` is enabled in the relevant workstation session, that each input was accepted by this path, and that model output resumed after the last steer. The remote Termux path may involve a different client/version. Nor does source alone explain whether the TUI should show interim output, or whether an accepted steer itself produces visible acknowledgement promptly.
+
+Confidence: high for the conditional release behavior from source; low/undetermined for attribution to the live session pending logs and feature/version state. Similar issues #15842 and #18860 are not causal evidence for this session.

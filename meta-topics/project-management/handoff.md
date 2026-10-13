@@ -1,5 +1,20 @@
 # Current handoff
 
+## 13 October: execution stopped; fresh-agent handoff prepared
+
+Jörn explicitly stopped execution around19:34UTC and requested planning,
+then a target/state/relevant-context handoff with the user/assistant chat rather
+than all tool calls. [The new handoff](../development-environment/cloud-handoff-20261013/HANDOFF.md)
+owns that exact packet and links readable current/prior chat records. This
+supersedes the earlier pending Rust-result and pending-approval entries below.
+Reported Claude Rust readiness succeeded at2c88aaa5 in235s; source review found
+no contradiction, but raw cloud execution logs were not provided. Other tool
+branches are planned, not run. Unsupported <10% estimate was retracted; the
+known goal remains all-tools cloud usability with low total cost, not one
+component pass. Execution remains stopped. The hard30-minute window ends at
+19:52:27UTC; the handoff creates no new allowance. Root retained evidence and
+planning context; next agent must use the packet and preserve current authority.
+
 ## 13 October 19:21 UTC: readiness proposal submitted
 
 Jörn reported "sent" at 19:21:32 UTC. The exact 15-minute Rust readiness stage is authorized and reported submitted; cloud receipt/start and results are not independently observed. This supersedes the pending-approval entries below. Await a <=1200-character text reply; no attachment requested. Receiving coordinator assesses HEAD, pinned versions, setup changes, locked compile, finite production anchors and elapsed time. The earlier 5% weekly-used ceiling remains; no extension, TeX installation, source fixes, new scientific programme or reset. Parent cloud objective remains open.
