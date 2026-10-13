@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-12T16:44:54Z",
+  "updated_at": "2026-10-13T11:20:17Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Reviewed topic branch adopted into main; f7e0 worktree and merged migration branch retired at Jörn’s request. Main is the only local branch and registered worktree. Review, evidence and maintenance obligations remain retained on main; this session’s selected work is complete.",
+  "summary": "13 October: first bounded cloud repair published as three-file draft PR #41 against the existing GitHub baseline. Current local baseline retains later skills/topic work and the same repair on a separate local branch. Live cloud execution and broader workflow acceptance remain open; no installation, authentication or scientific producer was run.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2805,6 +2805,27 @@
       "updated_at": "2026-10-12T16:44:54Z",
       "blocker": null,
       "next_step": "Cleanup complete; new work starts from main under its own selected scope. Session archiving remains with Jörn."
+    },
+    {
+      "id": "cloud-data-free-setup-20261013",
+      "title": "First cloud progress repair: optional R2 setup",
+      "project": "workflows",
+      "kind": "task",
+      "selection": "selected",
+      "status": "done",
+      "owner": null,
+      "outcome": "Draft PR #41 adds explicit --without-r2 setup mode; existing default remains credentialed. Six isolated command-stub tests, shell syntax and diff checks pass; independent implementation/message review approved. Remote branch is based on GitHub main 01aba0a3, avoiding publication of accumulated local source history. Same three-file repair cherry-picked onto current local baseline. This establishes a source repair and review delivery, not fresh cloud installation or useful autonomous cloud behavior.",
+      "depends_on": [],
+      "blocker": null,
+      "sources": [
+        "scripts/bootstrap-cloud.sh",
+        "scripts/test_bootstrap_cloud.py",
+        "scripts/README.md",
+        "meta-topics/project-management/handoff.md"
+      ],
+      "authorization": "Jörn selected cloud progress and branch/PR review as a success proxy on 13 October. Bounded preliminary investigation, one source repair and a small draft PR; no substantial cloud run, broad baseline publication or runtime configuration change.",
+      "next_step": "Jörn can reject or redirect PR #41. A proposed next acceptance check uses one fresh supported image without R2 secrets/cache, opt-out setup and locked Cargo check, returning exact commit/results and stopping at an unresolved environment/access failure. Actual cloud route and substantial execution allowance must be established before running; broader targets remain as already supplied, not a new target-selection gate.",
+      "updated_at": "2026-10-13T11:20:17Z"
     }
   ],
   "decisions": [
@@ -3094,6 +3115,12 @@
       "value": "Approved12:01:29–13:01:29 UTC at most; finish earlier when useful work complete. Other sessions inactive per Jörn. Quota/billed expenditure not currently measured.",
       "observed_at": "2026-10-12T12:02:38Z",
       "basis": "Direct user authorization and inactivity statement at12:01:29 UTC."
+    },
+    {
+      "label": "13 October cloud preparation",
+      "value": "Bounded first repair and draft PR preparation only. No numeric spending allowance or live cloud execution selected; current quota and billed spend unknown. Earlier dated grants remain historical.",
+      "observed_at": "2026-10-13T11:20:17Z",
+      "basis": "Current user goal and completed local source/command-stub work; no fresh account telemetry queried."
     }
   ],
   "links": [
@@ -3171,6 +3198,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-13T11:20:17Z",
+      "text": "Published narrow draft PR #41 for data-free Codex setup on existing remote baseline, retained current local source history separately and recorded missing live-cloud validation. Shared multi-surface support requirements remain unchanged."
+    },
     {
       "at": "2026-10-12T16:44:54Z",
       "text": "Retired the fully merged f7e0 worktree and migration branch after clean/ancestor/ignored-output checks. Only main remains; current session work is complete."

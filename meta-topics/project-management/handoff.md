@@ -1,5 +1,32 @@
 # Current handoff
 
+## 13 October: first cloud repair ready for review
+
+Jörn selected cloud progress with one branch/PR as a success proxy, bounded
+resources, enough review context and open feedback. [Draft PR #41](https://github.com/JoernStoehler/msc-math/pull/41)
+adds explicit `--without-r2` setup for code/PDF work, retaining the existing
+credentialed default and configured universal-runtime assumptions. It has
+three files, six passing isolated command-stub tests, shell syntax/diff checks
+and independent implementation/message approval. No cloud installation,
+login, data retrieval or scientific producer ran. Fresh Claude setup and
+useful autonomous cloud behavior remain unverified.
+
+The remote PR branch is based on actual GitHub main `01aba0a3`. Current local
+main was `203185a8`; its later skills/topic history remains unpublished. Do not
+present the old missing-local-commit finding as still current, or silently
+publish the large accumulated baseline. The repair is also cherry-picked on
+local `codex/cloud-core-setup-20261013`; main is unchanged. The already supplied
+cloud surfaces remain the support scope; do not reintroduce a target-selection
+blocker. PR feedback may revise any assumption, scope or approach. The optional
+better technical-skill link can inform continuation.
+
+Proposed next acceptance: one fresh supported environment without R2 secrets
+or inherited cache, opt-out setup plus `cargo check --workspace --locked`, and
+return exact commit/results. Stop at an unresolved access/setup failure and
+reconsider rather than retrying or expanding into producers. Actual execution
+access and any substantial spending allowance remain to be established. This
+first preparation is complete; the broader cloud goal remains open.
+
 ## 12 October: cleanup complete; continue from main
 
 At 16:42 UTC Jörn requested retiring the merged f7e0 branch/worktree.
