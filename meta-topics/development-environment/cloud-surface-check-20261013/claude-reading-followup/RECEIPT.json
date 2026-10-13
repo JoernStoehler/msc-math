@@ -1,0 +1,88 @@
+{
+  "surface": "Claude (claude.ai chat with Claude Code-based harness)",
+  "model": "Sonnet 5.5 (claude-sonnet-5-5)",
+  "date": "2026-10-13",
+  "source_access_mode": "shell git clone over HTTPS (real checkout)",
+  "repository": "https://github.com/JoernStoehler/msc-math",
+  "branch": "codex/cloud-support-20261013-1532",
+  "expected_revision": "2c88aaa58b63acbafc0a81c7046508051f607875",
+  "observed_revision": "2c88aaa58b63acbafc0a81c7046508051f607875",
+  "revision_match": true,
+  "tool_discovery": {
+    "scope": "tool list as presented in session plus harness deferred-tool name list; ToolSearch not run",
+    "deferred_tools_expanded": false
+  },
+  "probes": [
+    {
+      "cmd": "git clone --branch <branch> <repo>",
+      "result": "ok, 6836 files"
+    },
+    {
+      "cmd": "git rev-parse HEAD",
+      "result": "2c88aaa58b63acbafc0a81c7046508051f607875"
+    },
+    {
+      "cmd": "cat runbook; head -c AGENTS.md, cloud-workflow.md, CLAUDE.md",
+      "result": "first pass: runbook full, AGENTS.md/cloud-workflow.md partial, README.md unread; second pass: all of README.md, AGENTS.md, cloud-workflow.md, CLAUDE.md read in full at the same revision 2c88aaa"
+    },
+    {
+      "cmd": "command -v <selected programs>",
+      "result": "codex absent; git python3 zip unzip tar gh curl rg jq node npm cargo rustc claude gcloud bq gsutil present"
+    },
+    {
+      "cmd": "write REPORT.md, RECEIPT.json; zip",
+      "result": "see zip creation below"
+    }
+  ],
+  "actual_errors": [],
+  "elapsed_seconds_measured": 28,
+  "elapsed_note": "start to PATH probe only; report writing and zip time not measured",
+  "return_attempt": "SendUserFile of msc-handoff-return.zip (third version); outcome reported in chat",
+  "review": "pending; none performed by me; the [review: ...] marker in the coordinator's prompt is theirs, not my approval; message-review skill unread",
+  "remaining_unknowns": [
+    "SendUserFile human-receipt not observed",
+    "Rust/PDF tooling not tested",
+    "automatic AGENTS.md loading not demonstrated",
+    "whether direct replies to Jörn fall inside the message-review exemption (skill unread)",
+    "remote retrievability of the revision after branch deletion"
+  ],
+  "revision": 3,
+  "revision_note": "Third version. Reissued after the coordinator's follow-up: all four required files now read first to last line in one Read each (line counts matched wc), at HEAD re-verified in the existing checkout. Earlier versions read AGENTS.md/cloud-workflow.md partially (first) and by byte-offset remainder (second).",
+  "observed_revision_recheck": {
+    "head": "2c88aaa58b63acbafc0a81c7046508051f607875",
+    "match": true,
+    "clean_status": true,
+    "remote_branch": "reported deleted by coordinator; not re-cloned"
+  },
+  "required_reading": {
+    "README.md": {
+      "lines": 45,
+      "bytes": 3010,
+      "complete": true
+    },
+    "AGENTS.md": {
+      "lines": 188,
+      "bytes": 11860,
+      "complete": true
+    },
+    "meta-topics/development-environment/cloud-workflow.md": {
+      "lines": 136,
+      "bytes": 8143,
+      "complete": true
+    },
+    "meta-topics/development-environment/cloud-surface-runbook.md": {
+      "lines": 67,
+      "bytes": 3767,
+      "complete": true
+    },
+    "truncation": "none observed; each read ended at the last line",
+    "not_read": [
+      ".agents/skills/agent-platform-reference/SKILL.md",
+      ".agents/skills/message-review/SKILL.md",
+      "AGENTS.md.commentary.md"
+    ]
+  },
+  "capability_notes": {
+    "AskUserQuestion": "exposed, untested, project-disabled per AGENTS.md; not used"
+  }
+}

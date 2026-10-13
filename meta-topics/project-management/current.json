@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13T17:21:00Z",
+  "updated_at": "2026-10-13T17:38:00Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Cloud source support and received reference skill retained. Two disclosed surface checks returned downloaded ZIPs at the expected Git revision; Claude required reading incomplete. Whole useful-work outcome and cumulative efficiency remain open. Execution window ended; no further launch or allowance selected. Work chat archived; remote temporary branch deleted. Browser cleanup failed with Debugger unattached; remaining tabs unconfirmed. Claude retained because Archive was unavailable.",
+  "summary": "Cloud source support and received reference skill retained. Two disclosed surface checks returned downloaded ZIPs at the expected Git revision; Claude required reading incomplete. Whole useful-work outcome and cumulative efficiency remain open. Execution window ended; no further launch or allowance selected. Work chat archived; remote temporary branch deleted. Browser cleanup failed with Debugger unattached; remaining tabs unconfirmed. Claude retained because Archive was unavailable. Claude third-version correction received through Taildrop and assessed at17:38UTC; reported full entry reads have matching pinned-input counts. No new cloud assignment.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2835,7 +2835,7 @@
       "selection": "selected",
       "status": "parked",
       "owner": null,
-      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified.",
+      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified. Claude later supplied a received full-reading correction; counts matched pinned input, without validating whole-workflow success.",
       "depends_on": [],
       "blocker": null,
       "authorization": "Fresh60minutes15:32:21–16:32:21UTC; original+4weekly quota points ceiling retained. User authorized temporary GitHub branch and cleanup, brief cloud checks and repo skill source adoption. No further execution allowance.",
@@ -2846,7 +2846,7 @@
         "meta-topics/development-environment/cloud-surface-check-20261013/README.md"
       ],
       "next_step": "Inspect retained source and evidence with Jörn; select any further useful-work acceptance route and allowance in ordinary chat. No automatic continuation or external skill deployment.",
-      "updated_at": "2026-10-13T16:32:00Z"
+      "updated_at": "2026-10-13T17:38:00Z"
     },
     {
       "id": "agent-platform-reference-20261013",
@@ -2877,17 +2877,18 @@
       "selection": "selected",
       "status": "done",
       "owner": null,
-      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified.",
+      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified. 13 October17:36UTC: received Claude third-version reading correction through Taildrop; all four declared file counts match pinned inputs. Reported complete reading accepted as a bounded self-report; cloud execution not independently replayed.",
       "depends_on": [],
       "blocker": null,
       "authorization": "Fresh60minutes15:32:21–16:32:21UTC; original+4weekly quota points ceiling retained. User authorized temporary GitHub branch and cleanup, brief cloud checks and repo skill source adoption. No further execution allowance.",
       "sources": [
         "meta-topics/development-environment/cloud-workflow.md",
         "scripts/cloud-handoff.py",
-        "meta-topics/development-environment/cloud-surface-check-20261013/README.md"
+        "meta-topics/development-environment/cloud-surface-check-20261013/README.md",
+        "meta-topics/development-environment/cloud-surface-check-20261013/claude-reading-followup/assessment.md"
       ],
-      "next_step": "Jörn reports a second Claude message/ZIP after the focused reading rerun. Browser inventory has no connected surfaces in this turn; request attachment or Taildrop and the message. Original return remains retained. No new revision assessed yet.",
-      "updated_at": "2026-10-13T17:21:00Z"
+      "next_step": "Bounded return assessed and retained. No further cloud launch selected. Manual instruction loading/ZIP return demonstrated; full setup, scientific work and cumulative efficiency remain unverified.",
+      "updated_at": "2026-10-13T17:38:00Z"
     }
   ],
   "decisions": [

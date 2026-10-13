@@ -15,7 +15,10 @@ failure while shell Git and pinned source reads succeeded. Its UI showed
 
 Claude Sonnet5.5 Medium returned its own exposed/deferred namespaces and a ZIP.
 It read the runbook but omitted README and read AGENTS/workflow only partially.
-That instruction-reading check is incomplete. Its 28s measurement excludes
+That first instruction-reading check was incomplete. The later
+[reading follow-up](claude-reading-followup/assessment.md) supplies a reported
+complete read and a new received ZIP. Its input counts match the pinned files;
+cloud read execution was not independently verified. Its 28s measurement excludes
 report packaging and transfer. No Rust/PDF build or automatic instruction
 loading was tested on either surface. These checks establish a source-and-report
 route for these dated sessions, not useful scientific work, general capability,

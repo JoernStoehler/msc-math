@@ -4,7 +4,9 @@
 
 Source and received reference skill retained at `2c88aaa5`; broad cloud outcome
 and cumulative efficiency remain open. Two disclosed Git-source/report checks
-returned downloaded ZIPs; Claude omitted required reading. See
+returned downloaded ZIPs; Claude initially omitted required reading and later
+supplied a received correction. Pinned input counts match its declared full
+reads; the cloud Read calls were not independently reproduced. See
 [dated evidence](../development-environment/cloud-surface-check-20261013/README.md).
 Work chat archived; Claude offered no Archive and is retained. Browser cleanup hit a connection
 failure; remaining trial tabs may need manual closure.

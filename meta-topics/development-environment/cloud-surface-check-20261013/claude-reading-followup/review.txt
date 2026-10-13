@@ -1,0 +1,4 @@
+Read-only native review by /root/claude_rerun_review, 13 October 2026.
+APPROVE final-v1.
+
+No consequential assessment finding. Both texts distinguish Claude’s reading account from independently checked input counts, accept chunked reading, preserve the original deviation, and limit closure to the narrow check. They leave cloud Read calls, automatic loading, exemption compliance and broader workflow capability unresolved.

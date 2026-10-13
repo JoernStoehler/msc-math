@@ -1,0 +1,34 @@
+{
+  "expected_commit": "2c88aaa58b63acbafc0a81c7046508051f607875",
+  "files": [
+    {
+      "path": "README.md",
+      "lines": 45,
+      "bytes": 3010,
+      "sha256": "d74a16ecbc38019f15ff65dd09715e36246dd86f3698b2e7d62bcc946127fd21",
+      "receipt_counts_match": true
+    },
+    {
+      "path": "AGENTS.md",
+      "lines": 188,
+      "bytes": 11860,
+      "sha256": "bdb60d94ace45a5bf1ca2d377f849f7fe0b421a7b8bbc805f797e28c087c19d6",
+      "receipt_counts_match": true
+    },
+    {
+      "path": "meta-topics/development-environment/cloud-workflow.md",
+      "lines": 136,
+      "bytes": 8143,
+      "sha256": "7d3a29b65493e4cf6a64d13c156a592ec6af83ef6a1899f9dbb4bdf8b1cbe8aa",
+      "receipt_counts_match": true
+    },
+    {
+      "path": "meta-topics/development-environment/cloud-surface-runbook.md",
+      "lines": 67,
+      "bytes": 3767,
+      "sha256": "ed4815d5d9bcd34e6dee3e87c1e7c612dc4aac5e022d0e53afaecd42140551a7",
+      "receipt_counts_match": true
+    }
+  ],
+  "scope": "Independent pinned-input count check; does not reproduce or verify cloud Read calls."
+}
