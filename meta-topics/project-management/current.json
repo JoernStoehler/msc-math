@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13T11:20:17Z",
+  "updated_at": "2026-10-13T11:22:30Z",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
   "summary": "13 October: first bounded cloud repair published as three-file draft PR #41 against the existing GitHub baseline. Current local baseline retains later skills/topic work and the same repair on a separate local branch. Live cloud execution and broader workflow acceptance remain open; no installation, authentication or scientific producer was run.",
   "tasks": [
@@ -3118,9 +3118,9 @@
     },
     {
       "label": "13 October cloud preparation",
-      "value": "Bounded first repair and draft PR preparation only. No numeric spending allowance or live cloud execution selected; current quota and billed spend unknown. Earlier dated grants remain historical.",
-      "observed_at": "2026-10-13T11:20:17Z",
-      "basis": "Current user goal and completed local source/command-stub work; no fresh account telemetry queried."
+      "value": "Bounded first repair and draft PR preparation only. No numeric spending allowance or live cloud execution selected; current quota and billed spend unknown. Earlier dated grants remain historical. Goal completion snapshot: 141715 tokensUsed and 785 seconds; no tokenBudget. This is the goal tool counter, not billed cost or account-wide quota consumption.",
+      "observed_at": "2026-10-13T11:22:30Z",
+      "basis": "Current user goal and completed local source/command-stub work; no fresh account telemetry queried. Completion goal-tool structured result."
     }
   ],
   "links": [

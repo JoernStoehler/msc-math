@@ -1,5 +1,5 @@
 // Generated from meta-topics/project-management/current.json; do not edit.
-// coordination-sha256: ca30278437c45fb53c9bf3584cec70a9e3031f83b6514f7c04a91d3a90c70551
+// coordination-sha256: b2ba61c7da51104e699c7eba34ac5c0d671fcd8e4fd7ea09625a2ece72ab07c5
 digraph project {
   graph [rankdir=BT, newrank=true, bgcolor="white", fontname="sans-serif",
     fontsize=11, nodesep=0.18, ranksep=0.34, pad=0.15,
