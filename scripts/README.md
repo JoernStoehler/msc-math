@@ -116,6 +116,19 @@ verifies remote access. The configuration and credential-lifetime contract is
 in `meta-topics/development-environment/development-environments.md` and
 `docs/artifacts.md`.
 
+For code or PDF work without authenticated artifact retrieval, configure the
+setup command as `scripts/bootstrap-cloud.sh --without-r2`. This explicit mode
+does not read the R2 secrets, write rclone configuration, or probe the bucket.
+It preserves any existing credentials in a cached environment; use a fresh
+environment when checking operation without prior artifact access. Runtime
+checks, package installation and locked Cargo fetch still run. The default
+command continues to require both secrets and verify access. Neither mode is
+a generic installer for a fresh Claude VM.
+
+Run `python3 scripts/test_bootstrap_cloud.py` for isolated command-stub checks.
+These verify mode selection and invoked commands, not actual cloud installation,
+network access, PDF compilation or autonomous agent behavior.
+
 ## `maintain-cloud.sh`
 
 Use this as the Codex Cloud maintenance command. It runs after the requested
