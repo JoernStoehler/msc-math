@@ -1,5 +1,9 @@
 # Current handoff
 
+## 13 October 19:21 UTC: readiness proposal submitted
+
+Jörn reported "sent" at 19:21:32 UTC. The exact 15-minute Rust readiness stage is authorized and reported submitted; cloud receipt/start and results are not independently observed. This supersedes the pending-approval entries below. Await a <=1200-character text reply; no attachment requested. Receiving coordinator assesses HEAD, pinned versions, setup changes, locked compile, finite production anchors and elapsed time. The earlier 5% weekly-used ceiling remains; no extension, TeX installation, source fixes, new scientific programme or reset. Parent cloud objective remains open.
+
 ## 13 October 19:19 UTC: relay-cost correction
 
 Coordinator told Jörn to hold the isolated compile probe. The replacement Rust-readiness proposal bundles setup, locked compile and finite production anchors in one relay/return. Proposed 15-minute cloud cap is pending approval; no cloud launch. See the superseding proposal in [the validation record](../development-environment/cloud-rust-validation-20261013/README.md). Earlier five-minute diagnostic approval does not authorize the increased cap. Jörn now uses Termux + Codex TUI after forking surfaces. The later receiving thread owns assessment; no attachments requested.

@@ -43,3 +43,7 @@ or general speed improvement is claimed. Review by native readiness_review
 The anchor test exists at the earlier reported cloud input 2c88aaa5; checked
 locally with git cat-file. Canonical testing docs describe four tests on fourteen
 fixed bodies, not a general correctness proof.
+
+At 19:21:32 UTC Jörn reported "sent", authorizing and reporting submission of
+the exact 15-minute readiness proposal. Cloud receipt/start and result remain
+unobserved by the coordinator. This supersedes the pending-approval status above.
