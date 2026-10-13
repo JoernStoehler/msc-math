@@ -1,5 +1,9 @@
 # Current handoff
 
+## 13 October 19:19 UTC: relay-cost correction
+
+Coordinator told Jörn to hold the isolated compile probe. The replacement Rust-readiness proposal bundles setup, locked compile and finite production anchors in one relay/return. Proposed 15-minute cloud cap is pending approval; no cloud launch. See the superseding proposal in [the validation record](../development-environment/cloud-rust-validation-20261013/README.md). Earlier five-minute diagnostic approval does not authorize the increased cap. Jörn now uses Termux + Codex TUI after forking surfaces. The later receiving thread owns assessment; no attachments requested.
+
 ## 13 October 18:59 UTC: Rust check approved, relay pending
 
 Jörn approved the five-minute Rust check; no further approval is needed for it.

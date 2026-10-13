@@ -24,3 +24,22 @@ supersedes the earlier ZIP/log attachment route. Coordinator applied one-gap
 selection, batched mechanical preparation/counting and one compact Luna review
 for this handoff; subsequent action depends on the actual result. That bounded
 execution choice is not evidence of general workflow improvement.
+
+## Superseding proposal after relay-cost correction
+
+At 19:13 UTC the coordinator told Jörn to hold the isolated compile probe after
+Jörn emphasized several minutes of human relay overhead. Jörn forked/switched
+surface and reported using Termux + Codex TUI at 19:16 UTC. A newly exposed
+Playwright tab-list read did not return within the analysis window and was
+cancelled; no browser result or cloud submission was obtained.
+
+The [595-character readiness proposal](readiness-proposal.txt) bundles Rust-only
+setup/troubleshooting, locked workspace compile and finite production anchors
+into one stage with a proposed 15-minute cloud cap and inline return. This cap
+exceeds the earlier five-minute diagnostic; approval is pending, supplied by
+Jörn if he chooses to paste/run the exact proposal. No launch, source mutation
+or general speed improvement is claimed. Review by native readiness_review
+(Luna, low) approved exact final-v1; root owns returned-result assessment.
+The anchor test exists at the earlier reported cloud input 2c88aaa5; checked
+locally with git cat-file. Canonical testing docs describe four tests on fourteen
+fixed bodies, not a general correctness proof.
