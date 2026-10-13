@@ -46,3 +46,23 @@ A locked Rust workspace compile check would resolve tool/dependency setup; a
 thesis build/check would resolve TeX/figure setup. Neither would establish
 mathematical correctness or whole-route efficiency. A new live assignment and
 its expenditure require selection; no additional cloud session was launched.
+
+## Elapsed stage and execution overhead
+
+Approval was at 18:17:54 UTC. Scratch file timestamps show the first candidate
+at 18:20:55 and the fourth candidate's independent approvals by 18:30:27:
+about thirteen minutes for source drafting and review. Reviews found conditional
+delegation, skill discovery, shell-less access and return-owner gaps. Integration,
+dashboard serving/schema repair and live checks reached 18:35:15, about five
+more minutes. Local event timestamps then show evidence packaging, further
+source/link inspection, handoff/coordination updates, outgoing message review,
+context recovery and commit through 18:46:36: about eleven minutes of finalization.
+
+Coordinator assessment: the finalization was disproportionate for this bounded
+change, and multiple revision/report rounds added avoidable overhead. These
+records establish elapsed activity, not that thirty minutes were necessary or
+that the source revision has improved agent speed. The broader cloud objective
+remains open; no Rust/PDF workload ran during this entry-revision stage.
+
+The further approved check and current browser/relay blocker are owned by
+[the Rust validation record](../cloud-rust-validation-20261013/README.md).
