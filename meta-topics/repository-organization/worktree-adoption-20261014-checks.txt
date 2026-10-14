@@ -8,3 +8,5 @@ PASS: d040 clean including ignored files, ancestor, no process CWD
 PASS: data-free branch code/test blobs identical to main; unique commit retained in verified bundle
 Independent review caught task ID drift; corrected to latest owning e002 stopped record.
 Scientific baseline remains unreconciled. No scientific producer or cloud task ran.
+PASS: existing msc-math-dashboard.service restarted with unchanged configuration; live current.json byte-content equals main state and adopted/new report source routes return HTTP200.
+PASS: Tailscale file-viewer adoption report returns HTTP200.

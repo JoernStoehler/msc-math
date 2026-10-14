@@ -53,3 +53,5 @@ The cloud-support postmortem already records that its friction Pages overview is
 - The retained original440d checkout is not synchronized in place or cleaned; its original files remain available to concurrent sessions. Main is the consolidated source for future work. No remote branch was deleted or pushed.
 
 Final inspection and native review return are retained with this account. The account describes actual completed operations, not approval of future cloud/thesis work.
+
+The existing `msc-math-dashboard.service` was reloaded with unchanged configuration after adoption. Live state matched main and both the adoption report and new incident source returnedHTTP200. The Tailscale reading link also returnedHTTP200.
