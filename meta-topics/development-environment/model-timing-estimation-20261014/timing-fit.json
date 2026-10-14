@@ -1,0 +1,34 @@
+{
+  "formula": "cycle_seconds = overhead + seconds_per_reasoning_token * R + seconds_per_other_token * N + reconnect_seconds * connection_reestablishments",
+  "n": 15,
+  "coefficients": [
+    4.65070595972806,
+    0.042665136402130814,
+    0.02952716623940759,
+    24.021866495801376
+  ],
+  "contributions_seconds": [
+    69.7605893959209,
+    293.02415680983444,
+    163.3738108026422,
+    48.04373299160275
+  ],
+  "in_sample_rmse_seconds": 2.9053745487704963,
+  "leave_one_out_rmse_seconds": 6.11955261851518,
+  "reasoning_contribution_leave_one_out_range_seconds": [
+    283.48641887295497,
+    301.8726544516909
+  ],
+  "reasoning_contribution_bootstrap_quantiles_seconds": [
+    232.97142087683744,
+    292.92255415150845,
+    315.9464605571035
+  ],
+  "bootstrap_full_rank_samples": 4413,
+  "assumptions": [
+    "approximately constant generation speed within turn by token class",
+    "additive average overhead and reconnect penalty",
+    "not direct measurement of hidden reasoning or backend inference",
+    "bootstrap sampling interval omits model misspecification and systematic overhead confounding"
+  ]
+}

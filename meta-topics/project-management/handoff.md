@@ -2,7 +2,7 @@
 
 ## 14 October: reviewable worktree consolidation candidate
 
-An isolated candidate on `codex/triage-20261014` starts from local main and preserves both original dirty checkouts. [The triage account](../repository-organization/worktree-triage-20261014.md) owns the disposition and proposed next spending. Main adoption, publication and irreversible cleanup have not occurred and require the actual user decision. Browser host-change request is withdrawn; proposed intake guidance remains an inactive patch. Existing cloud/thesis execution stops remain in force. No ongoing monitoring is selected.
+The approved candidate on `codex/triage-20261014` starts from local main; both dirty inputs have verified recovery snapshots. Active e002 and concurrent440d work are preserved. [The triage account](../repository-organization/worktree-triage-20261014.md) owns the disposition and proposed next spending. Jörn approved local adoption and verified redundant cleanup at13:17:45Z, ending13:32:45Z; publication remains unselected. The adoption record owns actual results. Browser host-change request is withdrawn; proposed intake guidance remains an inactive patch. Existing cloud/thesis execution stops remain in force. No ongoing monitoring is selected.
 
 ## 14 October: cloud-support attempt stopped; postmortem retained
 

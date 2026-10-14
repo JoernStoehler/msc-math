@@ -19,6 +19,13 @@ labels lack conversation/request IDs; per-request token joins are not establishe
 Inference-cache lookup duration, isolated prefill duration/TPS and first-reasoning
 latency are not available in the observed exports. Cache-share scatter is correlation.
 
+A [15-cycle fitted timing estimate](../../meta-topics/development-environment/model-timing-estimation-20261014/README.md)
+now supplies a model-based allocation for one 14 October delegation turn: about
+4m 53s reasoning, 2m 43s other output, and 1m 58s base/reconnect overhead.
+The retained estimator, metadata and sensitivity checks support reuse on suitable
+single-conversation exports. This is not direct reasoning timing, cross-session
+calibration, or automatic accounting in future reports.
+
 An [official API-latency incident](https://status.openai.com/incidents/01M3SMF1Q0TDCQVNYSXYG37QMR)
 overlaps our observations. It supports a shared-service hypothesis, not a proven
 cause or a measured factor relative to normal speed. No billing or model settings

@@ -19,6 +19,11 @@ STATE = "meta-topics/project-management/current.json"
 BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
+    "meta-topics/repository-organization/worktree-adoption-20261014.md",
+    "meta-topics/development-environment/model-timing-estimation-20261014/README.md",
+    "meta-topics/agent-workflow/misunderstandings-20261014/report.html",
+    "meta-topics/agent-workflow/misunderstandings-20261014/evidence.json",
+    "meta-topics/agent-workflow/misunderstandings-20261014/README.md",
     "meta-topics/repository-organization/worktree-triage-20261014.md",
     "meta-topics/agent-workflow/handoff-intervention-test-20261014/design.json",
     "meta-topics/agent-workflow/handoff-intervention-test-20261014/results.json",

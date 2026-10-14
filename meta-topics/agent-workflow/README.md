@@ -79,3 +79,5 @@ to history and retired disposable delivery iterations to recoverable Git paths.
 [14 October handoff-wording trial](handoff-intervention-test-20261014/results.json) retains both arms: all four returned handoffs, and the original failure did not reproduce. No rollout or efficacy claim follows.
 
 [Cloud-support postmortem](cloud-support-postmortem-20261014/README.md) owns the separate failed cloud/browser continuation. HTML files are reading copies; the dated restart proposal is superseded and supplies no execution authority.
+
+[14 October misunderstanding inventory](misunderstandings-20261014/README.md) retains forty selected source-qualified episodes, their conditioning context and limits, with a generated browser view. It does not select a behavioral intervention.

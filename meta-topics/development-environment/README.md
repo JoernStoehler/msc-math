@@ -43,3 +43,5 @@ then-local skill/configuration package; this resolves that reported Git delivery
 gap, not fresh-cloud execution, authenticated data access or result delivery.
 The [10 October withdrawal](../../docs/history/cloud-skills-withdrawal-20261010.md)
 records a later rejected proposal and recovery request, not current authorization.
+
+[One-turn model timing estimate](model-timing-estimation-20261014/README.md) retains a fitted decomposition and metadata for one delegation turn, with explicit systematic-error and portability limits.

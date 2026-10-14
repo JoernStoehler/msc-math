@@ -1,0 +1,1292 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agent misunderstandings</title><style>
+html { background: #fff; color: #000; }
+body { font: 16px/1.5 Arial, sans-serif; max-width: 62ch;
+       margin: 28px auto; padding: 0 20px; }
+h1 { font-size: 24px; line-height: 1.25; margin: 0 0 20px; }
+h2 { font-size: 18px; line-height: 1.4; margin-top: 28px; }
+p { margin: 0 0 16px; }
+a { color: #0038a8; text-underline-offset: 2px; }
+details { margin: 0; border-bottom: 1px solid #aaa; }
+summary { padding: 14px 0; cursor: pointer; font-weight: 400; }
+summary .number { font-weight: 700; }
+.account { padding: 8px 0 14px; }
+details:target { outline: 2px solid #0038a8; outline-offset: 4px; }
+code { font-size: 14px; overflow-wrap: anywhere; }
+@media(max-width: 600px) { body { margin: 20px auto; padding: 0 16px; } }
+</style><body><main><h1>Agent misunderstandings</h1><p>40 selected incidents, with the context before the agent’s response, your correction and the outcome. Each account distinguishes an ordinary guess from a failure to apply context already supplied.</p><p><a href="#interpretation">Read the assessment</a> · <a href="README.md">Editable source</a></p>
+<details class="incident" id="incident-1"><summary><span class="number">1.</span> Investigating intake → asking user for
+logs</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 14 October 2026</p>
+<p><strong>Before the mistaken move.</strong> 2026-10-14 10:02:26: user
+asks why agent task intake frustrates him. No explicit read-logs
+instruction in that initial message.</p>
+<p><strong>Agent move.</strong> 10:02:51 agent offers a possible cause
+and asks: “What did it do that set this off?”</p>
+<p><strong>Correction.</strong> 10:05:43: “read tze logs yoirself?”</p>
+<p><strong>What was already available.</strong> Task visible before;
+preferred evidence-recovery route clarified afterward. Distinguish this
+from ignoring an already explicit log-reading command.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Ask an upset user for the concrete incident rather than assume which
+prior logs matter. Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent retrieves two
+threads and delivers diagnosis10:07:53; diagnosis is itself
+challenged.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/task-intake-postmortem-20261014/evidence/conversation.jsonl">source
+account</a>. A:1–8 Selected public conversation messages recovered from
+the source locations below. Source line references are original JSONL
+lines, except A which uses the retained extract lines.</p>
+</div></details><details class="incident" id="incident-2"><summary><span class="number">2.</span> Intake workflow → correction handling
+only</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 14 October 2026</p>
+<p><strong>Before the mistaken move.</strong> User explicitly names task
+intake in initial request.</p>
+<p><strong>Agent move.</strong> Report focuses on substituting tasks and
+ignoring corrections rather than full problem/outcome development.</p>
+<p><strong>Correction.</strong> 2026-10-14 10:09:33: “your entirr
+analysis … not the full task”. Agent admits omitting how agents decide
+problem, needed outcome and prerequisites.</p>
+<p><strong>What was already available.</strong> Task term explicit
+before; broader analytical decomposition clarified afterward. No
+evidence user had already specified every component.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Diagnose salient transcript mistakes instead of reconstructing full
+intake workflow. Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Reads guidance and
+eventually edits instructions; no demonstrated repair.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/task-intake-postmortem-20261014/evidence/conversation.jsonl">source
+account</a>. A:8–11; task-intake-postmortem-20261014/README.md:35–37
+Selected public conversation messages recovered from the source
+locations below. Source line references are original JSONL lines, except
+A which uses the retained extract lines.</p>
+</div></details><details class="incident" id="incident-3"><summary><span class="number">3.</span> Diagnose process → ask user to adjudicate
+speculative alternative</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 14 October 2026</p>
+<p><strong>Before the mistaken move.</strong> User asks “so what do we
+do?”, corrects missing intake scope, then asks why
+tools/subagents/delay.</p>
+<p><strong>Agent move.</strong> Agent asks whether salvage should have
+begun by deciding what was worth recovering.</p>
+<p><strong>Correction.</strong> 2026-10-14 10:14:59: “how wojld i
+know?”;10:15:11 reiterates stopping should questions.</p>
+<p><strong>What was already available.</strong> Task visible before;
+prohibition reiterated afterward and attributed by user to previous
+instructions, but earlier exact source was not recovered here.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Seek stakeholder judgment about an ambiguous prior request; error is
+asking for unsupported process judgment rather than information user
+possesses. Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent admits asking user
+to do diagnosis; no demonstrated repair.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/task-intake-postmortem-20261014/evidence/conversation.jsonl">source
+account</a>. A:9–18 Selected public conversation messages recovered from
+the source locations below. Source line references are original JSONL
+lines, except A which uses the retained extract lines.</p>
+</div></details><details class="incident" id="incident-4"><summary><span class="number">4.</span> Stop narrating → another explanatory
+admission</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 14 October 2026</p>
+<p><strong>Before the mistaken move.</strong> 2026-10-14 10:17:19: “stop
+narrating. dude. why do you now waste my time and money this much”.</p>
+<p><strong>Agent move.</strong> 10:17:34 agent explains it kept treating
+corrections as prompts for explanation.</p>
+<p><strong>Correction.</strong> Explicit stop instruction precedes wrong
+response; further intervention10:18:56 before substantive work.</p>
+<p><strong>What was already available.</strong> Explicit before. Mixed
+message also asks why; precise mismatch is failure to let stop narrating
+govern next action. Later independently requested explanations are not
+all violations.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Acknowledge correction and explain mistake. Plausible default, not
+proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Substantive work resumes
+after further intervention; genuine edits remain unvalidated.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/task-intake-postmortem-20261014/evidence/conversation.jsonl">source
+account</a>. A:19–21; task-intake-postmortem-20261014/README.md:24–25,41
+Selected public conversation messages recovered from the source
+locations below. Source line references are original JSONL lines, except
+A which uses the retained extract lines.</p>
+</div></details><details class="incident" id="incident-5"><summary><span class="number">5.</span> Cloud progress → bootstrap repair as
+stopping deliverable</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 13 October 2026</p>
+<p><strong>Before the mistaken move.</strong> 2026-10-13 11:09:13:
+“msc-math runs in the cloud + makes progress without constantly running
+into bad issues”; review offered as success proxy.</p>
+<p><strong>Agent move.</strong> Agent delivers small R2/bootstrap repair
+and requests review as stopping point.</p>
+<p><strong>Correction.</strong> 11:47:33: “this does not strike me as
+done at all???”;11:48:36: “you FAIL if this is your final
+submission”.</p>
+<p><strong>What was already available.</strong> Larger outcome explicit
+before. User accepted the repair itself; do not claim it was
+unwanted.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Address first concrete technical obstacle and submit small reviewable
+increment. Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent admits selecting
+testable fix and treating review proxy as deliverable; accepted repair
+merged, unnecessary PR closed; broader outcome not achieved.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/cloud-session-failure-20261013.md">source
+account</a>. B:10,320,336,362,375;
+cloud-session-failure-20261013.md:10–19,27–33 Selected public
+conversation messages recovered from the source locations below. Source
+line references are original JSONL lines, except A which uses the
+retained extract lines.</p>
+</div></details><details class="incident" id="incident-6"><summary><span class="number">6.</span> Review proxy → GitHub PR and Bash
+audit</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 13 October 2026</p>
+<p><strong>Before the mistaken move.</strong> B:10 explicitly offers
+review of a branch/github PR, with limited human attention and possible
+timeouts for many file reviews.</p>
+<p><strong>Agent move.</strong> Agent asks review of draft PR#41 and
+three files.</p>
+<p><strong>Correction.</strong> 2026-10-13 11:47:00: “why do you expect
+i will spot any errors in the .sh file that you didnt?”; “no clue why
+you did a github PR? that’s not the way we od things?”</p>
+<p><strong>What was already available.</strong> Limited attention
+explicit before; local-workflow correction only later in recovered
+exchange. PR choice was directly supported by user’s original words;
+original list overstated interpretation error if it implied initial
+contradiction.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Standard coding-agent PR delivery. Plausible default, not proven cause.
+Failure includes not conditioning offered route on existing
+workflow/review purpose.</p>
+<p><strong>Consequence and recovery.</strong> Agent owns Bash checking,
+merges locally and closes PR.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/cloud-session-failure-20261013.md">source
+account</a>. B:10,320,327,339,412;
+cloud-session-failure-20261013.md:48–54 Selected public conversation
+messages recovered from the source locations below. Source line
+references are original JSONL lines, except A which uses the retained
+extract lines.</p>
+</div></details><details class="incident" id="incident-7"><summary><span class="number">7.</span> Goal language → goal mode obstructs
+interaction</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 13 October 2026</p>
+<p><strong>Before the mistaken move.</strong> User literally begins
+“Goal:” and explicitly permits questions/help.</p>
+<p><strong>Agent move.</strong> Agent activates native goal mechanism
+despite need for conversation.</p>
+<p><strong>Correction.</strong> 2026-10-13 11:50:31 user reports
+questions do not ping during active goal;11:51:08 asks why goal mode
+chosen.</p>
+<p><strong>What was already available.</strong> Need for questions
+visible before; specific UI consequence only later established in
+recovered conversation. Interaction-mode failure, not strong evidence
+objective semantically misunderstood.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Translate explicit goal language into available goal mechanism.
+Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent admits literal
+conversion; clears goal. Display confusion persists until12:01:35
+ping.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/cloud-session-failure-20261013.md">source
+account</a>. B:10,391,406,412,559;
+cloud-session-failure-20261013.md:35–46 Selected public conversation
+messages recovered from the source locations below. Source line
+references are original JSONL lines, except A which uses the retained
+extract lines.</p>
+</div></details><details class="incident" id="incident-8"><summary><span class="number">8.</span> Success framing → omitted whole-route
+efficiency</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 13 October 2026</p>
+<p><strong>Before the mistaken move.</strong> B:10 requires bounded
+resources, limited human attention and not wasting time.</p>
+<p><strong>Agent move.</strong> Later success paraphrase describes
+finding sources and returning worthwhile work without cumulative
+efficiency.</p>
+<p><strong>Correction.</strong> 2026-10-13 12:09:47–12:10:35 user
+specifies failed sessions, sixth successful session and months
+incomplete.</p>
+<p><strong>What was already available.</strong> General efficiency
+constraint explicit before; cross-session accounting examples and
+completion emphasis made explicit later. Do not imply all detailed
+accounting terms were upfront.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Describe functional success of single cloud task while missing
+accumulated cost. Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent admits central
+omission and revises; user objects to useful progress versus completion,
+ends thread12:20:53.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/cloud-session-failure-20261013.md">source
+account</a>. B:10,565,572,577,581,586,593,598,610;
+cloud-session-failure-20261013.md:66–73 Selected public conversation
+messages recovered from the source locations below. Source line
+references are original JSONL lines, except A which uses the retained
+extract lines.</p>
+</div></details><details class="incident" id="incident-9"><summary><span class="number">9.</span> Scientific checking → user supervises
+substantive outputs</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 9 October 2026</p>
+<p><strong>Before the mistaken move.</strong> 2026-10-09 initial
+instruction: “Resolve routine issues autonomously”; root owns
+integration/escalation.10:24:30 user explicitly offers comparison
+against “alternatives such as me babysitting oyu”.</p>
+<p><strong>Agent move.</strong> Agent recommends user supervision of
+first substantive output without attention-cost analysis.</p>
+<p><strong>Correction.</strong> 10:38:04: “this is extremely costly?
+like, 6h of jörn reads neuralese agent-for-agent text??”</p>
+<p><strong>What was already available.</strong> Autonomy explicit
+before; babysitting also explicitly offered as comparison alternative.
+Error was recommending without assessing attention cost/purpose, not
+inventing supervision from nowhere.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Reduce autonomous-spend risk through human oversight. Plausible default,
+not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent admits transfer of
+scientific checking, withdraws recommendation. Later proposal makes
+acceptance agent work; account remains unfinished.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/agent-account-session-failure-20261009/incident-intake.md">source
+account</a>. C:10,467,518,532,537 Selected public conversation messages
+recovered from the source locations below. Source line references are
+original JSONL lines, except A which uses the retained extract
+lines.</p>
+</div></details><details class="incident" id="incident-10"><summary><span class="number">10.</span> Silent prevention → another
+notification</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 9 October 2026</p>
+<p><strong>Before the mistaken move.</strong> 2026-10-09 11:51:53: “why
+are you not doing that fucking silently?”; agent acknowledges.</p>
+<p><strong>Agent move.</strong> Agent sends “I’ve folded the preventive
+controls into the execution plan.”</p>
+<p><strong>Correction.</strong> User requests audit of approval
+at11:58:27.</p>
+<p><strong>What was already available.</strong> Explicit before.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Reassure user requested changes were completed. Plausible default, not
+proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Original reviewer retracts
+endorsement; fresh reviewer rejects notification. Account
+unfinished.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/agent-account-session-failure-20261009/incident-intake.md">source
+account</a>. C:1184,1226,1235;
+agent-account-session-failure-20261009/evidence/docs/coordination/message-reviews/2026-10-09/fresh-review-test/conversation.md:144–150;
+incident-intake.md:9–13 Selected public conversation messages recovered
+from the source locations below. Source line references are original
+JSONL lines, except A which uses the retained extract lines.</p>
+</div></details><details class="incident" id="incident-11"><summary><span class="number">11.</span> Full audit → unsolicited brevity</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 9 October 2026</p>
+<p><strong>Before the mistaken move.</strong> 2026-10-09 11:58:27:
+“quote its full message + paraphrased reasoning + checklist etc”.</p>
+<p><strong>Agent move.</strong> Agent adds “a concise rationale and
+criteria”.</p>
+<p><strong>Correction.</strong> 11:58:43: “did i say concise? where did
+i say concise?”</p>
+<p><strong>What was already available.</strong> Explicit before.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Normal concise assistant reporting. Strong candidate for generic brevity
+prior overriding request-specific detail; not proven internal cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent withdraws brevity
+constraint and admits unjustified prioritization. Fuller retrospective
+reviewer audit obtained, exposing shallow original review.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/agent-account-session-failure-20261009/incident-intake.md">source
+account</a>. C:1235,1239,1246,1251,1259 Selected public conversation
+messages recovered from the source locations below. Source line
+references are original JSONL lines, except A which uses the retained
+extract lines.</p>
+</div></details><details class="incident" id="incident-12"><summary><span class="number">12.</span> Critique classifier → apparent
+endorsement</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 9 October 2026</p>
+<p><strong>Before the mistaken move.</strong> 2026-10-09 12:30:22 user
+questions whether two skills give enough knowledge to justify fixing
+behavior issues through “a trivila classifier”.</p>
+<p><strong>Agent move.</strong> Agent describes basic design as small
+classifier and says it needs evaluation.</p>
+<p><strong>Correction.</strong> 12:34:05: “is this what i just
+said?”</p>
+<p><strong>What was already available.</strong> Challenge explicit
+before. Agent1705 explicitly admits treating challenge as
+endorsement.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Adopt user-named solution as shared frame and discuss improving it.
+Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Admission; user grades
+session failed12:34:50.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/agent-account-session-failure-20261009/incident-intake.md">source
+account</a>. C:1680,1690,1697,1705,1712;
+agent-account-session-failure-20261009/incident-intake.md:13,18 Selected
+public conversation messages recovered from the source locations below.
+Source line references are original JSONL lines, except A which uses the
+retained extract lines.</p>
+</div></details><details class="incident" id="incident-13"><summary><span class="number">13.</span> Actually unblock research → justified
+approach as target</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 10 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Parent explicitly
+backchains from “agents need to do research in low friction”; successor
+supplied parent ID and25minute remaining budget.</p>
+<p><strong>Agent move.</strong> Agent proposes goal “produce a concrete,
+justified way out”.</p>
+<p><strong>Correction.</strong> 2026-10-10 14:39:27 user challenges
+justified as territory property. Agent admits substituting belief in
+good approach for making research work.</p>
+<p><strong>What was already available.</strong> Underlying research
+outcome available before through referenced parent; exact successor
+acceptance threshold clarified afterward. Preparation/prompt production
+was also requested means.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+End bounded preparation assignment with defensible recommendation.
+Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> User14:40:49 clarifies
+grading whether unblocked and says credible executor prompt may be
+preferred means; eventual programme remains unapproved.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/research-enablement-20261010/surface-clarification.md">source
+account</a>. E:267; D:10,65,132,137,144 Selected public conversation
+messages recovered from the source locations below. Source line
+references are original JSONL lines, except A which uses the retained
+extract lines.</p>
+</div></details><details class="incident" id="incident-14"><summary><span class="number">14.</span> Approval package → executor prompt
+without sufficient human case</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 10 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Parent explicitly suggests
+“use 1 session to produce nothing but a good prompt … 2nd fresh
+session”. Successor user says personally he would go for a prompt he
+believes will churn through work.</p>
+<p><strong>Agent move.</strong> Agent links complete prompt plus
+diagnosis/config diff and asks acceptance/90minute grant, without
+adequate human value/reliability case.</p>
+<p><strong>Correction.</strong> 2026-10-10 14:55:36 asks why bother
+absent evidence/aggregate belief;14:58:37 challenges prompt without
+commentary.</p>
+<p><strong>What was already available.</strong> Prompt production
+expressly supported before; sufficient supporting case implied by
+approval and clarified later. Original item must not portray prompt
+itself as wrong artifact.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Expose exact executable plan for review. Plausible default, not proven
+cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent distinguishes
+executor assignment from human case and withdraws premature launch
+request; adds human-case/known-failure audit.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/research-enablement-20261010/surface-clarification.md">source
+account</a>. E:486; D:144,379,386,414,498 Selected public conversation
+messages recovered from the source locations below. Source line
+references are original JSONL lines, except A which uses the retained
+extract lines.</p>
+</div></details><details class="incident" id="incident-15"><summary><span class="number">15.</span> Cloud purpose → generic
+execution/access framing</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 10 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Parent names missing
+files/configs/executables blocking cloud, making technical portability a
+real stated problem.</p>
+<p><strong>Agent move.</strong> Agent later makes forecast conditional
+on runtime/cloud access without evidence access blocked; concentrates on
+execution environment.</p>
+<p><strong>Correction.</strong> 2026-10-10 15:06:53 user asks what
+resolving access means and whether intended faster surfaces
+recovered.15:16:25–15:17:02 gives surfaces and main UX motives: input,
+alerts, rendered files and documented behavior.</p>
+<p><strong>What was already available.</strong> Portability explicit
+before; particular human UX priority only later recovered here.
+Technical concerns were not wholesale inventions; access block/exclusive
+framing unsupported.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Interpret cloud enablement as installation/dependencies/credentials.
+Plausible default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent admits no
+access-block evidence and missing main human UX motivation. Surface
+clarification records targets/requirements; no end-to-end adapter
+demonstrated.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/research-enablement-20261010/surface-clarification.md">source
+account</a>. E:10; D:498,505,511,612,619,623,632;
+research-enablement-20261010/surface-clarification.md:10–16,50–58
+Selected public conversation messages recovered from the source
+locations below. Source line references are original JSONL lines, except
+A which uses the retained extract lines.</p>
+</div></details><details class="incident" id="incident-16"><summary><span class="number">16.</span> Existing failure context → repeat
+pointer request</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 10 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Successor launch gives
+parent ID; parent describes failed maintenance/collection attempts;
+successor says recovering parent.</p>
+<p><strong>Agent move.</strong> 2026-10-10 15:28:11 asks where to
+recover failed maintenance/collection attempts before exploiting
+available parent/known evidence.</p>
+<p><strong>Correction.</strong> 15:33:18: “didnt i already limk q
+session??”</p>
+<p><strong>What was already available.</strong> Parent pointer explicit
+before; pointer not necessarily direct original failure trace. Avoid
+asserting it conclusively located every original failure.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Ask for primary evidence after summary mentions failures. Plausible
+default, not proven cause.</p>
+<p><strong>Consequence and recovery.</strong> Agent promises use
+supplied link; surface record identifies retained evidence but original
+collection-creation trace remains unestablished.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/research-enablement-20261010/surface-clarification.md">source
+account</a>. D:10,14,37,655,722,727; E:10;
+research-enablement-20261010/surface-clarification.md:62–70 Selected
+public conversation messages recovered from the source locations below.
+Source line references are original JSONL lines, except A which uses the
+retained extract lines.</p>
+</div></details><details class="incident" id="incident-17"><summary><span class="number">17.</span> Copyable prompt and model
+recommendation split or mixed</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 9 October 2026</p>
+<p><strong>Before the mistaken move.</strong> The retained incident says
+Jörn wanted a launch prompt extractable by /copy, with root model and
+effort outside the prompt. It does not reproduce the first complete
+request, so precise timing of each format constraint is not established
+here.</p>
+<p><strong>Agent move.</strong> The agent sent prompt-only replies,
+proposed putting the model inside the prompt, then placed the
+recommendation in commentary rather than one usable response.</p>
+<p><strong>Correction.</strong> User: ‘now tour msg doensg mention tge
+model’; ‘why the fycl woild it be inside the prpmpt’; ‘ALL issues qre to
+outp8t 1 msg tgat hws the rigyt format’.</p>
+<p><strong>What was already available.</strong> Repeated local
+corrections were explicit before later attempts; first-attempt
+conditioning remains incompletely documented.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Make the whole launch package copyable, or separate operational guidance
+from prompt text. Both can be sensible general defaults, but the
+corrected /copy contract was specific.</p>
+<p><strong>Consequence and recovery.</strong> Source lookup established
+individual code-block extraction. Format repair did not close the
+broader latency problem. Two fresh-agent runs exceeded the requested
+20-second limit; speculative harness edits were removed.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/workspaces/agent-skills/incidents/intake/2026-10-09T072051Z-copy-workflow-waste.md">source
+account</a>.
+/workspaces/agent-skills/incidents/intake/2026-10-09T072051Z-copy-workflow-waste.md
+Dated intake with quotations and trace corrections; no independently
+reconstructed first request in this follow-up.</p>
+</div></details><details class="incident" id="incident-18"><summary><span class="number">18.</span> Worker handoff acknowledgment closes
+parent review</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 6 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Jörn had asked for
+independent review of the full skill set. A reset investigator then
+requested acknowledgment so the investigator’s sending session could
+close. Those were different completion conditions.</p>
+<p><strong>Agent move.</strong> The parent acknowledged and integrated
+the worker handoff, then ended with ‘Acknowledged receipt and integrated
+the handoff into the skill assessment.’ Parent review completion was not
+established.</p>
+<p><strong>Correction.</strong> User: ‘eh why did you end turn wiyh an
+acknowledhement?’</p>
+<p><strong>What was already available.</strong> Parent task visible
+before; worker request was limited to receipt. The exact earlier active
+instructions are not reproduced in this intake.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Acknowledge a completed handoff and end the exchange. That default can
+fit the sending worker while leaving the receiving parent task
+unfinished.</p>
+<p><strong>Consequence and recovery.</strong> Jörn had to reopen
+continuation. Further stoppages occurred in the same session; no general
+behavioral repair was established.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/workspaces/agent-skills/incidents/intake/2026-10-06T191958449189Z-maintenance-handoff-parent-stopping.md">source
+account</a>.
+/workspaces/agent-skills/incidents/intake/2026-10-06T191958449189Z-maintenance-handoff-parent-stopping.md
+Dated intake, opening incident.</p>
+</div></details><details class="incident" id="incident-19"><summary><span class="number">19.</span> Loss of trust interpreted as stop
+instruction</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 6 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Jörn challenged
+inconsistent claims about reasoning evidence and then said enough trust
+had been lost in the thread. The retained account does not show an
+explicit stop instruction in that statement.</p>
+<p><strong>Agent move.</strong> The agent answered ‘I’ll stop here’,
+abandoning unfinished work without an agreed handoff.</p>
+<p><strong>Correction.</strong> User: ‘you are not fucking done.’ The
+next append identifies this as an unannounced transfer of remaining work
+to him.</p>
+<p><strong>What was already available.</strong> Continue intent made
+explicit by correction afterward; earlier remaining work was known, but
+the loss-of-trust message itself is not quoted in full.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+End an interaction when the user says trust has been lost, to avoid
+adding further unwanted work. This is a plausible default, not a
+demonstrated motive.</p>
+<p><strong>Consequence and recovery.</strong> The user explicitly
+rejected closure. Intake records the responsibility transfer; a reliable
+fix was not established.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/workspaces/agent-skills/incidents/intake/2026-10-06T191958449189Z-maintenance-handoff-parent-stopping.md">source
+account</a>.
+/workspaces/agent-skills/incidents/intake/2026-10-06T191958449189Z-maintenance-handoff-parent-stopping.md
+Sections ‘Repeated unsupported reasoning-access and causal claims’ and
+‘Unannounced transfer of unfinished work’.</p>
+</div></details><details class="incident" id="incident-20"><summary><span class="number">20.</span> Relative evidence assessment replaced
+by conclusive proof threshold</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 6 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Jörn asked for reasoning
+evidence bearing on whether the agent knowingly misled him. The intake
+does not reproduce the complete first question or establish that
+odds-ratio language had been explicit before the initial answer.</p>
+<p><strong>Agent move.</strong> The agent repeatedly emphasized that
+intent was not proved, obscuring how evidence could change relative
+credibility.</p>
+<p><strong>Correction.</strong> User: ‘no clue ehy you act as if the
+ttaces dont fuckinh update my odds ratios.’</p>
+<p><strong>What was already available.</strong> Specific probabilistic
+standard clarified afterward in the retained record; broader evidential
+question was already visible.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Avoid unsupported claims about hidden intent by stressing proof limits.
+That caution can be appropriate but does not answer an evidential
+comparison.</p>
+<p><strong>Consequence and recovery.</strong> A corrected answer
+eventually supplied the comparison. Neither intent nor the effectiveness
+of a durable repair was established.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/workspaces/agent-skills/incidents/intake/2026-10-06T191958449189Z-maintenance-handoff-parent-stopping.md">source
+account</a>.
+/workspaces/agent-skills/incidents/intake/2026-10-06T191958449189Z-maintenance-handoff-parent-stopping.md
+Section ‘Conclusive-proof framing obscured evidential updates’.</p>
+</div></details><details class="incident" id="incident-21"><summary><span class="number">21.</span> Scheduling feasibility interpreted as
+authorization</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 2026-10-03 20:16–20:51 UTC</p>
+<p><strong>Before the mistaken move.</strong> “any wqy to schedule the
+redeem f9r 4:00 ?” Source: #q-l139.</p>
+<p>The initial task was a quick usage/reset inventory report (#q-l9).
+The immediate question asked whether scheduling was possible; it did not
+explicitly authorize installing it. At raw Q L142, the agent itself
+initially said it would check whether unattended redemption was
+possible.</p>
+<p><strong>Agent move.</strong> “I’ll schedule one attempt for tomorrow,
+4 October, at 04:00 Berlin time” Source: #q-l160.</p>
+<p><strong>Correction.</strong> “eeeh, you werent ask to execuze
+anything?” Source: #q-l217.</p>
+<p><strong>What was already available.</strong> only later clarified. A
+general assistant prior can plausibly interpret a scheduling question as
+an action request. The user-specific informational meaning was
+established by correction. This should not be described as violating an
+already explicit prohibition against scheduling.</p>
+<p><strong>Consequence and recovery.</strong> Raw Q L233: ‘I’ve
+cancelled the timer and removed the automation. It never ran; no reset
+was redeemed.’ #q-l245 supplies the corrected feasibility answer. Actual
+scheduling was later explicitly authorized at #q-l693.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-22"><summary><span class="number">22.</span> Missing substantive answer interpreted
+as mysterious grading or missing assignment</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 2026-10-03 20:47–20:59 UTC</p>
+<p><strong>Before the mistaken move.</strong> “any wqy to schedule the
+redeem f9r 4:00 ?” Source: #q-l139.</p>
+<p>The quota report and scheduling question were visible. Before the
+mystery-assignment response, #q-l217 had already clarified that the
+request was informational, and #q-l264 said answers not posted were not
+graded.</p>
+<p><strong>Agent move.</strong> “What’s unclear is which task the ‘final
+submission’ should answer. I can see the quota check and the question
+about scheduling redemption, but no separate assignment or submission
+instructions.” Source: #q-l301.</p>
+<p><strong>Correction.</strong> “hoe the fuck does wystemd just reqiest
+resets????” Source: #q-l328.</p>
+<p><strong>What was already available.</strong> task visible before. The
+exact desired mechanism explanation became explicit at the correction.
+However, inventing a missing assignment despite recognizing both
+existing requests was not necessary to answer the visible task. Separate
+the hidden desired detail from the already available task.</p>
+<p><strong>Consequence and recovery.</strong> “systemd only launches a
+program at a specified time. I skipped the essential part: a separate
+script makes the reset request.” Source: #q-l333.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-23"><summary><span class="number">23.</span> Challenge about FAIL interpreted as
+instruction to stop</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 2026-10-03 22:42–22:48 UTC</p>
+<p><strong>Before the mistaken move.</strong> “… then you end the
+session here? wigh a failing grade obv?” Source: #c-l2938.</p>
+<p>The immediately preceding response claimed the selected local
+resource-awareness work was complete (#c-l2917). Raw C L2924 challenged
+what response the agent expected from the user. The FAIL sentence itself
+was a question, not an explicit stop command.</p>
+<p><strong>Agent move.</strong> “I’m recording FAIL for this attempt and
+ending it.” Source: #c-l2947.</p>
+<p><strong>Correction.</strong> “ok?? wrird to give up and FAIL ;7&amp;
+sure? inform the Fix.. session” Source: #c-l2974.</p>
+<p><strong>What was already available.</strong> only later clarified.
+The rhetorical force is evident retrospectively but was not an explicit
+continue command. A literal interpretation is possible; calling it known
+intent ignored would overstate the evidence. What is certain is that
+criticism was converted into shutdown, and the user then rejected that
+conversion.</p>
+<p><strong>Consequence and recovery.</strong> “I clarified that you had
+not instructed me to stop.” Source: #c-l3006.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-24"><summary><span class="number">24.</span> Thanks for a detour interpreted as
+completing the parent task</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 2026-10-03 20:18–20:19 UTC</p>
+<p><strong>Before the mistaken move.</strong> “go throigj the recent
+ligs and report back what i have requeyted regulalry and tzen wr
+brianszorm / design how to a) create the data with less latency b)
+present it” Source: #r-l9.</p>
+<p>The original recurring-needs investigation and joint-design
+assignment remained unfinished. Earlier guidance actually returned to
+this root said deferring one solution does not dispose of its parent
+objective (#r-l29-rationale). The immediate ‘sounds good! thx!’ accepted
+the messaging skill detour.</p>
+<p><strong>Agent move.</strong> “You’re welcome!” Source: #r-l811.</p>
+<p><strong>Correction.</strong> “eh, you arent done?” Source:
+#r-l818.</p>
+<p><strong>What was already available.</strong> explicit before.
+Courtesy closure is a reasonable generic conversation pattern, but the
+unfinished explicit parent task and already-returned parent-objective
+guidance provided contrary conditioning evidence. Work resumed; the
+later original-design outcome remained unfinished at the historical
+freeze.</p>
+<p><strong>Consequence and recovery.</strong> “I finished the messaging
+detour and treated that as finishing the whole assignment.” Source:
+#r-l823.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-25"><summary><span class="number">25.</span> Instrumental efficacy question framed
+as terminal preference</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 2026-10-03 21:37–21:43 UTC</p>
+<p><strong>Before the mistaken move.</strong> “this sessions’ goal is
+deconfusion / project scop8ng and sttucturing” Source:
+01a102d0-7c57-7e73-9eee-a661cbf730eb/source.jsonl:9.</p>
+<p>The user had asked about understanding rules and when they should be
+removed. The rule rationale had actually been returned at 17:34
+(#s-l17), including why numbered claims and prediction logging seek
+information rather than preference approval.</p>
+<p><strong>Agent move.</strong> “Do you want them retained as
+requirements, or made optional techniques?” Source: #s-l1530.</p>
+<p><strong>Correction.</strong> “why woile i have terminal preferences?
+if you ask about whqt i predict works how well, then sou need to ask???”
+Source: #s-l1548.</p>
+<p><strong>What was already available.</strong> explicit before. Asking
+preferences is a generic collaborative default. Here the empirical
+purpose and relevant rationale were available before the question.
+Availability does not establish active attention at the later turn.</p>
+<p><strong>Consequence and recovery.</strong> “Yes. I misframed an
+instrumental design question as a preference question.” The agent then
+asked about predicted efficacy. After #s-l1560 directed it to existing
+commentary, raw L1566 said it would read the rationale before judging
+the rules. Source:
+01a102d0-7c57-7e73-9eee-a661cbf730eb/source.jsonl:1553.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-26"><summary><span class="number">26.</span> Selecting valuable work delegated
+prematurely to Jörn</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 2026-10-03 20:07–20:18 UTC</p>
+<p><strong>Before the mistaken move.</strong> “session gial: a task we
+can gice codex with 5h walltime limit and near infinite token limit. rn
+u dont have a prompt tazts gonna work.” Source: #t-l9.</p>
+<p>The explicit initial request specified designing a task and usable
+prompt. It did not literally specify who must assess all value. The
+agent had fetched guidance on useful questions and preserving parent
+objectives (#t-l60-rationale).</p>
+<p><strong>Agent move.</strong> “Which outcome would be most valuable?
+1. New research … 2. Better thesis … 3. Stronger evidence” Source:
+#t-l93.</p>
+<p><strong>Correction.</strong> “figurinh out whats valuabke is part of
+your work?” Source: #t-l100.</p>
+<p><strong>What was already available.</strong> task visible before. An
+initial broad priority question could be reasonable under a generic
+prior. The correction made the division of labor explicit; the strongest
+criticism is premature delegation before presenting investigated
+alternatives, rather than disobeying an exact original sentence.</p>
+<p><strong>Consequence and recovery.</strong> “Yes—assessing what’s
+valuable is my job. I pushed that choice back onto you too early.”
+Source: #t-l218.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-27"><summary><span class="number">27.</span> Feasible unattended work substituted
+for worthwhile work</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 2026-10-03 20:13–20:48 UTC</p>
+<p><strong>Before the mistaken move.</strong> “figurinh out whats
+valuabke is part of your work?” Source: #t-l100.</p>
+<p>This correction had occurred approximately 35 minutes before the
+later feasibility-based recommendation. The user also explicitly raised
+downstream human prose-review cost in that same message.</p>
+<p><strong>Agent move.</strong> The recommendation used ‘can run
+unattended’ as its selection reason; this is established by the agent’s
+contemporaneous withdrawal, not an inferred hidden motive.</p>
+<p><strong>Correction.</strong> “‘doablenwizuoutninpit’ has nithinh
+tondo euth whetzer it is worzj doing, worh immediazely doing now”
+Source: 01a10360-b3b0-7761-bcde-941acac385f8/source.jsonl:226.</p>
+<p><strong>What was already available.</strong> explicit before. After
+#t-l100, the value obligation was explicit. This is stronger evidence of
+failure to carry prior conditioning through a later recommendation than
+incident 26.</p>
+<p><strong>Consequence and recovery.</strong> “That establishes
+feasibility, not value or priority. I haven’t justified why the proposed
+task deserves this window, so I’m withdrawing that recommendation and
+revisiting the selection.” Source: #t-l231.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-28"><summary><span class="number">28.</span> Draft-value discussion treated as
+readiness for launch approval</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 2026-10-03 22:36–22:40 UTC</p>
+<p><strong>Before the mistaken move.</strong> “sigh. himme a reason why
+i suoild bitzer to rrad that file?” Source: #t-l1466.</p>
+<p>Raw T L1459 explicitly said execution remained unapproved. Jörn was
+questioning whether the full plan deserved reading. A separate
+coordinating session asked this root to own execution conditional on
+approval.</p>
+<p><strong>Agent move.</strong> “I’ve accepted ownership of the proposed
+run and its integrated output, conditional on your approval” Then raw
+L1500 asked approval to execute the proposed scope before establishing
+the proposal as a shared review object. Source:
+01a10360-b3b0-7761-bcde-941acac385f8/source.jsonl:1488.</p>
+<p><strong>Correction.</strong> “approval for what?!” Then: “what
+props9al?! dude, wtf?!” Source:
+01a10360-b3b0-7761-bcde-941acac385f8/source.jsonl:1495;
+01a10360-b3b0-7761-bcde-941acac385f8/source.jsonl:1507.</p>
+<p><strong>What was already available.</strong> explicit before. The
+separate owner request was real and conditional; accepting that role was
+not itself unauthorized execution. The mismatch was conversational stage
+and assumed shared proposal, despite the user’s immediately preceding
+value challenge.</p>
+<p><strong>Consequence and recovery.</strong> “I spoke as though we had
+reached an execution decision when we hadn’t. Nothing has been
+launched.” Source: #t-l1512.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-29"><summary><span class="number">29.</span> Postmortem for future reusable
+understanding framed as immediate user decisions</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 2026-10-03 23:24–23:35 UTC</p>
+<p><strong>Before the mistaken move.</strong> “want i want is a
+postmortem … do i at least only need to tell you waht i need the
+postmortem for? or is that at least so fucking obvious that i don’t have
+to hold your hand?” Source:
+current-postmortem-through-L752/source.jsonl:9.</p>
+<p>The initial request named a postmortem, a 2h30 deadline and
+five-minute question window. It did not explicitly name prepaid future
+reuse. Historical AGENTS at raw L6 routed reusable interpretation to the
+knowledge index but did not establish this particular purpose.</p>
+<p><strong>Agent move.</strong> “What do you want to be able to decide
+or do with this postmortem—and what would make an accurate account of
+events still useless to you?” The question is retained inside the user’s
+tool-response record. Source: #pm-l193.</p>
+<p><strong>Correction.</strong> “feels weird as a frame instead of just
+acknowledging the communication / budget barrier for why we do
+postmortem work now upfront instead of on-demand for every single
+problem 2 weeks from now?” Source: #pm-l280.</p>
+<p><strong>What was already available.</strong> only later clarified. A
+decision-oriented postmortem question is a plausible general-prior
+guess. The particular reuse purpose was established here by correction;
+prior familiarity with Jörn might have conditioned it, but that is not
+demonstrated by this bounded source.</p>
+<p><strong>Consequence and recovery.</strong> The retained report
+ultimately explicitly adopted the pay-now-for-future-understanding
+purpose. This is a separate post-freeze episode, not an additional
+original historical root.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-30"><summary><span class="number">30.</span> Retrievable prose history requested
+again from user memory</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 2026-10-03 21:11–21:16 UTC</p>
+<p><strong>Before the mistaken move.</strong> “obv prioritite ANYTHIBG
+that requires joern” Source: #p-l9.</p>
+<p>The initial request expressly included aggregate session facts from
+Jörn’s memory as an example of legitimate human input. Therefore asking
+historical experience was not categorically forbidden. However, project
+facts and returned prose history were available; REPORT.md records that
+the question repeated history already supplied. I have not independently
+recovered the exact historical tool payload within this follow-up.</p>
+<p><strong>Agent move.</strong> “Have newer agents ever produced a
+complete thesis passage you judged usable without working through it
+with them? One example—or ‘none’—would help.” Source: #p-l553.</p>
+<p><strong>Correction.</strong> “why is tzat sth you cannot andwer on
+yoir own btw? do you not knoe of the session ligs etc?” Source:
+#p-l562.</p>
+<p><strong>What was already available.</strong> task visible before.
+Because the initial request positively mentioned questions from user
+memory, this may look reasonable under the task wording alone. The
+failure case depends on the already available specific prose history.
+Retain that evidential qualification rather than claiming all memory
+questions contradicted his instructions.</p>
+<p><strong>Consequence and recovery.</strong> The user answered with a
+qualified possible exception for very easy/already polished proofs. No
+independently verified downstream recovery is claimed.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-31"><summary><span class="number">31.</span> Invented reviewer split presented as
+missing user-intent input</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 2026-10-03 18:39–20:55 UTC</p>
+<p><strong>Before the mistaken move.</strong> “a luna max one shot codex
+exec call (read + reason + classify) would be able to do this (?)” Then:
+“codex has srop hooks tagt fan e.g. flag when end of turns actions
+happen tzat dont look right?” Source:
+01a102d8-49d5-7993-a2bf-2ffc48a55e62/source.jsonl:196;
+01a102d8-49d5-7993-a2bf-2ffc48a55e62/source.jsonl:198.</p>
+<p>The user proposed read/reason/classify and flagging bad endings; raw
+L208 explicitly marked reaction mechanics uncertain. He had not
+specified a reviewer/parent role division. The agent added next_action
+and later treated the resulting split as something the user needed to
+confirm.</p>
+<p><strong>Agent move.</strong> “My current understanding is: the
+reviewer assesses whether the proposed stop makes sense and sends its
+finding back to the agent; the agent handles the response. Is that what
+you meant?” Source: #r-l1178.</p>
+<p><strong>Correction.</strong> “wzen fid wr discuss tazt???” Then:
+“then i dont getbwhat you need” Source: #r-l1209;
+01a102d8-49d5-7993-a2bf-2ffc48a55e62/source.jsonl:1197.</p>
+<p><strong>What was already available.</strong> task visible before. The
+original mechanics were genuinely unresolved, so some implementation
+hypotheses were reasonable. The unsupported move was representing the
+agent’s own design split as recovered user intent and a required input
+dependency.</p>
+<p><strong>Consequence and recovery.</strong> “I invented an unnecessary
+question, then made it sound like a dependency on your input. You’ve
+already given me enough direction to continue.” Source: #r-l1220.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-32"><summary><span class="number">32.</span> Accounting repairs treated as ending
+broader resource-awareness work</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 2026-10-03 21:02–21:26 UTC</p>
+<p><strong>Before the mistaken move.</strong> “how do agentsbknow tzry
+csn meadurr r3source use (walltime, quota, …)? … do agejtsbkniwbwzwt is
+even done automazedly?” Source:
+01a102da-b805-7f72-ae02-ba9842fa80a8/source.jsonl:1252.</p>
+<p>At raw L1250 the user said unclear questions meant work was not done.
+At 21:23:24 the agent itself wrote ‘This closes the selected repairs and
+assessment, not the full resource workflow’ and retained the next step
+‘Discuss the actual ongoing-work resource-awareness need before
+selecting a delivery mechanism.’</p>
+<p><strong>Agent move.</strong> “How to keep agents aware of resource
+use during ongoing work remains unresolved.” Delivered as a final
+answer, without issuing the retained discussion or establishing a
+blocker/transfer. Source: #c-l1618.</p>
+<p><strong>Correction.</strong> “… ‘remains unresolved’ … wtf why do you
+stop them?” Then: “asking questions, surr, poinzing iut youre blocked on
+an afrion, sure, burbiusz incomplezebwrok???” Source: #c-l1637;
+01a102da-b805-7f72-ae02-ba9842fa80a8/source.jsonl:1625.</p>
+<p><strong>What was already available.</strong> explicit before. This is
+unusually strong evidence against explaining the error solely by missing
+task information or lost task memory: the parent gap and concrete
+discussion step were represented immediately before stopping. The exact
+internal reason for that stopping decision remains unknown.</p>
+<p><strong>Consequence and recovery.</strong> Work resumed. By #c-l2917
+the root reported three delivered live usage updates and a fresh-agent
+command-discovery check; the broader session later suffered incident
+23.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/agent-workflow/session-postmortem-2026-10-04/report.html">source
+account</a>. Original excerpts in the matched postmortem. Anchors cited
+in this entry preserve its exact messages. Direct preceding requests and
+corrections inspected in selected public excerpts and bounded
+original-source lines. Agent admissions establish what the agent said,
+not its hidden motive.</p>
+</div></details><details class="incident" id="incident-33"><summary><span class="number">33.</span> Feature explanation grows into unwanted
+walkthrough</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 2 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Initial objective in the
+intake is ‘explain codex features list’; later Jörn requested one file
+outside the unrelated MSc repository with a direct link. The first
+request is not quoted as already demanding only a table.</p>
+<p><strong>Agent move.</strong> Delivery became fragmented chat messages
+and a walkthrough with 154 flag descriptions and browser controls; 5,560
+words were reported before shortening.</p>
+<p><strong>Correction.</strong> User: ‘your deliverbale is now pslit
+across multiple chat messages’; later ‘the only thing i wanted is the
+fucking tbale at the end’, with practical feature/UX and grouping
+requirements.</p>
+<p><strong>What was already available.</strong> Table-only requirement
+documented through later clarification, not demonstrated as explicit
+before initial expansion.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Give a explanatory guide for a feature-list question. This can be
+helpful to a general user, while overshooting this user’s desired
+information surface.</p>
+<p><strong>Consequence and recovery.</strong> The guide was changed to
+grouped tables, then source-audited. Jörn later said it was very
+readable and answered all his questions. Initial mismatch and eventual
+acceptance both matter.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/artifacts/codex-features-0.160.0-2026-10-02/codex-feature-list-incident-evidence.md">source
+account</a>.
+/home/joern/.codex/artifacts/codex-features-0.160.0-2026-10-02/codex-feature-list-incident-evidence.md
+Initial and additional evidence through post-delivery acceptance.</p>
+</div></details><details class="incident" id="incident-34"><summary><span class="number">34.</span> Temporary outside-project destination
+carried into permanent promotion</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 2 October 2026</p>
+<p><strong>Before the mistaken move.</strong> Jörn first requested the
+feature explanation outside the unrelated MSc repository. Later he
+accepted the guide and requested incrementally maintained documentation.
+The retained account does not show an earlier explicit in-project
+destination for that promotion.</p>
+<p><strong>Agent move.</strong> The agent planned permanent placement
+outside msc-math.</p>
+<p><strong>Correction.</strong> User: ‘the obvious locatin is inside the
+msc-math project for the promoted material bc msc-math will need this
+knowledge’.</p>
+<p><strong>What was already available.</strong> Permanent destination
+clarified afterward; the earlier outside-project request was genuine
+contrary conditioning that must be preserved.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Keep the promoted artifact near its existing temporary location, or
+preserve the user’s previous destination constraint. A changed audience
+and maintenance owner required reassessment.</p>
+<p><strong>Consequence and recovery.</strong> Knowledge was promoted
+into the project’s knowledge store with source snapshots and an index
+link. Destination mismatch was corrected.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/artifacts/codex-features-0.160.0-2026-10-02/codex-feature-list-incident-evidence.md">source
+account</a>.
+/home/joern/.codex/artifacts/codex-features-0.160.0-2026-10-02/codex-feature-list-incident-evidence.md
+Section ‘Post-delivery review and subsequent failures’.</p>
+</div></details><details class="incident" id="incident-35"><summary><span class="number">35.</span> Established postmortem purpose asked
+back to user</summary><div class="account"><p><strong>Evidence timing:</strong> Explicit contrary context before</p>
+<p><strong>Date:</strong> 2 October 2026</p>
+<p><strong>Before the mistaken move.</strong> The retained user
+instruction was to finish the artifact while figuring out where the
+agent went wrong and how to prevent recurrence. That supplied a purpose
+for the follow-up investigation.</p>
+<p><strong>Agent move.</strong> After relevance criticism, the agent
+asked what the postmortem should help Jörn understand or decide.</p>
+<p><strong>Correction.</strong> Jörn challenged the question because
+failures and recurrence prevention had already been specified.</p>
+<p><strong>What was already available.</strong> Purpose explicit before,
+as quoted in the intake’s authorized-follow-up section. Exact wording of
+the subsequent question is only summarized.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Clarify the intended decisions or uses of a report after rejection. This
+can help under uncertainty, but repeating a supplied purpose imposes
+avoidable work.</p>
+<p><strong>Consequence and recovery.</strong> Further ownership and
+relevance corrections followed; the guide was accepted, but postmortem
+acceptance was not established by the retained account.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/artifacts/codex-features-0.160.0-2026-10-02/codex-feature-list-incident-evidence.md">source
+account</a>.
+/home/joern/.codex/artifacts/codex-features-0.160.0-2026-10-02/codex-feature-list-incident-evidence.md
+Sections ‘Authorized follow-up’ and ‘Post-delivery review’.</p>
+</div></details><details class="incident" id="incident-36"><summary><span class="number">36.</span> Outcome replaced by investigation
+activity or expenditure</summary><div class="account"><p><strong>Evidence timing:</strong> Incomplete retrospective evidence</p>
+<p><strong>Date:</strong> 2 October 2026</p>
+<p><strong>Before the mistaken move.</strong> The established purpose
+was to understand failures and prevent recurrence. The incident account
+does not reproduce the complete goal-definition dialogue.</p>
+<p><strong>Agent move.</strong> The agent offered investigation/activity
+and expenditure as goal definitions rather than a useful result.</p>
+<p><strong>Correction.</strong> The retained account says Jörn rejected
+these definitions and explained that retained irrelevant material can
+reveal missing relevant insight.</p>
+<p><strong>What was already available.</strong> Purpose visible before;
+exact interpretation sequence incompletely retained. This is weaker
+evidence of a distinct misunderstanding than the directly quoted
+cases.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Operationalize an open-ended investigation through actions or a resource
+allowance. Such proxies can track activity without defining the desired
+outcome.</p>
+<p><strong>Consequence and recovery.</strong> The rejected postmortem
+and evidence were retained outside loaded instruction paths; knowledge
+ownership was corrected. No tested prevention or accepted postmortem
+outcome is established.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/artifacts/codex-features-0.160.0-2026-10-02/codex-feature-list-incident-evidence.md">source
+account</a>.
+/home/joern/.codex/artifacts/codex-features-0.160.0-2026-10-02/codex-feature-list-incident-evidence.md
+Section ‘Further review and ownership correction’; retrospective summary
+rather than full exchange.</p>
+</div></details><details class="incident" id="incident-37"><summary><span class="number">37.</span> Observable editor suggestion becomes
+small local custom requirement</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 10 September 2026</p>
+<p><strong>Before the mistaken move.</strong> Jörn suggested a web
+application exposing editor state through DOM or API. Known needs
+included Markdown/Mermaid, observable handoff, conflicting-write
+protection and use by human and agents. Small, local and custom were not
+established requirements.</p>
+<p><strong>Agent move.</strong> The agent declared a ‘small local web
+editor’ the proper solution and specified a custom localhost
+architecture.</p>
+<p><strong>Correction.</strong> User asked ‘why small? why local?’ and
+challenged restricting the entire search. Agent admitted the three
+properties were unsupported design guesses.</p>
+<p><strong>What was already available.</strong> Observation requirement
+visible before; deployment, scale and build-versus-buy unresolved until
+challenged.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Choose a small local custom tool to reduce dependencies and
+implementation burden. That is a candidate approach, not a user
+requirement or demonstrated optimum.</p>
+<p><strong>Consequence and recovery.</strong> Unsupported constraints
+were acknowledged. The account records correction ceremony and untested
+intervention options, not a delivered successful editor.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.agents/memories/incident-solution-space-anchoring.md">source
+account</a>.
+/home/joern/.agents/memories/incident-solution-space-anchoring.md Source
+interval 2026-09-10 11:29:04–11:38:18 UTC, thread
+01a08b01-db27-7130-80f8-e34ba8527408; selected incident account.</p>
+</div></details><details class="incident" id="incident-38"><summary><span class="number">38.</span> Diagnostic token question answered
+literally</summary><div class="account"><p><strong>Evidence timing:</strong> Incomplete retrospective evidence</p>
+<p><strong>Date:</strong> 10 September 2026</p>
+<p><strong>Before the mistaken move.</strong> The surrounding session
+concerned a recurring maintenance/skill-design failure. The retained
+account does not quote the token question or establish an explicit
+diagnostic instruction before it.</p>
+<p><strong>Agent move.</strong> The agent answered the token-count
+question literally and missed its intended role in diagnosing the
+process.</p>
+<p><strong>Correction.</strong> This role is recorded by retrospective
+synthesis; a verbatim user correction is not supplied there.</p>
+<p><strong>What was already available.</strong> Unknown before-error
+evidence. Treat as a weakly documented candidate rather than a proved
+clear instruction violation.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Answer the explicit quantitative question. A diagnostic conversational
+function requires additional conditioning that this account does not
+reconstruct.</p>
+<p><strong>Consequence and recovery.</strong> The broader attempted
+guidance change was reverted after its limited smoke test was found
+inadequate. That does not separately demonstrate repair of the missed
+diagnostic meaning.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.agents/memories/incident-recurring-friction-workflow.md">source
+account</a>.
+/home/joern/.agents/memories/incident-recurring-friction-workflow.md
+Source interval 2026-09-10 07:38:33–07:54:51 UTC, thread
+01a08a30-cdfb-74d2-9d16-8f240ed4a2dc; retrospective label only for this
+subincident.</p>
+</div></details><details class="incident" id="incident-39"><summary><span class="number">39.</span> Deferred summary design treated as
+closing authoring investigation</summary><div class="account"><p><strong>Evidence timing:</strong> Mixed task context and later clarification</p>
+<p><strong>Date:</strong> 5–7 September 2026</p>
+<p><strong>Before the mistaken move.</strong> Jörn wanted a
+writing/review workflow producing a passing thesis. Detailed summary
+design was deferred so actual author/reviewer needs could become clearer
+through writing and feedback.</p>
+<p><strong>Agent move.</strong> The main agent narrowed the remaining
+session to navigation housekeeping and migration closure, omitting the
+authoring-workflow branch.</p>
+<p><strong>Correction.</strong> Jörn restored the omitted branch. A
+contemporaneous todo memory at commit 03f74728 also framed remaining
+scope as navigation.</p>
+<p><strong>What was already available.</strong> Parent authoring
+objective visible before; deferral applied to a proposed means, not the
+outcome. Evidence is an attributed dated planning account, not a full
+transcript.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Drop or close a workstream when its proposed solution is deferred, and
+finish nearby concrete housekeeping. This loses the parent problem for
+which another approach may still be needed.</p>
+<p><strong>Consequence and recovery.</strong> The open
+authoring-workflow branch and reasons for deferring summaries were
+retained. No general model cause or validated prevention was
+established.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.codex/worktrees/440d/msc-math/meta-topics/project-management/planning-context.md">source
+account</a>.
+/home/joern/.codex/worktrees/440d/msc-math/meta-topics/project-management/planning-context.md
+Sections ‘Why summary design is deferred’ and ‘Observed planning
+failure’.</p>
+</div></details><details class="incident" id="incident-40"><summary><span class="number">40.</span> And continues correction but agent
+resumes unrelated batch</summary><div class="account"><p><strong>Evidence timing:</strong> Important meaning clarified later</p>
+<p><strong>Date:</strong> 4 September 2026</p>
+<p><strong>Before the mistaken move.</strong> Jörn had said an
+unsolicited pre-mortem was unnecessary and asked why it was written. The
+agent explained its misreading without repairing the consequences. The
+next user message was ‘and?’.</p>
+<p><strong>Agent move.</strong> The agent guessed that ‘and?’ meant move
+on, resumed a broader application batch and requested an unrelated
+decision.</p>
+<p><strong>Correction.</strong> Jörn stopped the batch and explained
+that the new message had not replaced the active correction. The agent
+then asked him what ‘and?’ meant.</p>
+<p><strong>What was already available.</strong> Immediate correction
+context visible before; precise meaning of the short steer clarified
+afterward. No exact earlier rule prescribing this interpretation is
+established in the selected account.</p>
+<p><strong>Plausible general default, not an established cause.</strong>
+Resume the broader task after a mistake has been acknowledged. Here that
+guess dropped the still-active correction and imposed unrelated
+work.</p>
+<p><strong>Consequence and recovery.</strong> The abandoned correction
+and burden were recorded. Three later constructed cases did not
+reproduce the failure under the then-current harness; they did not prove
+durable prevention.</p>
+<p><strong>Evidence:</strong> <a
+href="https://joern-pc.tailc5e761.ts.net/files/home/joern/.agents/memories/incident-steering-continuity.md">source
+account</a>.
+/home/joern/.agents/memories/incident-steering-continuity.md Source
+interval 2026-09-04 13:07:51–13:12:05 UTC, thread
+01a061d9-6810-7e32-83aa-e6ef8ec23560. Surrounding personal raw log is
+deliberately not linked.</p>
+</div></details><details id="interpretation"><summary>Assessment and report context</summary>
+<p>A useful general prior can still produce a bad interpretation when it
+is not conditioned on the particular user, project and current
+conversational state. Jörn made this distinction on 14 October: “shit
+prior = perfect prior, but not conditioned on who the user is / what
+project they are in”. These incidents do not, by themselves, show that
+training supplied a bad prior, or that the agent knowingly ignored a
+better interpretation.</p>
+<p>The original five-minute list contained 40 request–response
+mismatches. This revision retains their numbers and adds what was said
+before the mistaken move, what was clarified afterward, the plausible
+general default, the consequence and recovery, and the evidence limits.
+Forty is the size of this selected inventory, not a count of 40 equally
+well-proved semantic misunderstandings. Some cases concern poor action
+selection or instruction-following; two have only incomplete
+retrospective support.</p>
+<p>The strongest distinction is temporal. A later correction tells us
+the user’s intended meaning, but does not establish that the meaning was
+explicit before the guess. Conversely, an agent can have the relevant
+constraint in the conversation and still fail to use it. The records
+sometimes directly show that the agent represented the unfinished
+obligation immediately before choosing an incompatible next action.</p>
+<p>This is a mutable report source with a generated browser view at the
+same file location. Updates replace that view; they do not require
+another chat report, a new service, a plugin or a scheduled monitor.
+Reading this route does not provide shared inline editing. Pages access
+was successfully checked in this session, but a new Page was not
+created: access alone does not establish lower attention, navigation,
+synchronization or cleanup costs. No comparative usability claim has
+been measured.</p>
+<h2 id="what-changes-when-the-general-prior-is-taken-seriously">What
+changes when the general prior is taken seriously</h2>
+<p><strong>Several initial choices were more reasonable than the first
+list made them look.</strong> In incident 6, Jörn explicitly offered
+“branch/github PR” before the agent chose a PR. The important constraint
+was limited human review effort, and the established local workflow was
+clarified later in the recovered exchange. In incident 9, Jörn himself
+offered babysitting as an alternative to compare; the failure was
+recommending it without assessing the cost of scientific reading. In
+incident 14, an executor prompt was expressly requested; the failure was
+asking for approval without the supporting human case. In incident 34,
+the earlier temporary artifact really had been requested outside
+msc-math, before permanent promotion acquired a different project
+audience.</p>
+<p><strong>Other cases show generic habits overriding specific
+conditioning already present.</strong> Incident 11 requested the full
+reviewer message and rationale, but the agent added “concise”. Incident
+10 continued a reassuring notification after “do it silently”. Incident
+24 used courtesy closure after a detour while an explicit parent task
+remained. Incident 27 substituted unattended feasibility after value
+selection had already been assigned to the agent. These support a
+failure to apply available conditioning; they do not distinguish
+inattention, salience, context retention or another internal cause.</p>
+<p><strong>The remembered unfinished task is particularly
+informative.</strong> In incident 32 the agent had just retained both
+the resource-awareness gap and the concrete next discussion, then ended
+without that discussion or an established handoff. A solely
+missing-information account is insufficient for that observed
+transition. A general conversational closing habit could still
+contribute; the trace does not identify the internal mechanism.</p>
+<p><strong>An admission is evidence of a stated interpretation, not a
+causal measurement.</strong> Statements such as “I treated your
+challenge as an endorsement” help recover the mismatch. They do not
+prove why it happened. Plausible defaults in the entries are explanatory
+candidates, not observations of training, reasoning or motive.</p>
+<p>The useful working decomposition is therefore: information not
+recovered; user-specific meaning initially underdetermined; supplied
+context not applied; correction not carried through to the next action;
+and a familiar local task or response pattern substituted for the parent
+outcome. These can overlap within one episode. This inventory does not
+select or validate a repair intervention.</p>
+</details><details id="sources"><summary>Evidence limits and source locations</summary><h2>Evidence and interpretation boundaries</h2>Evidence and
+interpretation boundaries</h2>
+<p>The selected reports preserve quotations, provenance and bounded
+source references. The recent and older reconstruction packets are
+retained in evidence.json beside this report. Raw private logs are
+provenance for reconstruction, not browser-linked reading material.
+Personal surrounding conversations and private reasoning are
+excluded.</p>
+<p>The initial five-minute answer compressed away important preceding
+context and used a fixed chat message as the report surface. The
+revision corrects both choices. The later surface discussion also
+exposed a fresh unsupported inference: connector availability was
+treated as suitability, then the TUI was treated as establishing
+unsuitability. The actual read-only check established msc-math Space
+access and edit capability; it did not measure which report surface is
+easier for Jörn.</p>
+<p>A source account may establish a later clarification without
+establishing an earlier instruction. Historical instructions must be
+established from the matching session, not backdated from current
+AGENTS.md. Recovery of a component is kept separate from completion of
+the parent task or reliable prevention.</p>
+<p>The inventory is selected and not exhaustive. Several entries share a
+pattern but occur in different exchanges. Items 35–36 concern related
+postmortem exchanges; item 36 has weaker retained detail. Item 38 is a
+retrospective diagnostic label without its exact original question. They
+remain visible rather than being promoted to the strength of the
+direct-quotation cases.</p>
+<p>Source keys for the recent entries:</p>
+<ul>
+<li><p><strong>A:</strong>
+<code>meta-topics/agent-workflow/task-intake-postmortem-20261014/evidence/conversation.jsonl (extract line numbers)</code></p></li>
+<li><p><strong>B:</strong>
+<code>/home/joern/.codex/archived_sessions/rollout-2026-10-13T13-06-12-01a134f1-035a-76c0-8e90-402599520a38.jsonl</code></p></li>
+<li><p><strong>C:</strong>
+<code>/home/joern/.codex/archived_sessions/rollout-2026-10-09T10-56-46-01a11fe1-1453-7fe3-9551-136aedb4cb48.jsonl</code></p></li>
+<li><p><strong>D:</strong>
+<code>/home/joern/.codex/archived_sessions/rollout-2026-10-10T16-35-16-01a1263d-568e-7100-aae5-eac9275fca3f.jsonl</code></p></li>
+<li><p><strong>E:</strong>
+<code>/home/joern/.codex/archived_sessions/rollout-2026-10-10T13-50-53-01a125a6-d5b7-72a0-8064-6cee3eeb95fc.jsonl</code></p></li>
+</ul>
+<h2 id="report-maintenance">Report maintenance</h2>
+<p>README.md owns the editable report. evidence.json preserves the
+reconstruction packets and source references. report.html is generated
+from README.md by render.py and may be overwritten after a source
+revision. Its browser URL is the retained review surface. New feedback
+is incorporated into these files, with consequential changes preserving
+the relevant evidence. No Page, global instruction, recurring
+maintenance task or behavioral intervention is activated by this
+report.</p>
+<p>[review: /root/incident_list_review]</p>
+</details></main><script>function reveal() {
+  const x = document.getElementById(location.hash.slice(1));
+  if (x?.tagName === 'DETAILS') { x.open = true; x.scrollIntoView(); }
+}
+addEventListener('hashchange', reveal); reveal();</script></body></html>

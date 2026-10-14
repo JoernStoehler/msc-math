@@ -1,3 +1,5 @@
+> Historical proposal, approved for local adoption at13:17:45UTC. See [actual adoption and cleanup](worktree-adoption-20261014.md) for current results and retained exceptions. The unapproved30-minute follow-on remains unselected.
+
 # Worktree triage and proposed main candidate — 14 October 2026
 
 ## Recommendation
