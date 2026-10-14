@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-14T13:20:28.148289+00:00",
+  "updated_at": "2026-10-14T13:25:00.048509+00:00",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Approved main consolidation underway. Preserve active independent Jörn-model work in e002 and concurrent440d checkout. Main evidence, withdrawn-browser disposition and completed later reports integrated; cloud/thesis execution remains stopped.",
+  "summary": "Approved local-main consolidation complete; /workspaces/msc-math on main is the selected starting checkout. Exact recovery verified; d040 and redundant local branches retired. Keep concurrent440d and substantive e002 files; e002 owner now records task stopped. No cloud/thesis execution or remote publication selected.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2958,33 +2958,15 @@
       "kind": "task",
       "selection": "selected",
       "project": "workflows",
-      "status": "running",
-      "owner": "native /root — approved 14 October main consolidation",
+      "status": "done",
+      "owner": null,
       "depends_on": [],
       "sources": [
-        "meta-topics/repository-organization/worktree-triage-20261014.md"
+        "meta-topics/repository-organization/worktree-adoption-20261014.md"
       ],
       "authorization": "Jörn approved the exact15-minute package at2026-10-14T13:17:45Z: adopt into local main, retire only verified redundancy, handin by13:27:45Z and hard stop13:32:45Z. No cloud execution, remote publication or host configuration.",
-      "outcome": "Approved candidate a402acf3 plus subsequently completed reports are being integrated; active e002 work and original440d checkout preserved. Recovery snapshot verified before original-main replacement.",
-      "updated_at": "2026-10-14T13:20:28.148289+00:00"
-    },
-    {
-      "id": "joern-model-definition-20261014",
-      "title": "Develop a Jörn model for agent collaboration",
-      "kind": "task",
-      "selection": "selected",
-      "project": "workflows",
-      "status": "running",
-      "owner": "01a13a48-3307-7071-bd3b-77eb5dd42951",
-      "outcome": "Independent session active. Its managed worktree exists at /home/joern/.codex/worktrees/e002/msc-math, based on a915c128; new owner has read the handoff and is recovering relevant sources there. Model representation and benefit remain open.",
-      "depends_on": [],
-      "authorization": "Jörn explicitly requested a separate task with its own chat and a new msc-math worktree on 14 October. Bounded discovery/design and useful drafts; no substantial evaluation programme, profile/config/skill activation, publication or thesis restart selected.",
-      "next_step": "New owner develops the model and meaningful evaluation with Jörn in its own chat, in /home/joern/.codex/worktrees/e002/msc-math. Parent owns handoff registration only.",
-      "sources": [
-        "docs/project-facts.md",
-        ".agents/skills/harness-engineering/SKILL.md"
-      ],
-      "updated_at": "2026-10-14T12:01:17.554102+00:00"
+      "outcome": "Approved candidate and later completed440d reports adopted into /workspaces/msc-math on local main. Withdrawn browser decision reconciled, untested guidance inactive, exact recovery verified. Redundant d040 checkout and local data-free/cloud-support branches retired. Concurrent440d and stopped-but-unintegrated e002 retained.",
+      "updated_at": "2026-10-14T13:25:00.048509+00:00"
     },
     {
       "id": "misunderstanding-inventory-20261014",
@@ -3002,6 +2984,27 @@
       ],
       "authorization": "User requested incident list under original five-minute deadline, then requested missing context and challenged hindsight attribution and report-surface friction. Revision only, no large evaluation or workflow activation.",
       "updated_at": "2026-10-14T12:35:12.753839+00:00"
+    },
+    {
+      "id": "joern-model-definition",
+      "title": "Develop a useful model of Jörn for collaboration",
+      "status": "dropped",
+      "owner": null,
+      "project": "agent-workflow",
+      "selection": "selected",
+      "outcome": "Develop sourced knowledge of Jörn that can improve question prediction, useful human involvement and message preparation; relative benefit and deployment are unsettled.",
+      "depends_on": [],
+      "sources": [
+        "meta-topics/repository-organization/worktree-adoption-20261014.md"
+      ],
+      "authorization": "Separate task/chat/worktree, bounded source recovery, joint problem development and small drafts. No substantial evaluation, global activation, background monitoring or thesis restart.",
+      "next_step": "No further work authorized by this stopped assignment.",
+      "updated_at": "2026-10-14T13:19:20.407984+00:00",
+      "owning_checkout": "/home/joern/.codex/worktrees/e002/msc-math",
+      "owning_sources": [
+        "meta-topics/agent-workflow/joern-model-definition/README.md",
+        "meta-topics/agent-workflow/joern-model-definition/conversation-evidence.md"
+      ]
     }
   ],
   "decisions": [
@@ -3452,6 +3455,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-14T13:25:00.048509+00:00",
+      "text": "Local main adopted approved consolidation. Recovery verified by archive extraction and isolated Git clone; d040 plus redundant local branches retired. Independent review caught task-ID drift; main now uses owning e002 ID and latest stopped disposition rather than stale handoff."
+    },
     {
       "at": "2026-10-14T13:20:28.148289+00:00",
       "text": "Jörn approved15-minute adoption package. Fresh snapshots of both dirty inputs verified; later completed440d reports and independent e002 assignment preserved."

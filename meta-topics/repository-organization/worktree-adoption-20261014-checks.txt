@@ -1,0 +1,10 @@
+14 October approved adoption checks
+PASS: exact dirty inputs tar member SHA256 readback
+PASS: before-adoption.bundle verification, isolated mirror clone, exact ref recovery and git fsck --connectivity-only
+PASS: supplemental main-dirty-stash.bundle verified and fetched into recovery mirror
+PASS: eight dashboard tests before main adoption
+PASS: state/source serving and graph freshness before main adoption
+PASS: d040 clean including ignored files, ancestor, no process CWD
+PASS: data-free branch code/test blobs identical to main; unique commit retained in verified bundle
+Independent review caught task ID drift; corrected to latest owning e002 stopped record.
+Scientific baseline remains unreconciled. No scientific producer or cloud task ran.

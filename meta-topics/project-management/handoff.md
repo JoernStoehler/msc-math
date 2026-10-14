@@ -1,8 +1,8 @@
 # Current handoff
 
-## 14 October: reviewable worktree consolidation candidate
+## 14 October: approved main consolidation complete
 
-The approved candidate on `codex/triage-20261014` starts from local main; both dirty inputs have verified recovery snapshots. Active e002 and concurrent440d work are preserved. [The triage account](../repository-organization/worktree-triage-20261014.md) owns the disposition and proposed next spending. Jörn approved local adoption and verified redundant cleanup at13:17:45Z, ending13:32:45Z; publication remains unselected. The adoption record owns actual results. Browser host-change request is withdrawn; proposed intake guidance remains an inactive patch. Existing cloud/thesis execution stops remain in force. No ongoing monitoring is selected.
+Use `/workspaces/msc-math` on local `main` for new selected work. [The adoption account](../repository-organization/worktree-adoption-20261014.md) owns the kept/changed/retired list and verified recovery route. Approved candidate and subsequently completed440d reports are integrated. Browser host-change request is withdrawn; proposed intake guidance remains an inactive patch. The d040 checkout and redundant local data-free/cloud-support branches are retired. Keep440d because concurrent processes/work remain; e002 retains substantive unintegrated files and its owning task now reports stopped (actual ID `joern-model-definition`). No automatic restart, cloud/thesis execution, publication or monitoring is selected. The friction Pages overview and scientific dashboard baseline retain their recorded stale status.
 
 ## 14 October: cloud-support attempt stopped; postmortem retained
 
