@@ -39,8 +39,12 @@ bundle, per-checkout HEAD/status records, binary tracked-change patches,
 untracked SHA-256 manifests/tars, and ignored-file inventories/tars. Ignored build
 caches were preserved too; this was more expensive than necessary. All 60
 formerly untracked files were checked against archive hashes and the initial
-merged tree. Ignored archives contain every listed file: 10 in 60b9, 1,976 in
-b0b2 and 9,000 in f171. Cache inventory completeness does not establish individual
+merged tree. At consolidation, ignored archives contained every listed file: 10 in 60b9,
+1,976 in b0b2 and 9,000 in f171. The approved 14 October cleanup subsequently
+removed only `target/` build-cache members from b0b2/f171, preserving and
+byte-verifying all 27 other members. The two archive-local
+`cleanup-20261014.json` sidecars record old/new hashes and retained members;
+[the cleanup account](../../../meta-topics/repository-organization/worktree-adoption-20261014.md#approved-selective-cleanup--14-october) owns this later disposition. Cache inventory completeness does not establish individual
 byte integrity. Host-local artifacts/scratch were not removed. Original source
 branches remain recovery references.
 

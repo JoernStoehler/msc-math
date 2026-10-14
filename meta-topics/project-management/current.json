@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-14T13:25:00.048509+00:00",
+  "updated_at": "2026-10-14T13:52:26.540068+00:00",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Approved local-main consolidation complete; /workspaces/msc-math on main is the selected starting checkout. Exact recovery verified; d040 and redundant local branches retired. Keep concurrent440d and substantive e002 files; e002 owner now records task stopped. No cloud/thesis execution or remote publication selected.",
+  "summary": "Approved local-main consolidation and selective cleanup complete. /workspaces/msc-math on main is the sole registered worktree; no topic branches remain locally or on origin. Original inputs/retired history retained for recovery, rejected e002 draft archived without activation. About10GiB reclaimed; other scratch deliberately retained. No cloud/thesis execution selected.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2965,8 +2965,8 @@
         "meta-topics/repository-organization/worktree-adoption-20261014.md"
       ],
       "authorization": "Jörn approved the exact15-minute package at2026-10-14T13:17:45Z: adopt into local main, retire only verified redundancy, handin by13:27:45Z and hard stop13:32:45Z. No cloud execution, remote publication or host configuration.",
-      "outcome": "Approved candidate and later completed440d reports adopted into /workspaces/msc-math on local main. Withdrawn browser decision reconciled, untested guidance inactive, exact recovery verified. Redundant d040 checkout and local data-free/cloud-support branches retired. Concurrent440d and stopped-but-unintegrated e002 retained.",
-      "updated_at": "2026-10-14T13:25:00.048509+00:00"
+      "outcome": "Approved candidate and later completed440d reports adopted into /workspaces/msc-math on local main. Withdrawn browser decision reconciled, untested guidance inactive, exact recovery verified. Redundant d040 checkout and local data-free/cloud-support branches retired. Concurrent440d and stopped-but-unintegrated e002 retained. Later approved selective cleanup retired440d/e002 and the remaining topic branches; exact retained recovery replaces the original worktree-preservation exceptions.",
+      "updated_at": "2026-10-14T13:50:10.121386+00:00"
     },
     {
       "id": "misunderstanding-inventory-20261014",
@@ -2999,12 +2999,32 @@
       ],
       "authorization": "Separate task/chat/worktree, bounded source recovery, joint problem development and small drafts. No substantial evaluation, global activation, background monitoring or thesis restart.",
       "next_step": "No further work authorized by this stopped assignment.",
-      "updated_at": "2026-10-14T13:19:20.407984+00:00",
-      "owning_checkout": "/home/joern/.codex/worktrees/e002/msc-math",
+      "updated_at": "2026-10-14T13:50:10.121386+00:00",
+      "owning_checkout": null,
       "owning_sources": [
-        "meta-topics/agent-workflow/joern-model-definition/README.md",
-        "meta-topics/agent-workflow/joern-model-definition/conversation-evidence.md"
-      ]
+        "archived: e002-stopped-work.tar.gz/files/meta-topics/agent-workflow/joern-model-definition/README.md",
+        "archived: e002-stopped-work.tar.gz/files/meta-topics/agent-workflow/joern-model-definition/conversation-evidence.md"
+      ],
+      "recovery_archive": "/home/joern/.codex/artifacts/msc-math/cleanup-20261014/e002-stopped-work.tar.gz",
+      "recovery_sha256": "31f5a7897a9bb20aa27cce05877f9f365d5cd9007fdd802d2b3f1c5eccd54ae5"
+    },
+    {
+      "id": "selective-cleanup-20261014",
+      "title": "Retire remaining extra worktrees and specified build/download residue",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "depends_on": [],
+      "authorization": "Jörn approved the concrete selective package in this chat on14October: small stopped-model recovery packet, two extra worktrees/local topic branch/two named remote branches, onlytarget entries of two historical tars, four named disposable directories, downloaded Sage package archives/installer, and coordination records. No research, active guidance, manuscript or service changes.",
+      "outcome": "Retired440d/e002 and the last local topic branch plus both named remote topic branches. Exact original440d inputs verified; stopped e002 files/diff restored and archived in86KiB. Removed onlytarget members of two old ignored tars with27 remaining entries byte-verified; specified build/restore directories and469 Sage download archives/installer removed. Filesystem free space increased10721288192bytes (~10GiB). Other scratch/recovery/data/working caches deliberately retained; exact dispositions in adoption account.",
+      "sources": [
+        "meta-topics/repository-organization/worktree-adoption-20261014.md",
+        "meta-topics/project-management/handoff.md"
+      ],
+      "updated_at": "2026-10-14T13:52:26.540068+00:00",
+      "next_step": "No further cleanup package, archive triage, draft activation, cloud or thesis work selected. Use the recorded recovery route only if specific lost material is needed."
     }
   ],
   "decisions": [
@@ -3378,6 +3398,12 @@
       "observed_at": "2026-10-14T13:19:21.921329+00:00",
       "value": "15minutes elapsed from13:17:45Z, handin by13:27:45Z, hardstop13:32:45Z. Account-wideweekly5%used/95%remaining; secondaryunreturned,3resets available; billed/task-attributed spend unknown. No reset.",
       "basis": "User explicit approval plus account/rateLimits/read. Scope includes local adoption and verified redundant cleanup; no cloud execution or remote push."
+    },
+    {
+      "label": "14 October selective cleanup: workstation disk",
+      "observed_at": "2026-10-14T13:52:26.540068+00:00",
+      "value": "Filesystem free space increased10721288192bytes (~10GiB) across the approved local cleanup. Other tmp packets~401MiB, ordinary Rust build cache~6GiB, installed Sage/extractedpackages, existing recovery and registereddata retained. Account quota and current R2 billing not queried.",
+      "basis": "Approved exact-target deletion and verified archive filtering; local execution receipt at /home/joern/.codex/artifacts/msc-math/cleanup-20261014/execution-receipt.json; source account meta-topics/repository-organization/worktree-adoption-20261014.md."
     }
   ],
   "links": [
@@ -3455,6 +3481,14 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-14T13:50:10.121386+00:00",
+      "text": "Approved selective cleanup retired both extra worktrees/local topic branch and both remote topic branches, preserving exact undo records. Removed specified archived/current build residue and Sage downloads; about10GiB free-space gain. Other scratch/recovery/source/data caches retained with explicit reasons; no rejected guidance activated."
+    },
+    {
+      "at": "2026-10-14T13:46:52.604541+00:00",
+      "text": "Jörn approved the itemized selective cleanup; executing with preservation checks and exact-target deletion guards. Recovery retention is undo insurance, not promotion of rejected work."
+    },
     {
       "at": "2026-10-14T13:25:00.048509+00:00",
       "text": "Local main adopted approved consolidation. Recovery verified by archive extraction and isolated Git clone; d040 plus redundant local branches retired. Independent review caught task-ID drift; main now uses owning e002 ID and latest stopped disposition rather than stale handoff."
