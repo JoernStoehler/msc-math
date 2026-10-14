@@ -61,7 +61,7 @@ The existing `msc-math-dashboard.service` was reloaded with unchanged configurat
 
 ## Approved selective cleanup — 14 October
 
-Jörn approved the itemized follow-up cleanup in the same chat. His criticism of unread recovery dumps is retained as a limitation: a recovery copy supplies undoability, not useful synthesis, accepted work or an obligation to read it. This follow-up authorizes neither thesis/cloud execution nor active instruction changes.
+Jörn approved the itemized follow-up cleanup in the same chat. His criticism of unread recovery dumps is retained as a limitation: these archives retain prior file/history data; they do not supply a working undo operation or useful synthesis, accepted work or an obligation to read it. This follow-up authorizes neither thesis/cloud execution nor active instruction changes.
 
 ### Removed and verified
 
@@ -82,7 +82,7 @@ Recovery is exceptional: restore into a separate checkout of the recorded base, 
 ### Deliberate keeps and their cost
 
 - **Inside the repo:** selected manuscript/PDF evidence, the adopted platform-reference corpus (~85MiB), process-audit source rollouts (~107MiB), inactive proposed patches and scientific evidence stay with existing owners. Rust debug/release caches (~6GiB), installed Sage and extracted packages are usable working infrastructure; deleting the two one-off Rust caches did not require rebuilding them.
-- **Outside the repo:** prior adoption recovery (~218MiB), October4 recovery now~498MiB, October12 recovery~519MiB and the older September recovery~317MiB remain as original source/dirty snapshots and retired histories. They are local undo copies, not off-machine backups or accepted knowledge. The new stopped-model packet adds only86KiB, not a second full-repository bundle.
+- **Outside the repo:** prior adoption recovery (~218MiB), October4 recovery now~498MiB, October12 recovery~519MiB and the older September recovery~317MiB remain as original source/dirty snapshots and retired histories. They are local file/history recovery copies, not off-machine backups or accepted knowledge. The new stopped-model packet adds only86KiB, not a second full-repository bundle.
 - **Other scratch:** `/tmp/msc-math` is now~401MiB. The approved package deliberately leaves its other task/review packets: some are still cited evidence (browser execution receipt, pilot diagnostics/order checks and render captures), and a safe per-packet deletion list was not established. Retention does not claim every remaining byte indispensable. The new cleanup run/review packets are disposable execution support.
 - **Research storage:** registered immutable R2 snapshots remain the durable research layer; the shared local cache (~1.4GiB) avoids downloads and supplies existing symlinks. No R2 object was deleted or republished. Current remote storage billing was not queried.
 - **Main and services:** local main holds the selected working source; origin/main remains the existing published checkpoint. No topic branch or extra registered worktree remains. Existing file/dashboard viewers remain available with unchanged service configuration.
@@ -92,3 +92,13 @@ Existing scientific dashboard and friction-Page staleness is unchanged. Cleanup 
 Final focused verification: eight dashboard tests passed; coordination/state/served-source validation and graph projection freshness passed. Scientific reconciliation remains explicitly false with its prior changed-source list; no scientific baseline was refreshed.
 
 Independent read-only preservation/integration review approved the final cleanup after correcting one adoption-era remote-branch retention sentence. This review covers the cleanup scope and recovery records, not the merit of retained rejected drafts.
+
+## Follow-up: recovery terminology, R2 and push — 14 October
+
+The earlier blanket “undoability” justification was incorrect. The archives preserve prior file contents, diffs and Git history/tip identities. The e002 tracked-file restoration was checked against all five source files and its16 new files were read back/hash-checked. No whole-cleanup undo operation, session restoration or environment rollback was implemented. This establishes specific file recovery, not an individually justified retention benefit for every older archive.
+
+A fresh read-only listing of `msc-math-artifacts` found52 objects /1,475,457,453 bytes in exactly13 registered snapshots. All13 completion manifests passed snapshot-identity validation; their expected object names and sizes exactly matched the listing. There were no extra/unregistered objects, missing registered snapshots or unfinished multipart uploads. These are the registered retained research datasets, not cleanup backups. Payload bytes were not downloaded/rehashed during this metadata check. No R2 deletion was warranted by this inventory.
+
+Cloudflare's current Standard pricing is $0.015/GB-month with10GB-month included monthly (https://developers.cloudflare.com/r2/pricing/). The account invoice and other account usage were not inspected; the bucket inventory is not a billing statement.
+
+The first cleanup commit3d8b1ac9 was local only. The follow-up publishes the cleanup record and this correction to origin/main, with a final ref equality check; it includes no new scientific result or active instruction change.
