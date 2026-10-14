@@ -1,0 +1,63 @@
+Cloud support failure analysis retained evidence
+
+Prepared for Jörn in analysis-only session01a1374c-db58-71d1-af7b-e3d3ce23e55e.
+Original execution task not resumed. Report reviewed as analysis-v1; exact chat pointer reviewed as final-v1.
+
+APPROVE analysis-v1 and final-v1.
+
+The complete analysis preserves the original support task and reference-skill ownership, supports its conclusions with observed behavior, retains successful evidence and caveats, and gives actionable restart responsibilities, resource controls and explicit deferred decisions.
+
+The checked HTTPS artifact matches the retained report; its internal evidence links resolve. This supports the final pointer’s URL-check claim without asserting Jörn’s receipt or successful task execution.
+
+Exact HTTPS check:
+{
+  "report_url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/meta-topics/agent-workflow/cloud-support-failure-analysis-20261013.html",
+  "status": 200,
+  "content_type": "text/html",
+  "sha256": "2b4603d3e75e750cac712b829b97d46393ef004302a13f038c1c3bf806b2fa3f",
+  "bytes": 41043,
+  "served_matches_file": true,
+  "anchor_links_valid": 11,
+  "source_links": [
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/meta-topics/development-environment/cloud-handoff-20261013/HANDOFF.md",
+      "status": 200,
+      "bytes": 12600
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/meta-topics/development-environment/cloud-handoff-20261013/claude-rust-return.md",
+      "status": 200,
+      "bytes": 6021
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/meta-topics/development-environment/cloud-surface-check-20261013/README.md",
+      "status": 200,
+      "bytes": 6629
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/meta-topics/development-environment/cloud-surface-check-20261013/claude-reading-followup/assessment.md",
+      "status": 200,
+      "bytes": 6984
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/meta-topics/development-environment/cloud-entry-revision-20261013/README.md",
+      "status": 200,
+      "bytes": 9308
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/.agents/skills/agent-platform-reference/REVIEW.md",
+      "status": 200,
+      "bytes": 12881
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math/meta-topics/development-environment/browser-control-20261013/README.md",
+      "status": 200,
+      "bytes": 7221
+    }
+  ],
+  "scope": "HTTPS serving, exact artifact identity and cited internal links; not proof of J\u00f6rn device receipt or visual display."
+}
+
+Source and review working packet: /tmp/msc-math/message-reviews/2026-10-14/cloud-support-analysis
+Public failed-session conversation: /tmp/msc-math/failed-session-analysis/20261013-2208/chat.txt
+Report composition source: /tmp/msc-math/failed-session-analysis/20261013-2208/analysis-v1.md

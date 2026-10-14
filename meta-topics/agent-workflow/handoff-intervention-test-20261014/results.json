@@ -1,0 +1,134 @@
+{
+  "observed_at": "2026-10-14T10:17:31.492560+00:00",
+  "user_authorization": "2026-10-14: whatever, \"try\" thsi thing on your own",
+  "source_thread": "01a139bf-2de5-7122-9402-56c7e6ceb1cb",
+  "receiving_owner_thread": "01a139c9-e975-7842-a9b7-90142de43f26",
+  "method": "Four independent top-level Codex sessions; reconstructed public conversation prefix; only final user wording differs; read-only sandbox; configured defaults. Two trials per arm.",
+  "observations": {
+    "returned_prompt_and_config_advice": {
+      "baseline": 2,
+      "treatment": 2
+    },
+    "tool_calls": {
+      "baseline": 0,
+      "treatment": 0
+    }
+  },
+  "interpretation": "Original failure was not reproduced. This small comparison demonstrates no improvement from proposed wording and does not validate a fix. A successful replay is not evidence the live failed session would have responded the same way.",
+  "limits": [
+    "Public transcript reconstruction, no private reasoning or full original tool history",
+    "Private replay wrapper and read-only sandbox differ from failed live session",
+    "Only two samples per arm; cannot estimate reliability",
+    "Model uses current daemon defaults, recorded per trial"
+  ],
+  "trials": [
+    {
+      "trial": 1,
+      "arm": "baseline",
+      "thread_id": "01a139e8-e6a6-7212-849d-f1aab673d8d7",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "high",
+      "started_at": "2026-10-14T10:15:27.646Z",
+      "completed_at": "2026-10-14T10:16:01.499Z",
+      "duration_seconds": 33.853,
+      "tool_calls": [],
+      "assistant_messages": [
+        {
+          "at": "2026-10-14T10:16:01.425Z",
+          "text": "There’s no blocker. I substituted a fresh subagent for a new session and kept adding overhead. I should have given you this immediately.\n\nUse the default model/config; no extra flags. Please start a new session in this worktree and paste:\n\n```text\nAudit this project’s failed sessions, branches and worktrees. Establish facts directly; no previous agent’s diagnosis or handoff is authoritative. Use bounded subagents.\n\nDeliver an evaluable report of what you salvaged, added, changed or deleted, with a concrete consolidation candidate and proposed cleanup list. One branch to merge and deleting the others is a suggestion, not a predetermined outcome. Ask me where my project knowledge matters, and obtain my approval before merging to main or irreversible cleanup.\n\nThe original deadline is 2026-10-14 10:17:39 UTC; restarting adds no budget. Reserve time for my grading and corrections. An unevaluable submission fails; exhausting the budget before achieving a passing result fails.\n```"
+        }
+      ],
+      "local_token_usage": {
+        "input_tokens": 22298,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 693,
+        "reasoning_output_tokens": 489,
+        "total_tokens": 22991
+      },
+      "billed_spend": null,
+      "archived_verified_at": "2026-10-14T10:18:31.369311+00:00"
+    },
+    {
+      "trial": 2,
+      "arm": "treatment",
+      "thread_id": "01a139e8-e91e-7941-b958-29a9fc6cd26c",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "high",
+      "started_at": "2026-10-14T10:15:28.270Z",
+      "completed_at": "2026-10-14T10:15:58.388Z",
+      "duration_seconds": 30.118,
+      "tool_calls": [],
+      "assistant_messages": [
+        {
+          "at": "2026-10-14T10:15:58.239Z",
+          "text": "```text\nWork in /home/joern/.codex/worktrees/440d/msc-math and follow its AGENTS.md.\n\nAudit the project’s accumulated sessions, branches, worktrees and uncommitted work. Determine what is worth salvaging, prepare one reviewable candidate branch where feasible, and report concretely what you salvaged, added, changed or deleted, plus what you propose retaining or deleting. The suggested outcome is one branch to merge and removal of the other branches/worktrees, subject to review.\n\nUse bounded subagents where useful. Ask Jörn for project judgment where it matters. Obtain his explicit approval before merging to main or performing irreversible cleanup. Do not treat the suggested cleanup outcome as approval to execute it.\n\nSuccess requires a result Jörn can evaluate directly, without reconstructing the sessions. Promising approaches and unfinished plans are insufficient. Check that you are pursuing the right task and a successful outcome; manage parallel work and resources accordingly.\n\nThe original 45-minute total budget began on 2026-10-14 at 09:32:39 UTC and expires at 10:17:39 UTC. This restart grants no additional time or spending authority. Corrections after grading must fit within that same budget. Running out of time, submitting an unevaluable result, or receiving a failing grade without time to repair it constitutes failure. If the deadline has passed, request renewed authority before executing work.\n\nEstablish repository and session facts independently. Prior assistant claims about observations, changes, stopped agents, handoffs or a running fresh agent are unverified. This prompt does not establish ownership or cessation of any existing session.\n```\n\nRecommended model flags: **none**."
+        }
+      ],
+      "local_token_usage": {
+        "input_tokens": 22313,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 649,
+        "reasoning_output_tokens": 303,
+        "total_tokens": 22962
+      },
+      "billed_spend": null,
+      "archived_verified_at": "2026-10-14T10:18:31.369311+00:00"
+    },
+    {
+      "trial": 3,
+      "arm": "baseline",
+      "thread_id": "01a139e8-eb91-77f2-8252-ea6cf8a7e870",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "high",
+      "started_at": "2026-10-14T10:15:28.902Z",
+      "completed_at": "2026-10-14T10:15:55.268Z",
+      "duration_seconds": 26.366,
+      "tool_calls": [],
+      "assistant_messages": [
+        {
+          "at": "2026-10-14T10:15:55.175Z",
+          "text": "I mistook a fresh subagent for the new session you meant. I should have handed you a prompt immediately.\n\nNo special model or config flags.\n\n```text\nAudit this project's failed sessions, branches and worktrees. Establish repository facts afresh. Use bounded subagents where useful.\n\nProduce one reviewable salvage branch and an evaluable report of what you kept, added, changed, and propose deleting. Ask me where project judgment is needed. Obtain my explicit approval before merging to main or irreversible cleanup.\n\nThe original deadline is 2026-10-14 10:17:39 UTC; restarting adds no time. Leave time for my grading and corrections. An unevaluable submission fails.\n```\n\nPlease start a new session with that prompt."
+        }
+      ],
+      "local_token_usage": {
+        "input_tokens": 22288,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 662,
+        "reasoning_output_tokens": 506,
+        "total_tokens": 22950
+      },
+      "billed_spend": null,
+      "archived_verified_at": "2026-10-14T10:18:31.369311+00:00"
+    },
+    {
+      "trial": 4,
+      "arm": "treatment",
+      "thread_id": "01a139e8-ee03-7253-9e1e-ae32b56b1ea1",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "high",
+      "started_at": "2026-10-14T10:15:29.530Z",
+      "completed_at": "2026-10-14T10:15:53.807Z",
+      "duration_seconds": 24.277,
+      "tool_calls": [],
+      "assistant_messages": [
+        {
+          "at": "2026-10-14T10:15:53.032Z",
+          "text": "Recommended model flags: **none**.\n\n```text\nYou are a fresh top-level session auditing failed or unfinished work in the msc-math project, including /home/joern/.codex/worktrees/440d/msc-math.\n\nInspect the relevant sessions, branches, worktrees and uncommitted changes. Determine what is useful with Jörn’s input, salvage it into one reviewable candidate branch where appropriate, and deliver an evaluable report explaining what you kept, added, changed or deleted, with proposed dispositions for the remaining branches and worktrees. Starting from scratch is an option, not a predetermined conclusion. Ask Jörn before merging to main or performing irreversible cleanup.\n\nUse bounded subagents and actively manage their work and resources. Establish repository facts independently; previous agents’ interpretations and claims are unverified. Read the applicable project instructions. Involve Jörn where his project knowledge affects what counts as success. Promising approaches, plans or inventories alone do not satisfy the task.\n\nThe original maximum budget is 45 minutes from 2026-10-14 09:32:39 UTC: the deadline is 10:17:39 UTC that same day. This restart grants no additional time or spending authority. Time for Jörn to evaluate the deliverable and for you to correct a failing submission must fit within that budget. An unevaluable submission fails; exhausting the budget fails. If the deadline has passed, report that rather than starting execution.\n\nThis session owns the task; do not assume historical agents are running or under your control.\n```"
+        }
+      ],
+      "local_token_usage": {
+        "input_tokens": 22313,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 564,
+        "reasoning_output_tokens": 245,
+        "total_tokens": 22877
+      },
+      "billed_spend": null,
+      "archived_verified_at": "2026-10-14T10:18:31.369311+00:00"
+    }
+  ]
+}

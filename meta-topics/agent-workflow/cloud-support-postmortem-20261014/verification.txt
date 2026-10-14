@@ -1,0 +1,1 @@
+Fresh-process checks passed: scripts/serve-project-dashboard.py --check; scripts/render-workflow-graph.py --check; git diff --check. These establish local structure/projection only. Existing listener not reloaded or live-tested. Scientific reconciliation warning remains outside this postmortem scope.

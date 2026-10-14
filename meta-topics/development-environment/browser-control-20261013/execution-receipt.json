@@ -1,0 +1,25 @@
+{
+  "threadId": "01a136fe-4007-7972-993d-cc6d36d4d599",
+  "turnId": "01a136fe-40b7-7c52-9e0d-eadae595822e",
+  "threadStatus": "completed_idle",
+  "turnStatus": "completed",
+  "turnDurationMs": 10975,
+  "result": "Stopped: the Playwright navigation was blocked with the exact message: MCP tool call requires approval, but approval policy is never. No approval was given. The page title and first heading were not retrieved.",
+  "toolCallOutcome": "blocked_before_navigation",
+  "mcpProcess": {
+    "pid": 440148,
+    "parentPid": 24726,
+    "argvObserved": "/home/joern/.npm/_npx/9833c18b2d85bc59/node_modules/.bin/playwright-mcp --browser chrome --headless --user-data-dir /home/joern/.cache/ms-playwright/codex-browser-owner-20261013",
+    "scope": "Per-thread args verified in the launched MCP process; global config was not changed."
+  },
+  "profile": {
+    "path": "/home/joern/.cache/ms-playwright/codex-browser-owner-20261013",
+    "existsAtCheck": false,
+    "userChromeDataCopied": false,
+    "signInAttempted": false
+  },
+  "chromeIndependence": "Headless managed-browser architecture selected; no managed Chrome process/page was launched, and user-Chrome-closed behavior was not tested. A separate regular Chrome process remained running; it was not closed.",
+  "nextAction": "None. Do not retry thread creation or change approval policy without root/user direction.",
+  "browserToolCallAttempted": true,
+  "browserOperationExecuted": false
+}

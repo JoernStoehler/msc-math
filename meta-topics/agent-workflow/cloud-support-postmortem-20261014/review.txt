@@ -1,0 +1,6 @@
+Native reviewer: /root/postmortem_review
+APPROVE postmortem-v1.
+
+The public conversation supports the four stated failures. The deadline distinction is accurate: two explicit reply deadlines were missed; the third initial reply complied before subsequent tool work. The report preserves Jörn’s explicit rejection of the substituted criticism and leaves his unspoken criticisms unknown.
+
+The corrected identity and stopped coordination state are present. Resource metadata matches evidence.json and retains appropriate limits. No consequential correction required.

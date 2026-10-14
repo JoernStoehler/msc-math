@@ -1,0 +1,23 @@
+{
+  "thread_id": "01a139dc-90cc-7c40-87bc-568d49059ffa",
+  "source_log": "/home/joern/.codex/sessions/2026/10/14/rollout-2026-10-14T12-01-58-01a139dc-90cc-7c40-87bc-568d49059ffa.jsonl",
+  "snapshot_at": "2026-10-14T10:36:42.785218+00:00",
+  "snapshot_sha256": "486a13ec421aa6e8771ac4e18aad5c8adc3ab5ce4cc24f2d573d1edf34dcce08",
+  "snapshot_bytes": 1413782,
+  "public_messages": 45,
+  "calls": 29,
+  "call_counts": {
+    "exec": 21,
+    "spawn_agent": 2,
+    "wait_agent": 2,
+    "followup_task": 4
+  },
+  "excluded": "Instruction boilerplate, private reasoning, tool outputs and opaque arguments. Original source line numbers preserved.",
+  "failed_work_cutoff": "2026-10-14T10:35:19.087Z",
+  "failed_work_call_counts": {
+    "exec": 19,
+    "spawn_agent": 2,
+    "wait_agent": 2,
+    "followup_task": 4
+  }
+}

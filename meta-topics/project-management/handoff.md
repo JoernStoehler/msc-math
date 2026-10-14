@@ -1,5 +1,13 @@
 # Current handoff
 
+## 14 October: reviewable worktree consolidation candidate
+
+An isolated candidate on `codex/triage-20261014` starts from local main and preserves both original dirty checkouts. [The triage account](../repository-organization/worktree-triage-20261014.md) owns the disposition and proposed next spending. Main adoption, publication and irreversible cleanup have not occurred and require the actual user decision. Browser host-change request is withdrawn; proposed intake guidance remains an inactive patch. Existing cloud/thesis execution stops remain in force. No ongoing monitoring is selected.
+
+## 14 October: cloud-support attempt stopped; postmortem retained
+
+The resumed attempt did not deliver the full support workflow. Jörn stopped it; both implementation workers were interrupted. [The postmortem](../agent-workflow/cloud-support-postmortem-20261014/README.md) retains the public conversation, exact deadline chronology, authority/interpretation failures and evidence limits. Actual thread UUID is `01a13762-dc19-7ed0-85a2-00cdc127e60c`; the earlier restart artifact incorrectly used a context-window UUID. The wrong task-ID mutation was corrected in `current.json`. Existing Chrome connection was observed, but Claude access/workspace/result return were not verified. A later tab-opening attempt was aborted; resulting browser state is unknown. No current cloud/browser execution allowance, reset, publication, host change or novel permission. The friction Pages overview has not been reconciled for this new incident. Resume only on explicit user instruction.
+
 ## 13 October: execution stopped; fresh-agent handoff prepared
 
 Jörn explicitly stopped execution around19:34UTC and requested planning,

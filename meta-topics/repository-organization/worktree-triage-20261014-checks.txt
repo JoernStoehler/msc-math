@@ -1,0 +1,13 @@
+Candidate-v1 checks, 14 October 2026 UTC
+
+PASS: python3 scripts/render-workflow-graph.py (148 task records)
+PASS: python3 scripts/serve-project-dashboard.py --check
+PASS: python3 scripts/render-workflow-graph.py --check
+PASS: python3 -m unittest scripts/test_project_dashboard.py (8 tests)
+PASS: git diff --check
+PASS: SHA256 comparison of all original dirty inputs; unchanged after assembly.
+
+Scientific dashboard explicitly reports unreconciled baseline; unchanged.
+No scientific producers, cloud sessions, host config, merge, push or original cleanup.
+Original PR branch bootstrap and its focused tests are blob-identical to main; branch history itself is not an ancestor.
+Independent candidate review is a separate judgment, retained when returned.

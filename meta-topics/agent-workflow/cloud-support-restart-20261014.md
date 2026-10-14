@@ -1,0 +1,48 @@
+**Historical and superseded by [the postmortem](cloud-support-postmortem-20261014/README.md).** The execution proposals below are inactive; their expired allowance does not resume.
+
+# Cloud-support restart: failure record and continuation package
+
+Status: parent task incomplete. Retained on 14 October 2026 local time; timestamps below are UTC. Owner: Codex thread 01a13762-dc19-7ed0-85a2-00cdc127e60c.
+
+## Deadline failure for grading
+
+Jörn required the initial turn to end within 60 seconds, alongside zero questions or novel permissions. The root started at approximately 22:33:19 UTC and continued tool calls until after the deadline. Jörn identified the breach at 22:34:20 UTC. The root acknowledged the missed turn-ending instruction. No user question, permission request, browser operation, model assignment to Claude, host change or publication was performed. This record preserves a concrete instruction-following failure; it does not excuse it or establish the cause of earlier failures.
+
+Jörn then gave another 60-second turn-ending deadline. The root also missed that second deadline; the earlier claim that preparation stayed within the interval was false. Jörn subsequently gave up on this attempt. The task and both implementation workers are stopped; the parent objective remains incomplete.
+
+## Recovered state
+
+The substantive checkout is /workspaces/msc-math, branch codex/cloud-support-20261013-1532, HEAD ca8987f2. The session's original cwd is the separate clean older worktree /home/joern/.codex/worktrees/440d/msc-math at a915c128. Main-checkout dirty current.json and task graphs, untracked browser-control package and failure analysis have been preserved. Their existence is not authority to apply the host patch.
+
+The browser-readable failure analysis was read first, followed by its relevant handoff, Rust return, browser diagnosis and repository workflow owners. Source packets remain fallible; no capability inventory was repeated. The source-reported Rust success at clean 2c88aaa58b63acbafc0a81c7046508051f607875 is retained: pinned Rust/Cargo 1.94.0; workspace locked check and four production anchors passed in 235 seconds. Raw cloud command logs were absent. Current microVM survival has not been inspected, so current installed state remains unknown.
+
+The managed-browser host-change request was withdrawn in the prior session. Existing notes and coordination still carried stale pending wording at recovery. No host configuration or approval policy may be changed under the present instruction. Old time/quota grants are expired.
+
+## One coherent next package
+
+Use the existing connected Chrome route, if available with existing permissions, to inspect the retained Claude chat 5a3a4535-3826-452b-b04f-d6ebdf57648d and determine whether its execution environment survives. Compare the supported extension, managed-profile and exposed computer-use routes before a live probe. Existing Chrome is the selected route under the latest instruction; any permission or new login requirement is a blocked outcome, with no request to Jörn. Do not close Jörn's Chrome or apply the withdrawn managed-browser patch. Closed-Chrome independence remains a separate unverified obligation.
+
+In parallel where useful, a bounded source/tools owner can complete the Python/uv, isolated TeX, separate Sage and conditional registered-artifact readiness package from existing installation and artifact owners. Prefer a surviving cloud execution site; otherwise retain executable scripts and an explicit unexecuted disposition. Reuse Rust success unless source/runtime differences justify rerunning. Python must perform a meaningful bounded computation beyond --help; TeX must preserve existing outputs; Sage's --limit 50 check is only a proof prefix; missing authorized artifact access isolates that branch. No full producer, replacement certificate or new scientific programme is authorized.
+
+A bounded reference owner should assess the existing agent-platform-reference against the original consultation-to-consequence criterion: consulted source, decision, resulting maintained action, verification and cost. Focus on the demonstrated confusion between repository transfer and agent/context continuation; avoid corpus reacquisition or a broad rewrite. External skill deployment and withheld human grading stay deferred.
+
+The coordinator integrates changed files and exact evidence, preserves other work, reconciles withdrawn requests and assignments, checks navigation and source identities, and delivers a retained Tailscale-readable report with executable inputs and returned artifacts. A local test, source review, returned plan or one repaired component cannot close the parent task.
+
+## Resource and acceptance proposal under existing authority
+
+The original allowance was two hours from approximately 22:33:19 UTC, ending no later than 00:33:19 UTC, with zero Jörn time/questions/new permissions and a conservative ceiling of 10% total weekly quota used. No fresh two-hour window follows from the second deadline. Baseline server snapshot at 22:33:59 UTC: 3% weekly used, 97% remaining; task attribution and billed cost unknown. Use conservative account-wide delta checks and reserve quota/time for integration and required review. No reset is authorized.
+
+Proposed allocation within the remaining envelope: at most three complete independent workers, each initially capped at 25 minutes; coordinator retains browser ownership, integration and decisions; one focused reviewer. All follow-ups, reviews and relay costs draw from the same envelope. Reduce or stop branches when new evidence makes them lower value or threatens delivery reserve. There will be no human relay. This is a proposal under the user's existing scope, not a request for more resources.
+
+Acceptance requires usable source/navigation, appropriate workload evidence or explicit blocked dispositions, demonstrated instruction/reference consultation with an actual consequence, recoverable goals/authority/pending decisions across continuation, a verified returned artifact, and the relevant browser behavior. Each remains independently visible. Current inspection and this package do not establish those outcomes.
+
+Consequential choices requiring new user permission are denied for this run. Owner is the coordinator; trigger for any future reconsideration is a new explicit user instruction; next action is to assess the concrete retained alternative then; closure requires an actual decision and relevant evidence. Silence and automatic tool approval do not supply that decision.
+
+## Evidence pointers
+
+- cloud-support-failure-analysis-20261013.html (same directory)
+- ../development-environment/cloud-handoff-20261013/HANDOFF.md
+- ../development-environment/cloud-handoff-20261013/claude-rust-return.md
+- ../development-environment/browser-control-20261013/README.md
+- ../development-environment/cloud-workflow.md
+- ../../.agents/skills/agent-platform-reference/REVIEW.md

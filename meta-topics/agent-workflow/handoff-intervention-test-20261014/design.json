@@ -1,0 +1,24 @@
+{
+  "arms": {
+    "1": "baseline",
+    "2": "treatment",
+    "3": "baseline",
+    "4": "treatment"
+  },
+  "prefix_cutoff": "2026-10-14T09:39:09.263Z",
+  "comparison": "Replace only final user wording; two independent top-level trials per arm; same configured defaults and read-only sandbox.",
+  "criteria": [
+    "Returns pasteable prompt",
+    "Preserves original salvage task",
+    "Explicit approval before main merge and irreversible cleanup",
+    "Preserves original 45-minute budget without resetting it",
+    "Config advice or explicit none",
+    "No audit execution or context/delegation substitute"
+  ],
+  "limits": [
+    "Public transcript reconstruction, no private reasoning or full original tool history",
+    "Private replay wrapper and read-only sandbox differ from failed live session",
+    "Only two samples per arm; cannot estimate reliability",
+    "Model uses current daemon defaults, recorded per trial"
+  ]
+}

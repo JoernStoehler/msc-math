@@ -1,0 +1,30 @@
+{
+  "actual_thread_uuid": "01a13762-dc19-7ed0-85a2-00cdc127e60c",
+  "public_record_end": "2026-10-13T23:05:49.628Z",
+  "private_reasoning_included": false,
+  "source_log_path": "/home/joern/.codex/sessions/2026/10/14/rollout-2026-10-14T00-29-48-01a13762-dc19-7ed0-85a2-00cdc127e60c.jsonl",
+  "retained_files": {
+    "README.md": "17bab4d7b415a03066d71287b636fd9c500bcbec45f62627492b05aad7b55a0f",
+    "conversation.md": "d2100ad8054bc9a748f559d2b6339c5c311d22bc1b071b406364cb17af17a01c",
+    "tool-timeline.json": "c64b26f045834398457ebfb8389cf14bb97d41841ca1696a912ec78fbbc892f7"
+  },
+  "quota_snapshots": [
+    {
+      "observed_at": "2026-10-13T22:33:59.056846+00:00",
+      "weekly_used_percent": 3
+    },
+    {
+      "observed_at": "2026-10-13T23:08:22.239435+00:00",
+      "weekly_used_percent": 3
+    }
+  ],
+  "local_usage_observation": {
+    "observed_at": "2026-10-13T23:08:21+00:00",
+    "tree_usage_units": 238162,
+    "own_usage_units": 130752,
+    "descendants": 4,
+    "unit": "input minus cached input plus output; no model weighting or quota/billing conversion",
+    "includes_audit_so_far": true,
+    "errors": []
+  }
+}

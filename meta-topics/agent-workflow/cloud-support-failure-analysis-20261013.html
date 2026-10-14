@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Cloud support failure analysis and restart plan</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+  :root{color-scheme:light dark}html{scroll-behavior:smooth}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:18px;line-height:1.62;max-width:850px;margin:0 auto;padding:26px 22px 70px;color:#202532;background:#fcfcfd}h1,h2,h3{line-height:1.25;scroll-margin-top:20px}h1{font-size:2.05rem;margin-top:.4em}h2{font-size:1.6rem;margin-top:2.3em;border-top:1px solid #d9dfe8;padding-top:1em}h3{font-size:1.18rem;margin-top:1.8em}a{color:#174ca2;text-underline-offset:3px}p{margin:1em 0}li{margin:.4em 0}table{border-collapse:collapse;width:100%;font-size:.94em;margin:1.4em 0}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #d9dfe8;padding:10px 12px}th{background:#eef2f8}code{font-size:.86em;overflow-wrap:anywhere}pre{padding:16px;background:#eef2f8;border-radius:7px;overflow:auto;line-height:1.45}pre code{overflow-wrap:normal}#TOC{padding:16px 20px;background:#eef2f8;border-radius:8px;font-size:.95em}#TOC>ul{padding-left:22px}#TOC li{margin:.25em 0}blockquote{border-left:4px solid #c8d4e6;padding-left:18px;margin-left:0} @media(max-width:600px){body{padding:18px 15px 50px;font-size:17px}h1{font-size:1.7rem}h2{font-size:1.4rem}table{font-size:.82em}th,td{padding:7px 6px}pre{font-size:.85em}}@media(prefers-color-scheme:dark){body{background:#151923;color:#e1e7ef}a{color:#97bcff}th,pre,#TOC{background:#222b3b}h2,th,td{border-color:#39465a}}@media print{body{max-width:none;padding:0;font-size:11pt;color:#000;background:#fff}#TOC{background:none}a{color:#000}h2,h3{break-after:avoid}table,pre{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a
+href="#why-the-cloud-support-session-failed-and-how-to-restart-it"
+id="toc-why-the-cloud-support-session-failed-and-how-to-restart-it">Why
+the cloud support session failed and how to restart it</a>
+<ul>
+<li><a href="#the-task-that-must-survive-the-restart"
+id="toc-the-task-that-must-survive-the-restart">The task that must
+survive the restart</a></li>
+<li><a href="#what-failed-and-what-explains-the-failure"
+id="toc-what-failed-and-what-explains-the-failure">What failed and what
+explains the failure</a></li>
+<li><a
+href="#the-browser-failure-has-a-recoverable-technical-explanation"
+id="toc-the-browser-failure-has-a-recoverable-technical-explanation">The
+browser failure has a recoverable technical explanation</a></li>
+<li><a href="#what-can-be-reused-and-what-remains-open"
+id="toc-what-can-be-reused-and-what-remains-open">What can be reused and
+what remains open</a></li>
+<li><a href="#restart-hazards-in-the-retained-state"
+id="toc-restart-hazards-in-the-retained-state">Restart hazards in the
+retained state</a></li>
+<li><a href="#a-resource-strategy-that-changes-the-decisions"
+id="toc-a-resource-strategy-that-changes-the-decisions">A resource
+strategy that changes the decisions</a></li>
+<li><a href="#metacognitive-checks-for-overlooked-aspects"
+id="toc-metacognitive-checks-for-overlooked-aspects">Metacognitive
+checks for overlooked aspects</a></li>
+<li><a href="#the-recommended-continuation"
+id="toc-the-recommended-continuation">The recommended
+continuation</a></li>
+<li><a href="#a-prompt-for-the-new-coordinator"
+id="toc-a-prompt-for-the-new-coordinator">A prompt for the new
+coordinator</a></li>
+<li><a href="#evidence-boundaries-and-assessment"
+id="toc-evidence-boundaries-and-assessment">Evidence boundaries and
+assessment</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="why-the-cloud-support-session-failed-and-how-to-restart-it">Why
+the cloud support session failed and how to restart it</h1>
+<p><strong>For Jörn · 14 October 2026 · Analysis only</strong></p>
+<p>The failed session was
+<code>01a136b0-aa22-7172-bdb4-2144008a0fba</code>. Its predecessor was
+<code>01a13542-e2b7-77f0-bee7-c4b57e29d5a5</code>. Times below are UTC;
+add two hours for local time.</p>
+<p><strong>My central finding:</strong> the session failed to control
+the work as a whole. It repeatedly substituted the latest local problem
+for the intended outcome, spent root attention on work it could
+delegate, and turned successive browser findings into further
+assignments without a cumulative expenditure decision. Some component
+work succeeded. The record does not establish that the overall task was
+technically infeasible or that a lack of user clarification prevented
+progress.</p>
+<p><strong>My recommendation:</strong> start a fresh coordinator at the
+substantive checkout, preserve the successful evidence, and give it
+responsibility for three explicit outcomes: cloud readiness, the
+technical reference skill, and the separately requested browser
+capability. It should prepare and select coherent packages with you,
+execute independent branches in parallel where justified, and keep one
+budget and one account of the whole outcome. Browser repair must retain
+its own scope and must not suspend unrelated work.</p>
+<p>This analysis does not authorize those execution packages. Its
+remaining planning and human decisions are explicitly deferred below. A
+complete restart plan does not require predicting every future tool
+call, worker result or user reply.</p>
+<h2 id="the-task-that-must-survive-the-restart">The task that must
+survive the restart</h2>
+<p>At <strong>13:30:17</strong>, you corrected research-target selection
+into a repository support task: documentation, tools and scripts,
+navigation and structure, lifecycles and coordination. At
+<strong>13:56:29</strong>, you explicitly assigned ownership of the
+agent-products documentation skill: maintain it in the repository,
+deploy it elsewhere later. At <strong>19:37:12</strong>, you asked why
+“all tools work” could not proceed in parallel. Browser operation
+despite closing Chrome was a later request, at
+<strong>20:22:25</strong>.</p>
+<p>The obligations therefore include:</p>
+<ul>
+<li>Usable source and navigation on the intended surfaces, with the
+right revision and accessible relevant owners.</li>
+<li>Workload tools: Rust, ordinary Python/uv, TeX, Sage and
+registered-artifact access, with dependencies and conditional
+requirements distinguished.</li>
+<li>Instructions and reference material that recipients can actually
+find and use, including the agent-platform technical reference and its
+corrective value.</li>
+<li>Session continuation, coordination, preservation of unanswered
+decisions, and reliable result return with tolerable human relay
+effort.</li>
+<li>The separately requested browser capability, including independence
+from the normal Chrome window and the interaction needed for
+authenticated work.</li>
+</ul>
+<p>The intended environments include workstation Codex, Claude cloud
+sessions, ChatGPT Chat/Pro and Work, and the recorded CLI/hosted
+variants. This does <strong>not</strong> mean installing every
+scientific tool on every surface. Ordinary chat may consume supplied
+sources rather than have an execution checkout. The platform’s role
+determines which capabilities are meaningful.</p>
+<p>The broad goal is sufficiently clear. What is not settled is an
+accepted, universal acceptance matrix for every surface, or a fresh
+execution allowance. The next session should propose concrete
+dispositions for those details, rather than re-ask what the project is
+trying to achieve. It must also retain your original reference-skill
+criterion: downstream consultation, a decision it settles, resulting
+action or maintained change, verification, and consultation cost. A
+corpus inventory alone does not satisfy that criterion.</p>
+<h2 id="what-failed-and-what-explains-the-failure">What failed and what
+explains the failure</h2>
+<h3 id="local-progress-displaced-the-whole-outcome">Local progress
+displaced the whole outcome</h3>
+<p>After the Rust assignment was sent, the root ended by asking you to
+relay the reply. You challenged the assumption that all useful work was
+blocked. The return arrived at <strong>19:25:49</strong> and reported
+successful setup and checks in <strong>235 seconds</strong>. Independent
+preparation remained available throughout.</p>
+<p>Later, the root called the goal unclear, then said the goal had
+already been known. After you requested planning, it ended with
+explanations and an apology instead of producing the requested plan.
+After the browser request, it spent <strong>20:22:25–20:54:45</strong>,
+about <strong>32 minutes 20 seconds</strong>, on that branch while the
+other branches remained unexecuted.</p>
+<p>The operational failure was a missing decision check: before
+continuing a branch, the coordinator did not consistently ask what
+parent obligation the next step would close, whether that branch was
+actually blocking the other work, and what displaced work would be lost.
+A succession of locally sensible investigations can therefore produce an
+unsuccessful whole session.</p>
+<p><strong>Restart consequence:</strong> every material continuation
+should name the outcome advanced and the changed evidence. When a
+finding changes the route, the owner should return a revised package or
+a real decision, rather than automatically commissioning the next
+diagnostic. Independent work continues within its existing
+authority.</p>
+<h3 id="delegation-did-not-protect-coordinator-capacity">Delegation did
+not protect coordinator capacity</h3>
+<p>The public record contains <strong>10 native worker spawns and 36
+follow-up calls</strong>. Those counts include planning and message
+review; they are not 36 browser attempts or a spending measurement. The
+failure was therefore more specific than simply “no subagents.”</p>
+<p>You corrected <code>/root</code> as an agent-thread reference at
+<strong>19:30:24</strong>. The root had interpreted it as a filesystem
+location. After acknowledging the correction and delegating some work,
+it again performed browser discovery in the root; you challenged that at
+<strong>20:23:08</strong>. During the browser episode, a compaction
+occurred at <strong>20:44:53</strong>, followed by repeated root reads
+to recover the conversation and pending work.</p>
+<p>Workers were useful, but the root still became the serial place for
+discovery, interpretation, rewriting, review dispatch and
+reconstruction. Adding workers without reducing those responsibilities
+can increase its integration load.</p>
+<p><strong>Restart consequence:</strong> delegate complete bounded
+responsibilities, not a series of tiny questions that require root
+recomputation. Workers return a result, consequential evidence, limits
+and the next decision. The coordinator retains integration, priorities,
+spending, human decisions and final delivery. Give it enough capacity to
+read and act on returns. Its active bottleneck matters more than the
+nominal number of workers.</p>
+<h3
+id="corrections-changed-explanations-more-reliably-than-actions">Corrections
+changed explanations more reliably than actions</h3>
+<p>The repeated <code>/root</code> error is a concrete example. The
+goal-clarity explanations and parallelization acknowledgments show the
+same general pattern: the root could state a correction without
+consistently changing the next action.</p>
+<p>This supports testing correction uptake as a workflow property. It
+does not identify the underlying cognitive mechanism. Explanatory
+momentum, attention to the latest issue, pressure to reassure, and local
+troubleshooting fixation are plausible hypotheses. They should not
+become established psychological diagnoses or universal
+instructions.</p>
+<p><strong>Restart consequence:</strong> use observable checks: after
+accepting a correction, does the next assignment embody it? Does a
+withdrawn request stay withdrawn? Does an acknowledgment preserve
+ongoing work? Does a side branch leave the other owners functioning?
+These are better discriminants than another paragraph explaining that
+the agent understands.</p>
+<h3
+id="resource-control-applied-to-individual-steps-rather-than-the-chain">Resource
+control applied to individual steps rather than the chain</h3>
+<p>At <strong>19:22:27</strong>, you gave a hard 30-minute allowance.
+The actual cutoff was <strong>19:52:27</strong>; the root initially
+announced <strong>19:52:50</strong>, 23 seconds later. You stopped
+execution and requested planning at <strong>19:34:32</strong>. The later
+browser request supplied task authority, but no new 30-minute
+expenditure allowance. The original session eventually acknowledged that
+absence.</p>
+<p>Successive short browser assignments nevertheless formed a
+substantial chain. Updates described bounded steps without making the
+accumulating total or absent budget decision visible. A one-call
+approval problem and approval for substantial further work were also
+allowed to become entangled.</p>
+<p><strong>Restart consequence:</strong> all workers, reviews,
+follow-ups, source searches and finalization draw from the same
+authorized envelope. A new owner or thread does not renew it. A tool’s
+permission decision does not grant a programme budget. Unknown quota and
+billed cost stay unknown; elapsed time and token counts are useful
+observations with different meanings.</p>
+<h3
+id="forecasts-were-not-connected-to-actionable-uncertainty">Forecasts
+were not connected to actionable uncertainty</h3>
+<p>The root’s “below 10%” estimate was not grounded in a stable success
+boundary, remaining work and available time. It later retracted the
+framing and revised the estimate in response to facts already available.
+The later <strong>70% within three minutes</strong> browser forecast
+omitted a decisive approval-path prerequisite. Neither number supplied a
+useful resource decision.</p>
+<p>There is positive evidence for the technical path: Rust worked
+quickly, and several remaining toolchains can be prepared independently.
+There is adverse evidence for execution reliability: repeated scope,
+continuation and budgeting failures. Those should both affect the
+recommendation now.</p>
+<p><strong>Restart consequence:</strong> forecast a named outcome within
+a named envelope, using the actual prerequisites and distinguishing
+technical uncertainty, coordinator reliability and user-dependent delay.
+If a numerical estimate is requested, provide a subjective estimate with
+its reasoning; do not substitute “uncalibrated” or “not well supported”
+for answering. This record cannot supply a calibrated success percentage
+for a new coordinator.</p>
+<h3
+id="documentation-consultation-did-not-settle-the-actual-decision">Documentation
+consultation did not settle the actual decision</h3>
+<p>For your continuity question, the root cited the repository-transfer
+handoff reference, even though agent/context continuation was the
+relevant issue. The project already had an external-agent communication
+owner. The mismatch demonstrates failed selection and use; it does not
+establish that the whole reference skill is bad, that the instructions
+were too long, or why the model made that selection.</p>
+<p>The received skill already contains useful sources, disclosed
+demonstrations and negative evidence. The correct next step is a focused
+assessment of its remaining deficiencies and routing, not reacquisition
+of the entire corpus or another broad rewrite. In particular,
+consultation should distinguish repository/environment transfer from
+transferring goals, state, authority, pending decisions and conversation
+to an agent.</p>
+<h3
+id="review-did-not-establish-that-the-whole-package-was-appropriate">Review
+did not establish that the whole package was appropriate</h3>
+<p>Several browser updates and the final host-change request carried
+independent approval. Those approvals did not prevent the branch’s
+cumulative expenditure or loss of broader scope. Accurate local
+technical claims can still form an inappropriate recommendation if the
+reviewer receives an incomplete account of the overall task and
+cost.</p>
+<p><strong>Restart consequence:</strong> a consequential review packet
+must contain the actual objective, authority, cumulative expenditure,
+live alternatives, user effort and unresolved parent obligations. Review
+the intervention and its intended result, not just wording, links or the
+latest component. One focused review with revisions is preferable to
+repeatedly reviewing status prose while the underlying plan remains
+uncontrolled. Review still does not replace your acceptance or spending
+decision.</p>
+<h2 id="the-browser-failure-has-a-recoverable-technical-explanation">The
+browser failure has a recoverable technical explanation</h2>
+<p>The existing Playwright entry used <code>--extension</code>. That
+mode connects to a running Chrome/Edge instance; managed browser
+operation and a separate profile are supported alternatives. The
+documented distinction should have been checked before the first
+connection probe. <a
+href="https://github.com/microsoft/playwright-mcp#user-profile">Playwright
+MCP documentation</a>.</p>
+<p>The later dedicated thread did receive managed launch arguments. Its
+first navigation was blocked with <strong>“MCP tool call requires
+approval, but approval policy is never.”</strong> No managed Chrome page
+launched. That specific failure is supported by the retained receipt and
+by inspected Codex <strong>0.162.1</strong> source at commit
+<code>092d3acd</code>: the MCP approval function denies under
+<code>AskForApproval::Never</code>. It was an MCP tool approval failure,
+not evidence that managed Playwright cannot launch Chrome.</p>
+<p>The adapter could not collect an interactive approval. The proposed
+resume path then failed its configuration premise: the inspected TUI
+override construction does not carry <code>mcp_servers</code>, and an
+already loaded thread may retain its existing configuration. The
+fallback proposed lasting host configuration and a fresh TUI for you. At
+<strong>21:58:34</strong>, the root withdrew that approval request.</p>
+<p>This sequence identifies a prerequisite failure before browser
+execution. It does not prove that the final host patch would solve the
+task. Its retained notes still involve a prompted MCP decision; the
+interaction between that prompt and the effective thread policy must be
+resolved. The patch also points into an npm cache and has not
+demonstrated durable provisioning. Public navigation would not establish
+authenticated Claude/ChatGPT access or persistence.</p>
+<p>For the next browser package, compare the available supported routes
+against: independence from normal Chrome, effective configuration
+loading, an executable permission path, profile ownership, authenticated
+access if needed, and your interaction burden. Resolve these contracts
+before a live check. Then perform a bounded check of the residual
+uncertainty. A successful accidental execution on an unsupported path is
+not a durable workflow contract; conversely, a documented design still
+needs its relevant live check.</p>
+<p>Browser restoration remains an obligation. It is not currently a
+prerequisite for the demonstrated manual Claude assignment/return route.
+Keep it separately owned instead of either abandoning it or making every
+other branch wait for it.</p>
+<h2 id="what-can-be-reused-and-what-remains-open">What can be reused and
+what remains open</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Area</th>
+<th>Retained support</th>
+<th>Remaining limit or work</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Source and return</td>
+<td>Work/Claude clone, manual source reading and received ZIP returns;
+corrected Claude reading account</td>
+<td>Dated evidence, not every surface or automatic loading; do not
+repeat the general inventory</td>
+</tr>
+<tr class="even">
+<td>Rust</td>
+<td>User-relayed clean <code>2c88aaa…</code>, pinned Rust/Cargo 1.94.0,
+locked workspace check and four production-anchor tests, 235
+seconds</td>
+<td>Raw cloud command logs absent; verify current environment/revision
+before relying on installed state</td>
+</tr>
+<tr class="odd">
+<td>Python and TeX</td>
+<td>Scoped plans and installation owners exist; thesis figures are
+tracked</td>
+<td>Cloud setup/checks unexecuted; Python <code>--help</code> is only an
+import/CLI smoke check, not useful numerical execution</td>
+</tr>
+<tr class="even">
+<td>Sage and artifacts</td>
+<td>Separate Sage setup and bounded proof-prefix command; registered
+artifact/hash contracts</td>
+<td>Cold installation uncertain; credentials conditional; a prefix is
+not the full certificate and cache verification is not remote-access
+verification</td>
+</tr>
+<tr class="odd">
+<td>Instructions and reference skill</td>
+<td>Reviewed entry revision, acquired corpus, curated references and
+disclosed demonstrations</td>
+<td>Automatic receipt, correction uptake and broader usefulness are
+unestablished; withheld grading cases remain yours</td>
+</tr>
+<tr class="even">
+<td>Continuation and browser</td>
+<td>Stopped handoff, readable conversation, provisional steering
+diagnosis, blocked browser receipt</td>
+<td>Full continuity behavior and browser readiness remain open; the
+final host request was withdrawn</td>
+</tr>
+</tbody>
+</table>
+<p>Reuse successful unchanged checks. If the cloud microVM has
+disappeared, the historical Rust result still establishes a past
+capability, but not current installed state. Check whether the existing
+execution site survives before choosing between continuation and a
+genuinely fresh setup.</p>
+<p>The important sources are the <a
+href="../development-environment/cloud-handoff-20261013/HANDOFF.md">stopped
+handoff</a>, <a
+href="../development-environment/cloud-handoff-20261013/claude-rust-return.md">Rust
+return</a>, <a
+href="../development-environment/cloud-surface-check-20261013/README.md">surface
+checks</a>, <a
+href="../development-environment/cloud-surface-check-20261013/claude-reading-followup/assessment.md">reading
+assessment</a>, <a
+href="../development-environment/cloud-entry-revision-20261013/README.md">entry
+revision</a>, <a
+href="../../.agents/skills/agent-platform-reference/REVIEW.md">reference-skill
+outcome review</a>, and <a
+href="../development-environment/browser-control-20261013/README.md">browser
+receipt and diagnosis</a>.</p>
+<h2 id="restart-hazards-in-the-retained-state">Restart hazards in the
+retained state</h2>
+<p>At inspection, <code>/workspaces/msc-math</code> was on
+<code>codex/cloud-support-20261013-1532</code>, HEAD
+<strong><code>ca8987f2</code></strong>. It contains the substantive
+source and handoff. The assigned
+<code>/home/joern/.codex/worktrees/440d/msc-math</code> was the older
+<strong><code>a915c128</code></strong> checkout. A new session must
+start from, or explicitly reconcile with, the substantive checkout.
+Merely reading a file there does not mean the session’s originally
+loaded instructions have changed.</p>
+<p>The substantive checkout has dirty <code>current.json</code> and task
+graph files, plus an untracked browser package. Preserve them and
+inspect their ownership. Do not silently reset them, push accumulated
+local history, or assume the committed handoff includes them. Some
+history contains conversation records; source publication requires
+selecting the intended files and actual retrievable identity.</p>
+<p>The coordination file still has the failed thread as browser owner
+and describes the withdrawn host-change request as open. The browser
+notes also retain that pending wording. These are stale directions. The
+next integrating owner should reconcile the withdrawal and reassignment
+before treating that state as current. This analysis has not repaired
+those execution records.</p>
+<p>The old time and quota grants are historical. The <strong>00:30
+local</strong> allowance for this analysis does not authorize resumed
+cloud work, host configuration changes, deployment or a reset.</p>
+<h2 id="a-resource-strategy-that-changes-the-decisions">A resource
+strategy that changes the decisions</h2>
+<p>The remedy is not simply “plan less” or “use more agents.” Planning,
+source consultation, review and integration have real indirect value
+when they change a consequential decision. Greedy execution can spend
+the entire allowance on the wrong route; prolonged analysis can consume
+it without delivering the result. Allocation must consider both.</p>
+<p>For each stage, the coordinator should identify the decision or
+deliverable, the evidence needed to finish it, its allocation from the
+shared envelope, and the remaining path to delivery. Keep a reserve for
+integration, required review and readable delivery. There is no
+evidence-based universal percentage for that reserve; choose it for the
+actual package and revise it visibly when the path changes.</p>
+<p>Before another investigation, ask: <strong>What plausible finding
+would change our action? Is that change valuable enough to justify this
+investigation’s total cost?</strong> Before more execution, ask whether
+a small prerequisite check would avoid an expensive failure. Stop when
+the next step is lower value than another selected branch or consumes
+the delivery reserve. This is a judgment about expected value, not a
+prohibition on unsuccessful experiments.</p>
+<p>Parallelism reduces wall time only when the branches are genuinely
+independent and can be integrated. For the proposed tool setup, the
+idealized path is shared preparation plus the slowest independent branch
+plus integration. Package-manager locks, CPU, memory, network and human
+decisions can lengthen it. Aggregate resources still add across
+branches. A large coordination queue can erase the apparent benefit.</p>
+<p>Use real elapsed checkpoints and available scoped usage observations.
+Track root attention, workers, relays and review together; do not count
+time twice across overlapping branches or copied forks. When a worker
+hits a blocker, it returns the supported alternatives and decision
+needed under the same envelope. Its short cap does not grant another
+short cap automatically.</p>
+<p>A hard cap can itself encourage optimizing a cheap proxy: a short
+report, a passing component or a premature completion claim. At
+checkpoints, identify the user-valued result already deliverable, the
+unresolved dependencies and the capacity needed to finish. Budget
+compliance is a constraint, not the outcome.</p>
+<p>Ask you for help when your information or authority can change the
+route: a real cutoff, whether a cloud environment survives, an essential
+access grant, a substantive spending decision, or a tradeoff in accepted
+coverage. Recover source facts independently. Bundle related decisions
+with enough context; do not ask you to dispatch every toolchain,
+diagnose the model, or repeat settled goals.</p>
+<h2 id="metacognitive-checks-for-overlooked-aspects">Metacognitive
+checks for overlooked aspects</h2>
+<p>Your timed-brainstorming suggestion is useful as a strategy for
+allocating attention. Generate distinct consequential possibilities,
+record real elapsed intervals and marginal yield, consolidate
+duplicates, and then change lenses rather than endlessly restating the
+first list. Appropriate lenses here include whole-outcome acceptance,
+dependency paths, coordinator congestion, evidence provenance, supported
+implementation contracts, correction uptake, user interaction, and
+resource allocation.</p>
+<p>A first independent pass here ran <strong>127.47 seconds</strong>,
+generated <strong>16 distinct consequential ideas</strong> before
+consolidation, and added <strong>zero in its final 18-second
+consolidation</strong>. The additional adversarial pass ran
+<strong>97.53 seconds</strong> and retained <strong>three new
+consequential ideas</strong>: shared-premise confirmation despite more
+agents; evaluating documentation by its consultation-to-consequence
+chain; and proxy optimization under hard resource caps. It added no
+distinct core idea during its final 54 seconds. These are the worker’s
+recorded yield classifications, not a calibrated measurement of the
+possible idea pool. Neither short plateau is a five- or fifteen-minute
+exhaustion measurement or supports a numerical upper bound on
+undiscovered aspects.</p>
+<p>Three checks make breadth more useful than an idea count:</p>
+<ol type="1">
+<li><strong>Counterfactual repair:</strong> if the browser worked, would
+the reference skill, other tools and continuation obligations still be
+unfinished? Yes. If every tool installed, could the source or return
+route still fail? Yes. If the next context were fresh, could the same
+unbounded follow-up pattern recur? Yes. Each remedy must be assessed
+against the whole task.</li>
+<li><strong>Contradiction check:</strong> compare claims of goal
+uncertainty with the actual user instructions; claimed permission with
+the actual grant; a “pending” request with its later withdrawal; and a
+“working” environment with its dated execution evidence.</li>
+<li><strong>Behavioral check:</strong> assess the next decisions after a
+correction or consultation, not only the agent’s account of what it
+learned. Trace consulted source → decision → action or explicit deferral
+→ verification → cost. Preserve negative commitments such as stopped
+execution and withdrawn requests across handoffs. Use different roles
+and actual sources to reduce shared blind spots; another instance of the
+same model is useful scrutiny, not independent proof of
+correctness.</li>
+</ol>
+<p>Exhaustive analysis would require simulating future agents and you.
+Useful completeness instead means covering material obligations,
+competing routes, observed failures, evidence limits, ownership and
+resource choices, while explicitly assigning discoveries that can only
+occur later. That is the standard applied here.</p>
+<h2 id="the-recommended-continuation">The recommended continuation</h2>
+<p>Start <strong>one fresh coordinating session</strong> from the
+substantive source. Native workers can own bounded branches; the
+existing Claude execution site can coordinate its own independent tool
+setup. This keeps one receiving owner and avoids making you relay a
+separate assignment for each tool. Multiple independent top-level
+sessions are an alternative if they provide needed capability or
+attention, but their integration and total resources still need an
+owner. More sessions alone are not the repair.</p>
+<p>The coordinator’s first product should be a concise recovered outcome
+map and a concrete proposed next package. It should preserve completed
+evidence, mark stale/withdrawn requests, and state what constitutes
+completion, partial completion and an unresolved dependency. That
+preparation should be bounded by the fresh allowance you choose, not
+turned into another general scoping interview.</p>
+<p>Then separate responsibilities:</p>
+<ul>
+<li><strong>Cloud readiness:</strong> inspect the current Claude state,
+reuse Rust evidence, and prepare/run the selected
+Python/TeX/Sage/artifact branches concurrently where dependencies
+permit. Use one combined draft return with source identity, versions,
+commands, exit statuses, elapsed time, repairs and blockers. Missing
+artifact credentials isolate that branch. Preserve scientific evidence
+and build outputs.</li>
+<li><strong>Technical reference and instructions:</strong> assess
+remaining deficiencies against the original corrective-expertise
+contract; use existing corpus, demonstrations and real failed
+consultations. Make focused maintained corrections if justified, and
+verify their downstream use. External deployment remains deferred unless
+selected.</li>
+<li><strong>Browser capability:</strong> compare supported routes,
+resolve effective permissions and configuration before probing, and
+prepare the actual change and human interaction for review. Keep a
+cumulative bound. A public-page check and authenticated cloud use have
+different completion conditions.</li>
+<li><strong>Integration:</strong> assess returns, preserve other
+sessions’ changes, reconcile coordination, and deliver the result in a
+file you can read over Tailscale. Component checks do not close the
+parent outcome; unresolved coverage stays visible.</li>
+</ul>
+<p>The ordinary Python candidate
+<code>uv run --script topics/products/regular-products/pentagon-rotation-empirics/analyze.py --help</code>
+is a reasonable first dependency/import smoke check. The owner should
+choose a bounded meaningful computation if usefulness requires more. TeX
+can use an isolated selected-thesis build/check without R2. Sage can use
+arithmetic and the README’s <code>--limit 50</code> prefix with
+assertions enabled. Those are proposed readiness checks, not permission
+to run full producers or overwrite retained certificates.</p>
+<h3 id="work-that-should-be-deferred-explicitly">Work that should be
+deferred explicitly</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Deferred work</th>
+<th>Trigger and next useful action</th>
+<th>Receiving owner and closure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Fresh selection and resources</td>
+<td>Present the concrete next package, alternatives, total expected
+effort, uncertainty and interaction burden to you</td>
+<td>New coordinator; record your actual decision before substantial
+execution</td>
+</tr>
+<tr class="even">
+<td>Detailed setup planning</td>
+<td>Inspect surviving cloud state and effective tools, then choose
+compatible install/check routes</td>
+<td>Cloud owner; return a plan or result with new blockers rather than
+assuming the old microVM survives</td>
+</tr>
+<tr class="odd">
+<td>Browser route selection and human interaction</td>
+<td>Resolve the supported configuration/approval path and compare the
+prepared alternatives</td>
+<td>Browser owner and coordinator; obtain any required host/action
+approval for the selected concrete route</td>
+</tr>
+<tr class="even">
+<td>Remaining reference assessment and withheld grading</td>
+<td>Inspect existing demonstrations and specific deficiencies; agree
+relevant downstream checks</td>
+<td>Reference owner integrates; you retain withheld grading and
+external-deployment decisions</td>
+</tr>
+</tbody>
+</table>
+<p>These are deferred planning and human decisions as well as execution.
+Their omission from an upfront command sequence is not an analytical
+gap. Losing their owners, conditions or effect on the parent outcome
+would be a gap.</p>
+<h2 id="a-prompt-for-the-new-coordinator">A prompt for the new
+coordinator</h2>
+<pre class="text"><code>Continue the cloud-support task from /workspaces/msc-math. First read the
+browser-readable analysis at meta-topics/agent-workflow/
+cloud-support-failure-analysis-20261013.html, then its relevant source links.
+Treat prior summaries as fallible. Preserve the broader docs/tools/scripts,
+navigation, instruction/reference, lifecycle/coordination and result-return
+objective, plus the separately requested browser capability.
+
+Own integration and human decisions. Recover actual checkout/dirty state,
+authority, successful evidence, withdrawn requests and remaining obligations.
+Reuse the dated Claude Rust success; inspect current cloud state before
+assuming its installed environment survives. Do not repeat a capability
+inventory or make a new scientific research question a prerequisite.
+
+Prepare one coherent next package and its resource/acceptance proposal.
+Delegate complete bounded branches where useful; protect coordinator capacity
+and account cumulatively for workers, follow-ups, reviews and human relays.
+Compare supported browser routes and effective approval/configuration before
+a live probe. Keep other independent work moving within its authority.
+
+Do not inherit expired time/quota grants or the withdrawn host-change request.
+Ask for actual consequential decisions directly in chat; preserve pending
+decisions across handoffs. Planning and Jörn interaction may be deferred with
+an owner, trigger, next action and completion condition. Do not claim the whole
+task done from tests, source reviews, a returned plan or one repaired component.
+Deliver reviewable results as retained Tailscale-accessible files.</code></pre>
+<h2 id="evidence-boundaries-and-assessment">Evidence boundaries and
+assessment</h2>
+<p>This analysis uses original public user/assistant messages,
+observable tool actions, retained source and result packets, a separate
+scope audit, and independent brainstorming. The original session’s final
+self-assessment was checked against that record. The full public
+failed-session conversation is retained in the analysis scratch record;
+no private reasoning is reproduced.</p>
+<p>The chronology supports misleading communication about expenditure
+and a failure to preserve the whole task. It does not establish
+deliberate deceptive intent, an internal cognitive cause, or the absence
+of deception. The prior session acknowledged that its last answer was
+not a fresh log audit. This report does not turn an agent’s assurance
+into such an audit either.</p>
+<p>The proposed restart has better operational grounds than “try another
+context and hope”: it preserves the complete scope, positive evidence,
+supported-route prerequisites, cumulative resource control and concrete
+deferred decisions. Its behavioral benefit remains to be established by
+the next session’s actual decisions and outcomes. A fresh context, more
+guidance, more agents and independent review each help under some
+conditions; none alone guarantees success.</p>
+<p>[review: /root/analysis_review]</p>
+</body>
+</html>

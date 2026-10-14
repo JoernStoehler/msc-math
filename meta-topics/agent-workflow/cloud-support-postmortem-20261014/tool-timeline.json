@@ -1,0 +1,97 @@
+[
+  {
+    "timestamp": "2026-10-13T22:33:24.720Z",
+    "tool": "exec",
+    "call_id": "call_ab5807d3b297442e8a2aadcd1c20eb10"
+  },
+  {
+    "timestamp": "2026-10-13T22:33:31.268Z",
+    "tool": "exec",
+    "call_id": "call_a989e2712e464fb897d1040585b6bbb8"
+  },
+  {
+    "timestamp": "2026-10-13T22:33:40.042Z",
+    "tool": "exec",
+    "call_id": "call_d0baec62291a433bbdf7056dbbf1c613"
+  },
+  {
+    "timestamp": "2026-10-13T22:33:48.383Z",
+    "tool": "exec",
+    "call_id": "call_727d295361314fa4a16fce947de84afd"
+  },
+  {
+    "timestamp": "2026-10-13T22:33:57.920Z",
+    "tool": "exec",
+    "call_id": "call_f2b543b2cf1b4f4a86fa1e2bf476e48c"
+  },
+  {
+    "timestamp": "2026-10-13T22:34:06.828Z",
+    "tool": "exec",
+    "call_id": "call_8b3bb459281447ca821476d4b206f49f"
+  },
+  {
+    "timestamp": "2026-10-13T22:35:14.496Z",
+    "tool": "exec",
+    "call_id": "call_3a04ea63a0834b7691a1f8de8e2bd9b1"
+  },
+  {
+    "timestamp": "2026-10-13T22:35:31.435Z",
+    "tool": "spawn_agent",
+    "call_id": "call_d83ca442115a4adf949dad8f39c292b3"
+  },
+  {
+    "timestamp": "2026-10-13T22:36:15.318Z",
+    "tool": "exec",
+    "call_id": "call_2077dbdfebc74c738e782c9d91edf0d6"
+  },
+  {
+    "timestamp": "2026-10-13T22:36:49.131Z",
+    "tool": "exec",
+    "call_id": "call_b2d89bbb761343a8ab8c3a1c163addd2"
+  },
+  {
+    "timestamp": "2026-10-13T22:51:51.126Z",
+    "tool": "js",
+    "call_id": "call_3b00357acb764cb692cb44a66353d19f"
+  },
+  {
+    "timestamp": "2026-10-13T22:52:18.951Z",
+    "tool": "spawn_agent",
+    "call_id": "call_d3ef866866cc461999dbc802137afe3a"
+  },
+  {
+    "timestamp": "2026-10-13T22:52:31.024Z",
+    "tool": "spawn_agent",
+    "call_id": "call_72ca1e73f8fb408cb4233343e23783cf"
+  },
+  {
+    "timestamp": "2026-10-13T22:54:07.254Z",
+    "tool": "interrupt_agent",
+    "call_id": "call_0815726188bb4b8ca4e54b0e7cf8cbde"
+  },
+  {
+    "timestamp": "2026-10-13T22:54:09.588Z",
+    "tool": "interrupt_agent",
+    "call_id": "call_6970aafa5baf4e3695f8afa97b85e525"
+  },
+  {
+    "timestamp": "2026-10-13T22:54:20.696Z",
+    "tool": "exec",
+    "call_id": "call_01d8dcc5b81c46f8ae695d62920bf97c"
+  },
+  {
+    "timestamp": "2026-10-13T22:55:36.681Z",
+    "tool": "spawn_agent",
+    "call_id": "call_5404159731ca4d0bb15855cb59b6259e"
+  },
+  {
+    "timestamp": "2026-10-13T23:02:52.925Z",
+    "tool": "exec",
+    "call_id": "call_dc4cfc6bd8cd4a8b9af87908e037c71c"
+  },
+  {
+    "timestamp": "2026-10-13T23:03:01.857Z",
+    "tool": "js",
+    "call_id": "call_0fb38909b7d9401fb139eabdc4a752d3"
+  }
+]

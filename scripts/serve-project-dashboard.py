@@ -19,6 +19,9 @@ STATE = "meta-topics/project-management/current.json"
 BASELINE = "docs/dashboard/thesis-sources.json"
 # Explicitly named files only: no directory handler, path expansion or write API.
 FILES = {
+    "meta-topics/repository-organization/worktree-triage-20261014.md",
+    "meta-topics/agent-workflow/handoff-intervention-test-20261014/design.json",
+    "meta-topics/agent-workflow/handoff-intervention-test-20261014/results.json",
     "meta-topics/repository-organization/f7e0-vs-main-review-2026-10-12.md",
     "meta-topics/repository-organization/main-reconciliation-2026-10-12.md",
     "meta-topics/agent-workflow/research-enablement-20261010/README.md",
@@ -67,6 +70,8 @@ FILES = {
     "meta-topics/project-management/thesis-work.md",
     "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
     "meta-topics/agent-workflow/cloud-continuation-prompt-20261013.txt",
+    "meta-topics/agent-workflow/cloud-support-restart-20261014.html",
+    "meta-topics/agent-workflow/cloud-support-postmortem-20261014/README.md",
     "meta-topics/development-environment/cloud-workflow.md",
     "meta-topics/development-environment/cloud-entry-revision-proposal-20261013.txt",
     "meta-topics/development-environment/cloud-entry-revision-20261013/README.md",

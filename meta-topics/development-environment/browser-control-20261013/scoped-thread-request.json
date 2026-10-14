@@ -1,0 +1,23 @@
+{
+  "method": "thread/start",
+  "params": {
+    "cwd": "/home/joern/.codex/worktrees/440d/msc-math",
+    "sandbox": "read-only",
+    "approvalPolicy": "never",
+    "config": {
+      "mcp_servers": {
+        "playwright": {
+          "command": "/home/joern/.npm/_npx/9833c18b2d85bc59/node_modules/.bin/playwright-mcp",
+          "args": ["--browser", "chrome", "--headless", "--user-data-dir", "/home/joern/.cache/ms-playwright/codex-browser-owner-20261013"],
+          "startup_timeout_sec": 120
+        }
+      }
+    }
+  },
+  "firstTurn": {
+    "method": "turn/start",
+    "params": {
+      "input": [{"type": "text", "text": "You own one bounded browser smoke check. Use only this thread's Playwright MCP browser tools. Navigate once to the public page https://openai.com/ and report the page title plus the first heading visible in the accessibility snapshot. Do not inspect other pages, follow links, sign in, access private content, upload or download files, or start other agents/tasks. Do not install software, change configuration, or restart or stop processes. If the browser tool is unavailable or a permission or approval dialogue appears, stop immediately without approving it and report the exact visible text if available. Do not read or change project files or data."}]
+    }
+  }
+}

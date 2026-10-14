@@ -1,0 +1,1 @@
+Stop execution. This turn’s only deliverable is a pasteable prompt for a fresh top-level session, plus recommended model flags or “none.” Use no tools, spawn no agents, and preserve the task’s authority and budget boundaries. End after delivering it.

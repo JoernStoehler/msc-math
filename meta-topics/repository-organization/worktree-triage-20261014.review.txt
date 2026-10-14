@@ -1,0 +1,8 @@
+Native reviewer: /root/triage_check
+Verdict: APPROVE candidate-v1 as a reviewable consolidation.
+
+Confirmed withdrawn-browser decision and historical notices; preserved main dirty evidence except intended duplicate delivery.txt; no active AGENTS/.agents or scientific source modifications; recovered composition and inactive patch present.
+
+Precommit requirement: add the referenced checks file. Integrator added worktree-triage-20261014-checks.txt before commit. Reviewer did not rerun tests or independently compare input snapshot hashes.
+
+This is approval of a reviewable candidate, not user approval to adopt, publish or clean up.

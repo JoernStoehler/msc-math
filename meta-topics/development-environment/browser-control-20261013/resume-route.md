@@ -1,0 +1,9 @@
+**Historical proposal, withdrawn.** The later cloud-support postmortem and current coordination state supersede the pending-approval wording below. No host change, browser retry or new execution is selected.
+
+# Proposed route (not approved or executed)
+
+No runnable approved route exists yet. The earlier `codex resume` proposal is invalid because the existing remote TUI’s `config_request_overrides_from_config` excludes `mcp_servers`; the one-off configuration for thread `01a136fe-4007-7972-993d-cc6d36d4d599` is not restored by resuming that thread. The app-server endpoint is `/home/joern/.codex/app-server-control/app-server-control.sock` on Codex 0.162.1.
+
+A candidate additive host stanza is in [host-mcp-candidate.patch](host-mcp-candidate.patch), with analysis in [host-mcp-candidate-notes.md](host-mcp-candidate-notes.md). It adds a separately named `playwright_managed` entry with a dedicated headless Chrome user-data directory and per-entry approval prompting, while preserving the existing `playwright` browser-extension entry and leaving global approval policy unchanged. This is a proposed host-config change, not applied. It requires Jörn’s explicit approval because it changes lasting host configuration.
+
+If Jörn approves the config proposal, the next check must use a **new interactive TUI session** after that config is available. Do not resume the old thread: if it is already loaded, resume attaches to its existing configuration and bypasses the cold config-load path. A single new-session action would navigate to public `https://openai.com/`; the interactive TUI must show the actual MCP request so Jörn can choose one-time `Allow` or `Cancel`. No sign-in, private data, or other browsing. Host-config approval and the one browser-call decision are both still pending. No config edit, RPC, or browser call has occurred; browser behavior remains unverified.

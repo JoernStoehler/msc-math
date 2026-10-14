@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13T19:49:59+00:00",
+  "updated_at": "2026-10-14T11:30:58.886769+00:00",
   "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Cloud execution stopped at Jörn’s request. Reported Claude Rust setup/check/anchors succeeded; other toolchain plans remain unexecuted. Target/state/chat-only handoff retained for fresh-agent planning; no claim of full cloud-support success or renewed execution allowance.",
+  "summary": "14 October triage candidate: accumulated workflow failures retained separately, withdrawn browser request reconciled, intake guidance kept inactive for review. Main remains the integration base. No cloud/thesis execution, merge, publication or irreversible cleanup selected.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2835,20 +2835,21 @@
       "selection": "selected",
       "status": "parked",
       "owner": null,
-      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified. Claude later supplied a received full-reading correction; counts matched pinned input, without validating whole-workflow success. Entry revision delivered: root AGENTS now 98 lines / 7131 bytes with rule preservation and surface-contract reviews; owner procedures routed explicitly. Coordination serving/source record repair passed checks and live HTTP. No automatic-loading, Rust/PDF or behavioral benefit established. Local source revision committed at f8242b43. Further five-minute Rust check approved, but native browser inventory is empty; ready-to-copy external relay retained, with no cloud run claimed. Stage timing and disproportionate finalization assessment retained with entry revision. At 19:09 UTC user requested no attachments and short Android copy/paste. Relay shortened to 389 characters with <=900-character text return; earlier ZIP requirement superseded. Applied batched preparation and compact Luna review. Human relay overhead corrected the recommendation: isolated compile probe put on hold; bundled Rust-readiness proposal prepared within five-minute analysis, with a new 15-minute cap pending approval. No live result. Jörn reported submission of the 15-minute readiness proposal at 19:21:32 UTC; result pending, cloud start not independently observed. Received user-relayed Claude report: Rust1.94.0/components auto-installed by rustup; workspacecheck0/55s, productionanchors4passed/148s,235s total, clean2c88 source. Independent source review found no contradiction; no rawcloudlogs. Current Rust runtime paths unchanged from tested input. Remaining Python/TeX/Sage/R2 plans delegated in parallel and retained as unexecuted candidates. Unsupported <10% estimate retracted. Requested handoff at meta-topics/development-environment/cloud-handoff-20261013/HANDOFF.md records correct target/authority/evidence and links user/assistant-only chat. Broader cloud objective not claimed complete.",
+      "outcome": "Source support/reference retained at2c88aaa5. Work and Claude clone/report ZIP route observed; Claude skipped required reading. Evidence at meta-topics/development-environment/cloud-surface-check-20261013. Broader outcome/efficiency unverified. Claude later supplied a received full-reading correction; counts matched pinned input, without validating whole-workflow success. Entry revision delivered: root AGENTS now 98 lines / 7131 bytes with rule preservation and surface-contract reviews; owner procedures routed explicitly. Coordination serving/source record repair passed checks and live HTTP. No automatic-loading, Rust/PDF or behavioral benefit established. Local source revision committed at f8242b43. Further five-minute Rust check approved, but native browser inventory is empty; ready-to-copy external relay retained, with no cloud run claimed. Stage timing and disproportionate finalization assessment retained with entry revision. At 19:09 UTC user requested no attachments and short Android copy/paste. Relay shortened to 389 characters with <=900-character text return; earlier ZIP requirement superseded. Applied batched preparation and compact Luna review. Human relay overhead corrected the recommendation: isolated compile probe put on hold; bundled Rust-readiness proposal prepared within five-minute analysis, with a new 15-minute cap pending approval. No live result. Jörn reported submission of the 15-minute readiness proposal at 19:21:32 UTC; result pending, cloud start not independently observed. Received user-relayed Claude report: Rust1.94.0/components auto-installed by rustup; workspacecheck0/55s, productionanchors4passed/148s,235s total, clean2c88 source. Independent source review found no contradiction; no rawcloudlogs. Current Rust runtime paths unchanged from tested input. Remaining Python/TeX/Sage/R2 plans delegated in parallel and retained as unexecuted candidates. Unsupported <10% estimate retracted. Requested handoff at meta-topics/development-environment/cloud-handoff-20261013/HANDOFF.md records correct target/authority/evidence and links user/assistant-only chat. Broader cloud objective not claimed complete. 14October audit: this resumed attempt failed to deliver the whole support workflow; two reply deadlines unambiguously missed. ExistingChrome connection observed, Claude state not verified. Two workers interrupted; whole task remains stopped. Earlier mutation used the wrong task ID and did not update this row; corrected by the postmortem.",
       "depends_on": [],
-      "blocker": "Execution explicitly stopped by Jörn. Planning handoff and conversation-only logs retained; next execution requires clear renewed authority, not inheritance of a new clock.",
-      "authorization": "Jörn stopped execution and requested planning around 19:34 UTC, then explicitly requested a target/state/relevant-context handoff and readable chat log at 19:43 UTC. That writing and retention are authorized; execution remains stopped. Existing hard window19:22:27–19:52:27 UTC, historical account ceiling5%weeklyused; no automatic extension, reset, new cloud execution or publication.",
+      "blocker": null,
+      "authorization": "Stopped by Jörn on13October22:53:56UTC and again23:05:39UTC. The earlier resumed support allowance was2h from22:33:19UTC, zero questions/novel permissions and10%weeklyquota. It is not current execution authority after the stop. Current authorization is postmortem only; no reset, publication, host/config changes or cloud execution.",
       "sources": [
         "meta-topics/agent-workflow/cloud-session-failure-20261013.md",
         "meta-topics/agent-workflow/cloud-continuation-prompt-20261013.txt",
         "meta-topics/project-management/handoff.md",
         "meta-topics/development-environment/cloud-surface-check-20261013/README.md",
         "meta-topics/development-environment/cloud-entry-revision-proposal-20261013.txt",
-        "meta-topics/development-environment/cloud-entry-revision-20261013/README.md"
+        "meta-topics/development-environment/cloud-entry-revision-20261013/README.md",
+        "meta-topics/agent-workflow/cloud-support-postmortem-20261014/README.md"
       ],
-      "next_step": "Read the retained HANDOFF.md and its conversation links. Planning only until Jörn clearly resumes execution. Use one cloud coordinator for independent all-tools branches, scoped pass/blocked checks and one text return; do not restart inventories or make each tool a human relay. Existing documentation already covers handoff content.",
-      "updated_at": "2026-10-13T19:49:59+00:00"
+      "next_step": "Preserve dated evidence and this postmortem. No execution or permission request; resume only on an explicit new user instruction.",
+      "updated_at": "2026-10-13T23:12:39.705976+00:00"
     },
     {
       "id": "agent-platform-reference-20261013",
@@ -2912,6 +2913,60 @@
       ],
       "next_step": "Preserve delivered source and review evidence; cloud-support parent owns the next live-workload selection. Existing clients may need source reload.",
       "updated_at": "2026-10-13T18:45:02+00:00"
+    },
+    {
+      "id": "browser-approval-path-20261013",
+      "title": "Diagnose managed-browser tool approval path",
+      "project": "workflows",
+      "kind": "task",
+      "selection": "selected",
+      "status": "parked",
+      "owner": null,
+      "outcome": "Historical managed launch blocked before execution; host-change request withdrawn. Current attempt observed an existing Chrome extension connection, without authenticated Claude or closed-Chrome checks. Later attempted Claude tab creation was aborted by Jörn; resulting browser state unobserved.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Stopped. Prior scope was existing Chrome and existing permissions only; no questions, host/config/approval changes or novel permissions. Withdrawn host-change request remains withdrawn. Postmortem does not resume browser operation.",
+      "sources": [
+        "meta-topics/development-environment/development-environments.md",
+        "meta-topics/agent-workflow/cloud-support-restart-20261014.html",
+        "meta-topics/agent-workflow/cloud-support-postmortem-20261014/README.md"
+      ],
+      "next_step": "Retain the stopped disposition and observed limits; no browser retry without an explicit new assignment.",
+      "updated_at": "2026-10-13T23:12:39.705976+00:00"
+    },
+    {
+      "id": "handoff-intervention-test-20261014",
+      "title": "Test output-only handoff wording against saved failure",
+      "project": "workflows",
+      "kind": "task",
+      "selection": "selected",
+      "status": "done",
+      "owner": null,
+      "outcome": "Four read-only top-level replays (two per wording) all returned handoff prompts and configuration advice without tool calls. Original failure did not reproduce; no improvement or reliable fix demonstrated. Test threads completed and archived.",
+      "depends_on": [],
+      "authorization": "14 October direct user request: whatever, \"try\" thsi thing on your own. Bounded prompt test only; no source-task execution or harness activation.",
+      "sources": [
+        "meta-topics/agent-workflow/handoff-intervention-test-20261014/results.json",
+        "meta-topics/agent-workflow/handoff-intervention-test-20261014/design.json"
+      ],
+      "next_step": "No rollout selected. Any further efficacy claim needs a comparison that first reproduces the relevant failure; fresh replay success does not establish a live fix.",
+      "updated_at": "2026-10-14T10:18:31.369311+00:00"
+    },
+    {
+      "id": "worktree-triage-20261014",
+      "title": "Reviewable consolidation of accumulated workflow evidence",
+      "kind": "task",
+      "selection": "selected",
+      "project": "workflows",
+      "status": "done",
+      "owner": null,
+      "depends_on": [],
+      "sources": [
+        "meta-topics/repository-organization/worktree-triage-20261014.md"
+      ],
+      "authorization": "14 October user request for worktree triage and a proposal for main; 10m total interpreted as ten minutes elapsed from 11:26:47 UTC. No merge, publication, deletion or resumed cloud/thesis execution.",
+      "outcome": "Prepared isolated candidate from local main plus both checkouts’ dirty evidence. Reconciled withdrawn browser request; retained intake guidance as inactive patch. Main adoption and irreversible cleanup remain pending user approval.",
+      "updated_at": "2026-10-14T11:30:58.886769+00:00"
     }
   ],
   "decisions": [
@@ -3181,6 +3236,17 @@
         "meta-topics/repository-organization/inventory/migration-results-2026-10-12.md"
       ],
       "updated_at": "2026-10-12T12:02:38Z"
+    },
+    {
+      "id": "browser-host-config-and-check-20261013",
+      "question": "Approve adding the separately named managed-browser MCP host entry while preserving the existing browser extension and global approval policy, followed by one public https://openai.com/ navigation in a fresh interactive TUI session with Jörn choosing one-time Allow or Cancel?",
+      "status": "resolved",
+      "owner": "Unassigned; request withdrawn",
+      "recommendation": "Host-change request withdrawn; preserve the unapplied historical candidate. No approval is pending.",
+      "consequence": "No host/config change or browser retry is authorized by this resolved request. Any future work needs a new selected assignment.",
+      "sources": [
+        "meta-topics/development-environment/development-environments.md"
+      ]
     }
   ],
   "resources": [
@@ -3256,6 +3322,18 @@
       "value": "Hard30-minute window19:22:27–19:52:27UTC. Jörn stopped execution around19:34, later requested a planning handoff. No automatic extension or newexecution. Quota last observed18:59:44UTC2%used, now historical; currentspending/billingunknown.",
       "observed_at": "2026-10-13T19:49:59+00:00",
       "basis": "Durable user budget message timestamp and subsequent explicit stop/handoff requests in conversation-only log; prior quota helper observation."
+    },
+    {
+      "label": "13 October browser approval-path diagnosis",
+      "value": "Managed-browser navigation was blocked before browser launch because the MCP tool call requires approval while approval policy is never. A separate read-only supported-options diagnosis is underway, bounded to three minutes. No approval policy/config change, RPC, retry, profile creation or user-Chrome closure. Current quota and task spending unknown; no fresh telemetry queried.",
+      "observed_at": "2026-10-13T20:47:32+00:00",
+      "basis": "Execution receipt /tmp/msc-math/browser-recovery/20261013T2023Z/execution-receipt.json; current bounded worker assignment and root coordination."
+    },
+    {
+      "label": "14 October worktree triage",
+      "observed_at": "2026-10-14T11:27:09+00:00",
+      "value": "Ten-minute total elapsed allowance interpreted from 10m; hard stop 11:36:47 UTC. Account-wide weekly 4% used / 96% remaining, reset 20 October 08:00:07 UTC; secondary window absent, 3 resets available. Billed/task-attributed spending unknown. No reset consumption.",
+      "basis": "Current user allowance plus scripts/codex-quota-status.py account/rateLimits/read; allocation proposals are not execution approval."
     }
   ],
   "links": [
@@ -3333,6 +3411,26 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-14T11:30:58.886769+00:00",
+      "text": "Triage candidate prepared separately from both original dirty checkouts; preserve newer main state, resolve withdrawn browser decision, retain two separate 440d failure packets without activating proposed guidance."
+    },
+    {
+      "at": "2026-10-13T20:53:35+00:00",
+      "text": "Retained an unapproved additive managed-browser host-config candidate and fresh-session public-check route. Browser task is blocked pending Jörn’s decision on host config and the one-time browser approval; no operation has run."
+    },
+    {
+      "at": "2026-10-13T20:51:50+00:00",
+      "text": "Invalidated the prepared resume command after confirming remote TUI resume overrides exclude mcp_servers. Root now prepares a separately named managed-browser host-config proposal; host change awaits Jörn approval, with no global approval-policy change."
+    },
+    {
+      "at": "2026-10-13T20:50:00+00:00",
+      "text": "Retained the managed-browser request, blocked execution receipt, read-only approval diagnosis and prepared local resume route; closed-Chrome behavior remains untested and any MCP approval remains a user choice."
+    },
+    {
+      "at": "2026-10-13T20:47:32+00:00",
+      "text": "Recorded separately selected managed-browser approval-path diagnosis. Initial public navigation was blocked before browser launch by approval policy; read-only diagnosis is bounded, while broader cloud-toolchain execution remains stopped."
+    },
     {
       "at": "2026-10-13T18:45:02+00:00",
       "text": "Delivered reviewed root bootstrap revision and explicit conditional-owner/cloud preflight routes; repaired coordination serving/schema validation. Parent remains open with actual next-stage decision pending."

@@ -1,0 +1,39 @@
+diff --git a/.agents/skills/problem-structuring/SKILL.md b/.agents/skills/problem-structuring/SKILL.md
+index 188c7119..d3ebe3c1 100644
+--- a/.agents/skills/problem-structuring/SKILL.md
++++ b/.agents/skills/problem-structuring/SKILL.md
+@@ -13,0 +14,2 @@ Efficient interaction is an enabling condition for this work, not a separate pol
++Enter this workflow before committing an exploratory request to an execution task or a prepared report. Recover the current request and accepted corrections together; preserve the whole problem when addressing its latest criticized part. Investigate a concrete uncertainty that can change the next action, then use the finding to develop the task. A restatement, announced plan or explanation of the workflow is not that investigation.
++
+@@ -23,0 +26,2 @@ In this project, `docs/project-facts.md` owns attributed scope and `docs/knowled
++Do not ask Jörn “should I ...?” questions about agent process, task-intake diagnosis or which investigation to undertake. Those choices belong to the agent. When a user-held fact, substantive judgment or explicit approval is necessary, present the concrete missing information or decision directly, with the evidence needed to answer it. Do not ask Jörn to diagnose the agent's workflow failure or choose between unsupported explanations of it.
++
+@@ -29,0 +34,2 @@ Watch whether exchanges are resolving uncertainty or merely consuming the sessio
++When Jörn asks to stop narrating, take the next useful authorized action or deliver the substantive result. Do not substitute another acknowledgment, apology or promise to act. Keep live problem development in direct synchronous conversation; creating a prepared report adds delivery work and requires a concrete benefit for the task. Account for the work and other sessions blocked on Jörn's attention, as well as the agent's own calls and elapsed time.
++
+diff --git a/.agents/skills/problem-structuring/references/design-notes.md b/.agents/skills/problem-structuring/references/design-notes.md
+index 2f3d9bf6..cff32e4b 100644
+--- a/.agents/skills/problem-structuring/references/design-notes.md
++++ b/.agents/skills/problem-structuring/references/design-notes.md
+@@ -13,0 +14,8 @@ Open review question: does this condition catch work needing structuring without
++
++## 14 October task-intake workflow correction
++
++Jörn explicitly rejected agent-process “should” questions, shifting workflow diagnosis to him, repeated narration instead of action, and ongoing resource expenditure without a useful result. Root thread `01a139dc-90cc-7c40-87bc-568d49059ffa` demonstrated these failures even after reading the skill. Its first analysis covered responses to corrections while omitting task intake itself. The related roots `01a139bf-2de5-7122-9402-56c7e6ceb1cb` and `01a139c9-e975-7842-a9b7-90142de43f26` supplied the salvage/handoff and intervention-discussion evidence. Exact working excerpts and reviews are disposable packets under `/tmp/msc-math/message-reviews/2026-10-14/intake-logs/`.
++
++The scoped change routes exploratory requests to this skill before commitment, assigns recoverable evidence and process choices to the agent, preserves substantive user decisions and approval boundaries, and makes the requested stop to narration explicit. These are direct user preferences and a workflow candidate, not a proven causal repair. The independent read-only workflow check distinguished intake from later execution. It does not establish reliable future application. Same-day handoff-wording replays in `meta-topics/agent-workflow/handoff-intervention-test-20261014/results.json` did not reproduce the original failure and do not validate this different change. Current-session loading and future behavior are unverified; no configuration change or broad evaluation is selected.
++
++The [session postmortem](../../../../meta-topics/agent-workflow/task-intake-postmortem-20261014/README.md) retains selected public conversation and call evidence. It classifies the session as failed and these changes as unvalidated; adding the wording did not complete the user's workflow-improvement task. Its delayed preparation also reproduced the gap between an announced next action and execution.
+diff --git a/AGENTS.md b/AGENTS.md
+index f58a1298..c7ea9a65 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -102,0 +103,8 @@ not restart paused thesis work or establish ongoing monitoring.
++For exploratory requests, unresolved goals or repeated corrections to the task,
++use [problem structuring](.agents/skills/problem-structuring/SKILL.md) before
++committing to an execution approach or prepared report. Recover available context
++and investigate agent-resolvable uncertainties. Do not ask Jörn “should I ...?”
++questions about agent process or ask him to diagnose workflow failures. Present
++genuine missing information, substantive user decisions and required approvals
++directly. Clear routine tasks can proceed without an intake interview.
++

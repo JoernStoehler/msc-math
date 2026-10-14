@@ -73,3 +73,9 @@ unmeasured reliability. It did not select a broad evaluation or repair programme
 [Main-checkpoint retention](main-checkpoint-retention-20261012.md) records how the
 12 October reconciliation retained these source accounts, moved expired dispatches
 to history and retired disposable delivery iterations to recoverable Git paths.
+
+[14 October task-intake postmortem](task-intake-postmortem-20261014/README.md) retains the failed session and bounded evidence. Its instruction edits are preserved as an inactive `proposed-guidance.patch`; no behavior improvement is established.
+
+[14 October handoff-wording trial](handoff-intervention-test-20261014/results.json) retains both arms: all four returned handoffs, and the original failure did not reproduce. No rollout or efficacy claim follows.
+
+[Cloud-support postmortem](cloud-support-postmortem-20261014/README.md) owns the separate failed cloud/browser continuation. HTML files are reading copies; the dated restart proposal is superseded and supplies no execution authority.

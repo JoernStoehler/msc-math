@@ -1,0 +1,226 @@
+[
+  {
+    "source_line": 28,
+    "at": "2026-10-14T10:05:50.695Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command",
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 42,
+    "at": "2026-10-14T10:06:04.468Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command",
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 48,
+    "at": "2026-10-14T10:06:13.156Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 55,
+    "at": "2026-10-14T10:06:26.044Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 66,
+    "at": "2026-10-14T10:07:10.329Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 72,
+    "at": "2026-10-14T10:07:18.873Z",
+    "name": "spawn_agent",
+    "nested_tools": []
+  },
+  {
+    "source_line": 80,
+    "at": "2026-10-14T10:07:21.966Z",
+    "name": "wait_agent",
+    "nested_tools": []
+  },
+  {
+    "source_line": 91,
+    "at": "2026-10-14T10:07:46.044Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 117,
+    "at": "2026-10-14T10:10:05.416Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command",
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 130,
+    "at": "2026-10-14T10:11:22.152Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 138,
+    "at": "2026-10-14T10:11:32.630Z",
+    "name": "followup_task",
+    "nested_tools": []
+  },
+  {
+    "source_line": 145,
+    "at": "2026-10-14T10:11:45.028Z",
+    "name": "wait_agent",
+    "nested_tools": []
+  },
+  {
+    "source_line": 159,
+    "at": "2026-10-14T10:13:00.094Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 232,
+    "at": "2026-10-14T10:19:47.189Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 239,
+    "at": "2026-10-14T10:20:08.297Z",
+    "name": "spawn_agent",
+    "nested_tools": []
+  },
+  {
+    "source_line": 248,
+    "at": "2026-10-14T10:20:37.214Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 267,
+    "at": "2026-10-14T10:21:56.129Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command",
+      "apply_patch"
+    ]
+  },
+  {
+    "source_line": 284,
+    "at": "2026-10-14T10:22:45.604Z",
+    "name": "exec",
+    "nested_tools": [
+      "apply_patch"
+    ]
+  },
+  {
+    "source_line": 290,
+    "at": "2026-10-14T10:23:12.032Z",
+    "name": "exec",
+    "nested_tools": [
+      "apply_patch",
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 299,
+    "at": "2026-10-14T10:23:32.517Z",
+    "name": "exec",
+    "nested_tools": [
+      "apply_patch"
+    ]
+  },
+  {
+    "source_line": 304,
+    "at": "2026-10-14T10:23:42.799Z",
+    "name": "followup_task",
+    "nested_tools": []
+  },
+  {
+    "source_line": 419,
+    "at": "2026-10-14T10:30:46.097Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  },
+  {
+    "source_line": 433,
+    "at": "2026-10-14T10:32:33.168Z",
+    "name": "exec",
+    "nested_tools": [
+      "clock__curr_time",
+      "apply_patch"
+    ]
+  },
+  {
+    "source_line": 441,
+    "at": "2026-10-14T10:33:10.802Z",
+    "name": "followup_task",
+    "nested_tools": []
+  },
+  {
+    "source_line": 457,
+    "at": "2026-10-14T10:34:10.843Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command",
+      "apply_patch"
+    ]
+  },
+  {
+    "source_line": 463,
+    "at": "2026-10-14T10:34:20.744Z",
+    "name": "followup_task",
+    "nested_tools": []
+  },
+  {
+    "source_line": 478,
+    "at": "2026-10-14T10:35:05.176Z",
+    "name": "exec",
+    "nested_tools": [
+      "apply_patch"
+    ]
+  },
+  {
+    "source_line": 493,
+    "at": "2026-10-14T10:36:06.890Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command",
+      "clock__curr_time"
+    ]
+  },
+  {
+    "source_line": 501,
+    "at": "2026-10-14T10:36:42.678Z",
+    "name": "exec",
+    "nested_tools": [
+      "exec_command"
+    ]
+  }
+]
