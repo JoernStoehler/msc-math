@@ -1,8 +1,9 @@
 # Pentagon products: rotation, independent linear deformations, and proof routes
 
-This directory owns the maintained mathematical development of the independent
-linear-deformation extension. Start with [research.tex](research.tex), a
-self-contained note with statements, proofs and primary references. The original
+This directory owns the independent linear-deformation extension and the
+[all-odd rotation theorem](odd-regular-angular-width.md). The self-contained
+[research note](research.tex) supplies the affine pentagon statements, proofs
+and primary references. The original
 ChatGPT Pro ZIP is provenance, not a required input to reading or building this
 note.
 
@@ -55,11 +56,25 @@ contains an unresolved smooth-envelope proof sketch, not that theorem's proof.
    mathematical steps outside the finite run. Neither present analytic proof
    depends on rerunning it. Preserve code and output rather than appending
    the old classification to the new chapter.
-4. **Optional further mathematics.** The canonical note also preserves complete
-   7×7 and 5×7 rotation profiles, strict-containment stability, interpolation
-   sharpness and the triangle obstruction. Those results are not automatically
-   added to the agreed thesis chapter. Their angular containment does not imply
-   arbitrary independent affine heptagon formulas.
+4. **All odd regular rotation profiles (19 October 2026).** The separate
+   [all-odd proof](odd-regular-angular-width.md), with
+   [first](odd-regular-angular-width-audit.md) and
+   [second](odd-regular-angular-width-second-audit.md) independent audits, proves
+   `c(P_n ×_L R_theta P_m)=(1+h_n)(1+h_m) sec d_lcm(n,m)(theta)` for every odd
+   `n,m>=5`, where `h_j=cos(pi/j)` and `d_L` is distance to the nearest multiple
+   of `pi/L`. Its circle-deficit method gives strict angular containment except
+   for the known 5×5 edge-contact case, and hence open labelled nonregular
+   width-formula neighborhoods for every other pair. The sharp systolic ratio
+   in this entire rotated odd regular class is `(3+sqrt(5))/5`, with equality
+   exactly at `n=m=5`, `theta=pi/10+k pi/5`. Human acceptance and novelty remain
+   open; this new theorem is outside the selected thesis. The stronger
+   independent-affine extension still requires tensor containment.
+5. **Earlier angular proofs and useful limits.** The canonical note preserves
+   the 7×7 and 5×7 proofs, strict-containment stability, interpolation sharpness
+   and the triangle obstruction. The separate [nonagon norm proof](nonagon-angular-width.md)
+   gives a reusable spectral estimate and an exact infinite family on which
+   that sufficient estimate fails; the circle-deficit argument resolves the
+   broader rotation problem without claiming independent-affine containment.
 
 Two independent agent audits found no internal gap in the affine argument and
 angular extensions. The [primary-source contract](source-contract.md) now closes
@@ -68,12 +83,17 @@ agent-reviewed mathematical proofs; no human proof acceptance, prose PASS or
 novelty determination is asserted for the extension. The symmetric-product
 interpretation is optional and not an input to the affine proof.
 
-The [selected thesis extension](../../../thesis/chapters/10-affine-pentagons.tex)
+The [selected affine thesis extension](../../../thesis/chapters/10-affine-pentagons.tex)
 is included by [the sole thesis entry point](../../../thesis/main.tex), immediately
 after the rotation proof. Inclusion does not establish human proof acceptance,
 prose PASS or submission readiness. Current remaining obligations belong to
 [the thesis work list](../../../meta-topics/project-management/thesis-work.md); earlier
-integration records are historical evidence.
+integration records are historical evidence. The separately selected
+[symmetric-partner theorem](../../../thesis/chapters/10b-symmetric-partners.tex)
+is now integrated as Section 11. Source/math review, the thesis build and
+focused page checks passed; human proof/prose acceptance and a whole-PDF PASS
+remain open. The [sharp symmetrization plateau](../pentagon-arbitrary-partner/symmetrization-plateau-20261019.md)
+is separate new research outside the selected thesis.
 
 ## Source identity, attribution, and maintenance
 
@@ -85,12 +105,15 @@ text and the audited correction that the triangle's **coefficient hull** is a
 hexagon: the coefficient set also contains zero. Future mathematical edits
 belong here, not in the returned bytes.
 
-The new argument originated in the ChatGPT Pro return delivered by Jörn on
+The independent-affine pentagon argument originated in the ChatGPT Pro return delivered by Jörn on
 18 September 2026. Codex performed the repository integration and independent
 agent audits. The earlier endpoint-interpolation argument also originated in
 AI-assisted review; see the replacement chapter's provenance. Preserve both
 contributions when updating the thesis AI disclosure. The HKO counterexample
-and benchmark value are external results, not newly discovered here.
+and benchmark value are external results, not newly discovered here. The
+all-odd circle-deficit proof and nonagon norm note originated in the fresh
+19 October 2026 research swarm; their retained audits identify the authors and
+independent checking scopes.
 
 Build from this directory:
 

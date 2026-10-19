@@ -301,15 +301,7 @@ owns the additional scoped results and acceptance boundaries.
   10 October inventory; it does not select or deselect that family for inclusion.
   The later lift-containment counterfamily is reviewed research context, not a
   separately selected thesis theorem.
-- **Selected for inclusion on 3 October; currently omitted:** the fixed regular
-  pentagon / arbitrary centrally symmetric partner exact capacity formula,
-  sharp ratio and equality class. Jörn explicitly selected inclusion; proof
-  acceptance and presentation remain open. Compare a compact self-contained
-  proof with a method-first treatment using actual reader-facing candidates,
-  rendered length, conceptual dependencies and figure needs. Source:
-  `topics/products/pentagon-arbitrary-partner/symmetric-partner-lemma.md`.
-  The independent-affine theorem covers a different class; no publication-wide
-  novelty claim is established. No substantial execution package is approved.
+- **Integrated 19 October; human acceptance open:** the fixed regular pentagon / arbitrary centrally symmetric partner exact capacity formula, sharp ratio and equality class. Jörn selected inclusion on 3 October. The new `thesis/chapters/10b-symmetric-partners.tex` is selected Section 11/theorem 11.1/figure 11, pp. 72–74 of a 105-page working build. Its geometric proof starts with five segments and a calibrated decagon; independent source/math review and focused rendered-page/interface checks passed. Human proof/prose acceptance and whole-PDF PASS remain open. Source: `topics/products/pentagon-arbitrary-partner/symmetric-partner-exposition.md`; run/evidence owner: `meta-topics/project-management/research-swarm-20261019.md`. The independently checked all-odd rotation result has a separate reader-facing presentation decision and is not automatically included.
 - **Reviewed but unselected optional results:** harmonic blind-direction
   families, ridge circulation bounds, the moment counterexample, and
   joint-representation separations under

@@ -1,0 +1,5 @@
+# Selected manuscript checkpoint · 19 October 2026
+
+The previously selected pentagon/symmetric-partner theorem is now selected Section 11, theorem 11.1 and figure 11, on pp. 72–74 of the 105-page working PDF. The [author build/render check](symmetric-partner-writer-check.md) fixes source/PDF identities and focused inspection scope; the [receiving source/math review](symmetric-partner-receiving-review.md) independently approves the current proof, TikZ and interfaces. The latter closes the author report's then-pending receiving review. Neither is human prose/proof acceptance or whole-PDF PASS.
+
+The live build is `thesis/build/main.pdf`; no full-PDF baseline or historical page references are silently refreshed here. New all-odd rotation and sharp symmetrization research retain their proof/audit owners under `topics/products/` and are not automatically promoted into the manuscript. [Current bounded run](../../../meta-topics/project-management/research-swarm-20261019.md) owns continuation, resources and human reader questions.

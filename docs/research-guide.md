@@ -175,8 +175,10 @@ Sage predicates and Rust-generated witness choices; the
 [formal upper-section note](../formal/hko-feasible-section-upper-branches.tex)
 is another proof route. The finite certificate is essential but does not by
 itself prove the neighborhood implication. Older smooth-envelope sketches and
-numerical neighborhood samples do not replace this route. The theorem fixes
-ten facets; it does not settle perturbations that create extra facets.
+numerical neighborhood samples do not replace this route. The selected theorem fixes ten facets. The separately
+[accepted at-most-eleven-facet research extension](../topics/variation-and-local-maxima/hko-local-maximum/f11-acceptance-20261005.md)
+controls one facet birth; its selected manuscript integration and the
+unrestricted facet-count question remain separate.
 
 The selected chapter also includes a separate rational hexagon–quadrilateral
 product with ratio one and a non-strict ten-facet local maximum. Its equality
@@ -232,21 +234,38 @@ symmetric convex planar partner** K. The
 identifies capacity with a difference-body inclusion scale and gives the sharp
 ratio \((10+6\sqrt5)/25<1\), attained by a specified regular decagon partner.
 Its method is a finite normal-triangle covering criterion plus containment,
-not the affine matrix argument. Jörn selected inclusion, but this result is
-not presently a theorem passage in the selected chapters. The owner records
-an independently checked agent-derived proof, without human acceptance or a
-novelty determination. Global HKO optimality for arbitrary asymmetric partners
+not the affine matrix argument. The selected [Section 11](../thesis/chapters/10b-symmetric-partners.tex)
+now contains the theorem and a geometric proof. Independent source/math review,
+a 105-page build and focused pp. 72–74 visual/interface checks passed on 19 October.
+Human proof/prose acceptance, whole-PDF PASS and novelty remain open. Global HKO optimality for arbitrary asymmetric partners
 remains unresolved; local-cover and cut-lifting research notes are not that
 global theorem.
 
-An [agent-checked extension](../topics/products/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md)
+An [agent-checked symmetric-partner extension](../topics/products/pentagon-arbitrary-partner/odd-regular-symmetric-partner.md)
 covers every odd regular factor with at least five sides and a centrally
-symmetric partner. This does not solve the general capacity formula for two
-nonsymmetric odd regular factors: outside the proved pentagon–pentagon,
-pentagon–heptagon and heptagon–heptagon cases, that remains a conjectural route
-in the [affine research note](../topics/products/pentagon-affine-products/research.tex).
-The broader symmetric-partner extension is retained research, not a new claim
-of human acceptance or manuscript inclusion.
+symmetric partner. It remains retained research without selection of the
+whole generalization for the manuscript.
+
+A separate [19 October uniform rotation theorem](../topics/products/pentagon-affine-products/odd-regular-angular-width.md)
+now proves the capacity formula for **two odd regular factors with n,m >= 5**.
+Its two independent assembled-proof audits cover a translated-circle deficit,
+a continuous minimum-angle inequality, the pentagon cases and the sharp HKO
+systolic bound/equality throughout this family. The earlier aggregate-norm
+route fails on an explicit infinite family; retaining triangle shape supplies
+the missing information. Angular containment does not imply independent-affine
+tensor containment. This new theorem is outside the selected manuscript;
+human acceptance and a literature-wide novelty assessment remain open.
+
+The [sharp symmetrization plateau](../topics/products/pentagon-arbitrary-partner/symmetrization-plateau-20261019.md)
+controls every convex partner of the fixed regular pentagon along
+K_t=(1-t)K+t(-K). Capacity equals its unchanged difference-body ceiling for
+(3-sqrt(5))/2 <= t <= (sqrt(5)-1)/2; one explicit trapezoid has exactly that
+equality interval, making the uniform bound optimal. Scoped independent checks
+cover the proof, transfer/breakpoint consequences and sharpness. It does not
+settle the arbitrary asymmetric minimum-area cover. A
+[source-checked algorithm account](../topics/products/pentagon-arbitrary-partner/translation-cover-algorithms-20261019.md)
+distinguishes the published exact unrestricted algorithm, inherited solved
+prescribed-fan problem, and a bounded numerical parallel-slide rehearsal.
 
 The separate [product-position chapter](../thesis/chapters/11-product-position.tex)
 shows that a product initially in symplectically orthogonal factor planes

@@ -1,0 +1,2268 @@
+{
+  "status": "exploratory floating point only; not a global or local optimality certificate",
+  "config": {
+    "seed": 20261019,
+    "starts": 12,
+    "per_start_eval_limit": 300,
+    "direction_updates": 12,
+    "max_cuts_per_direction": 18,
+    "shift_box": 2.0,
+    "direction_angles": [
+      0.0,
+      1.5707963267948966,
+      0.6283185307179586,
+      1.8849555921538759,
+      0.3141592653589793,
+      2.199114857512855,
+      0.0,
+      1.5707963267948966,
+      0.6283185307179586,
+      1.8849555921538759,
+      0.3141592653589793,
+      2.199114857512855
+    ],
+    "wall_limit_seconds": 55,
+    "cpu_soft_limit_seconds": 50,
+    "cpu_hard_limit_seconds": 55,
+    "pid": 322258,
+    "fixture_path": "/workspaces/msc-math/topics/products/pentagon-arbitrary-partner/local-cover/pentagon_fixture.py",
+    "fixture_sha256": "3e4c9b5efd8ae424d50c0b3b27a433da6e49a80b868a8e6b97239db59eef9a88",
+    "script_sha256": "4e1869d8927ed727812be804fab1be0ed2fdcae74e9a0a27edfb51a4d6d4f7c1",
+    "numpy_version": "2.5.4",
+    "scipy_version": "1.18.1"
+  },
+  "HKO_area": 0.20081141588622722,
+  "elapsed_seconds": 7.358306376991095,
+  "process_cpu_seconds": 8.46221747,
+  "stop_reason": "completed bounded schedule",
+  "results": [
+    {
+      "name": "HKO",
+      "initial_area": 0.20081141588622725,
+      "best_area": 0.20081141588622725,
+      "best_over_HKO": 1.0000000000000002,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.12732200375003505,
+          0.04136942678222635
+        ],
+        [
+          0.03519093633336135,
+          -0.025567711846516065
+        ],
+        [
+          0.11388026216662461,
+          -0.13387427725748482
+        ],
+        [
+          0.02174919474995094,
+          0.015801714935710275
+        ],
+        [
+          0.02174919474995094,
+          0.1496759921931951
+        ],
+        [
+          0.00830745316654053,
+          -0.025567711846516065
+        ],
+        [
+          -0.07038187266672272,
+          -0.13387427725748482
+        ],
+        [
+          0.04349838949990188,
+          0.0
+        ],
+        [
+          0.17082039324993692,
+          0.04136942678222635
+        ]
+      ],
+      "best_hull_vertices": [
+        3,
+        5,
+        18,
+        13,
+        2
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.18366746463243508,
+          "gap_in_shift_box": 0.017143951253792172,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.18821746977313733,
+          "gap_in_shift_box": 0.012593946113089921,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19911737269151683,
+          "gap_in_shift_box": 0.0016940431947104206,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.1993651643646381,
+          "gap_in_shift_box": 0.0014462515215891425,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19391039834657328,
+          "gap_in_shift_box": 0.00690101753965397,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.1955538854954323,
+          "gap_in_shift_box": 0.005257530390794962,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.18366746463243508,
+          "gap_in_shift_box": 0.017143951253792172,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.18821746977313733,
+          "gap_in_shift_box": 0.012593946113089921,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19911737269151683,
+          "gap_in_shift_box": 0.0016940431947104206,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.1993651643646381,
+          "gap_in_shift_box": 0.0014462515215891425,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19391039834657328,
+          "gap_in_shift_box": 0.00690101753965397,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.1955538854954323,
+          "gap_in_shift_box": 0.005257530390794962,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "reflected_HKO",
+      "initial_area": 0.20081141588622725,
+      "best_area": 0.20081141588622725,
+      "best_over_HKO": 1.0000000000000002,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.12732200375003505,
+          0.04136942678222635
+        ],
+        [
+          -0.24120226591665966,
+          0.17524370403971118
+        ],
+        [
+          -0.1625129400833964,
+          0.06693713862874241
+        ],
+        [
+          -0.14907119849998599,
+          -0.10830656541096875
+        ],
+        [
+          -0.14907119849998599,
+          0.025567711846516072
+        ],
+        [
+          -0.056940131083312334,
+          0.17524370403971118
+        ],
+        [
+          -0.13562945691657557,
+          0.06693713862874241
+        ],
+        [
+          -0.29814239699997197,
+          0.0
+        ],
+        [
+          -0.17082039324993692,
+          0.04136942678222635
+        ]
+      ],
+      "best_hull_vertices": [
+        1,
+        2,
+        8,
+        6,
+        5
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19182731667143138,
+          "gap_in_shift_box": 0.008984099214795871,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.1972135855858454,
+          "gap_in_shift_box": 0.0035978303003818546,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.2001262025348401,
+          "gap_in_shift_box": 0.0006852133513871594,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19654429822035738,
+          "gap_in_shift_box": 0.004267117665869874,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.1882702769385988,
+          "gap_in_shift_box": 0.012541138947628455,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19678557343283018,
+          "gap_in_shift_box": 0.004025842453397072,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19182731667143138,
+          "gap_in_shift_box": 0.008984099214795871,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.1972135855858454,
+          "gap_in_shift_box": 0.0035978303003818546,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.2001262025348401,
+          "gap_in_shift_box": 0.0006852133513871594,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19654429822035738,
+          "gap_in_shift_box": 0.004267117665869874,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.1882702769385988,
+          "gap_in_shift_box": 0.012541138947628455,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.20081141588622725,
+          "lower_bound_in_shift_box": 0.19678557343283018,
+          "gap_in_shift_box": 0.004025842453397072,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "common_center",
+      "initial_area": 0.24667960126735594,
+      "best_area": 0.24667960126735594,
+      "best_over_HKO": 1.2284142322223157,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      "best_hull_vertices": [
+        14,
+        15,
+        9,
+        6,
+        0,
+        5,
+        27,
+        24,
+        18,
+        23,
+        17,
+        13,
+        7,
+        10,
+        4,
+        2,
+        25,
+        28,
+        22,
+        20
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.2388895458401136,
+          "gap_in_shift_box": 0.007790055427242343,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.239825734424168,
+          "gap_in_shift_box": 0.00685386684318795,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.2400187637842368,
+          "gap_in_shift_box": 0.006660837483119131,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.2406040878540118,
+          "gap_in_shift_box": 0.006075513413344141,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.2393432839557499,
+          "gap_in_shift_box": 0.007336317311606028,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.24020686928969967,
+          "gap_in_shift_box": 0.006472731977656271,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.2388895458401136,
+          "gap_in_shift_box": 0.007790055427242343,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.239825734424168,
+          "gap_in_shift_box": 0.00685386684318795,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.2400187637842368,
+          "gap_in_shift_box": 0.006660837483119131,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.2406040878540118,
+          "gap_in_shift_box": 0.006075513413344141,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.2393432839557499,
+          "gap_in_shift_box": 0.007336317311606028,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.24667960126735594,
+          "lower_bound_in_shift_box": 0.24020686928969967,
+          "gap_in_shift_box": 0.006472731977656271,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "HKO_perturb_0.02",
+      "initial_area": 0.23164690865147564,
+      "best_area": 0.2177919578733434,
+      "best_over_HKO": 1.0845596447402013,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.13478964781651773,
+          0.022755015264984982
+        ],
+        [
+          0.01695957279189556,
+          -0.030168835466821732
+        ],
+        [
+          0.1070589957484008,
+          -0.15032012277038467
+        ],
+        [
+          0.01123053766948371,
+          0.013373088381385484
+        ],
+        [
+          0.01070483156224845,
+          0.14171626971690252
+        ],
+        [
+          0.03942812947027227,
+          -0.0008305795136058711
+        ],
+        [
+          -0.05469409707918458,
+          -0.11843265517519416
+        ],
+        [
+          0.03580824646848709,
+          -0.02904642055838226
+        ],
+        [
+          0.1633220677232888,
+          0.013111543143412334
+        ]
+      ],
+      "best_hull_vertices": [
+        5,
+        24,
+        18,
+        29,
+        10,
+        13,
+        2,
+        14,
+        15,
+        6
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.23164690865147564,
+          "lower_bound_in_shift_box": 0.20175740315344742,
+          "gap_in_shift_box": 0.029889505498028213,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.23164690865147564,
+          "lower_bound_in_shift_box": 0.20399419140517322,
+          "gap_in_shift_box": 0.027652717246302416,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.23164690865147564,
+          "lower_bound_in_shift_box": 0.20554482914294125,
+          "gap_in_shift_box": 0.02610207950853438,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.23164690865147564,
+          "lower_bound_in_shift_box": 0.20190790302135678,
+          "gap_in_shift_box": 0.02973900563011886,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.23164690865147564,
+          "lower_bound_in_shift_box": 0.20360019546774386,
+          "gap_in_shift_box": 0.02804671318373178,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.22737151036902323,
+          "lower_bound_in_shift_box": 0.20832737333563342,
+          "gap_in_shift_box": 0.019044137033389807,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.22136455411304518,
+          "lower_bound_in_shift_box": 0.20306560953255137,
+          "gap_in_shift_box": 0.018298944580493803,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.22136455411304518,
+          "lower_bound_in_shift_box": 0.19995724435118592,
+          "gap_in_shift_box": 0.021407309761859256,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.22136455411304518,
+          "lower_bound_in_shift_box": 0.20580701936580448,
+          "gap_in_shift_box": 0.015557534747240698,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.22136455411304518,
+          "lower_bound_in_shift_box": 0.20105913296959368,
+          "gap_in_shift_box": 0.02030542114345149,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.22136455411304518,
+          "lower_bound_in_shift_box": 0.20083649609057497,
+          "gap_in_shift_box": 0.020528058022470208,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2177919578733434,
+          "lower_bound_in_shift_box": 0.20321433573769415,
+          "gap_in_shift_box": 0.014577622135649254,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "HKO_perturb_0.08",
+      "initial_area": 0.41279837165638966,
+      "best_area": 0.24843082556622473,
+      "best_over_HKO": 1.2371349729787127,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.20091466246849785,
+          0.006899720588366909
+        ],
+        [
+          -0.1098101561537988,
+          0.021456757290662126
+        ],
+        [
+          -0.0819709240092453,
+          0.021918217775982428
+        ],
+        [
+          -0.07297994846133253,
+          -0.00492614522469487
+        ],
+        [
+          -0.0683037208520504,
+          0.1853116107710469
+        ],
+        [
+          -0.03197313117565318,
+          0.17441322339140364
+        ],
+        [
+          -0.0912365170532504,
+          0.13984647387891258
+        ],
+        [
+          -0.18692280061976624,
+          0.05419402804947607
+        ],
+        [
+          -0.13884752137827341,
+          0.015842453756172166
+        ]
+      ],
+      "best_hull_vertices": [
+        14,
+        9,
+        6,
+        5,
+        27,
+        18,
+        13,
+        17,
+        10,
+        19,
+        16,
+        22,
+        15
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.41279837165638966,
+          "lower_bound_in_shift_box": 0.30298397269589655,
+          "gap_in_shift_box": 0.10981439896049311,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.3284704199668852,
+          "lower_bound_in_shift_box": 0.26187357438804204,
+          "gap_in_shift_box": 0.06659684557884316,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.31042414591147494,
+          "lower_bound_in_shift_box": 0.2412846405152851,
+          "gap_in_shift_box": 0.06913950539618985,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.3043432106658961,
+          "lower_bound_in_shift_box": 0.24190131424294556,
+          "gap_in_shift_box": 0.06244189642295053,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.2656021816673139,
+          "lower_bound_in_shift_box": 0.20575840136979592,
+          "gap_in_shift_box": 0.059843780297517996,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2656021816673139,
+          "lower_bound_in_shift_box": 0.20947768105834388,
+          "gap_in_shift_box": 0.056124500608970035,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.2656021816673139,
+          "lower_bound_in_shift_box": 0.22341836922846078,
+          "gap_in_shift_box": 0.042183812438853135,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.2656021816673139,
+          "lower_bound_in_shift_box": 0.201295771253507,
+          "gap_in_shift_box": 0.06430641041380691,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.2600869573042822,
+          "lower_bound_in_shift_box": 0.21984945227741298,
+          "gap_in_shift_box": 0.040237505026869236,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.24843082556622473,
+          "lower_bound_in_shift_box": 0.20539311172090438,
+          "gap_in_shift_box": 0.04303771384532035,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.24843082556622473,
+          "lower_bound_in_shift_box": 0.21159717577471798,
+          "gap_in_shift_box": 0.036833649791506745,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.24843082556622473,
+          "lower_bound_in_shift_box": 0.20966078173726305,
+          "gap_in_shift_box": 0.03877004382896168,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "HKO_perturb_0.2",
+      "initial_area": 0.8054553452558002,
+      "best_area": 0.2559980035718711,
+      "best_over_HKO": 1.2748179800540356,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.18193219476586842,
+          0.05926206069506347
+        ],
+        [
+          -0.048009470492408085,
+          0.05858415349878522
+        ],
+        [
+          -0.014586501389490834,
+          -0.03755451633543069
+        ],
+        [
+          -0.08631297561789039,
+          -0.054023012146235255
+        ],
+        [
+          -0.1375054283079553,
+          0.18038645906831496
+        ],
+        [
+          -0.1574518468355513,
+          0.1037273501422879
+        ],
+        [
+          -0.1762687285813489,
+          0.06107329273190547
+        ],
+        [
+          -0.19214386464283656,
+          0.04791469698573153
+        ],
+        [
+          -0.19589186280144422,
+          0.08934061791110384
+        ]
+      ],
+      "best_hull_vertices": [
+        0,
+        11,
+        13,
+        7,
+        2,
+        4,
+        25,
+        28,
+        20,
+        15,
+        14,
+        9,
+        5
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.6286125590317123,
+          "lower_bound_in_shift_box": 0.3651512646827472,
+          "gap_in_shift_box": 0.2634612943489651,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.43141309128833966,
+          "lower_bound_in_shift_box": 0.24903880343974988,
+          "gap_in_shift_box": 0.18237428784858978,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.38326938987963843,
+          "lower_bound_in_shift_box": 0.2670798958704549,
+          "gap_in_shift_box": 0.11618949400918355,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.3705103602662495,
+          "lower_bound_in_shift_box": 0.2419679267024137,
+          "gap_in_shift_box": 0.1285424335638358,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.30310522961098274,
+          "lower_bound_in_shift_box": 0.2345354886355123,
+          "gap_in_shift_box": 0.06856974097547044,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2712130968696892,
+          "lower_bound_in_shift_box": 0.2232361750377827,
+          "gap_in_shift_box": 0.047976921831906494,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.2559980035718711,
+          "lower_bound_in_shift_box": 0.201154582605898,
+          "gap_in_shift_box": 0.05484342096597308,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.2559980035718711,
+          "lower_bound_in_shift_box": 0.20336039239110437,
+          "gap_in_shift_box": 0.05263761118076671,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.2559980035718711,
+          "lower_bound_in_shift_box": 0.22303198668853175,
+          "gap_in_shift_box": 0.03296601688333933,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.2559980035718711,
+          "lower_bound_in_shift_box": 0.20271432447423493,
+          "gap_in_shift_box": 0.05328367909763615,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.2559980035718711,
+          "lower_bound_in_shift_box": 0.21299815780556225,
+          "gap_in_shift_box": 0.04299984576630883,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2559980035718711,
+          "lower_bound_in_shift_box": 0.20269409324026805,
+          "gap_in_shift_box": 0.05330391033160303,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "remote_6_0.12",
+      "initial_area": 0.4523261484449772,
+      "best_area": 0.25438680409117204,
+      "best_over_HKO": 1.2667945344068425,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.10583075052669508,
+          0.015299802224415886
+        ],
+        [
+          -0.05277080096665407,
+          -0.03826816181936271
+        ],
+        [
+          0.031039617430199683,
+          -0.035142240430972645
+        ],
+        [
+          0.0858939733216727,
+          -0.04229710819363318
+        ],
+        [
+          0.034531864370097407,
+          0.16356919463077957
+        ],
+        [
+          0.026788382683786652,
+          0.04462066342908498
+        ],
+        [
+          0.07646085291091159,
+          0.08668012397083615
+        ],
+        [
+          -0.06755281273514332,
+          -0.00035641705275041985
+        ],
+        [
+          0.01939816250699767,
+          0.04003918821266848
+        ]
+      ],
+      "best_hull_vertices": [
+        15,
+        6,
+        5,
+        24,
+        18,
+        23,
+        13,
+        17,
+        10,
+        16,
+        22,
+        28,
+        20
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.32230426737975965,
+          "lower_bound_in_shift_box": 0.22869111334299497,
+          "gap_in_shift_box": 0.09361315403676468,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.2903374890773869,
+          "lower_bound_in_shift_box": 0.224119389284792,
+          "gap_in_shift_box": 0.06621809979259488,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.2903374890773869,
+          "lower_bound_in_shift_box": 0.2254347329848237,
+          "gap_in_shift_box": 0.06490275609256319,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.2789530704380588,
+          "lower_bound_in_shift_box": 0.22359523969584513,
+          "gap_in_shift_box": 0.05535783074221365,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.2551812592794755,
+          "lower_bound_in_shift_box": 0.20840693315150507,
+          "gap_in_shift_box": 0.04677432612797042,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2551812592794755,
+          "lower_bound_in_shift_box": 0.21824479069982594,
+          "gap_in_shift_box": 0.03693646857964955,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.2551812592794755,
+          "lower_bound_in_shift_box": 0.20653004347261203,
+          "gap_in_shift_box": 0.04865121580686346,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.2551812592794755,
+          "lower_bound_in_shift_box": 0.2163799763849931,
+          "gap_in_shift_box": 0.0388012828944824,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.25438680409117204,
+          "lower_bound_in_shift_box": 0.20212594684833154,
+          "gap_in_shift_box": 0.05226085724284049,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.25438680409117204,
+          "lower_bound_in_shift_box": 0.21408724292062628,
+          "gap_in_shift_box": 0.040299561170545756,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.25438680409117204,
+          "lower_bound_in_shift_box": 0.2110337565647932,
+          "gap_in_shift_box": 0.043353047526378835,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.25438680409117204,
+          "lower_bound_in_shift_box": 0.21510068376215813,
+          "gap_in_shift_box": 0.03928612032901391,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "remote_7_0.25",
+      "initial_area": 0.6689779188422216,
+      "best_area": 0.24501634527409044,
+      "best_over_HKO": 1.2201315557324102,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.05528626040305938,
+          0.026870156810556853
+        ],
+        [
+          0.0061201360139264555,
+          0.04396636907352065
+        ],
+        [
+          0.1536134018720455,
+          -0.14563007904979608
+        ],
+        [
+          0.07111595874561978,
+          -0.11580438206232971
+        ],
+        [
+          0.03435640455047424,
+          0.05411142244169767
+        ],
+        [
+          0.11428565736010494,
+          -0.020572864069594465
+        ],
+        [
+          -0.028176169059123804,
+          -0.1493843249324328
+        ],
+        [
+          0.11635412417338642,
+          0.02708693101108301
+        ],
+        [
+          0.17419530243707448,
+          0.03100644754125348
+        ]
+      ],
+      "best_hull_vertices": [
+        22,
+        15,
+        6,
+        0,
+        21,
+        23,
+        18,
+        13,
+        10,
+        7,
+        25,
+        2
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.5956281934320049,
+          "lower_bound_in_shift_box": 0.46063223105739043,
+          "gap_in_shift_box": 0.13499596237461448,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.31929076878722323,
+          "lower_bound_in_shift_box": 0.24286090710925215,
+          "gap_in_shift_box": 0.07642986167797108,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.2927284154095652,
+          "lower_bound_in_shift_box": 0.22663788710373095,
+          "gap_in_shift_box": 0.06609052830583423,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.2927284154095652,
+          "lower_bound_in_shift_box": 0.21263458345043523,
+          "gap_in_shift_box": 0.08009383195912995,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.2927284154095652,
+          "lower_bound_in_shift_box": 0.23626418245107983,
+          "gap_in_shift_box": 0.05646423295848535,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2773248075539163,
+          "lower_bound_in_shift_box": 0.22506261466728958,
+          "gap_in_shift_box": 0.05226219288662673,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.2529724276734886,
+          "lower_bound_in_shift_box": 0.22257741405820852,
+          "gap_in_shift_box": 0.030395013615280075,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.2529724276734886,
+          "lower_bound_in_shift_box": 0.20390099875618356,
+          "gap_in_shift_box": 0.04907142891730504,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.2506515873834903,
+          "lower_bound_in_shift_box": 0.2084051777931273,
+          "gap_in_shift_box": 0.04224640959036299,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.2506515873834903,
+          "lower_bound_in_shift_box": 0.20829865863338937,
+          "gap_in_shift_box": 0.04235292875010094,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.24501634527409044,
+          "lower_bound_in_shift_box": 0.20813309543986933,
+          "gap_in_shift_box": 0.036883249834221116,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.24501634527409044,
+          "lower_bound_in_shift_box": 0.211442786740799,
+          "gap_in_shift_box": 0.03357355853329144,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "remote_8_0.5",
+      "initial_area": 3.290398650225431,
+      "best_area": 0.24402055884663884,
+      "best_over_HKO": 1.2151727418967675,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.06378820092631007,
+          0.045237835717601024
+        ],
+        [
+          -0.10866360836927902,
+          0.08730204049303214
+        ],
+        [
+          -0.019719141383226862,
+          0.01719533792189601
+        ],
+        [
+          -0.10996064022372191,
+          -0.07088348843780655
+        ],
+        [
+          -0.10136197746453585,
+          0.1052452882699652
+        ],
+        [
+          -0.12808545375867184,
+          -0.009769518981216977
+        ],
+        [
+          -0.1423180770681622,
+          0.024128714662280407
+        ],
+        [
+          -0.22084907076700316,
+          -0.006721307640903496
+        ],
+        [
+          -0.002519091861709219,
+          0.021125589677889613
+        ]
+      ],
+      "best_hull_vertices": [
+        27,
+        18,
+        13,
+        17,
+        10,
+        4,
+        25,
+        22,
+        20,
+        14,
+        6,
+        0
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.9838303226443352,
+          "lower_bound_in_shift_box": 0.7303187316929136,
+          "gap_in_shift_box": 0.2535115909514216,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.31652122749193656,
+          "lower_bound_in_shift_box": 0.2306777411386614,
+          "gap_in_shift_box": 0.08584348635327516,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.29839563481443426,
+          "lower_bound_in_shift_box": 0.22410272590105387,
+          "gap_in_shift_box": 0.07429290891338039,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.28994672486438444,
+          "lower_bound_in_shift_box": 0.22989632320788778,
+          "gap_in_shift_box": 0.060050401656496666,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.28994672486438444,
+          "lower_bound_in_shift_box": 0.23328100986578734,
+          "gap_in_shift_box": 0.0566657149985971,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2858279132077033,
+          "lower_bound_in_shift_box": 0.2102829721757489,
+          "gap_in_shift_box": 0.07554494103195439,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.2858279132077033,
+          "lower_bound_in_shift_box": 0.22418681352772618,
+          "gap_in_shift_box": 0.06164109967997711,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.2625342575712993,
+          "lower_bound_in_shift_box": 0.21233237343214853,
+          "gap_in_shift_box": 0.05020188413915075,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.24402055884663884,
+          "lower_bound_in_shift_box": 0.21684174243694268,
+          "gap_in_shift_box": 0.02717881640969616,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.24402055884663884,
+          "lower_bound_in_shift_box": 0.20842898228491513,
+          "gap_in_shift_box": 0.03559157656172371,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.24402055884663884,
+          "lower_bound_in_shift_box": 0.22068103266357944,
+          "gap_in_shift_box": 0.0233395261830594,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.24402055884663884,
+          "lower_bound_in_shift_box": 0.2074067021558375,
+          "gap_in_shift_box": 0.03661385669080133,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "remote_9_0.12",
+      "initial_area": 0.4772302210034926,
+      "best_area": 0.27525775079917214,
+      "best_over_HKO": 1.3707276032311013,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.040021298538047936,
+          0.0069742630749300445
+        ],
+        [
+          0.10384356929926691,
+          0.020531582265236
+        ],
+        [
+          0.19551164343879895,
+          -0.0668476179732429
+        ],
+        [
+          0.06166766646649846,
+          -0.046963174007919786
+        ],
+        [
+          0.11284391868676641,
+          0.1298278701371745
+        ],
+        [
+          0.13458164651596813,
+          0.12158816348105268
+        ],
+        [
+          0.07936345193131088,
+          -0.11390844388415663
+        ],
+        [
+          0.021769708611784705,
+          -0.012962554730656495
+        ],
+        [
+          0.012553673600476906,
+          0.03918748754999976
+        ]
+      ],
+      "best_hull_vertices": [
+        28,
+        14,
+        0,
+        5,
+        24,
+        23,
+        17,
+        10,
+        19,
+        16,
+        2
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.35836854650838046,
+          "lower_bound_in_shift_box": 0.2601360190292905,
+          "gap_in_shift_box": 0.09823252747908995,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.3567017048939836,
+          "lower_bound_in_shift_box": 0.22017416098502118,
+          "gap_in_shift_box": 0.13652754390896243,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.3034248429808468,
+          "lower_bound_in_shift_box": 0.218332872402637,
+          "gap_in_shift_box": 0.08509197057820983,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.3034248429808468,
+          "lower_bound_in_shift_box": 0.23887687033913987,
+          "gap_in_shift_box": 0.06454797264170695,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.2777368037547974,
+          "lower_bound_in_shift_box": 0.20845191038097632,
+          "gap_in_shift_box": 0.0692848933738211,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2777368037547974,
+          "lower_bound_in_shift_box": 0.22446617850005543,
+          "gap_in_shift_box": 0.05327062525474199,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.27525775079917214,
+          "lower_bound_in_shift_box": 0.20704767716310302,
+          "gap_in_shift_box": 0.06821007363606912,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.27525775079917214,
+          "lower_bound_in_shift_box": 0.22142283856771758,
+          "gap_in_shift_box": 0.05383491223145456,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.27525775079917214,
+          "lower_bound_in_shift_box": 0.2274537325025513,
+          "gap_in_shift_box": 0.04780401829662084,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.27525775079917214,
+          "lower_bound_in_shift_box": 0.21915759230651616,
+          "gap_in_shift_box": 0.05610015849265598,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.27525775079917214,
+          "lower_bound_in_shift_box": 0.21445409950904146,
+          "gap_in_shift_box": 0.060803651290130684,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.27525775079917214,
+          "lower_bound_in_shift_box": 0.21741519349072863,
+          "gap_in_shift_box": 0.05784255730844351,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "remote_10_0.25",
+      "initial_area": 1.1581549800396085,
+      "best_area": 0.238467709768674,
+      "best_over_HKO": 1.1875206831058924,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.13376434320822173,
+          0.07176093837838632
+        ],
+        [
+          -0.13471442046438484,
+          0.05672878066021356
+        ],
+        [
+          -0.12800623719015464,
+          0.02390642391519051
+        ],
+        [
+          -0.07668345490862219,
+          -0.10820957049255986
+        ],
+        [
+          -0.06267349097533594,
+          0.07782872085331799
+        ],
+        [
+          0.02631379401569721,
+          0.032828569364772985
+        ],
+        [
+          -0.060586043022434685,
+          -0.04586121576090455
+        ],
+        [
+          0.03509554381678573,
+          0.04359590049024176
+        ],
+        [
+          0.013118790988413374,
+          0.04794397986182565
+        ]
+      ],
+      "best_hull_vertices": [
+        25,
+        28,
+        22,
+        15,
+        9,
+        6,
+        0,
+        12,
+        27,
+        24,
+        18,
+        17,
+        7
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.7215768208999626,
+          "lower_bound_in_shift_box": 0.46057990994171905,
+          "gap_in_shift_box": 0.2609969109582435,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.3690174606136443,
+          "lower_bound_in_shift_box": 0.26312162592281363,
+          "gap_in_shift_box": 0.10589583469083069,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.28233659235633535,
+          "lower_bound_in_shift_box": 0.2026954378171276,
+          "gap_in_shift_box": 0.07964115453920775,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.2783137179822567,
+          "lower_bound_in_shift_box": 0.22655293471652824,
+          "gap_in_shift_box": 0.051760783265728444,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.2783137179822567,
+          "lower_bound_in_shift_box": 0.20154394554492844,
+          "gap_in_shift_box": 0.07676977243732824,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.2783137179822567,
+          "lower_bound_in_shift_box": 0.22509625632713007,
+          "gap_in_shift_box": 0.05321746165512661,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.2783137179822567,
+          "lower_bound_in_shift_box": 0.20784285127679855,
+          "gap_in_shift_box": 0.07047086670545813,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.2783137179822567,
+          "lower_bound_in_shift_box": 0.2290499603425323,
+          "gap_in_shift_box": 0.049263757639724376,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.24350064130066953,
+          "lower_bound_in_shift_box": 0.20540379629119634,
+          "gap_in_shift_box": 0.03809684500947319,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.24350064130066953,
+          "lower_bound_in_shift_box": 0.2178191894302285,
+          "gap_in_shift_box": 0.025681451870441047,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.238467709768674,
+          "lower_bound_in_shift_box": 0.21058178396653807,
+          "gap_in_shift_box": 0.027885925802135947,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.238467709768674,
+          "lower_bound_in_shift_box": 0.21404580605854726,
+          "gap_in_shift_box": 0.024421903710126758,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    },
+    {
+      "name": "remote_11_0.5",
+      "initial_area": 1.233044820957539,
+      "best_area": 0.24584091939779407,
+      "best_over_HKO": 1.224237767125147,
+      "objective_evaluations": 217,
+      "best_translations": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          -0.08915264185827673,
+          0.037389342231604394
+        ],
+        [
+          -0.03420403019358914,
+          -0.03245509093441118
+        ],
+        [
+          0.07565541727489822,
+          -0.13332530569531004
+        ],
+        [
+          0.019725906011447525,
+          0.048355556364103644
+        ],
+        [
+          0.01730642709032379,
+          0.07012975723345019
+        ],
+        [
+          0.0523164864459143,
+          0.08608521128557275
+        ],
+        [
+          -0.07450206885414307,
+          -0.12061331405159643
+        ],
+        [
+          -0.02272638666342036,
+          0.023609912992270714
+        ],
+        [
+          0.05880835109167687,
+          0.06902099478340314
+        ]
+      ],
+      "best_hull_vertices": [
+        13,
+        4,
+        25,
+        28,
+        20,
+        14,
+        22,
+        15,
+        6,
+        11,
+        23,
+        18,
+        17
+      ],
+      "steps": [
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.6666806163517213,
+          "lower_bound_in_shift_box": 0.42816029925057797,
+          "gap_in_shift_box": 0.2385203171011433,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.3402030355649228,
+          "lower_bound_in_shift_box": 0.25112820034835204,
+          "gap_in_shift_box": 0.08907483521657078,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.3097577166259495,
+          "lower_bound_in_shift_box": 0.24155267853146478,
+          "gap_in_shift_box": 0.0682050380944847,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.27564322781517286,
+          "lower_bound_in_shift_box": 0.23237908958947728,
+          "gap_in_shift_box": 0.04326413822569558,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.27564322781517286,
+          "lower_bound_in_shift_box": 0.21113930166112943,
+          "gap_in_shift_box": 0.06450392615404343,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.27564322781517286,
+          "lower_bound_in_shift_box": 0.21353964580663384,
+          "gap_in_shift_box": 0.06210358200853902,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.0,
+          "evaluations": 18,
+          "area": 0.24584091939779407,
+          "lower_bound_in_shift_box": 0.21526457004990773,
+          "gap_in_shift_box": 0.030576349347886334,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.5707963267948966,
+          "evaluations": 18,
+          "area": 0.24584091939779407,
+          "lower_bound_in_shift_box": 0.2050937844108048,
+          "gap_in_shift_box": 0.04074713498698926,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.6283185307179586,
+          "evaluations": 18,
+          "area": 0.24584091939779407,
+          "lower_bound_in_shift_box": 0.2080144237362082,
+          "gap_in_shift_box": 0.03782649566158586,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 1.8849555921538759,
+          "evaluations": 18,
+          "area": 0.24584091939779407,
+          "lower_bound_in_shift_box": 0.20925111976122956,
+          "gap_in_shift_box": 0.0365897996365645,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 0.3141592653589793,
+          "evaluations": 18,
+          "area": 0.24584091939779407,
+          "lower_bound_in_shift_box": 0.21706945588860987,
+          "gap_in_shift_box": 0.028771463509184192,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        },
+        {
+          "angle": 2.199114857512855,
+          "evaluations": 18,
+          "area": 0.24584091939779407,
+          "lower_bound_in_shift_box": 0.20733619379035154,
+          "gap_in_shift_box": 0.03850472560744253,
+          "termination": "cut budget",
+          "best_shift_boundary_hit": false,
+          "maximum_observed_cut_violation": 0.0
+        }
+      ],
+      "failure_or_stop": null
+    }
+  ]
+}

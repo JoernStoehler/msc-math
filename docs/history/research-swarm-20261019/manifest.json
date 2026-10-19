@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-19T18:05:29.091662+00:00",
+  "scope": "Incremental selected Section11 integration: source/math approval, successful105-page build, focused pp72\u201374 visual/interfaces. Not full-manuscript scientific reconciliation, human proof/prose acceptance or whole-PDF PASS.",
+  "files": {
+    "thesis/chapters/10b-symmetric-partners.tex": {
+      "sha256": "759922148b5b6b995df12ba1d7269c9121aad1c4fb46981e734524fe0314a270",
+      "bytes": 7224
+    },
+    "thesis/main.tex": {
+      "sha256": "47c89e1d3636e228e738edf2f180acd532d9e009bcabfee499d060e791b8e5fa",
+      "bytes": 2522
+    },
+    "thesis/build/main.pdf": {
+      "sha256": "1bbadec4a20298aac40c6aa3c20ef0ade55617d52fe3dee57a584a66868f9b44",
+      "bytes": 1781247
+    }
+  },
+  "evidence": [
+    "symmetric-partner-writer-check.md",
+    "symmetric-partner-receiving-review.md",
+    "source-integration-review.md",
+    "thesis-build.log",
+    "thesis-added-072.png",
+    "thesis-added-073-final.png",
+    "thesis-added-074-final.png"
+  ],
+  "retained_full_pdf": false,
+  "live_pdf": "thesis/build/main.pdf"
+}

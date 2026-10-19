@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-14T14:49:40.978079+00:00",
-  "scope": "This worktree retains consolidated project state plus the selected 10 October cleanup-workflow design. Historical assignments and runtime observations are not current authorizations or live resource balances.",
-  "summary": "Approved local-main consolidation and selective cleanup complete. /workspaces/msc-math on main is the sole registered worktree; no topic branches remain locally or on origin. Original inputs/retired history retained for recovery, rejected e002 draft archived without activation. About10GiB reclaimed; other scratch deliberately retained. No cloud/thesis execution selected.",
+  "updated_at": "2026-10-19T18:04:11.256442+00:00",
+  "scope": "Fresh human-authorized 19 October research swarm in /workspaces/msc-math. Historical assignments and resource observations remain evidence, not inherited execution authority.",
+  "summary": "Fresh run has independently checked all-odd regular-pair capacity formula and sharp HKO bound in that class, sharp universal fixed-pentagon symmetrization plateau, and selected symmetric-partner theorem integrated in Section11 of a105-page build (focused pp72–74 review). Root integrates source/state and a genuine reader decision on presenting the new general method. A bounded direct translation-cover probe tests a published convex inner primitive; no unrestricted global optimum or human PASS is claimed.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -2276,19 +2276,23 @@
     {
       "id": "selected-symmetric-partner-inclusion",
       "title": "Integrate selected symmetric-partner result",
-      "status": "ready",
+      "status": "done",
       "selection": "selected",
       "project": "msc-math",
       "owner": null,
-      "outcome": "Jörn selected inclusion on 3 October (project-facts 13.2); standalone candidate retained but result absent from the selected 101-page manuscript. Proof/prose acceptance and final placement remain open. Consolidation performs no new thesis authoring.",
+      "outcome": "Selected pentagon/symmetric-partner theorem integrated as Section11, theorem11.1, figure11, pp72–74. Independent source/math review and build/focused visual checks passed. WorkingPDF105pages; human proof/prose and wholePDF PASS remain open.",
       "depends_on": [],
       "blocker": null,
       "sources": [
         "docs/project-facts.md",
         "meta-topics/project-management/thesis-work.md",
-        "docs/history/symmetric-partner-candidate-2026-10-03/README.md"
+        "docs/history/symmetric-partner-candidate-2026-10-03/README.md",
+        "thesis/chapters/10b-symmetric-partners.tex",
+        "thesis/main.tex"
       ],
-      "updated_at": "2026-10-04T09:28:11.204695+00:00"
+      "updated_at": "2026-10-19T17:53:06.039623+00:00",
+      "authorization": "Jörn selected pentagon inclusion3October; fresh19October human research/writeup envelope gives root scientific and integration decisions. Bounded geometric chapter integration/build/review selected17:38UTC, same10+1quota/timebounds.",
+      "next_step": "Human reader judgment can guide exposition; preserve exact source/build/review evidence. New all-odd result has a separate presentation decision."
     },
     {
       "id": "post-consolidation-health-repair-20261004",
@@ -3025,6 +3029,136 @@
       ],
       "updated_at": "2026-10-14T14:49:40.978079+00:00",
       "next_step": "No further cleanup package, archive triage, draft activation, cloud or thesis work selected. Use the recorded recovery route only if specific lost material is needed."
+    },
+    {
+      "id": "research-swarm-20261019",
+      "title": "Bounded research value and checked approach map",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261019",
+      "status": "running",
+      "owner": "01a15530-d319-71a0-8615-77d40e2fe36c",
+      "outcome": "Useful checked research/exposition or precise evidenced obstruction, current/conditional approach map, reviewed delivery and released child owners.",
+      "depends_on": [
+        "research-odd-pair-20261019",
+        "research-partner-plateau-20261019",
+        "selected-symmetric-partner-inclusion"
+      ],
+      "sources": [
+        "meta-topics/project-management/research-swarm-20261019.md"
+      ],
+      "authorization": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution.",
+      "updated_at": "2026-10-19T18:04:11.256442+00:00",
+      "next_step": "Finish scoped source/state review, use optional reader feedback if received, commit checked integration and preserve handoff/stop owned work within18:24:37 research and18:34:37 final limits (or earlier account guard)."
+    },
+    {
+      "id": "research-odd-pair-20261019",
+      "title": "Odd regular pair angular containment",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261019",
+      "status": "done",
+      "owner": null,
+      "outcome": "All odd n,m>=5 rotation capacity formula proved via shape-sensitive circle deficit; sharp HKO systolic bound/equality throughout this class. Two independent final proof audits passed. No independent-affine extension, human acceptance, novelty or manuscript inclusion inferred.",
+      "depends_on": [],
+      "sources": [
+        "meta-topics/project-management/research-swarm-20261019.md",
+        "topics/products/pentagon-affine-products/odd-regular-angular-width.md"
+      ],
+      "authorization": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution.",
+      "updated_at": "2026-10-19T17:53:06.039623+00:00",
+      "next_step": "Root reconciles old conjecture/status sources and chooses reader-facing exposition route; owner returned with no subprocess."
+    },
+    {
+      "id": "research-partner-plateau-20261019",
+      "title": "Asymmetric partner fixed-width plateau",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261019",
+      "status": "done",
+      "owner": null,
+      "outcome": "Sharp universal pentagon fixed-width saturation interval proved; explicit trapezoid has exact equality interval. Main proof, transfer/breakpoint consequences and sharpness independently checked with scoped audits. Human acceptance/novelty remain open.",
+      "depends_on": [],
+      "sources": [
+        "meta-topics/project-management/research-swarm-20261019.md",
+        "topics/products/pentagon-arbitrary-partner/symmetrization-plateau-20261019.md"
+      ],
+      "authorization": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution.",
+      "updated_at": "2026-10-19T17:53:06.039623+00:00",
+      "next_step": "Root integrates sources and result map; no further onset campaign selected."
+    },
+    {
+      "id": "writeup-symmetric-partner-20261019",
+      "title": "Geometric symmetric-partner exposition",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261019",
+      "status": "done",
+      "owner": null,
+      "outcome": "Geometric decagon-first exposition retained and independently checked, then integrated in selected Section11 under selected-symmetric-partner-inclusion. Source/math and focused105pagebuild checks passed; human prose/proof acceptance remains open.",
+      "depends_on": [],
+      "sources": [
+        "meta-topics/project-management/research-swarm-20261019.md",
+        "topics/products/pentagon-arbitrary-partner/symmetric-partner-exposition.md"
+      ],
+      "authorization": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution.",
+      "updated_at": "2026-10-19T18:03:23.617036+00:00",
+      "next_step": "Optional reader calibration-transfer question pending; use feedback for a concrete revision within the fresh envelope. No new theorem promotion."
+    },
+    {
+      "id": "writeup-product-method-route-20261019",
+      "title": "Choose how the new uniform product method enters the writeup",
+      "kind": "crux",
+      "selection": "parked",
+      "project": "research-20261019",
+      "status": "parked",
+      "owner": null,
+      "depends_on": [
+        "research-odd-pair-20261019"
+      ],
+      "outcome": "Concrete reader decision: keep the short accepted pentagon proof as main anchor plus general theorem/method and appendix estimates, or make the uniform proof central. No automatic new theorem promotion.",
+      "next_step": "After the concrete calibration reader check, consider the uniform-method manuscript route. A broader question draft was not sent; no automatic theorem/appendix promotion.",
+      "sources": [
+        "topics/products/pentagon-affine-products/odd-regular-angular-width.md",
+        "thesis/chapters/09-rotated-regular-polygons.tex",
+        "thesis/chapters/10b-symmetric-partners.tex"
+      ],
+      "updated_at": "2026-10-19T18:02:37.586019+00:00"
+    },
+    {
+      "id": "translation-cover-algorithm-probe-20261019",
+      "title": "Test an unrestricted translation-cover optimization primitive",
+      "project": "research-20261019",
+      "status": "done",
+      "selection": "selected",
+      "owner": null,
+      "depends_on": [],
+      "outcome": "Published exact unrestricted strategy and inherited solved10fan baseline recovered. Bounded12-start direct cover rehearsal plus3existing-start refinements finished: no belowHKO candidate; individual boxed numericalLP gaps closed, no full-space optimum/convergence claim. Both processes exited; ~10.1s observedCPU, not quota.",
+      "next_step": "Root retains matched small evidence and source-limits; no larger campaign selected.",
+      "sources": [
+        "topics/products/pentagon-arbitrary-partner/translation-cover-algorithms-20261019.md",
+        "topics/products/pentagon-arbitrary-partner/translation-cover-probe-20261019/README.md"
+      ],
+      "updated_at": "2026-10-19T18:02:37.586019+00:00"
+    },
+    {
+      "id": "writeup-calibration-reader-20261019",
+      "title": "Reader check of the selected calibration transfer",
+      "kind": "crux",
+      "selection": "selected",
+      "project": "research-20261019",
+      "status": "running",
+      "owner": "01a15530-d319-71a0-8615-77d40e2fe36c",
+      "depends_on": [
+        "selected-symmetric-partner-inclusion"
+      ],
+      "outcome": "Optional artifact-anchored question published to Workbench request:msc-research-20261019-calibration-reader: does Section11 opening/Figure11 explain why calibrating oneB transfers to every symmetricK? Not a proof/inclusion approval request.",
+      "next_step": "Use any answer for a concrete opening/containment-picture revision within the remaining envelope; independent source integration continues. Pending feedback is not standing post-deadline authorization.",
+      "sources": [
+        "thesis/chapters/10b-symmetric-partners.tex",
+        "docs/history/research-swarm-20261019/symmetric-partner-receiving-review.md"
+      ],
+      "updated_at": "2026-10-19T18:02:37.586019+00:00"
     }
   ],
   "decisions": [
@@ -3410,9 +3544,35 @@
       "observed_at": "2026-10-14T14:49:40.978079+00:00",
       "value": "msc-math-artifacts:52objects/1475457453bytes, exactly13registered snapshots; manifest identities and listed names/sizes validated. No unregistered objects or unfinished multipart uploads. Actual account invoice/otherusage uninspected.",
       "basis": "Read-only rclone lsjson,13manifest reads and list-multipart-uploads; source account worktree-adoption-20261014.md. No payloaddownload/deletion."
+    },
+    {
+      "label": "19 October fresh research swarm envelope",
+      "value": "Account baseline41%weekly used,10080min window, rounded/account-wide. Research allowance10percentage points, winddown1; research stop2026-10-19T18:24:37.341551Z, final2026-10-19T18:34:37.341551Z. Conservative backend guard on+10ACCOUNTpoints while project attribution unavailable. No token/dollar conversion. Latest project quota consumption unknown.",
+      "observed_at": "2026-10-19T17:26:53.127499+00:00",
+      "basis": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution."
+    },
+    {
+      "label": "19 October backend guard observation",
+      "value": "Account43%weekly used, rounded/account-wide; baseline41%frozen. Five native children coverage verified by backend ancestor query/read-only edge record. Project quota attribution unknown; bounds unchanged.",
+      "observed_at": "2026-10-19T17:34:50.492315+00:00",
+      "basis": "Native backend update in root conversation; proof /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/descendant-coverage.json."
+    },
+    {
+      "label": "19 October account guard update",
+      "value": "Backend reports45%weekly account used; frozen baseline41%. Rounded/shared account observation; no project attribution. Research/final deadlines and10+1point allowance unchanged.",
+      "observed_at": "2026-10-19T17:53:06.039623+00:00",
+      "basis": "Workbench native guard checkpoint received; no token or API-dollar conversion."
     }
   ],
   "links": [
+    {
+      "label": "Research result and approach map · 19 October",
+      "path": "docs/dashboard/research-frontier.html"
+    },
+    {
+      "label": "19 October fresh research frontier and bounded run",
+      "path": "meta-topics/project-management/research-swarm-20261019.md"
+    },
     {
       "label": "Codex TUI/config and implementation reference",
       "path": "meta-topics/development-environment/codex-reference.md"
@@ -3487,6 +3647,26 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-19T18:02:37.586019+00:00",
+      "text": "Actual calibration-transfer reader question published after artifact/source review; broader product-method placement is parked rather than silently substituted. Published cover-algorithm answer delivered, bounded probe closed with explicit numerical-box/convergence limits. Receiving chapter review receipt retained; final scoped source/status review underway."
+    },
+    {
+      "at": "2026-10-19T17:53:06.039623+00:00",
+      "text": "Reconciled actual selectedSection11 integration/build and closed returned research owners. All-odd theorem and sharp plateau now checked; human request changes next writing decision to explicit reader-led method placement. Published exact cover algorithm and inherited solved10fan baseline recovered; bounded unrestricted probe performed."
+    },
+    {
+      "at": "2026-10-19T17:38:07.275834+00:00",
+      "text": "Selected bounded manuscript integration of already-selected pentagon symmetric-partner theorem, using independently checked geometric exposition. No automatic promotion of new plateau/nonagon research; PDF/human acceptance remain separate."
+    },
+    {
+      "at": "2026-10-19T17:34:50.492315+00:00",
+      "text": "Independent checks passed new universal pentagon symmetrization plateau and consequences, geometric symmetric-partner exposition and elementary9×9 angular width theorem. All-odd and global asymmetric HKO bounds remain open. Human free-bridge contact question posted through verified Workbench route."
+    },
+    {
+      "at": "2026-10-19T17:26:53.127499+00:00",
+      "text": "Fresh HUMAN-authorized research swarm admitted, separate from all closed runs. Three bounded native owners selected; strategy/checks/current surfaces remain with root. Backend owns account guard/shared routing only."
+    },
     {
       "at": "2026-10-14T14:49:40.978079+00:00",
       "text": "Corrected blanket undoability claim to specific file/history recovery. Read-only R2 audit found only13registered research snapshots and no unfinished uploads; retained data now has an inventory-backed disposition. Publishing cleanup/correction to origin/main."

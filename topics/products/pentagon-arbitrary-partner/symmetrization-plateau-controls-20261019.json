@@ -1,0 +1,845 @@
+{
+  "status": "floating-point corroboration; not a proof or optimality certificate",
+  "numpy_version": "2.5.4",
+  "scipy_version": "1.18.1",
+  "script_sha256": "7d44c219f2a9467eb04f89dfc58cdbd6e0624f973fa28e4beb074e702d6816c8",
+  "universal_sufficient_onset": 0.3819660112501051,
+  "controls": [
+    {
+      "name": "regular_triangle_angle_0",
+      "vertices": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          -0.4999999999999998,
+          0.8660254037844387
+        ],
+        [
+          -0.5000000000000004,
+          -0.8660254037844384
+        ]
+      ],
+      "width": 2.7135254915624216,
+      "first_plateau_t": 0.2225624520175487,
+      "construction": {
+        "t": 0.3819660112501051,
+        "templates": [
+          {
+            "template_id": "(0, 1, 3)-(0, 1, 2)",
+            "minimum_slack": 0.04953404504806336
+          },
+          {
+            "template_id": "(0, 1, 3)-(0, 2, 1)",
+            "minimum_slack": 0.04953404504806347
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 1, 2)",
+            "minimum_slack": -1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 2, 1)",
+            "minimum_slack": -1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.04953404504806325
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.04953404504806325
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.01252031067592918
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.012520310675929402
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 1, 2)",
+            "minimum_slack": 0.012520310675929514
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 2, 1)",
+            "minimum_slack": 0.012520310675929514
+          }
+        ],
+        "maximum_constraint_violation": 1.1102230246251565e-16
+      },
+      "central_samples": [
+        {
+          "t": 0.3819660112501051,
+          "capacity_over_width": 1.0,
+          "sys": 0.8096953983017081,
+          "area_formula_error": 2.220446049250313e-16
+        },
+        {
+          "t": 0.45,
+          "capacity_over_width": 1.0,
+          "sys": 0.7973121795569563,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.5,
+          "capacity_over_width": 1.0,
+          "sys": 0.7946544722917666,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.55,
+          "capacity_over_width": 1.0,
+          "sys": 0.7973121795569563,
+          "area_formula_error": 2.220446049250313e-16
+        },
+        {
+          "t": 0.6180339887498949,
+          "capacity_over_width": 1.0,
+          "sys": 0.8096953983017081,
+          "area_formula_error": 2.220446049250313e-16
+        }
+      ]
+    },
+    {
+      "name": "regular_triangle_angle_0.17",
+      "vertices": [
+        [
+          0.9855847669095608,
+          0.16918234906699603
+        ],
+        [
+          -0.6393085956187252,
+          0.7689502711931463
+        ],
+        [
+          -0.34627617129083577,
+          -0.938132620260142
+        ]
+      ],
+      "width": 2.715637270704427,
+      "first_plateau_t": 0.22763291998107915,
+      "construction": {
+        "t": 0.3819660112501051,
+        "templates": [
+          {
+            "template_id": "(0, 1, 3)-(0, 1, 2)",
+            "minimum_slack": 0.0403383184299394
+          },
+          {
+            "template_id": "(0, 1, 3)-(0, 2, 1)",
+            "minimum_slack": 0.058729771666187425
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 1, 2)",
+            "minimum_slack": 0.007819728365434875
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 2, 1)",
+            "minimum_slack": 0.007819728365434875
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.01722089298642393
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.01722089298642404
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.04033831842993929
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.04033831842993951
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 1, 2)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          }
+        ],
+        "maximum_constraint_violation": 0.0
+      },
+      "central_samples": [
+        {
+          "t": 0.3819660112501051,
+          "capacity_over_width": 1.0000000000000002,
+          "sys": 0.8109561664174887,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.45,
+          "capacity_over_width": 1.0000000000000002,
+          "sys": 0.7985536658941854,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.5,
+          "capacity_over_width": 1.0,
+          "sys": 0.7958918203412048,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.55,
+          "capacity_over_width": 1.0000000000000002,
+          "sys": 0.7985536658941855,
+          "area_formula_error": 2.220446049250313e-16
+        },
+        {
+          "t": 0.6180339887498949,
+          "capacity_over_width": 1.0,
+          "sys": 0.8109561664174881,
+          "area_formula_error": 4.440892098500626e-16
+        }
+      ]
+    },
+    {
+      "name": "skinny_triangle",
+      "vertices": [
+        [
+          -3.0,
+          -0.2
+        ],
+        [
+          3.0,
+          -0.2
+        ],
+        [
+          0.1,
+          0.4
+        ]
+      ],
+      "width": 1.1412678195541845,
+      "first_plateau_t": 0.0,
+      "construction": {
+        "t": 0.3819660112501051,
+        "templates": [
+          {
+            "template_id": "(0, 1, 3)-(0, 1, 2)",
+            "minimum_slack": 0.0875388202501893
+          },
+          {
+            "template_id": "(0, 1, 3)-(0, 2, 1)",
+            "minimum_slack": 0.0875388202501893
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 1, 2)",
+            "minimum_slack": 0.14164078649987386
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.08753882025018928
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.08753882025018928
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 1, 2)",
+            "minimum_slack": -2.220446049250313e-16
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 1, 2)",
+            "minimum_slack": 5.551115123125783e-17
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 2, 1)",
+            "minimum_slack": 5.551115123125783e-17
+          }
+        ],
+        "maximum_constraint_violation": 2.220446049250313e-16
+      },
+      "central_samples": [
+        {
+          "t": 0.3819660112501051,
+          "capacity_over_width": 0.9999999999999996,
+          "sys": 0.10336616131848231,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.45,
+          "capacity_over_width": 0.9999999999999996,
+          "sys": 0.10178531278075219,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.5,
+          "capacity_over_width": 0.9999999999999996,
+          "sys": 0.10144602840481634,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.55,
+          "capacity_over_width": 0.9999999999999996,
+          "sys": 0.10178531278075219,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.6180339887498949,
+          "capacity_over_width": 0.9999999999999996,
+          "sys": 0.10336616131848231,
+          "area_formula_error": 4.440892098500626e-16
+        }
+      ]
+    },
+    {
+      "name": "irregular_pentagon",
+      "vertices": [
+        [
+          -1.0,
+          -0.6
+        ],
+        [
+          0.6,
+          -0.9
+        ],
+        [
+          1.2,
+          0.1
+        ],
+        [
+          0.5,
+          1.1
+        ],
+        [
+          -0.7,
+          0.8
+        ]
+      ],
+      "width": 3.5521554572905045,
+      "first_plateau_t": 0.0,
+      "construction": {
+        "t": 0.3819660112501051,
+        "templates": [
+          {
+            "template_id": "(0, 1, 3)-(0, 1, 2)",
+            "minimum_slack": 0.09184543778191245
+          },
+          {
+            "template_id": "(0, 1, 3)-(0, 2, 1)",
+            "minimum_slack": 0.09184543778191268
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 1, 2)",
+            "minimum_slack": 0.03227556002857601
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 2, 1)",
+            "minimum_slack": 0.03227556002857601
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.01275041457388626
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.01275041457388626
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.00215896999980425
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.002158969999804694
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 1, 2)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 2, 1)",
+            "minimum_slack": 1.1102230246251565e-16
+          }
+        ],
+        "maximum_constraint_violation": 0.0
+      },
+      "central_samples": [
+        {
+          "t": 0.3819660112501051,
+          "capacity_over_width": 1.0,
+          "sys": 0.7918198284266751,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.45,
+          "capacity_over_width": 1.0000000000000002,
+          "sys": 0.7881630652683632,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.5,
+          "capacity_over_width": 1.0,
+          "sys": 0.7873678859146797,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.55,
+          "capacity_over_width": 1.0000000000000002,
+          "sys": 0.7881630652683633,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.6180339887498949,
+          "capacity_over_width": 1.0,
+          "sys": 0.7918198284266751,
+          "area_formula_error": 0.0
+        }
+      ]
+    },
+    {
+      "name": "translated_irregular",
+      "vertices": [
+        [
+          22.0,
+          -11.6
+        ],
+        [
+          23.6,
+          -11.9
+        ],
+        [
+          24.2,
+          -10.9
+        ],
+        [
+          23.5,
+          -9.9
+        ],
+        [
+          22.3,
+          -10.2
+        ]
+      ],
+      "width": 3.5521554572905036,
+      "first_plateau_t": 0.0,
+      "construction": {
+        "t": 0.3819660112501051,
+        "templates": [
+          {
+            "template_id": "(0, 1, 3)-(0, 1, 2)",
+            "minimum_slack": 0.09184543778191223
+          },
+          {
+            "template_id": "(0, 1, 3)-(0, 2, 1)",
+            "minimum_slack": 0.09184543778191623
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 1, 2)",
+            "minimum_slack": 0.032275560028577566
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 2, 1)",
+            "minimum_slack": 0.032275560028577566
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.012750414573885038
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.012750414573885926
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.002158969999804583
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.0021589699998059153
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 1, 2)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          }
+        ],
+        "maximum_constraint_violation": 0.0
+      },
+      "central_samples": [
+        {
+          "t": 0.3819660112501051,
+          "capacity_over_width": 1.0000000000000002,
+          "sys": 0.7918198284266752,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.45,
+          "capacity_over_width": 1.0000000000000004,
+          "sys": 0.788163065268363,
+          "area_formula_error": 2.220446049250313e-15
+        },
+        {
+          "t": 0.5,
+          "capacity_over_width": 1.0000000000000002,
+          "sys": 0.7873678859146798,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.55,
+          "capacity_over_width": 0.999999999999998,
+          "sys": 0.7881630652683596,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.6180339887498949,
+          "capacity_over_width": 1.0000000000000004,
+          "sys": 0.7918198284266756,
+          "area_formula_error": 0.0
+        }
+      ]
+    },
+    {
+      "name": "regular_pentagon_hko_angle",
+      "vertices": [
+        [
+          0.5877852522924731,
+          0.8090169943749475
+        ],
+        [
+          -0.587785252292473,
+          0.8090169943749475
+        ],
+        [
+          -0.9510565162951536,
+          -0.3090169943749473
+        ],
+        [
+          -1.8369701987210297e-16,
+          -1.0
+        ],
+        [
+          0.9510565162951535,
+          -0.3090169943749476
+        ]
+      ],
+      "width": 3.440954801177934,
+      "first_plateau_t": 0.0,
+      "construction": {
+        "t": 0.3819660112501051,
+        "templates": [
+          {
+            "template_id": "(0, 1, 3)-(0, 1, 2)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 1, 3)-(0, 2, 1)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 1, 2)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 1, 2)",
+            "minimum_slack": -3.3306690738754696e-16
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 1, 2)",
+            "minimum_slack": 2.220446049250313e-16
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 2, 1)",
+            "minimum_slack": 2.220446049250313e-16
+          }
+        ],
+        "maximum_constraint_violation": 3.3306690738754696e-16
+      },
+      "central_samples": [
+        {
+          "t": 0.3819660112501051,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9421996245487356,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.45,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9376462140466008,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.5,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9366563145999488,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.55,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9376462140466009,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.6180339887498949,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9421996245487356,
+          "area_formula_error": 0.0
+        }
+      ]
+    },
+    {
+      "name": "regular_decagon",
+      "vertices": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.8090169943749475,
+          0.5877852522924731
+        ],
+        [
+          0.30901699437494745,
+          0.9510565162951535
+        ],
+        [
+          -0.30901699437494734,
+          0.9510565162951536
+        ],
+        [
+          -0.8090169943749473,
+          0.5877852522924732
+        ],
+        [
+          -1.0,
+          1.2246467991473532e-16
+        ],
+        [
+          -0.8090169943749476,
+          -0.587785252292473
+        ],
+        [
+          -0.30901699437494756,
+          -0.9510565162951535
+        ],
+        [
+          0.30901699437494723,
+          -0.9510565162951536
+        ],
+        [
+          0.8090169943749473,
+          -0.5877852522924734
+        ]
+      ],
+      "width": 3.618033988749895,
+      "first_plateau_t": 0.0,
+      "construction": {
+        "t": 0.3819660112501051,
+        "templates": [
+          {
+            "template_id": "(0, 1, 3)-(0, 1, 2)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 1, 3)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 1, 2)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 2, 1)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 1, 2)",
+            "minimum_slack": -1.1102230246251565e-16
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 1, 2)",
+            "minimum_slack": -4.440892098500626e-16
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.0
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 1, 2)",
+            "minimum_slack": 1.1102230246251565e-16
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 2, 1)",
+            "minimum_slack": 1.1102230246251565e-16
+          }
+        ],
+        "maximum_constraint_violation": 4.440892098500626e-16
+      },
+      "central_samples": [
+        {
+          "t": 0.3819660112501051,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9366563145999488,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.45,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9366563145999489,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.5,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9366563145999488,
+          "area_formula_error": 4.440892098500626e-16
+        },
+        {
+          "t": 0.55,
+          "capacity_over_width": 0.9999999999999998,
+          "sys": 0.936656314599949,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.6180339887498949,
+          "capacity_over_width": 0.9999999999999997,
+          "sys": 0.9366563145999488,
+          "area_formula_error": 4.440892098500626e-16
+        }
+      ]
+    },
+    {
+      "name": "elongated_irregular",
+      "vertices": [
+        [
+          -11.8,
+          -0.12
+        ],
+        [
+          3.3,
+          -0.18000000000000002
+        ],
+        [
+          12.3,
+          0.020000000000000004
+        ],
+        [
+          8.3,
+          0.22000000000000003
+        ],
+        [
+          -4.6,
+          0.16000000000000003
+        ]
+      ],
+      "width": 0.7155286803643953,
+      "first_plateau_t": 0.0,
+      "construction": {
+        "t": 0.3819660112501051,
+        "templates": [
+          {
+            "template_id": "(0, 1, 3)-(0, 1, 2)",
+            "minimum_slack": 0.06190161406281777
+          },
+          {
+            "template_id": "(0, 1, 3)-(0, 2, 1)",
+            "minimum_slack": 0.05453135293791181
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 1, 2)",
+            "minimum_slack": 0.04282116994843821
+          },
+          {
+            "template_id": "(0, 2, 3)-(0, 2, 1)",
+            "minimum_slack": 0.046549394590144844
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 1, 2)",
+            "minimum_slack": 0.060598606172780595
+          },
+          {
+            "template_id": "(0, 2, 4)-(0, 2, 1)",
+            "minimum_slack": 0.05453135293791181
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 1, 2)",
+            "minimum_slack": -1.3877787807814457e-16
+          },
+          {
+            "template_id": "(1, 2, 4)-(0, 2, 1)",
+            "minimum_slack": -2.7755575615628914e-17
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 1, 2)",
+            "minimum_slack": 0.00043428849182677864
+          },
+          {
+            "template_id": "(1, 3, 4)-(0, 2, 1)",
+            "minimum_slack": 0.00043428849182677864
+          }
+        ],
+        "maximum_constraint_violation": 1.3877787807814457e-16
+      },
+      "central_samples": [
+        {
+          "t": 0.3819660112501051,
+          "capacity_over_width": 0.9999999999999993,
+          "sys": 0.016064475165017713,
+          "area_formula_error": 8.881784197001252e-16
+        },
+        {
+          "t": 0.45,
+          "capacity_over_width": 0.9999999999999996,
+          "sys": 0.015990286594799945,
+          "area_formula_error": 8.881784197001252e-16
+        },
+        {
+          "t": 0.5,
+          "capacity_over_width": 0.9999999999999996,
+          "sys": 0.015974153961440207,
+          "area_formula_error": 0.0
+        },
+        {
+          "t": 0.55,
+          "capacity_over_width": 0.9999999999999993,
+          "sys": 0.015990286594799938,
+          "area_formula_error": 8.881784197001252e-16
+        },
+        {
+          "t": 0.6180339887498949,
+          "capacity_over_width": 0.9999999999999993,
+          "sys": 0.01606447516501771,
+          "area_formula_error": 0.0
+        }
+      ]
+    }
+  ]
+}

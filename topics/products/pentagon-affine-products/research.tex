@@ -526,12 +526,28 @@ For an empty six-block set this is interpreted as automatic. The two sides are a
 
 \textbf{Novelty qualification.} The named primary sources and their relevant statements were checked, together with a limited targeted search. I did not locate the independent-affine-pentagon formula or the affine-class extremal statement in those sources. This is not an exhaustive literature review, and no priority or publication-readiness claim is made. The independent agent audits and the source-contract check are recorded alongside the repository integration. Human acceptance and a broader novelty assessment remain separate obligations.
 
-\textbf{A specific unresolved extension.} For odd regular $P_n,P_m$ with $n,m\ge5$, the natural candidate is
+\textbf{Current extension status (19 October 2026).} The rotation-only question
+left open in the original handoff is now resolved in the separate
+\href{odd-regular-angular-width.md}{all-odd angular-width proof}, with
+\href{odd-regular-angular-width-audit.md}{first} and
+\href{odd-regular-angular-width-second-audit.md}{second} independent agent audits.
+For every odd $n,m\ge5$, that proof establishes
 \[
  \capc(P_n\times R_\theta P_m)
- \stackrel{?}{=}(1+h_n)(1+h_m)\sec d_{\operatorname{lcm}(n,m)}(\theta).
+ =(1+h_n)(1+h_m)\sec d_{\operatorname{lcm}(n,m)}(\theta).
 \]
-Outside the cases proved above, this remains a conjectural extension in this handoff. Ordinary floating-point checks of additional regular polygons motivated it, but are not a proof. The exact missing step is to show that every paired closure-triangle coefficient lies in the regular four-block polygon~\eqref{eq:regular-H4}. The still stronger matrix containment would extend such a result to independent affine images; angular or radial containment alone does not imply that matrix statement. No additional project data are needed to formulate this obstruction. A proof or an exact counterexample to this finite geometric containment is the useful next mathematical target, rather than a larger numerical campaign.
+It also proves the sharp systolic ratio $(3+\sqrt5)/5$ throughout this rotated
+odd regular class, with equality exactly for $n=m=5$ and
+$\theta=\pi/10+k\pi/5$, $k\in\mathbb Z$. Six-block angular containment is strict
+inside the four-block incircle except for the known pentagon--pentagon
+edge-contact case, giving open labelled nonregular width-formula neighborhoods
+for every other pair. The earlier proofs above are preserved as proof history;
+the new general proof is not part of this note's proof body or the selected
+thesis. Human proof acceptance and external novelty remain open.
+
+The remaining independent-affine question is the stronger matrix containment
+$\Tsix(P_n,P_m)\subseteq\Tfour(P_n,P_m)$ beyond the proved pentagon case.
+Angular or radial containment alone does not imply that tensor statement.
 
 \begin{thebibliography}{9}
 \bibitem{HK} P. Haim--Kislev, \emph{On the symplectic size of convex polytopes}, Geom. Funct. Anal. 29 (2019), 440--463. Theorem 1.1. \href{https://arxiv.org/html/1712.03494v3}{arXiv:1712.03494v3}; DOI 10.1007/s00039-019-00486-4.

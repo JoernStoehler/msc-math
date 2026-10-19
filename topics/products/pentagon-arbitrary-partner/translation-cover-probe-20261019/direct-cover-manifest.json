@@ -1,0 +1,39 @@
+{
+  "status": "all owned probe processes finished; no mathematical optimality claim",
+  "created_at_utc": "2026-10-19T17:52:12.486637+00:00",
+  "files": {
+    "direct-cover-probe.py": {
+      "sha256": "4e1869d8927ed727812be804fab1be0ed2fdcae74e9a0a27edfb51a4d6d4f7c1",
+      "bytes": 7037
+    },
+    "direct-cover-results-inputs.json": {
+      "sha256": "facbfb07908a74a2d584cb83f4a426db156b522f0b39935ab0d40af5c769a956",
+      "bytes": 14114
+    },
+    "direct-cover-results.json": {
+      "sha256": "356f30a4dcdf83a6edfaf71268d96040870fc2dca366c43fe98371b2e1bcba2f",
+      "bytes": 68842
+    },
+    "direct-cover-refine.py": {
+      "sha256": "3ce9e607f784f234c2c2a391f956541a4650b30e9c34bc8e95675e31eb59a46d",
+      "bytes": 2555
+    },
+    "direct-cover-refine-results.json": {
+      "sha256": "c778d8e855548912848b674f1d6bb916a74a385657f1243483caf79795233066",
+      "bytes": 91299
+    }
+  },
+  "processes": [
+    {
+      "pid": 322258,
+      "exit_code": 0,
+      "role": "12-start bounded parallel-direction probe"
+    },
+    {
+      "pid": 322870,
+      "exit_code": 0,
+      "role": "three existing-start fixed-direction refinements"
+    }
+  ],
+  "ownership": "root chooses retention/integration; no more probe work pending"
+}

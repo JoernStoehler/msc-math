@@ -25,9 +25,11 @@ then transfer this calibration to every symmetric partner.
 
 This is an independently agent-checked argument, not human proof acceptance or
 a novelty claim. Jörn selected this pentagon instance for inclusion on 3 October
-2026 ([project facts](../../../docs/project-facts.md), item 13.2); it remains
-absent from the selected manuscript. That is a pre-existing thesis promotion
-gap, not a migration regression. No theorem has been promoted here.
+2026 ([project facts](../../../docs/project-facts.md), item 13.2). On 19 October it was
+integrated in [selected Section 11](../../../thesis/chapters/10b-symmetric-partners.tex),
+using the [geometric exposition](symmetric-partner-exposition.md). Independent
+source/math review, the 105-page build and focused pp. 72–74 visual/interface
+checks passed. Human proof/prose acceptance and whole-PDF PASS remain open.
 
 The [odd-regular theorem](odd-regular-symmetric-partner.md) already extends the
 calibration to every odd `n>=5`, with sharp decreasing constants
@@ -43,9 +45,11 @@ human acceptance or thesis selection. The separate
 [heptagon proof](heptagon-symmetric-partner.md) is subsumed mathematically, and
 retained as the shorter original calibration route. The triangle obstruction
 in [preliminary calibration](calibration-extension-preliminary.md) excludes a
-naive extension to `n=3`. The conjectural width formula for two nonsymmetric odd
-regular factors in [the affine note](../pentagon-affine-products/research.tex)
-is still open; it is not this symmetric-partner theorem.
+naive extension to `n=3`. The separate
+[uniform angular theorem](../pentagon-affine-products/odd-regular-angular-width.md)
+now proves the width formula for two nonsymmetric odd regular factors with
+at least five sides. It is distinct from this symmetric-partner theorem;
+independent-affine tensor containment remains open.
 
 [Local calibration stability](local-calibration-stability.md) gives an open
 labelled-polygon neighborhood for each fixed odd regular factor. It uses exact
@@ -104,8 +108,10 @@ argument and imported criterion rather than those outputs.
 For arbitrary asymmetric `K`, central symmetrization preserves its difference
 body and hence its width ceiling. Capacity is concave and symmetric along the
 fixed-width path from `K` to `-K`; its increase toward the midpoint is forced,
-not an empirical discovery. The precise plateau onset remains a geometry
-question. Equal fitting vectors need not determine widths, area or moments.
+not an empirical discovery. The [19 October sharp plateau theorem](symmetrization-plateau-20261019.md)
+now gives the optimal universal interval [(3-sqrt(5))/2,(sqrt(5)-1)/2].
+One explicit trapezoid has exactly that equality interval. The first onset for
+a particular other partner remains a geometry question. Equal fitting vectors need not determine widths, area or moments.
 
 The [local arbitrary-partner rigidity note](local-cover-rigidity.md) has an
 [exact finite certificate](local-cover/README.md), but the continuum
@@ -113,7 +119,10 @@ signed-polygon estimate has not been independently formalized. The
 [coupled one-cut lifting](local-cut-lifting.md) and
 [generic-cell contact reduction](smooth-cell-reduction.md) are scoped analytic
 research routes. None is a global fixed-partner theorem or an active thesis
-proof. The minimum-area cover among arbitrary asymmetric partners remains
+proof. The [algorithm account](translation-cover-algorithms-20261019.md) identifies
+a published exact unrestricted strategy and recovers the already solved
+ten-direction fan baseline; numerical parallel-slide probes remain candidates,
+not a global certificate. The minimum-area cover among arbitrary asymmetric partners remains
 unresolved; the independent-affine and fixed-axis orientation-wide theorems
 settle distinct restricted classes.
 
