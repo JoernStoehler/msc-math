@@ -1,5 +1,21 @@
 # Current handoff
 
+## 19 October: bounded research outcomes preserved; run closed
+
+The fresh human-authorized run has completed its research work in this checkout.
+[The run account](research-swarm-20261019.md) routes the all-odd regular-pair formula
+and sharp HKO corollary, sharp fixed-pentagon plateau, selected Section 11
+(pp. 72–74 of the 105-page working PDF), exact receiving/build review scope,
+reviewed method diagram and bounded numerical cover probe. Source reconciliation
+and the [result/approach map](../../docs/dashboard/research-frontier.html) distinguish
+these outcomes from open extensions. Main checked packet is local commit
+`38081e75`; no remote publication. Research owners returned and the final reviewed delivery closes this run.
+Optional reader question `request:msc-research-20261019-calibration-reader` has no
+answer at closing and remains available for a future selected continuation.
+No owned background process or new research campaign remains; the fresh envelope
+grants no standing post-run revision work. Human proof/prose acceptance and
+whole-PDF PASS remain open; the older scientific source manifest is not refreshed.
+
 ## 14 October: approved main consolidation and selective cleanup complete
 
 Use `/workspaces/msc-math` on local `main` for new selected work. [The adoption account](../repository-organization/worktree-adoption-20261014.md) owns the kept/changed/retired list and verified recovery route. Approved candidate and subsequently completed440d reports are integrated. Browser host-change request is withdrawn; proposed intake guidance remains an inactive patch. The d040 checkout and redundant local data-free/cloud-support branches are retired. Later approved cleanup retired440d/e002 and the last local topic branch; only main remains in the registered worktree and local/remote branch inventories. Original440d inputs remain in the verified adoption archive; stopped/rejected e002 work has one86KiB recovery packet at `/home/joern/.codex/artifacts/msc-math/cleanup-20261014/e002-stopped-work.tar.gz` (file recovery only, no activation). Both remote topic branches are removed with their exact tips retained in the existing bundle. The adoption account records targeted cache deletion, about10GiB reclaimed, and deliberate keeps including other scratch. Follow-up R2 inventory matched all13 registered snapshots (52objects/1.475GB), with no extras or unfinished uploads. The earlier undoability wording is corrected to specific file/history recovery; no whole-cleanup undo mechanism exists. No automatic restart, cloud/thesis execution, publication or monitoring is selected. The friction Pages overview and scientific dashboard baseline retain their recorded stale status.

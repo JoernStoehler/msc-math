@@ -68,7 +68,10 @@ contains an unresolved smooth-envelope proof sketch, not that theorem's proof.
    in this entire rotated odd regular class is `(3+sqrt(5))/5`, with equality
    exactly at `n=m=5`, `theta=pi/10+k pi/5`. Human acceptance and novelty remain
    open; this new theorem is outside the selected thesis. The stronger
-   independent-affine extension still requires tensor containment.
+   independent-affine extension still requires tensor containment. A separate
+   [diagram and short explanation](circle-deficit-explanation-20261019.md)
+   isolate the weighted-radius saving; its [scoped review](circle-deficit-review-20261019.md)
+   preserves source identities without changing the hashed proof.
 5. **Earlier angular proofs and useful limits.** The canonical note preserves
    the 7×7 and 5×7 proofs, strict-containment stability, interpolation sharpness
    and the triangle obstruction. The separate [nonagon norm proof](nonagon-angular-width.md)

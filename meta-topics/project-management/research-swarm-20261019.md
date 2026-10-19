@@ -8,6 +8,22 @@ Source: human answer to `request:root-math-activation-envelope-20261019`, actual
 
 Research: **17:24:37.341551–18:24:37.341551 UTC**. Wind-down ends **18:34:37.341551 UTC**. Allowance: ten weekly quota percentage points for research, one for preserving/reviewing/handoff. Baseline 41% account used in a 10080-minute window. Rounded account-wide observations cannot attribute precise project consumption. Backend conservatively winds both concurrent math projects down at a ten-point account increase while attribution is unavailable. No reset, external contact/submission, new paid services or cloud execution.
 
+## Closing disposition
+
+Research work closed early on 2026-10-19T18:11:00.949220+00:00 after the checked outcomes below;
+root preserved the checked sources, map and handoff; the final reviewed delivery closes the run.
+No further campaign is selected and no owned background process remains.
+The all-odd method now has a [labelled visual companion](../../topics/products/pentagon-affine-products/circle-deficit-explanation-20261019.md)
+with a [scoped independent exposition review](../../topics/products/pentagon-affine-products/circle-deficit-review-20261019.md).
+The hashed mathematical proof is unchanged.
+
+The optional Section 11 calibration-transfer reader question has no answer as of
+this timestamp and is parked for a future selected continuation. Its existence
+creates no standing revision allowance. Human proof/prose acceptance, whole-PDF
+PASS, novelty, independent-affine containment and unrestricted cover optimality
+remain open. The permitted clock/quota limits above remain ceilings, not a
+requirement to spend the remaining resources.
+
 ## Current checked checkpoint
 
 Updated 2026-10-19T17:53:06.039623+00:00. The selected symmetric-partner theorem **is now integrated** in `thesis/chapters/10b-symmetric-partners.tex`, selected Section 11/theorem 11.1/figure 11, pages 72–74 of the 105-page working PDF. Independent source/math review, build and focused visual/interface checks passed; the [receiving receipt](../../docs/history/research-swarm-20261019/symmetric-partner-receiving-review.md) fixes exact scope and source identity. Human proof/prose acceptance and whole-PDF PASS remain open. This supersedes the admission-time absence below.

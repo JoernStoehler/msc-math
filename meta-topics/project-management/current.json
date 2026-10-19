@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-19T18:04:11.256442+00:00",
+  "updated_at": "2026-10-19T18:11:50.613499+00:00",
   "scope": "Fresh human-authorized 19 October research swarm in /workspaces/msc-math. Historical assignments and resource observations remain evidence, not inherited execution authority.",
-  "summary": "Fresh run has independently checked all-odd regular-pair capacity formula and sharp HKO bound in that class, sharp universal fixed-pentagon symmetrization plateau, and selected symmetric-partner theorem integrated in Section11 of a105-page build (focused pp72–74 review). Root integrates source/state and a genuine reader decision on presenting the new general method. A bounded direct translation-cover probe tests a published convex inner primitive; no unrestricted global optimum or human PASS is claimed.",
+  "summary": "19 October bounded research work complete: independently checked all-odd regular-pair capacity formula/sharp HKO bound, sharp universal pentagon symmetrization plateau, selected symmetric-partner theorem in Section 11 of a 105-page working PDF, and reviewed circle-method diagram. Checked sources, map, handoff and owner dispositions are preserved; optional reader feedback and unrestricted/affine questions remain separate. No owned background process.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3036,9 +3036,9 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261019",
-      "status": "running",
-      "owner": "01a15530-d319-71a0-8615-77d40e2fe36c",
-      "outcome": "Useful checked research/exposition or precise evidenced obstruction, current/conditional approach map, reviewed delivery and released child owners.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Bounded research package complete: all-odd formula/sharp ratio with two proof audits, sharp universal plateau with scoped reviews, selected Section 11/build/receiving review, reviewed circle-method companion, source/map reconciliation and bounded cover-algorithm evidence. Human acceptance, novelty and broader conjectures remain open.",
       "depends_on": [
         "research-odd-pair-20261019",
         "research-partner-plateau-20261019",
@@ -3048,8 +3048,8 @@
         "meta-topics/project-management/research-swarm-20261019.md"
       ],
       "authorization": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution.",
-      "updated_at": "2026-10-19T18:04:11.256442+00:00",
-      "next_step": "Finish scoped source/state review, use optional reader feedback if received, commit checked integration and preserve handoff/stop owned work within18:24:37 research and18:34:37 final limits (or earlier account guard)."
+      "updated_at": "2026-10-19T18:11:50.613499+00:00",
+      "next_step": "No active assignment. Optional reader feedback and future research/writeup routes require a new selected continuation; no standing allowance."
     },
     {
       "id": "research-odd-pair-20261019",
@@ -3066,8 +3066,8 @@
         "topics/products/pentagon-affine-products/odd-regular-angular-width.md"
       ],
       "authorization": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution.",
-      "updated_at": "2026-10-19T17:53:06.039623+00:00",
-      "next_step": "Root reconciles old conjecture/status sources and chooses reader-facing exposition route; owner returned with no subprocess."
+      "updated_at": "2026-10-19T18:11:00.949220+00:00",
+      "next_step": "Source/map reconciliation and reviewed visual companion retained. Manuscript route and independent-affine extension remain unselected."
     },
     {
       "id": "research-partner-plateau-20261019",
@@ -3084,8 +3084,8 @@
         "topics/products/pentagon-arbitrary-partner/symmetrization-plateau-20261019.md"
       ],
       "authorization": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution.",
-      "updated_at": "2026-10-19T17:53:06.039623+00:00",
-      "next_step": "Root integrates sources and result map; no further onset campaign selected."
+      "updated_at": "2026-10-19T18:11:00.949220+00:00",
+      "next_step": "Sources/map reconciled; no active onset campaign."
     },
     {
       "id": "writeup-symmetric-partner-20261019",
@@ -3102,8 +3102,8 @@
         "topics/products/pentagon-arbitrary-partner/symmetric-partner-exposition.md"
       ],
       "authorization": "Fresh human source request:root-math-activation-envelope-20261019, answer read from /home/joern/workbench/.local/coordination-components/math-activation-2026-10-19/authorization.json. Research17:24:37.341551–18:24:37.341551UTC; wind-down through18:34:37.341551UTC;10+1 weekly quota percentage points. Backend conservative guard at+10 account points may end early due to concurrent usage; no precise project attribution.",
-      "updated_at": "2026-10-19T18:03:23.617036+00:00",
-      "next_step": "Optional reader calibration-transfer question pending; use feedback for a concrete revision within the fresh envelope. No new theorem promotion."
+      "updated_at": "2026-10-19T18:11:00.949220+00:00",
+      "next_step": "Selected manuscript and receiving review retained. Optional reader answer remains pending; no standing revision assignment."
     },
     {
       "id": "writeup-product-method-route-20261019",
@@ -3147,18 +3147,36 @@
       "kind": "crux",
       "selection": "selected",
       "project": "research-20261019",
-      "status": "running",
-      "owner": "01a15530-d319-71a0-8615-77d40e2fe36c",
+      "status": "parked",
+      "owner": null,
       "depends_on": [
         "selected-symmetric-partner-inclusion"
       ],
       "outcome": "Optional artifact-anchored question published to Workbench request:msc-research-20261019-calibration-reader: does Section11 opening/Figure11 explain why calibrating oneB transfers to every symmetricK? Not a proof/inclusion approval request.",
-      "next_step": "Use any answer for a concrete opening/containment-picture revision within the remaining envelope; independent source integration continues. Pending feedback is not standing post-deadline authorization.",
+      "next_step": "Optional question remains available, no answer as of 2026-10-19T18:11:00.949220+00:00. A later answer needs a newly selected continuation; no standing research or revision allowance after this run.",
       "sources": [
         "thesis/chapters/10b-symmetric-partners.tex",
         "docs/history/research-swarm-20261019/symmetric-partner-receiving-review.md"
       ],
-      "updated_at": "2026-10-19T18:02:37.586019+00:00"
+      "updated_at": "2026-10-19T18:11:00.949220+00:00"
+    },
+    {
+      "id": "circle-method-exposition-20261019",
+      "title": "Visual explanation of the circle-deficit method",
+      "selection": "selected",
+      "project": "research-20261019",
+      "status": "done",
+      "owner": null,
+      "depends_on": [
+        "research-odd-pair-20261019"
+      ],
+      "outcome": "Reviewed labelled SVG and short explanation retained with exact source identities; factor 2, closure, minimum-weight saving and order conventions checked. Outside selected manuscript.",
+      "next_step": "No active assignment; use the companion when considering a separately selected manuscript route.",
+      "sources": [
+        "topics/products/pentagon-affine-products/circle-deficit-explanation-20261019.md",
+        "topics/products/pentagon-affine-products/circle-deficit-review-20261019.md"
+      ],
+      "updated_at": "2026-10-19T18:11:00.949220+00:00"
     }
   ],
   "decisions": [
@@ -3647,6 +3665,14 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-19T18:11:00.949220+00:00",
+      "text": "Research work closed early with checked outcomes rather than starting a further campaign. Circle-method companion reviewed/retained without changing hashed proof. Optional Section 11 reader question has no answer and is parked for future selection; root preserves final delivery and owner release. Source/graph checks and live HTTP passed; reviewed package and owner dispositions complete."
+    },
+    {
+      "at": "2026-10-19T18:07:14.532661+00:00",
+      "text": "Checked main research/manuscript packet committed locally at38081e75; no remote publication. Final source/status review passed and receiving chapter receipt retained. Bounded five-minute visual companion selected to explain the new method, while actual Section11 reader question remains optional/pending."
+    },
     {
       "at": "2026-10-19T18:02:37.586019+00:00",
       "text": "Actual calibration-transfer reader question published after artifact/source review; broader product-method placement is parked rather than silently substituted. Published cover-algorithm answer delivered, bounded probe closed with explicit numerical-box/convergence limits. Receiving chapter review receipt retained; final scoped source/status review underway."
