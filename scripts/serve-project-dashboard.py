@@ -50,6 +50,7 @@ FILES = {
     "topics/products/pentagon-affine-products/next-obstructions-20261022.md",
     "topics/products/pentagon-affine-products/exposition-comparison-20261022.md",
     "meta-topics/project-management/research-decision-context-20261022.md",
+    "meta-topics/project-management/selected-partner-navigation-20261022.md",
     "AGENTS.md", "meta-topics/agent-workflow/collaboration-rationale.md",
     "meta-topics/thesis-submission/archive-closure-checklist.md",
     "docs/reproducibility.md",
