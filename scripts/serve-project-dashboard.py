@@ -48,6 +48,7 @@ FILES = {
     "topics/products/pentagon-affine-products/research.tex",
     "topics/products/pentagon-affine-products/tensor-certificate-review-20261022.md",
     "topics/products/pentagon-affine-products/next-obstructions-20261022.md",
+    "meta-topics/project-management/research-decision-context-20261022.md",
     "AGENTS.md", "meta-topics/agent-workflow/collaboration-rationale.md",
     "meta-topics/thesis-submission/archive-closure-checklist.md",
     "docs/reproducibility.md",
