@@ -43,7 +43,10 @@ render correctly without clipping, overlap or split paragraphs. The final log
 contains zero undefined references/citations; one overfull and three underfull
 boxes occur in unrelated unchanged numerics/code-data text.
 
-The current [working PDF](../../thesis/build/main.pdf) now contains these edits.
+The [retained checked PDF](../../docs/history/selected-partner-navigation-20261022/thesis.pdf)
+is published through the canonical Files route. The local working PDF at
+`thesis/build/main.pdf` contains identical bytes; that ignored build path is not
+exposed by Workbench’s Git-visible source route.
 Its SHA-256 is `00aabd301cd9dcaae0c0a67b81dc0545533789f4d1ca24007831109c32384a06`.
 [Build log, inspected-page renders and input identity manifest](../../docs/history/selected-partner-navigation-20261022/manifest.json)
 are retained with the evidence owner. This focused rendered-page check is not
