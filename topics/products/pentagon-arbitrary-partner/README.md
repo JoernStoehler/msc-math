@@ -129,3 +129,8 @@ Reproduction commands live with the individual records and write owned outputs.
 No producer, collection or certificate was rerun for this relocation. Scripts
 use local file paths; retained JSON, figures and verification logs retain their
 original bytes and historical provenance.
+
+The [22 October block Hessian lemma](block-hessian-lemma-20261022.md) proves
+a necessary ten-independent-contact condition for a nondegenerate constrained
+minimum on a regular contact stratum. Degenerate minima remain possible;
+this is not a solution of the global cover problem.

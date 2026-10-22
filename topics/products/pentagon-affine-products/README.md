@@ -132,3 +132,13 @@ syntax and cross-references, not proof soundness or readability. No experiments,
 remote data or ZIP extraction are required.
 
 The [22 October next-obstruction note](next-obstructions-20261022.md) proves that a non-rotational affine deformation strictly improves the best rotated 5×7 systolic ratio. It reduces the still-open sharp affine optimum to determinant optimization over a compact matrix polytope and compares that route with analytic containment and larger-pair certificates.
+
+## Ten minute journal sprint on 22 October
+
+The [new exact tensor packet](tensor-extensions-20261022/report.md) proves
+independent-affine capacity formulas for 7×7 and 5×9 by independently replayed
+finite certificates. The [sharp affine heptagon theorem](affine-heptagon-sharp-bound.md)
+gives its ratio and equality class. A general [rank-one determinant lemma](determinant-edge-reduction.md)
+reduces matrix optimization to edges; the [explicit 5×7 witness](affine-witness-20261022/finding.md)
+beats the best rotation but does not prove affine optimality. Novelty and
+human acceptance remain open; these results are not selected thesis additions.
