@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-19T18:11:50.613499+00:00",
-  "scope": "Fresh human-authorized 19 October research swarm in /workspaces/msc-math. Historical assignments and resource observations remain evidence, not inherited execution authority.",
-  "summary": "19 October bounded research work complete: independently checked all-odd regular-pair capacity formula/sharp HKO bound, sharp universal pentagon symmetrization plateau, selected symmetric-partner theorem in Section 11 of a 105-page working PDF, and reviewed circle-method diagram. Checked sources, map, handoff and owner dispositions are preserved; optional reader feedback and unrestricted/affine questions remain separate. No owned background process.",
+  "updated_at": "2026-10-22T08:47:58.590239+00:00",
+  "scope": "Current retained project coordination, including completed 19 October research and the separately admitted 22 October ten-minute local-cover source preliminary. Historical assignments, budgets and deadlines are not standing authority.",
+  "summary": "19 October bounded research work complete: independently checked all-odd regular-pair capacity formula/sharp HKO bound, sharp universal pentagon symmetrization plateau, selected symmetric-partner theorem in Section 11 of a 105-page working PDF, and reviewed circle-method diagram. Checked sources, map, handoff and owner dispositions are preserved; optional reader feedback and unrestricted/affine questions remain separate. No owned background process. 22 October preliminary: explicit continuum proof lemmas inspected and retained without full theorem approval; assignment ended, no experiment/build/manuscript change.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3177,6 +3177,25 @@
         "topics/products/pentagon-affine-products/circle-deficit-review-20261019.md"
       ],
       "updated_at": "2026-10-19T18:11:00.949220+00:00"
+    },
+    {
+      "id": "local-cover-preliminary-20261022",
+      "title": "Ten-minute preliminary check of local-cover continuum proof",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261022",
+      "status": "done",
+      "owner": null,
+      "outcome": "Bounded continuum inspection complete: no concrete fatal gap found in sections 1 and 3; explicit crossing/deletion/winding and compactness lemmas retained, with simultaneous-translation clarification. No overall theorem approval or fresh certificate execution.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Root admitted a bounded scientific preliminary on 22 October 2026, up to ten minutes from 08:42:37 UTC, with checkpoint by 08:52:37 UTC. Read/reason only; no numerical producer, build or manuscript change. Prior campaign budgets are not active.",
+      "next_step": "If selected, independently review explicit loop lemma and finite-certificate interface before assembled proof acceptance. No automatic continuation.",
+      "sources": [
+        "topics/products/pentagon-arbitrary-partner/local-cover-rigidity.md",
+        "topics/products/pentagon-arbitrary-partner/local-cover/preliminary-continuum-check-20261022.md"
+      ],
+      "updated_at": "2026-10-22T08:47:58.590239+00:00"
     }
   ],
   "decisions": [
@@ -3665,6 +3684,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-22T08:47:58.590239+00:00",
+      "text": "Completed the newly admitted ten-minute local-cover continuum preliminary in an isolated worktree. Retained explicit lemma decomposition and anchoring clarification, not full proof acceptance; no scientific producer, build or manuscript change. Assignment released at checkpoint; further review remains unselected."
+    },
     {
       "at": "2026-10-19T18:11:00.949220+00:00",
       "text": "Research work closed early with checked outcomes rather than starting a further campaign. Circle-method companion reviewed/retained without changing hashed proof. Optional Section 11 reader question has no answer and is parked for future selection; root preserves final delivery and owner release. Source/graph checks and live HTTP passed; reviewed package and owner dispositions complete."

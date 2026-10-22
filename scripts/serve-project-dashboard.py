@@ -41,6 +41,8 @@ FILES = {
     "docs/history/symmetric-partner-candidate-2026-10-03/main.tex",
     "docs/history/symmetric-partner-candidate-2026-10-03/section.tex",
     "topics/products/pentagon-arbitrary-partner/symmetric-partner-lemma.md",
+    "topics/products/pentagon-arbitrary-partner/local-cover-rigidity.md",
+    "topics/products/pentagon-arbitrary-partner/local-cover/preliminary-continuum-check-20261022.md",
     "AGENTS.md", "meta-topics/agent-workflow/collaboration-rationale.md",
     "meta-topics/thesis-submission/archive-closure-checklist.md",
     "docs/reproducibility.md",
