@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-22T14:31:40.371145+00:00",
+  "updated_at": "2026-10-22T14:37:59.339190+00:00",
   "scope": "Current retained project coordination. Fresh 22 October bounded research completed under explicit restart instruction; old campaign budgets remain historical.",
   "summary": "22 October bounded research complete: local arbitrary-partner continuum proof and published-criterion applicability checked with fresh exact finite verification; independent-affine 5×7 capacity formula supported by rational-interval full-tensor certificate and independent replay/review. No 7×7, global optimum, novelty, human acceptance or manuscript promotion. Prior 19 October results remain retained. Source-only followup proves a strict affine improvement over the best 5×7 rotation; sharp affine optimization remains open. No owned scientific process remains; larger continuation is a separate selection.",
   "tasks": [
@@ -3254,6 +3254,26 @@
         "meta-topics/project-management/research-decision-context-20261022.md"
       ],
       "updated_at": "2026-10-22T14:31:40.371145+00:00"
+    },
+    {
+      "id": "affine-exposition-comparison-20261022",
+      "title": "Compare compact exposition with and without the proved 5×7 example",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261022",
+      "status": "done",
+      "owner": null,
+      "outcome": "Retained 663-word candidate comparing an exact 5×7 theorem/affine-ascent example with a brief omit version. Coordinator checked formula/dependencies against retained proof; no manuscript selection or new mathematics.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Root explicitly admitted at most ten-minute Sol exposition slice from already proved results, separate from optional larger research extensions. No manuscript selection/edit/build or mathematical search.",
+      "next_step": "Review reader payoff versus new certificate dependency using the two concrete versions; no insertion selected.",
+      "sources": [
+        "topics/products/pentagon-affine-products/next-obstructions-20261022.md",
+        "meta-topics/project-management/research-decision-context-20261022.md",
+        "topics/products/pentagon-affine-products/exposition-comparison-20261022.md"
+      ],
+      "updated_at": "2026-10-22T14:37:59.339190+00:00"
     }
   ],
   "decisions": [
