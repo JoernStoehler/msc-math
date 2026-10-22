@@ -729,12 +729,10 @@
       "owner": null,
       "outcome": "Coordinator reconciles selected outcomes and caveats, current scientific synthesis when its sources/route change, retained completion evidence and continuation constraints; release all project-owned assignments/sessions. Optional research remains explicitly disposed rather than silently included.",
       "depends_on": [
-        "workflow-done",
         "thesis-ready",
         "code-evidence-ready",
         "reproduction-ready",
-        "project-delivery-disposition",
-        "workflow-dashboard-map"
+        "project-delivery-disposition"
       ],
       "blocker": "Bounded continuation delivered and assignments released. Broader workflow activation, human PASS, complete reproduction and actual submission/archive dispositions remain unfinished.",
       "sources": [
