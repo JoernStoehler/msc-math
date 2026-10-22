@@ -130,3 +130,5 @@ latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=build research.tex
 The PDF is `build/research.pdf`; build products are ignored. Compilation checks
 syntax and cross-references, not proof soundness or readability. No experiments,
 remote data or ZIP extraction are required.
+
+The [22 October next-obstruction note](next-obstructions-20261022.md) proves that a non-rotational affine deformation strictly improves the best rotated 5×7 systolic ratio. It reduces the still-open sharp affine optimum to determinant optimization over a compact matrix polytope and compares that route with analytic containment and larger-pair certificates.

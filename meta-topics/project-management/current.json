@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-22T14:10:55.015653+00:00",
+  "updated_at": "2026-10-22T14:19:14.012244+00:00",
   "scope": "Current retained project coordination. Fresh 22 October bounded research completed under explicit restart instruction; old campaign budgets remain historical.",
-  "summary": "22 October bounded research complete: local arbitrary-partner continuum proof and published-criterion applicability checked with fresh exact finite verification; independent-affine 5×7 capacity formula supported by rational-interval full-tensor certificate and independent replay/review. No 7×7, global optimum, novelty, human acceptance or manuscript promotion. Prior 19 October results remain retained. A bounded source-only next-obstruction comparison is now assigned within the original Astra envelope; no numerical producer runs.",
+  "summary": "22 October bounded research complete: local arbitrary-partner continuum proof and published-criterion applicability checked with fresh exact finite verification; independent-affine 5×7 capacity formula supported by rational-interval full-tensor certificate and independent replay/review. No 7×7, global optimum, novelty, human acceptance or manuscript promotion. Prior 19 October results remain retained. Source-only followup proves a strict affine improvement over the best 5×7 rotation; sharp affine optimization remains open. No owned scientific process remains; larger continuation is a separate selection.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3224,18 +3224,19 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261022",
-      "status": "running",
-      "owner": "/root/msc_today_scope/continuum_review",
-      "outcome": "3×3/5×5 controls and 840-tensor 5×7 numerical probe led to standalone rational-interval strict full-matrix containment certificate. Independent Astra review/replay accepted final bytes and affine 5×7 capacity formula via existing decomposition. No affine-ratio optimum, 7×7 or all-odd affine result.",
+      "status": "done",
+      "owner": null,
+      "outcome": "3×3/5×5 controls and 840-tensor 5×7 numerical probe led to standalone rational-interval strict full-matrix containment certificate. Independent Astra review/replay accepted final bytes and affine 5×7 capacity formula via existing decomposition. No affine-ratio optimum, 7×7 or all-odd affine result. Source followup proves best rotations are not affine-ratio optimal and reduces sharp optimization to faces of dimension at most two of a 70-inequality matrix polytope.",
       "depends_on": [],
       "blocker": null,
       "authorization": "Fresh 22 October research instruction. Initial 10 min/30 s CPU numerical Sol probe followed, after robust interior evidence, by 10 min/60 s CPU certificate attempt; independent Astra review remained within original 35 min envelope. No 7×7 or open-ended symbolic campaign.",
-      "next_step": "Bounded eight-minute source-only comparison of affine optimization, analytic containment and larger-pair discriminator; no new producer. Initial checked result integrated on main as dcf86761.",
+      "next_step": "Select a further bounded route from the retained comparison: sharp affine determinant optimization, analytic tensor explanation, or larger-pair discriminator. No larger slice started.",
       "sources": [
         "topics/products/pentagon-affine-products/research.tex",
-        "topics/products/pentagon-affine-products/tensor-certificate-review-20261022.md"
+        "topics/products/pentagon-affine-products/tensor-certificate-review-20261022.md",
+        "topics/products/pentagon-affine-products/next-obstructions-20261022.md"
       ],
-      "updated_at": "2026-10-22T14:10:55.015653+00:00"
+      "updated_at": "2026-10-22T14:19:14.012244+00:00"
     }
   ],
   "decisions": [
@@ -3724,6 +3725,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-22T14:19:14.012244+00:00",
+      "text": "Astra source followup completed 14:10:23–14:17:30 UTC. Retained explicit affine ascent, determinant optimization reduction and complementary route comparison; no producer or manuscript change."
+    },
     {
       "at": "2026-10-22T14:10:55.015653+00:00",
       "text": "Integrated checked research commit as main dcf86761 with three unrelated dirty files byte-unchanged; canonical Files rendered/raw source checks passed. Assigned eight-minute source-only next-obstruction comparison to existing Astra reviewer within original envelope."
