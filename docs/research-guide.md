@@ -253,7 +253,7 @@ a continuous minimum-angle inequality, the pentagon cases and the sharp HKO
 systolic bound/equality throughout this family. The earlier aggregate-norm
 route fails on an explicit infinite family; retaining triangle shape supplies
 the missing information. Angular containment does not imply independent-affine
-tensor containment. This new theorem is outside the selected manuscript;
+tensor containment. A separate [22 October finite certificate and review](../topics/products/pentagon-affine-products/tensor-certificate-review-20261022.md) now establish full tensor containment for 5×7, giving its independent-affine width formula through the existing decomposition. This does not establish the general odd-pair affine theorem or a sharp affine-class ratio bound. This new theorem is outside the selected manuscript;
 human acceptance and a literature-wide novelty assessment remain open.
 
 The [sharp symmetrization plateau](../topics/products/pentagon-arbitrary-partner/symmetrization-plateau-20261019.md)

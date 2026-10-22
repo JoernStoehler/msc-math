@@ -67,8 +67,7 @@ contains an unresolved smooth-envelope proof sketch, not that theorem's proof.
    width-formula neighborhoods for every other pair. The sharp systolic ratio
    in this entire rotated odd regular class is `(3+sqrt(5))/5`, with equality
    exactly at `n=m=5`, `theta=pi/10+k pi/5`. Human acceptance and novelty remain
-   open; this new theorem is outside the selected thesis. The stronger
-   independent-affine extension still requires tensor containment. A separate
+   open; this new theorem is outside the selected thesis. The general odd-pair independent-affine extension still requires tensor containment; the separately certified 5×7 case below is a new finite extension. A separate
    [diagram and short explanation](circle-deficit-explanation-20261019.md)
    isolate the weighted-radius saving; its [scoped review](circle-deficit-review-20261019.md)
    preserves source identities without changing the hashed proof.
@@ -78,6 +77,10 @@ contains an unresolved smooth-envelope proof sketch, not that theorem's proof.
    gives a reusable spectral estimate and an exact infinite family on which
    that sufficient estimate fails; the circle-deficit argument resolves the
    broader rotation problem without claiming independent-affine containment.
+
+6. **Independent affine 5×7 factors (22 October 2026).** The [certificate review](tensor-certificate-review-20261022.md) checks all 840 six-block tensors against the full four-dimensional four-block hull. A standalone integer/rational interval checker supplies strictly positive convex representations; its [retained packet](tensor-certificate-20261022/report.md) includes witness data, source identities and independent replay. Relative to the existing decomposition and affine covariance, this gives
+   `c(GP5 ×_L HP7)=(1+h5)(1+h7)/max_ij |n_i^T G^{-1}H^{-T}m_j|`
+   for invertible G,H, where h_k=cos(pi/k) and n_i,m_j are the regular-factor unit normals. The [numerical discriminator](tensor-discriminator-20261022/report.md) with 3×3/5×5 controls preceded the rigorous certificate and remains separate evidence. No sharp independently-affine 5×7 ratio bound, 7×7 result, all-odd affine theorem, novelty or manuscript inclusion follows automatically.
 
 Two independent agent audits found no internal gap in the affine argument and
 angular extensions. The [primary-source contract](source-contract.md) now closes

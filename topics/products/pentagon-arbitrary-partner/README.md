@@ -114,8 +114,7 @@ One explicit trapezoid has exactly that equality interval. The first onset for
 a particular other partner remains a geometry question. Equal fitting vectors need not determine widths, area or moments.
 
 The [local arbitrary-partner rigidity note](local-cover-rigidity.md) has an
-[exact finite certificate](local-cover/README.md), but the continuum
-signed-polygon estimate has not been independently formalized. The
+[exact finite certificate](local-cover/README.md), and a [22 October independent review](local-cover/continuum-review-20261022.md) now supplies the uniform continuum estimate, positive-marginal implication and arbitrary-body transfer. A [fresh exact rerun](local-cover/verification/20261022/report.md) and [published-criterion applicability check](local-cover/capacity-interface-check-20261022.md) support the local result relative to the imported theorem; human acceptance and manuscript inclusion remain separate. The
 [coupled one-cut lifting](local-cut-lifting.md) and
 [generic-cell contact reduction](smooth-cell-reduction.md) are scoped analytic
 research routes. None is a global fixed-partner theorem or an active thesis

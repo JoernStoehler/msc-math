@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-22T08:47:58.590239+00:00",
-  "scope": "Current retained project coordination, including completed 19 October research and the separately admitted 22 October ten-minute local-cover source preliminary. Historical assignments, budgets and deadlines are not standing authority.",
-  "summary": "19 October bounded research work complete: independently checked all-odd regular-pair capacity formula/sharp HKO bound, sharp universal pentagon symmetrization plateau, selected symmetric-partner theorem in Section 11 of a 105-page working PDF, and reviewed circle-method diagram. Checked sources, map, handoff and owner dispositions are preserved; optional reader feedback and unrestricted/affine questions remain separate. No owned background process. 22 October preliminary: explicit continuum proof lemmas inspected and retained without full theorem approval; assignment ended, no experiment/build/manuscript change.",
+  "updated_at": "2026-10-22T14:04:46.736260+00:00",
+  "scope": "Current retained project coordination. Fresh 22 October bounded research completed under explicit restart instruction; old campaign budgets remain historical.",
+  "summary": "22 October bounded research complete: local arbitrary-partner continuum proof and published-criterion applicability checked with fresh exact finite verification; independent-affine 5×7 capacity formula supported by rational-interval full-tensor certificate and independent replay/review. No 7×7, global optimum, novelty, human acceptance or manuscript promotion. Prior 19 October results remain retained. No owned scientific process remains.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3196,6 +3196,46 @@
         "topics/products/pentagon-arbitrary-partner/local-cover/preliminary-continuum-check-20261022.md"
       ],
       "updated_at": "2026-10-22T08:47:58.590239+00:00"
+    },
+    {
+      "id": "local-cover-review-20261022",
+      "title": "Independent local-cover continuum and certificate-interface review",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261022",
+      "status": "done",
+      "owner": null,
+      "outcome": "Independent disk/chord continuum proof, positive-marginal coercivity, arbitrary-body transfer and source-checked BMP applicability establish local fixed-pentagon arbitrary-partner result relative to imported theorem. Fresh exact finite rerun passed. No global optimum, human acceptance or manuscript promotion.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Fresh user instruction f-0e56f2f60f6d40a39c5f2c1c9b5aa2a2 saved 13:33:17.571647UTC authorizes starting prepared research regardless Workbench readiness. Astra high actual read started 13:40:03UTC; initial 20–35 min scope, latest stop 14:15:03UTC. No inherited 19 October budget. Quota effect unknown; walltime and attention remain costs.",
+      "next_step": "Retain checked research result and source applicability boundary; any manuscript selection or larger global programme is separate.",
+      "sources": [
+        "topics/products/pentagon-arbitrary-partner/local-cover-rigidity.md",
+        "topics/products/pentagon-arbitrary-partner/local-cover/preliminary-continuum-check-20261022.md",
+        "topics/products/pentagon-arbitrary-partner/local-cover/continuum-review-20261022.md",
+        "topics/products/pentagon-arbitrary-partner/local-cover/capacity-interface-check-20261022.md"
+      ],
+      "updated_at": "2026-10-22T14:04:46.736260+00:00"
+    },
+    {
+      "id": "tensor-discriminator-20261022",
+      "title": "First new affine tensor containment discriminator",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261022",
+      "status": "done",
+      "owner": null,
+      "outcome": "3×3/5×5 controls and 840-tensor 5×7 numerical probe led to standalone rational-interval strict full-matrix containment certificate. Independent Astra review/replay accepted final bytes and affine 5×7 capacity formula via existing decomposition. No affine-ratio optimum, 7×7 or all-odd affine result.",
+      "depends_on": [],
+      "blocker": null,
+      "authorization": "Fresh 22 October research instruction. Initial 10 min/30 s CPU numerical Sol probe followed, after robust interior evidence, by 10 min/60 s CPU certificate attempt; independent Astra review remained within original 35 min envelope. No 7×7 or open-ended symbolic campaign.",
+      "next_step": "Research extension retained; compare exact larger-case certificate, analytic explanation and affine-ratio optimization before selecting a larger continuation.",
+      "sources": [
+        "topics/products/pentagon-affine-products/research.tex",
+        "topics/products/pentagon-affine-products/tensor-certificate-review-20261022.md"
+      ],
+      "updated_at": "2026-10-22T14:04:46.736260+00:00"
     }
   ],
   "decisions": [
@@ -3684,6 +3724,10 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-22T14:04:46.736260+00:00",
+      "text": "Fresh 13:33 UTC user instruction superseded readiness deferral. Astra completed local-cover proof/source interface and independent 5×7 certificate review; Sol exact/numerical/certificate producers finished. Research packets and source-status reconciliation retained; no scientific background work or automatic larger campaign."
+    },
     {
       "at": "2026-10-22T08:47:58.590239+00:00",
       "text": "Completed the newly admitted ten-minute local-cover continuum preliminary in an isolated worktree. Retained explicit lemma decomposition and anchoring clarification, not full proof acceptance; no scientific producer, build or manuscript change. Assignment released at checkpoint; further review remains unselected."

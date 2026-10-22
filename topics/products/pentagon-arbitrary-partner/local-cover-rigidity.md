@@ -1,9 +1,6 @@
 # Local rigidity of the regular-pentagon normal-triangle cover
 
-Status: new mathematical derivation in the present session, with an executed exact
-finite certificate. The continuum argument below is supplied explicitly for
-independent review; an exact arithmetic PASS is not itself a formalization.
-The global arbitrary-partner problem is NOT solved.
+Status, 22 October 2026: the [independent continuum review](local-cover/continuum-review-20261022.md) supplies a uniform disk-and-chord proof and the finite-certificate implication; a [fresh exact rerun](local-cover/verification/20261022/report.md) checks the finite predicates. The [capacity applicability check](local-cover/capacity-interface-check-20261022.md) verifies the complete template family and normalization against the imported BMP theorem. These support the stated local result, not a global arbitrary-partner optimum, novelty, human acceptance or manuscript promotion. The earlier argument below is retained; use the new review for the complete uniform estimate.
 
 ## Statement
 
@@ -148,8 +145,9 @@ Therefore all such translations tend to t_j^* (uniform closeness follows by
 the usual contradiction/compactness argument).
 
 For a feasible cover K sufficiently close to H, choose its ten translations,
-remove their common translation, and apply the placement theorem to their hull
-P subset K. It yields A(K)>=A(P)>=m. Equality forces the placements to be the
+put a=t_0-t_0^* and u_j=t_j-t_j^*-a, and apply the placement theorem to
+the anchored hull P(u) subset K-a. Translation invariance gives
+A(K)=A(K-a)>=A(P(u))>=m. Equality forces the placements to be the
 common translate of the fixture, so H+z subset K; equality of areas of nested
 convex bodies with interior gives K=H+z.
 
@@ -187,9 +185,9 @@ neither excludes remote non-fan competitors nor proves the global bound.
 
 Requires SymPy. The checker reuses the supplied exact triangle fixture and
 checks new equations; it does not certify the winding argument by computation.
-The numerical pilot is ancillary and is not used in the proof. This proof and
-its geometric lemma should receive an independent mathematical review before
-being promoted to an accepted manuscript theorem.
+The numerical pilot is ancillary and is not used in the proof. The 22 October review supplies the independent continuum argument and source
+applicability check. Manuscript selection and human acceptance remain separate;
+the finite checker alone still does not establish the continuum implication.
 
 External input for the capacity interpretation: Balitskiy--Mitrofanov--Polyanskii,
 Triangle covering problems and the Viterbo inequality in the plane,

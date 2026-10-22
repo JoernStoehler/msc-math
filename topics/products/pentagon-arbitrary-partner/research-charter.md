@@ -18,9 +18,7 @@ The September 2026 consolidation adds three scoped research notes:
 [local arbitrary-partner rigidity](local-cover-rigidity.md),
 [coupled one-cut lifting](local-cut-lifting.md), and
 [generic-cell contact reduction](smooth-cell-reduction.md). The first has an
-exact finite certificate in [local-cover/](local-cover/), but its continuum
-signed-polygon estimate has not been independently formalized; none of these
-notes is a global fixed-partner theorem or an active thesis proof.
+exact finite certificate in [local-cover/](local-cover/), and the [22 October continuum review](local-cover/continuum-review-20261022.md) now proves the uniform estimate and arbitrary-body transfer, with a separate [source applicability check](local-cover/capacity-interface-check-20261022.md). None of these notes is a global fixed-partner theorem or an active thesis proof.
 
 ## What is worth investigating first
 

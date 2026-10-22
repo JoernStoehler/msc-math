@@ -1,0 +1,44 @@
+[
+  {
+    "pair": [
+      3,
+      3
+    ],
+    "lp_success": false,
+    "lp_status": 2,
+    "lp_message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is Infeasible)",
+    "lp_equality_max_abs_residual": null,
+    "lp_nonzero_count": null,
+    "lp_min_weight": null,
+    "direct_support_gap_value_minus_support": 0.13608276348795423,
+    "qhull_max_facet_residual": 0.13608276348795426
+  },
+  {
+    "pair": [
+      5,
+      5
+    ],
+    "lp_success": true,
+    "lp_status": 0,
+    "lp_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+    "lp_equality_max_abs_residual": 1.5543122344752192e-15,
+    "lp_nonzero_count": 2,
+    "lp_min_weight": -0.0,
+    "direct_support_gap_value_minus_support": 0.0,
+    "qhull_max_facet_residual": 5.551115123125783e-17
+  },
+  {
+    "pair": [
+      5,
+      7
+    ],
+    "lp_success": true,
+    "lp_status": 0,
+    "lp_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+    "lp_equality_max_abs_residual": 1.3877787807814457e-17,
+    "lp_nonzero_count": 5,
+    "lp_min_weight": 0.0,
+    "direct_support_gap_value_minus_support": -0.00034807129296068884,
+    "qhull_max_facet_residual": -0.00034807129296067496
+  }
+]
