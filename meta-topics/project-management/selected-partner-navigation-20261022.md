@@ -36,6 +36,17 @@ fixed-orientation equality qualifier. That qualifier was added before integratio
 The reviewer confirmed no 5×7/local-asymmetric claim and no theorem-source edit. Coordinator matched hypotheses,
 normalization, equality and theorem reference to the selected source. The source
 uses a standard existing section label and ordinary prose/math; no new package,
-figure or citation was introduced. The thesis dashboard marks the PDF/source
-baseline stale for this change. No full PDF build or layout/whole-thesis acceptance
-is claimed; a later selected build should include these source edits.
+figure or citation was introduced. The selected thesis was subsequently built successfully (105 pages, 12 seconds).
+Luna and the coordinator visually inspected PDF pages 8, 9 and 87 at 120 dpi:
+the added passages, Section 11 references, formula and orientation qualifier
+render correctly without clipping, overlap or split paragraphs. The final log
+contains zero undefined references/citations; one overfull and three underfull
+boxes occur in unrelated unchanged numerics/code-data text.
+
+The current [working PDF](../../thesis/build/main.pdf) now contains these edits.
+Its SHA-256 is `00aabd301cd9dcaae0c0a67b81dc0545533789f4d1ca24007831109c32384a06`.
+[Build log, inspected-page renders and input identity manifest](../../docs/history/selected-partner-navigation-20261022/manifest.json)
+are retained with the evidence owner. This focused rendered-page check is not
+whole-PDF acceptance or human proof/prose acceptance. The historical global
+source-review manifest remains unchanged; a new build does not refresh its
+scientific acceptance claim.
