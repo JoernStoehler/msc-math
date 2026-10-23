@@ -1,16 +1,16 @@
 # Status — msc-math
 
-v1.0 · 2026-10-23 · Claude (workbench-next session), first version
+v1.1 · 2026-10-23 · Codex thread 01a16960-869d-77d3-ae57-d3412d39ac05
 
 ## Goal
 Jörn's MSc thesis "Probing Viterbo's conjecture" is submitted and passes. The manuscript is unfinished and not yet submitted (README).
 
 ## Open
-- **Colloquium requirement settled with the Prüfungsamt.** PO M-420-2-3-002 §20 probably requires a colloquium; the repo assumes none ([review](docs/history/thesis-agent-review-20261022/opportunity-official-status.md)). Next: Jörn decides whether to send the [draft inquiry](docs/history/thesis-agent-review-20261022/pruefungsamt-anfrage-ENTWURF.md). Owner: Jörn.
-- **AI-use disclosure consistent with the declaration form.** Same review; the AI disclosure needs clarifying against the form (`thesis/ai-use-disclosure.tex`). Next: compare the two and propose wording. Owner: unassigned.
-- **Whole-PDF PASS by a human (Jörn or Kai).** The agent reviews of 22 Oct found almost no surviving defects, and the code-contract review did not finish ([reviews](docs/history/thesis-agent-review-20261022/)). Next: Jörn or Kai reads `thesis/build/main.pdf`. Owner: Jörn.
+- **Applicable colloquium requirement/status established.** Current listed PO includes it; personal applicability/completion is unverified ([current-source check](docs/history/official-requirements-check-20261023.md)). Next: check governing student record before deciding whether an inquiry is needed. Owner: unassigned.
+- **AI-use disclosure/declaration reconciled.** Current form matches the retained copy; university AI guidance does not settle this thesis-specific interpretation ([source check](docs/history/official-requirements-check-20261023.md)). Next: retrieve chair/examiner-specific instructions before proposing signable wording. Owner: unassigned.
+- **Whole-PDF PASS by a human (Jörn or Kai).** Jörn reports only failing preliminary checks; bounded agent reviews do not establish readiness. One exact-product code route is now [source-checked](docs/history/code-contract-review-20261023.md); other code/PDF obligations remain. Next: identify surviving whole-manuscript acceptance failures. Owner: unassigned.
 - **22 Oct sprint results assessed for the thesis.** Commit `d91d01b0` ("Prove affine polygon capacity extensions…"). Next: decide whether they enter the thesis. Owner: unassigned.
-- **File-viewer edits landed or dropped.** `docs/file-viewer.md` and `scripts/serve-files.py` with its test have been uncommitted since 19 Oct. Next: review the diff. Owner: unassigned.
+- **File-viewer edits landed or dropped.** Existing three-file diff inspected; 14 fixture tests pass ([review](docs/history/file-viewer-review-20261023.md)). Next: determine whether its two fixed Workbench-build targets still need the optimization; source remains uncommitted and preserved. Owner: unassigned.
 
 ## Waiting on Jörn
-- Send the Prüfungsamt inquiry or not (first Open item).
+- No new question required for the completed source/test checks. Personal administrative records and any inquiry approval remain distinct from agent-owned retrieval.

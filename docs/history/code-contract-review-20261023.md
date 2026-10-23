@@ -1,0 +1,29 @@
+# Selected code-contract check — 2026-10-23
+
+## Interface selected
+
+I checked one consequential boundary: the manuscript's exact-capacity claim for a **recognized coordinate-aligned Lagrangian product** through the Rust production `capacity_4d` API. If product recognition, sparse candidate enumeration, objective convention, or exact output diverged from the mathematical claim, it would affect capacity values used by later computations.
+
+## Exact manuscript passages
+
+- `thesis/chapters/13-numerics.tex:15–26` defines the binary64 inputs as exact dyadic rationals, says exact geometry establishes bounded/nonempty/full-dimensional/nonredundant input, and says indeterminate predicates resolve exactly.
+- `thesis/chapters/13-numerics.tex:28–45` states the 16-facet and primal/dual infinity-norm limits, general interval result, and exact rational capacity for a recognized Lagrangian product.
+- `thesis/chapters/04-quadratic-program.tex:637–648` says the product implementation enumerates closure-polytope vertices, compares objective values, returns exact capacity of the supplied binary64 input treated rationally, and uses interval bounds plus exact arithmetic as needed.
+- Availability/evidence contract: `thesis/chapters/14-code-data.tex:60–79` distinguishes the development audits and finite production correspondence check; its surrounding text labels finite checks as finite and states current production-to-development comparison is separately recorded.
+
+## Actual code and math contract inspected
+
+- Production entry point `capacity_from_dual_vertices` in `crates/symplectic/src/algorithms/capacity_4d/mod.rs:405–434` runs facet-count, finite-coordinate, dual-norm, exact geometry, and exact primal-norm checks before dispatch. Constants in `geometry.rs:15–19` set 16 facets and `[1e-3, 1e3]`. `exact_binary64_polytope_geometry` in `geometry.rs:72–119` converts every finite coordinate with `f64_to_rational`, certifies origin interior/boundedness, constructs exact polar geometry, and checks facet irredundancy.
+- Dispatch at `mod.rs:447–452` uses the product route only if `classify_lagrangian_product` succeeds. The classifier at `geometry.rs:264–283` accepts rows supported wholly in q or p coordinates (and at least three each); non-structural products fall back to general route. Thus “recognized” is a meaningful scope restriction: it is not arbitrary symplectic images/rotations of products.
+- Product API at `mod.rs:476–499` returns the route's `capacity_exact` rational and derived outward bounds. `product.rs:165–170` documents its already-validated structural-product input contract and exact dyadic interpretation. Its hybrid path uses outward interval support filters, sends indeterminate support decisions to exact rational support calculations (`product.rs:377–438`), exact-resolves possible winning candidates (`:194–253`), and falls back to the complete exact route if its float path has nonfinite objective intervals (`:203–214`).
+- Exact closure support code at `product.rs:442–463` enumerates support sizes two and three and retains strictly positive closure weights. `:465–507` gives exact pair/triple weights; `:680–754` enforces structural splitting and converts original f64 values exactly. `:820–837` enumerates all permutations after fixing a cyclic starting label. Exact word objective is accumulated from exact weights and `omega_exact` at `:589–605`; `report_from_resolved` picks exact positive maximum (Q) and returns (1/(2Q)) at `:291–326` (the formula is confirmed in the mathematical source below).
+- Mathematical source: `topics/products/product-qp-six-facet-reduction.tex`, Theorem `thm:product-qp-six-facet-maximizer` and Corollary `cor:product-qp-closure-vertex-enumeration`. It proves some global Haim–Kislev maximizer is supported on at most three facets per factor, with factor masses 1/2, and that closure-vertex pairs plus cyclic orders recover the scalar capacity (1/(2Q_{max})). The code's candidate construction follows that value theorem; it does not claim every minimizer/orbit is recovered.
+- Direct finite correspondence source inspected: `topics/capacity-and-qp/development/tests/selected_route_correspondence.rs`, test `readable_and_production_product_certificates_match`, uses exactly three named fixtures (triangle product, triangle-square, HKO pentagon) and compares selected development route with production exact capacity and sparse winner lists. This test source is finite evidence, not an all-input equivalence proof.
+
+## Disposition
+
+**No mismatch established in this selected interface.** The stated input meaning, validation boundary, restricted product dispatch, sparse closure-vertex/cyclic-order candidate family, exact rational output, and mathematical (1/(2Q_{max})) value theorem line up in the inspected sources. Interval computations are candidate filters; surviving contenders and final output are exact, matching the manuscript's hybrid description. The three-fixture test source's narrow scope is also consistent with Chapter 14's finite-evidence caveat.
+
+## Limits / next checks
+
+This is not a fresh execution of correspondence tests, a proof of the interval arithmetic, a full audit of the exact product implementation, or a review of every numerical thesis claim. The mathematical theorem was source-read to understand the interface, not independently reproved. The finite test does not establish all-input code correctness; formal proof-to-code completeness and floating-point environment assumptions remain outside this check. A bounded next acceptance check, if needed, is to inspect the complete product route's interval-filter soundness lemmas against each interval predicate and then run only the named fixed correspondence test in an approved environment. No expensive producer or source edit was performed.

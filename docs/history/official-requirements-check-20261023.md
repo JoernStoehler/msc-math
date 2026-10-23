@@ -1,0 +1,37 @@
+# Current Augsburg MNTF requirements check — 2026-10-23
+
+## Sources checked
+
+Checked public University of Augsburg primary sources on 23 October 2026. Downloaded and text-extracted the three linked PDFs; current university HTML pages were opened through the university site.
+
+1. **MNTF Mathematics Master examination regulations, current listed consolidation M-420-2-3-002:** [Mathematics legal collection](https://www.uni-augsburg.de/de/services/rechtssammlung/mntf-master-mathematik/), which currently lists the consolidated PO “vom 20. Februar 2013 in der Fassung vom 5. August 2015”; direct [PDF](https://assets.uni-augsburg.de/media/filer_public/c7/ca/c7ca192b-ebc8-4200-9906-cfa736063088/m-420-2-3-002.pdf). Version date: 5 August 2015 (base text 20 February 2013; amendment 002). The legal-collection page was checked 23 October 2026; no later Mathematics PO was listed there.
+2. **Current MNTF submission declaration:** [MNTF forms page](https://www.uni-augsburg.de/de/studium/organisation-beratung/pruefungen/infos-und-antrage/mathematisch-naturwissenschaftlich-technische-fakultat-pruefungen/), linked “Erklärung zur Abgabe der Abschlussarbeit”; direct [PDF](https://assets.uni-augsburg.de/media/filer_public/1f/5d/1f5d67ea-6121-488d-8f0e-a1bdcef414a8/1erklarung_abgabe_abschlussarbeit_mntf_mit_freiwilliger_cd-1.pdf). The form is undated. Downloaded on 23 October 2026 from the current link; SHA-256 `63d9cd05642cea8b8e595b9c1ce688007e9dc8a31154fc9e0fd2603303f526cb`, identical to the repository's retained PDF.
+3. **University generative-AI user guideline E-048-1-000:** [University legal collection page](https://www.uni-augsburg.de/de/services/rechtssammlung/ki-anwendungen/); direct [PDF](https://assets.uni-augsburg.de/media/filer_public/7c/5e/7c5e26c5-231d-4199-a234-4bd5be18b8d3/e-048-1-000.pdf). Site lists “Fassung vom 11. August 2025”; the six-page document says effective 1 August 2025. Downloaded 23 October 2026.
+4. **MNTF Prüfungsamt FAQ:** [current FAQ](https://www.uni-augsburg.de/de/studium/organisation-beratung/pruefungen/infos-und-antrage/mathematisch-naturwissenschaftlich-technische-fakultat-pruefungen/haufig-gestellte-fragen-faqs/), checked 23 October 2026. It says Zeugnis issuance requires the thesis grade and, where applicable under the PO, the colloquium grade.
+
+## What these sources support
+
+### Independent work and AI
+
+- The current-linked declaration asks the candidate to affirm that the thesis was prepared independently, without impermissible outside help, and with no undeclared aids. It also says to identify borrowed intellectual property, document underlying data, make one's contribution clear in collaborative work, and follow the chair's scientific-writing guide. Its explicit proofreading allowance for peers or software is limited to orthography, punctuation and grammar. (Form, pp. 1–2.)
+- The current Mathematics PO §20(1) says the final assessment comprises the master's thesis **and associated colloquium**, and that the final assessment should demonstrate ability to work independently on a problem using scientific methods and rules. This is a qualification criterion; the text does not itself specify how AI assistance is assessed.
+- The university-wide AI guideline expressly covers generative applications used in a “studienbezogenen” or “forschungsbezogenen” context (§1.1), including internet tools such as ChatGPT. For scientific work it requires used content, including AI-generated content, to meet good-scientific-practice requirements and relevant information about origin and areas of use to be transparently documented, giving logs, citations, or footnotes as examples (§5). Users must carefully review and validate prompts and outputs before use or onward sharing (§6.2).
+- These sources therefore support a transparency/validation obligation and a real reconciliation question between the thesis's broad AI-use disclosure and the declaration's independent-work/impermissible-help affirmation. They do **not** establish that the disclosed use is prohibited, that it is permitted, that the disclosure satisfies every chair requirement, or that Jörn can or cannot sign. The declaration's limits and the PO's independent-work criterion need interpretation in the specific assessment context; the AI guideline does not resolve that interpretation.
+
+### Colloquium
+
+- Under the currently listed M-420-2-3-002 Mathematics PO, §20(1) defines the final assessment as master's thesis plus associated colloquium. §20(5) says the colloquium is normally 2–6 weeks after submission and consists of a 30–60 minute presentation plus 15–30 minutes of oral questions. §21(2) makes the colloquium pass/fail; §21(3) requires both thesis and colloquium to pass for the module to pass.
+- Thus the prior project assumption “no defense talk” is not supported for a student governed by M-420-2-3-002. The University's FAQ likewise treats the colloquium as applicable when required by the relevant PO.
+
+## Applicability limits
+
+- The public Mathematics legal-collection page presently lists M-420-2-3-002 as the consolidated 2013 PO as amended in 2015; §26(1) of the consolidated PO says it applies to students first entering the Mathematics master's from summer semester 2013, while §26(2) preserves the superseded 2011 PO for students who began earlier. The individual start date and governing PO for this thesis author were not inspected or established. Do not state that a colloquium is personally mandatory until the applicable PO/cohort is confirmed against the student's official Bescheid/records; also do not infer it is waived or completed.
+- The current MNTF declaration is a faculty-wide form, but the required chair guide is not on the public forms page and was not available in this check. The identity and authority of the claimed advisor approval, any examiner-specific written instructions about AI use, and any individual permission/clarification are unknown. No university person was contacted.
+- This is a requirements-source check, not legal advice, a finding of misconduct, a finding that AI assistance violates the declaration, a permission to sign, or an assessment of the thesis's mathematics.
+
+## Concrete agent-owned next checks
+
+1. From the official topic-issuance Bescheid (or information the user supplies), record the program, first-enrollment/cohort and governing PO; then verify the applicable PO's final-assessment clause. Preserve the official notice's date and wording.
+2. Retrieve the actual chair-issued scientific-writing guide and any written examiner/committee instructions about generative AI for this thesis. Compare them directly against the complete disclosure and declaration, including the stated ChatGPT-originated proof and the disclosure's statement that its personal verification is incomplete.
+3. Reconcile before any submission package or signed assertion: make sure the disclosure accurately identifies relevant AI origin/use and that the candidate has personally validated and accepted all mathematical and factual claims for which the declaration requires independent responsibility. If rule interpretation remains unclear, prepare a focused inquiry for the user's approval; do not send it.
+4. For colloquium status, check any official record for completion, exemption, or outstanding requirement only after confirming the governing PO. Do not schedule or claim a failure from this public-source review.

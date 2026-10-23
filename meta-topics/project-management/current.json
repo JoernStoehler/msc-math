@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-22T20:50:10.675123+00:00",
-  "scope": "User-selected 10-minute research and paper-structure sprint ending 2026-10-22T20:53:54Z. User described resources as 'infinite API quota, infinite agents, infinite recursion'; these are reported authorization/resource descriptions, not independently observed quota or usage. No numerical quota/spend observation is established.",
-  "summary": "Ten-minute journal sprint closed: reviewed/replayed affine7×7 and5×9 capacity certificates; sharp affine7×7 ratio; general determinant edge reduction; certified5×7 improvement witness; contact-Hessian necessary condition; three-paper portfolio and concrete product-paper draft. Novelty, human acceptance and journal readiness remain open. No selected thesis changes.",
+  "updated_at": "2026-10-23T17:30:01.417230+00:00",
+  "scope": "23 October portfolio-assigned continuation: bounded review/test of existing file-viewer changes and current-source administrative discovery. No new mathematical research campaign, selected thesis-source change, submission, publication or human acceptance is implied. Earlier sprint scopes remain historical.",
+  "summary": "Bounded reviews complete: 14 file-viewer fixture tests passed; current official administrative sources checked with personal applicability unresolved; exact product-capacity code contract inspected with no mismatch established in that limited scope. No implementation adoption, mathematical result, whole-thesis acceptance or submission is implied.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3364,6 +3364,60 @@
         "topics/products/paper-development/polygon-product-paper.md"
       ],
       "updated_at": "2026-10-22T20:50:10.675123+00:00"
+    },
+    {
+      "id": "file-viewer-diff-review-20261023",
+      "title": "Disposition of existing file-viewer diff",
+      "kind": "task",
+      "selection": "selected",
+      "project": "msc-math",
+      "status": "done",
+      "owner": null,
+      "outcome": "Actual three-file diff inspected and focused tests run: 14 passed. No concrete regression found within scope; no source implementation change adopted by this review. Existing dirty source remains preserved.",
+      "depends_on": [],
+      "next_step": "Determine whether the two historical Workbench artifact roots still need this optimization before landing or dropping the inherited implementation.",
+      "sources": [
+        "docs/history/file-viewer-review-20261023.md",
+        "docs/file-viewer.md",
+        "scripts/serve-files.py",
+        "scripts/test_serve_files.py"
+      ],
+      "updated_at": "2026-10-23T17:16:34.598375+00:00",
+      "authorization": "Current user assigned msc-math; this was a bounded read-only/temporary-fixture review, not revival of old research budgets."
+    },
+    {
+      "id": "official-requirements-check-20261023",
+      "title": "Current official-source administrative requirements",
+      "kind": "task",
+      "selection": "selected",
+      "project": "msc-math",
+      "status": "done",
+      "owner": null,
+      "outcome": "Current official PO, declaration and AI guideline checked. Cohort/examiner-specific applicability and interpretation remain unresolved; no permission, misconduct or completion conclusion.",
+      "depends_on": [],
+      "next_step": "Retrieve governing student record and chair/examiner-specific guidance before personal applicability/signability conclusions.",
+      "sources": [
+        "docs/history/official-requirements-check-20261023.md"
+      ],
+      "updated_at": "2026-10-23T17:30:01.417230+00:00",
+      "authorization": "Bounded public-source verification within assigned project; no university contact or signing/submission authority."
+    },
+    {
+      "id": "product-code-contract-review-20261023",
+      "title": "Exact product-capacity implementation contract",
+      "kind": "task",
+      "selection": "selected",
+      "project": "msc-math",
+      "status": "done",
+      "owner": null,
+      "outcome": "One capacity_4d product route checked against selected manuscript, code and theorem. No mismatch established. Finite correspondence test source contains three fixtures; tests were not run and all-input correctness or other interfaces are not certified.",
+      "depends_on": [],
+      "next_step": "Use retained inspected scope to select the next unreviewed contract rather than repeating this check or claiming whole-code acceptance.",
+      "sources": [
+        "docs/history/code-contract-review-20261023.md"
+      ],
+      "updated_at": "2026-10-23T17:30:01.417230+00:00",
+      "authorization": "Bounded source audit within assigned project; no proof research or numerical producer."
     }
   ],
   "decisions": [
@@ -3648,6 +3702,12 @@
   ],
   "resources": [
     {
+      "label": "23 October live Codex usage observation",
+      "value": "At 17:00:00 UTC the account API reported 9% used in the seven-day window, ordinary usage allowed, two reset credits available. The regular backend reset timestamp was 29 October; user reported an additional announced reset around17:00. Completion of that extra reset is not established by this observation. Account capacity is not a project allowance or session attribution.",
+      "observed_at": "2026-10-23T17:00:00.036Z",
+      "basis": "Read-only account/rateLimits/read against the local Codex daemon; user Desk 78e53247 and47f9e49f. No reset credit used."
+    },
+    {
       "label": "12 October cleanup launch",
       "value": "Approved wall stop 2026-10-12T10:59:24Z; account-wide weekly used baseline 5.0% at 08:59:35.924Z (window 10080 min, reset epoch 1792312863), stop before 35.0% used in same window. Final execution reading 10.0% at 10:09:24.629Z in the same 10080-minute window/reset epoch; billed spending and thread attribution unknown.",
       "observed_at": "2026-10-12T10:09:24.629Z",
@@ -3858,6 +3918,14 @@
     }
   ],
   "changes": [
+    {
+      "at": "2026-10-23T17:30:01.417230+00:00",
+      "text": "Finished current official-source and exact-product-interface checks; retained scope/limits and released reviewer. No whole-project readiness inferred."
+    },
+    {
+      "at": "2026-10-23T17:16:34.598375+00:00",
+      "text": "Bounded file-viewer source review and 14 fixture tests completed; inherited dirty implementation preserved. Opened current official-source check; no mathematical/thesis acceptance promoted."
+    },
     {
       "at": "2026-10-22T20:50:10.675123+00:00",
       "text": "User signalled one minute remaining; stopped new exploration, retained reviewed results and paper artifacts, closed sprint ownership. Major novelty and journal readiness not established."
