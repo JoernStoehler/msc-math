@@ -3,7 +3,7 @@
 v1.1 · 2026-10-23 · Codex thread 01a16960-869d-77d3-ae57-d3412d39ac05
 
 ## Goal
-Jörn's MSc thesis "Probing Viterbo's conjecture" is submitted and passes. The manuscript is unfinished and not yet submitted (README).
+Jörn's MSc thesis "Probing Viterbo's conjecture" is submitted and passes. It has not been submitted to the university; so far it has only received failing grades in preliminary checks (source: Jörn, desk question 6ded353d, 23 Oct). Checks found and their causes: [preliminary checks](docs/preliminary-checks-2026-10-23.md).
 
 ## Open
 - **Applicable colloquium requirement/status established.** Current listed PO includes it; personal applicability/completion is unverified ([current-source check](docs/history/official-requirements-check-20261023.md)). Next: check governing student record before deciding whether an inquiry is needed. Owner: unassigned.
