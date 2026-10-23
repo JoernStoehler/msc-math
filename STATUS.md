@@ -15,3 +15,5 @@ Jörn's MSc thesis "Probing Viterbo's conjecture" is submitted and passes. It ha
 
 ## Waiting on Jörn
 - No new question required for the completed source/test checks. Personal administrative records and any inquiry approval remain distinct from agent-owned retrieval.
+
+- Grade blocked on desk (23 Oct): Jörn answered 2e3fc765 with 'Desk file viewer is broken for PDF. Ask again once that's fixed.' Once desk STATUS D6 is done, ask again for the grade of the 2-page introduction (pp. 5-6) on branch `claude/opening-pass-2026-10-23` (97fe0af0, worktree /workspaces/msc-math-worktrees/opening-pass-2026-10-23). Agent prediction: borderline PASS. Owner: next msc-math session.
