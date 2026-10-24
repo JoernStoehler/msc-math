@@ -1,6 +1,6 @@
 # Current handoff
 
-## 24 October: introduction function repair returned for operations assessment
+## 24 October: introduction candidate read and received by operations
 
 Jörn rejected `a39e93ff` in answered Desk `7b13611b` at 12:06:51 UTC,
 despite its fresh Astra/high review. Both that question and earlier `d050457a`
@@ -17,9 +17,16 @@ blind or human tests. Source alignment and focused layout are checked; no
 whole-thesis acceptance or fresh proof/experiment audit is claimed. The PDF
 still has 104 pages; the introduction now spans pp. 5–7.
 
-Operations `01a16da4-32c1-79c2-b7a2-cec58615a4c1` receives the candidate and
-raw evidence and selects any next human consultation or substantive work.
-No new question/title/grade request was prepared or issued by this worker.
+Operations `01a16da4-32c1-79c2-b7a2-cec58615a4c1` explicitly read the actual
+introduction and full evidence and confirmed receipt at 12:51 UTC. Human
+acceptance and main integration remain separate. The bounded receiving
+continuation recommends a narrow acceptance decision on this candidate:
+acceptable permits closing the opening repair and selecting another remaining
+manuscript issue; needs-repair keeps the opening selected for PM's next choice.
+The exact title/body is prepared for separate message review, not issued; PM
+chooses whether/when to send it. The review packet is
+`/tmp/msc-math/message-reviews/2026-10-24/introduction-receipt/`.
+No further manuscript work, broader audit or stopped work is selected.
 Main manuscript and unrelated viewer edits are preserved. Historical global
 source/PDF reconciliation and the existing dashboard unserved-source failure
 remain outside this repair. Writer `01a16da7-54ea-7ea3-8fe6-fd8a0a4e851c`

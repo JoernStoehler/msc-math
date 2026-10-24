@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-24T12:31:06Z",
+  "updated_at": "2026-10-24T12:53:06Z",
   "scope": "24 October portfolio PM handoff: human introduction FAIL remains live task state; root’s bounded candidate repair is complete and a fresh readability grade is pending. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
-  "summary": "The rejection of a39e93ff in answered Desk 7b13611b and the failed prediction of its fresh Astra/high review are preserved. New candidate 16ca1458 explains capacity/volume significance and relates methods/results to the problem. One native Opus5.5 editorial response succeeded; an initially unaided Astra/high reader reconstructed the introduction and found concrete obstacles, corrected through scoped follow-ups. Build: 104 pages, introduction pp. 5–7. This is not human acceptance. Operations receives the candidate/evidence and selects any further consultation; no new question is pending or issued by the worker.",
+  "summary": "Operations explicitly read and received candidate 16ca1458 and the full introduction-function evidence on 24 October. Human acceptance and main integration remain unestablished; prior questions are answered rejections. Recommendation: operations considers one narrow acceptance decision on this changed-method candidate to choose continued introduction repair versus selecting another remaining manuscript issue. A concise title/body is prepared for separate exact-message review, not issued. No new manuscript work, research, broader audit or stopped work is selected.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3428,10 +3428,10 @@
       "graph_label": "Introduction motivation",
       "status": "ready",
       "owner": "01a16da4-32c1-79c2-b7a2-cec58615a4c1",
-      "outcome": "The rejection of a39e93ff in answered Desk 7b13611b and the failed prediction of its fresh Astra/high review are preserved. New candidate 16ca1458 explains capacity/volume significance and relates methods/results to the problem. One native Opus5.5 editorial response succeeded; an initially unaided Astra/high reader reconstructed the introduction and found concrete obstacles, corrected through scoped follow-ups. Build: 104 pages, introduction pp. 5–7. This is not human acceptance. Operations receives the candidate/evidence and selects any further consultation; no new question is pending or issued by the worker.",
+      "outcome": "Operations explicitly read and received candidate 16ca1458 and the full introduction-function evidence on 24 October. Human acceptance and main integration remain unestablished; prior questions are answered rejections. Recommendation: operations considers one narrow acceptance decision on this changed-method candidate to choose continued introduction repair versus selecting another remaining manuscript issue. A concise title/body is prepared for separate exact-message review, not issued. No new manuscript work, research, broader audit or stopped work is selected.",
       "depends_on": [],
       "blocker": null,
-      "next_step": "Operations 01a16da4-32c1-79c2-b7a2-cec58615a4c1 assesses candidate 16ca1458 and review/introduction-function-2026-10-24/README.md in the opening-pass checkout, including raw editorial/reader evidence and limits; selects substantive next work or any human consultation. No automatic grade-loop resubmission or main manuscript merge.",
+      "next_step": "Operations 01a16da4-32c1-79c2-b7a2-cec58615a4c1 chooses whether/when to issue the separately reviewed narrow candidate-acceptance title/body. An acceptable opening can close this bounded repair; rejection keeps it open for PM selection of the next approach. Neither outcome supplies whole-PDF PASS or authorizes main integration.",
       "authorization": "24 Oct operations follow-up after second rejection: own candidate integration/state; Astra/high or Opus5.5 writing, one roughly five-minute Opus5.5 editorial response through existing authentication, bounded reader/message review. No main manuscript merge, new question, experiments, broad audit, login/billing/config changes or spending resets.",
       "sources": [
         "Desk question 77acc843-87d1-4bdd-bedb-cb0027e6a074",
@@ -3442,7 +3442,7 @@
         "thesis/chapters/10-affine-pentagons.tex",
         "Desk question 7b13611b-bd83-42df-91de-674bd2bf1d02"
       ],
-      "updated_at": "2026-10-24T12:31:06Z"
+      "updated_at": "2026-10-24T12:53:06Z"
     }
   ],
   "decisions": [
