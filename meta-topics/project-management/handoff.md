@@ -1,16 +1,29 @@
 # Current handoff
 
-## 24 October: introduction candidate received; revised follow-up waiting
+## 24 October: introduction function repair returned for operations assessment
 
-Operations `01a16da4-32c1-79c2-b7a2-cec58615a4c1` received candidate `a39e93ff`
-(opening-pass worktree; state handoff `1d12c3a8`, main state-only `7e1d6355`).
-Operations issued the exact reviewed human-v2 title/body once as Desk
-`7b13611b-bd83-42df-91de-674bd2bf1d02` at 2026-10-24T12:01:18.102Z.
-Direct `questions get` at 2026-10-24T12:02:46Z verified `waiting` and the operations
-thread as `replyTo`. This is the revised-candidate follow-up; `d050457a`
-remains answered. Operations receives the answer and selects substantive next
-work. No main manuscript edit/merge, new question, review or experiment is
-selected by this bookkeeping update. Human acceptance remains open.
+Jörn rejected `a39e93ff` in answered Desk `7b13611b` at 12:06:51 UTC,
+despite its fresh Astra/high review. Both that question and earlier `d050457a`
+are answered, not pending. Candidate `16ca1458` in the opening-pass checkout
+now explains the capacity–volume problem's significance and what its methods
+and results contribute. Evidence owner:
+`review/introduction-function-2026-10-24/README.md` in that checkout.
+
+One existing-auth native Claude consultation returned `claude-opus-5-5` in
+118.16 seconds (one turn; no tools). A new Astra/high reader reconstructed the
+introduction without feedback/source dossiers, then identified concrete reading
+obstacles. Scoped follow-ups checked corrections; those follow-ups were not
+blind or human tests. Source alignment and focused layout are checked; no
+whole-thesis acceptance or fresh proof/experiment audit is claimed. The PDF
+still has 104 pages; the introduction now spans pp. 5–7.
+
+Operations `01a16da4-32c1-79c2-b7a2-cec58615a4c1` receives the candidate and
+raw evidence and selects any next human consultation or substantive work.
+No new question/title/grade request was prepared or issued by this worker.
+Main manuscript and unrelated viewer edits are preserved. Historical global
+source/PDF reconciliation and the existing dashboard unserved-source failure
+remain outside this repair. Writer `01a16da7-54ea-7ea3-8fe6-fd8a0a4e851c`
+has no continuing domain assignment after this handoff.
 
 ## 19 October: bounded research outcomes preserved; run closed
 
