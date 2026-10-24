@@ -1,6 +1,6 @@
 # Current handoff
 
-## 24 October: introduction candidate read and received by operations
+## 24 October: introduction acceptance waiting on Jörn; writer receives answer
 
 Jörn rejected `a39e93ff` in answered Desk `7b13611b` at 12:06:51 UTC,
 despite its fresh Astra/high review. Both that question and earlier `d050457a`
@@ -17,20 +17,25 @@ blind or human tests. Source alignment and focused layout are checked; no
 whole-thesis acceptance or fresh proof/experiment audit is claimed. The PDF
 still has 104 pages; the introduction now spans pp. 5–7.
 
-Operations `01a16da4-32c1-79c2-b7a2-cec58615a4c1` explicitly read the actual
-introduction and full evidence and confirmed receipt at 12:51 UTC. Human
-acceptance and main integration remain separate. The bounded receiving
-continuation recommends a narrow acceptance decision on this candidate:
-acceptable permits closing the opening repair and selecting another remaining
-manuscript issue; needs-repair keeps the opening selected for PM's next choice.
-The exact title/body is prepared for separate message review, not issued; PM
-chooses whether/when to send it. The review packet is
+Operations `01a16da4-32c1-79c2-b7a2-cec58615a4c1` read the introduction
+and full evidence, then issued the exact separately approved consultation as
+Desk `d7d04463-2326-4af7-99c6-284d96328315` at 12:56:17 UTC.
+`questions get` at 2026-10-24T12:57:24Z verified waiting, no answer and explicit
+reply recipient writer `01a16da7-54ea-7ea3-8fe6-fd8a0a4e851c`. The earlier answered
+`7b13611b` routing is unchanged; it is not a pending question.
+
+Writer owns reading and processing the new answer. If accepted, record only
+narrow introduction acceptance and return a proposed next manuscript issue or
+integration to operations. If rejected, preserve the exact answer and reassess
+the selected repair without a routine repeated grade request. PM retains
+cross-project allocation. No manuscript work while waiting; no automatic main
+merge or whole-thesis PASS. The approved question and review packet remain at
 `/tmp/msc-math/message-reviews/2026-10-24/introduction-receipt/`.
-No further manuscript work, broader audit or stopped work is selected.
+
 Main manuscript and unrelated viewer edits are preserved. Historical global
-source/PDF reconciliation and the existing dashboard unserved-source failure
-remain outside this repair. Writer `01a16da7-54ea-7ea3-8fe6-fd8a0a4e851c`
-has no continuing domain assignment after this handoff.
+source/PDF reconciliation, the existing dashboard unserved-source failure and
+code/data overflow remain outside this state-only follow-through.
+
 
 ## 19 October: bounded research outcomes preserved; run closed
 

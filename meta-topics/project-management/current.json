@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-24T12:53:06Z",
+  "updated_at": "2026-10-24T12:57:24Z",
   "scope": "24 October portfolio PM handoff: human introduction FAIL remains live task state; root’s bounded candidate repair is complete and a fresh readability grade is pending. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
-  "summary": "Operations explicitly read and received candidate 16ca1458 and the full introduction-function evidence on 24 October. Human acceptance and main integration remain unestablished; prior questions are answered rejections. Recommendation: operations considers one narrow acceptance decision on this changed-method candidate to choose continued introduction repair versus selecting another remaining manuscript issue. A concise title/body is prepared for separate exact-message review, not issued. No new manuscript work, research, broader audit or stopped work is selected.",
+  "summary": "Operations issued narrow introduction-acceptance question d7d04463-2326-4af7-99c6-284d96328315 at 12:56:17 UTC on 24 October for candidate 16ca1458. questions get at 2026-10-24T12:57:24Z verifies waiting, no answer and replyTo writer 01a16da7-54ea-7ea3-8fe6-fd8a0a4e851c. Writer owns processing the answer; PM retains cross-project allocation. No manuscript work while waiting; human acceptance, main integration and whole-thesis PASS remain unestablished.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3426,13 +3426,13 @@
       "selection": "selected",
       "project": "msc-math",
       "graph_label": "Introduction motivation",
-      "status": "ready",
-      "owner": "01a16da4-32c1-79c2-b7a2-cec58615a4c1",
-      "outcome": "Operations explicitly read and received candidate 16ca1458 and the full introduction-function evidence on 24 October. Human acceptance and main integration remain unestablished; prior questions are answered rejections. Recommendation: operations considers one narrow acceptance decision on this changed-method candidate to choose continued introduction repair versus selecting another remaining manuscript issue. A concise title/body is prepared for separate exact-message review, not issued. No new manuscript work, research, broader audit or stopped work is selected.",
+      "status": "blocked",
+      "owner": "01a16da7-54ea-7ea3-8fe6-fd8a0a4e851c",
+      "outcome": "Operations issued narrow introduction-acceptance question d7d04463-2326-4af7-99c6-284d96328315 at 12:56:17 UTC on 24 October for candidate 16ca1458. questions get at 2026-10-24T12:57:24Z verifies waiting, no answer and replyTo writer 01a16da7-54ea-7ea3-8fe6-fd8a0a4e851c. Writer owns processing the answer; PM retains cross-project allocation. No manuscript work while waiting; human acceptance, main integration and whole-thesis PASS remain unestablished.",
       "depends_on": [],
-      "blocker": null,
-      "next_step": "Operations 01a16da4-32c1-79c2-b7a2-cec58615a4c1 chooses whether/when to issue the separately reviewed narrow candidate-acceptance title/body. An acceptable opening can close this bounded repair; rejection keeps it open for PM selection of the next approach. Neither outcome supplies whole-PDF PASS or authorizes main integration.",
-      "authorization": "24 Oct operations follow-up after second rejection: own candidate integration/state; Astra/high or Opus5.5 writing, one roughly five-minute Opus5.5 editorial response through existing authentication, bounded reader/message review. No main manuscript merge, new question, experiments, broad audit, login/billing/config changes or spending resets.",
+      "blocker": "Awaiting Jörn’s answer to narrow introduction-acceptance question d7d04463-2326-4af7-99c6-284d96328315; verified waiting at 2026-10-24T12:57:24Z.",
+      "next_step": "Await and read the actual answer. If accepted, record narrow introduction acceptance and return a proposed next manuscript issue/integration to operations; no automatic main merge or whole-thesis PASS. If rejected, retain the exact rejection and reassess the selected repair without a routine repeated grade request.",
+      "authorization": "24 Oct operations receiving-route assignment: writer owns the issued question response and bounded processing described in next_step. Current action is state-only reconciliation. No manuscript work while waiting, main merge, new question, evaluation or research. PM retains cross-project allocation.",
       "sources": [
         "Desk question 77acc843-87d1-4bdd-bedb-cb0027e6a074",
         "Desk question d050457a-6ed3-4bad-8136-289c72ee022c",
@@ -3440,9 +3440,10 @@
         "thesis/chapters/01-introduction.tex (candidate branch)",
         "thesis/chapters/09-rotated-regular-polygons.tex",
         "thesis/chapters/10-affine-pentagons.tex",
-        "Desk question 7b13611b-bd83-42df-91de-674bd2bf1d02"
+        "Desk question 7b13611b-bd83-42df-91de-674bd2bf1d02",
+        "Desk question d7d04463-2326-4af7-99c6-284d96328315"
       ],
-      "updated_at": "2026-10-24T12:53:06Z"
+      "updated_at": "2026-10-24T12:57:24Z"
     }
   ],
   "decisions": [
