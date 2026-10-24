@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-23T17:30:01.417230+00:00",
-  "scope": "23 October portfolio-assigned continuation: bounded review/test of existing file-viewer changes and current-source administrative discovery. No new mathematical research campaign, selected thesis-source change, submission, publication or human acceptance is implied. Earlier sprint scopes remain historical.",
-  "summary": "Bounded reviews complete: 14 file-viewer fixture tests passed; current official administrative sources checked with personal applicability unresolved; exact product-capacity code contract inspected with no mismatch established in that limited scope. No implementation adoption, mathematical result, whole-thesis acceptance or submission is implied.",
+  "updated_at": "2026-10-24T10:08:00Z",
+  "scope": "24 October portfolio PM handoff: the human introduction FAIL is live task state; root assigned review/correction of a bounded candidate in an isolated worktree. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
+  "summary": "Jörn graded pp. 5–6 FAIL for painful AI-style phrasing (Desk 77acc843). Isolated candidate commit 74adc710 corrects the ratio-bound label, Mahler transition, CH2021 citation, empirical rank wording and dimension-four counterexample transition. Changed summaries were checked against in-manuscript definitions/theorem statements. Native reviewer thread 01a16d56-b14f-7352-958b-085fc1de7a6a approved the exact version for prose, source alignment and page fit; proofs and external papers were not checked. The 104-page PDF retains the opening on pp. 5–6; earlier commit 24cc8f8b built to 103 pages and the cause is unknown. Root review and a decision about any fresh human grade remain pending.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -18,8 +18,8 @@
         "project-close"
       ],
       "blocker": "Workflow implementation/acceptance, thesis source/support/human PASS, code/evidence and reproduction checks, actual delivery/archive dispositions and final session release remain unfinished.",
-      "plan_gap": "The 4 October bounded thesis run is closed. Human acceptance, university submission status and optional workflow activation remain unknown or unresolved.",
-      "next_step": "Select a new authorized continuation from the retained obligations; the original thesis run and its deadline are closed.",
+      "plan_gap": "Whole-thesis PASS and other thesis/project completion obligations remain unresolved. Current selected work is only review and repair of the rejected two-page opening.",
+      "next_step": "Finish root review of the bounded opening candidate; separately select future work for remaining obligations.",
       "authorization": "Jörn explicitly restarted from fe3475b3 on 4 October 2026: best supported thesis PDF/repository using remaining weekly quota (numeric balance unknown), no human questions, absolute stop 2026-10-04T02:00:00Z. No public release or university submission.",
       "sources": [
         "meta-topics/project-management/thesis-work.md",
@@ -27,7 +27,7 @@
         "docs/project-facts.md",
         "meta-topics/repository-organization/README.md"
       ],
-      "updated_at": "2026-10-04T20:43:50.270690+00:00"
+      "updated_at": "2026-10-24T10:01:00Z"
     },
     {
       "id": "workflow-done",
@@ -3418,6 +3418,29 @@
       ],
       "updated_at": "2026-10-23T17:30:01.417230+00:00",
       "authorization": "Bounded source audit within assigned project; no proof research or numerical producer."
+    },
+    {
+      "id": "rejected-opening-repair-20261024",
+      "title": "Repair the rejected two-page thesis opening",
+      "kind": "task",
+      "selection": "selected",
+      "project": "msc-math",
+      "graph_label": "Opening prose repair",
+      "status": "running",
+      "owner": "01a16d53-7d7a-7fb0-a64b-bf5c14b53256",
+      "outcome": "Candidate 74adc710 corrects the flagged result labels/transitions and source attributions; changed result summaries were checked against in-manuscript definitions/theorem statements. Native reviewer 01a16d56-b14f-7352-958b-085fc1de7a6a approved prose, source alignment and pp. 5–6 layout. Proofs/external sources were not checked; no whole-thesis or human acceptance is claimed.",
+      "depends_on": [],
+      "blocker": null,
+      "next_step": "Root reviews the exact 74adc710 PDF and decides whether to request a fresh human grade.",
+      "authorization": "Bounded prose repair assigned by the root portfolio coordinator on 24 October. No new research campaign, university submission, manuscript integration to main or external action.",
+      "sources": [
+        "Desk question 77acc843-87d1-4bdd-bedb-cb0027e6a074",
+        "opening-pass-2026-10-23 worktree, branch claude/opening-pass-2026-10-23, commit 24cc8f8b",
+        "thesis/chapters/01-introduction.tex (candidate branch)",
+        "thesis/chapters/09-rotated-regular-polygons.tex",
+        "thesis/chapters/10-affine-pentagons.tex"
+      ],
+      "updated_at": "2026-10-24T10:08:00Z"
     }
   ],
   "decisions": [
