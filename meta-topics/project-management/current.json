@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-24T10:39:18Z",
+  "updated_at": "2026-10-24T11:32:23Z",
   "scope": "24 October portfolio PM handoff: human introduction FAIL remains live task state; root’s bounded candidate repair is complete and a fresh readability grade is pending. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
-  "summary": "The original human FAIL for pp. 5–6 remains in Desk 77acc843. Root sent a new readability-only grade request, d050457a-6ed3-4bad-8136-289c72ee022c, for candidate commit 74adc710; a response is pending. A separate Luna/medium reviewer approved prose and layout and compared result summaries with the in-manuscript claims. The reviewer inherited parent history, and both writer and reviewer executed Luna/medium, so the pass was neither blinded/cold nor cross-model validation. It did not verify proofs or external papers. Whole-thesis acceptance remains open.",
+  "summary": "Jörn’s rejection of candidate 74adc710 in answered Desk d050457a is received. Candidate a39e93ff now leads with thesis contributions, empirical rationale and AI research-process reflection before prior work. The 104-page build and fresh-context Astra/high opening review passed within prose/source-alignment/page-fit scope. Operations PM receives the candidate and exact reviewed consultation title/body; no new question has been issued by the writer. Whole-thesis acceptance remains open.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3421,27 +3421,27 @@
     },
     {
       "id": "rejected-opening-repair-20261024",
-      "title": "Repair the rejected two-page thesis opening",
+      "title": "Make the introduction motivate the thesis and its empirical/AI approach",
       "kind": "task",
       "selection": "selected",
       "project": "msc-math",
-      "graph_label": "Opening prose repair",
-      "status": "running",
-      "owner": "01a16d53-7d7a-7fb0-a64b-bf5c14b53256",
-      "outcome": "Candidate 74adc710 revises the opening and builds to a PDF with the excerpt on pp. 5–6. The human FAIL remains historical; a new readability-only grade question d050457a-6ed3-4bad-8136-289c72ee022c is pending. A separate Luna/medium reviewer approved prose and layout and compared result summaries with the in-manuscript claims. The reviewer inherited parent history, and both writer and reviewer executed Luna/medium, so the pass was neither blinded/cold nor cross-model validation. It did not verify proofs or external papers.",
+      "graph_label": "Introduction motivation",
+      "status": "ready",
+      "owner": "01a16da4-32c1-79c2-b7a2-cec58615a4c1",
+      "outcome": "Jörn’s rejection of candidate 74adc710 in answered Desk d050457a is received. Candidate a39e93ff now leads with thesis contributions, empirical rationale and AI research-process reflection before prior work. The 104-page build and fresh-context Astra/high opening review passed within prose/source-alignment/page-fit scope. Operations PM receives the candidate and exact reviewed consultation title/body; no new question has been issued by the writer. Whole-thesis acceptance remains open.",
       "depends_on": [],
       "blocker": null,
-      "next_step": "Root reads the response to d050457a-6ed3-4bad-8136-289c72ee022c and decides any narrow follow-up. Whole-thesis acceptance remains separate.",
-      "authorization": "Bounded prose repair assigned by the root portfolio coordinator on 24 October. No new research campaign, university submission, manuscript integration to main or external action.",
+      "next_step": "After final commit receipt, operations PM issues the exact reviewed human-v2 title/body as a materially revised candidate follow-up with --reply-to 01a16da4-32c1-79c2-b7a2-cec58615a4c1; read and integrate the response. No broader grade request or resend of answered d050457a. Candidate manuscript is not merged to main.",
+      "authorization": "Selected narrow follow-up to Jörn’s answered rejection: candidate introduction, directly related evidence and state only. Astra/high substantive writing. Bounded separate review authorized. No main manuscript merge, research/experiments, disclosure expansion, submission or external contact.",
       "sources": [
         "Desk question 77acc843-87d1-4bdd-bedb-cb0027e6a074",
         "Desk question d050457a-6ed3-4bad-8136-289c72ee022c",
-        "opening-pass-2026-10-23 worktree, branch claude/opening-pass-2026-10-23, commit 74adc710",
+        "opening-pass-2026-10-23 worktree, branch claude/opening-pass-2026-10-23, commit a39e93ff",
         "thesis/chapters/01-introduction.tex (candidate branch)",
         "thesis/chapters/09-rotated-regular-polygons.tex",
         "thesis/chapters/10-affine-pentagons.tex"
       ],
-      "updated_at": "2026-10-24T10:39:18Z"
+      "updated_at": "2026-10-24T11:32:23Z"
     }
   ],
   "decisions": [
