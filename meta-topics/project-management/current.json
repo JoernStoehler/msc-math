@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-24T10:08:00Z",
+  "updated_at": "2026-10-24T10:10:00Z",
   "scope": "24 October portfolio PM handoff: the human introduction FAIL is live task state; root assigned review/correction of a bounded candidate in an isolated worktree. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
-  "summary": "Jörn graded pp. 5–6 FAIL for painful AI-style phrasing (Desk 77acc843). Isolated candidate commit 74adc710 corrects the ratio-bound label, Mahler transition, CH2021 citation, empirical rank wording and dimension-four counterexample transition. Changed summaries were checked against in-manuscript definitions/theorem statements. Native reviewer thread 01a16d56-b14f-7352-958b-085fc1de7a6a approved the exact version for prose, source alignment and page fit; proofs and external papers were not checked. The 104-page PDF retains the opening on pp. 5–6; earlier commit 24cc8f8b built to 103 pages and the cause is unknown. Root review and a decision about any fresh human grade remain pending.",
+  "summary": "The original human FAIL for pp. 5–6 remains in Desk 77acc843. Root sent a new readability-only grade request, d050457a-6ed3-4bad-8136-289c72ee022c, for candidate commit 74adc710; a response is pending. A bounded source-summary comparison and cold prose/layout review were completed, but proof validity and external sources were not verified. Whole-thesis acceptance remains open.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3428,19 +3428,20 @@
       "graph_label": "Opening prose repair",
       "status": "running",
       "owner": "01a16d53-7d7a-7fb0-a64b-bf5c14b53256",
-      "outcome": "Candidate 74adc710 corrects the flagged result labels/transitions and source attributions; changed result summaries were checked against in-manuscript definitions/theorem statements. Native reviewer 01a16d56-b14f-7352-958b-085fc1de7a6a approved prose, source alignment and pp. 5–6 layout. Proofs/external sources were not checked; no whole-thesis or human acceptance is claimed.",
+      "outcome": "Candidate 74adc710 revises the opening and builds to a PDF with the excerpt on pp. 5–6. The human FAIL remains historical; a new readability-only grade question d050457a-6ed3-4bad-8136-289c72ee022c is pending. Source summaries were checked against in-manuscript statements; proofs and external papers were not verified.",
       "depends_on": [],
       "blocker": null,
-      "next_step": "Root reviews the exact 74adc710 PDF and decides whether to request a fresh human grade.",
+      "next_step": "Root reads the response to d050457a-6ed3-4bad-8136-289c72ee022c and decides any narrow follow-up. Whole-thesis acceptance remains separate.",
       "authorization": "Bounded prose repair assigned by the root portfolio coordinator on 24 October. No new research campaign, university submission, manuscript integration to main or external action.",
       "sources": [
         "Desk question 77acc843-87d1-4bdd-bedb-cb0027e6a074",
-        "opening-pass-2026-10-23 worktree, branch claude/opening-pass-2026-10-23, commit 24cc8f8b",
+        "Desk question d050457a-6ed3-4bad-8136-289c72ee022c",
+        "opening-pass-2026-10-23 worktree, branch claude/opening-pass-2026-10-23, commit 74adc710",
         "thesis/chapters/01-introduction.tex (candidate branch)",
         "thesis/chapters/09-rotated-regular-polygons.tex",
         "thesis/chapters/10-affine-pentagons.tex"
       ],
-      "updated_at": "2026-10-24T10:08:00Z"
+      "updated_at": "2026-10-24T10:10:00Z"
     }
   ],
   "decisions": [
