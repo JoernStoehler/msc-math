@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-24T10:10:00Z",
-  "scope": "24 October portfolio PM handoff: the human introduction FAIL is live task state; root assigned review/correction of a bounded candidate in an isolated worktree. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
-  "summary": "The original human FAIL for pp. 5–6 remains in Desk 77acc843. Root sent a new readability-only grade request, d050457a-6ed3-4bad-8136-289c72ee022c, for candidate commit 74adc710; a response is pending. A bounded source-summary comparison and cold prose/layout review were completed, but proof validity and external sources were not verified. Whole-thesis acceptance remains open.",
+  "updated_at": "2026-10-24T10:39:18Z",
+  "scope": "24 October portfolio PM handoff: human introduction FAIL remains live task state; root’s bounded candidate repair is complete and a fresh readability grade is pending. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
+  "summary": "The original human FAIL for pp. 5–6 remains in Desk 77acc843. Root sent a new readability-only grade request, d050457a-6ed3-4bad-8136-289c72ee022c, for candidate commit 74adc710; a response is pending. A separate Luna/medium reviewer approved prose and layout and compared result summaries with the in-manuscript claims. The reviewer inherited parent history, and both writer and reviewer executed Luna/medium, so the pass was neither blinded/cold nor cross-model validation. It did not verify proofs or external papers. Whole-thesis acceptance remains open.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3428,7 +3428,7 @@
       "graph_label": "Opening prose repair",
       "status": "running",
       "owner": "01a16d53-7d7a-7fb0-a64b-bf5c14b53256",
-      "outcome": "Candidate 74adc710 revises the opening and builds to a PDF with the excerpt on pp. 5–6. The human FAIL remains historical; a new readability-only grade question d050457a-6ed3-4bad-8136-289c72ee022c is pending. Source summaries were checked against in-manuscript statements; proofs and external papers were not verified.",
+      "outcome": "Candidate 74adc710 revises the opening and builds to a PDF with the excerpt on pp. 5–6. The human FAIL remains historical; a new readability-only grade question d050457a-6ed3-4bad-8136-289c72ee022c is pending. A separate Luna/medium reviewer approved prose and layout and compared result summaries with the in-manuscript claims. The reviewer inherited parent history, and both writer and reviewer executed Luna/medium, so the pass was neither blinded/cold nor cross-model validation. It did not verify proofs or external papers.",
       "depends_on": [],
       "blocker": null,
       "next_step": "Root reads the response to d050457a-6ed3-4bad-8136-289c72ee022c and decides any narrow follow-up. Whole-thesis acceptance remains separate.",
@@ -3441,7 +3441,7 @@
         "thesis/chapters/09-rotated-regular-polygons.tex",
         "thesis/chapters/10-affine-pentagons.tex"
       ],
-      "updated_at": "2026-10-24T10:10:00Z"
+      "updated_at": "2026-10-24T10:39:18Z"
     }
   ],
   "decisions": [
