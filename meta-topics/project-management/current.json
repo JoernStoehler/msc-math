@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-24T11:32:23Z",
+  "updated_at": "2026-10-24T12:02:46Z",
   "scope": "24 October portfolio PM handoff: human introduction FAIL remains live task state; root’s bounded candidate repair is complete and a fresh readability grade is pending. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
-  "summary": "Jörn’s rejection of candidate 74adc710 in answered Desk d050457a is received. Candidate a39e93ff now leads with thesis contributions, empirical rationale and AI research-process reflection before prior work. The 104-page build and fresh-context Astra/high opening review passed within prose/source-alignment/page-fit scope. Operations PM receives the candidate and exact reviewed consultation title/body; no new question has been issued by the writer. Whole-thesis acceptance remains open.",
+  "summary": "Operations received introduction candidate a39e93ff and issued the exact approved human-v2 title/body once as Desk 7b13611b-bd83-42df-91de-674bd2bf1d02 at 2026-10-24T12:01:18.102Z. Direct questions get verified waiting with replyTo 01a16da4-32c1-79c2-b7a2-cec58615a4c1. Earlier d050457a remains answered. Operations receives the response and selects substantive next work; no main manuscript merge or new domain work is selected. Whole-thesis acceptance remains open.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3426,12 +3426,12 @@
       "selection": "selected",
       "project": "msc-math",
       "graph_label": "Introduction motivation",
-      "status": "ready",
+      "status": "blocked",
       "owner": "01a16da4-32c1-79c2-b7a2-cec58615a4c1",
-      "outcome": "Jörn’s rejection of candidate 74adc710 in answered Desk d050457a is received. Candidate a39e93ff now leads with thesis contributions, empirical rationale and AI research-process reflection before prior work. The 104-page build and fresh-context Astra/high opening review passed within prose/source-alignment/page-fit scope. Operations PM receives the candidate and exact reviewed consultation title/body; no new question has been issued by the writer. Whole-thesis acceptance remains open.",
+      "outcome": "Operations received introduction candidate a39e93ff and issued the exact approved human-v2 title/body once as Desk 7b13611b-bd83-42df-91de-674bd2bf1d02 at 2026-10-24T12:01:18.102Z. Direct questions get verified waiting with replyTo 01a16da4-32c1-79c2-b7a2-cec58615a4c1. Earlier d050457a remains answered. Operations receives the response and selects substantive next work; no main manuscript merge or new domain work is selected. Whole-thesis acceptance remains open.",
       "depends_on": [],
-      "blocker": null,
-      "next_step": "After final commit receipt, operations PM issues the exact reviewed human-v2 title/body as a materially revised candidate follow-up with --reply-to 01a16da4-32c1-79c2-b7a2-cec58615a4c1; read and integrate the response. No broader grade request or resend of answered d050457a. Candidate manuscript is not merged to main.",
+      "blocker": "Awaiting Jörn’s answer to issued revised-candidate follow-up 7b13611b-bd83-42df-91de-674bd2bf1d02; operations owns receipt.",
+      "next_step": "Operations 01a16da4-32c1-79c2-b7a2-cec58615a4c1 receives the answer to 7b13611b-bd83-42df-91de-674bd2bf1d02 and selects any substantive next work. Do not resend the answered d050457a or issue another question; candidate remains unmerged.",
       "authorization": "Selected narrow follow-up to Jörn’s answered rejection: candidate introduction, directly related evidence and state only. Astra/high substantive writing. Bounded separate review authorized. No main manuscript merge, research/experiments, disclosure expansion, submission or external contact.",
       "sources": [
         "Desk question 77acc843-87d1-4bdd-bedb-cb0027e6a074",
@@ -3439,9 +3439,10 @@
         "opening-pass-2026-10-23 worktree, branch claude/opening-pass-2026-10-23, commit a39e93ff",
         "thesis/chapters/01-introduction.tex (candidate branch)",
         "thesis/chapters/09-rotated-regular-polygons.tex",
-        "thesis/chapters/10-affine-pentagons.tex"
+        "thesis/chapters/10-affine-pentagons.tex",
+        "Desk question 7b13611b-bd83-42df-91de-674bd2bf1d02"
       ],
-      "updated_at": "2026-10-24T11:32:23Z"
+      "updated_at": "2026-10-24T12:02:46Z"
     }
   ],
   "decisions": [

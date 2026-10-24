@@ -1,5 +1,17 @@
 # Current handoff
 
+## 24 October: introduction candidate received; revised follow-up waiting
+
+Operations `01a16da4-32c1-79c2-b7a2-cec58615a4c1` received candidate `a39e93ff`
+(opening-pass worktree; state handoff `1d12c3a8`, main state-only `7e1d6355`).
+Operations issued the exact reviewed human-v2 title/body once as Desk
+`7b13611b-bd83-42df-91de-674bd2bf1d02` at 2026-10-24T12:01:18.102Z.
+Direct `questions get` at 2026-10-24T12:02:46Z verified `waiting` and the operations
+thread as `replyTo`. This is the revised-candidate follow-up; `d050457a`
+remains answered. Operations receives the answer and selects substantive next
+work. No main manuscript edit/merge, new question, review or experiment is
+selected by this bookkeeping update. Human acceptance remains open.
+
 ## 19 October: bounded research outcomes preserved; run closed
 
 The fresh human-authorized run has completed its research work in this checkout.
