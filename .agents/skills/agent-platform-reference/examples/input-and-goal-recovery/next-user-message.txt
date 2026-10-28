@@ -1,1 +1,0 @@
-What deployment target should the alert-routing change use? I’ll keep the implementation that depends on that target paused until you specify it.

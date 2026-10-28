@@ -1,6 +1,0 @@
-__pycache__/
-.pytest_cache/
-*.pyc
-dist/*
-!dist/agent-platform-reference-thin.zip
-.refresh.lock
