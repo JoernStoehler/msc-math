@@ -27,6 +27,8 @@ Each ID has one canonical file. Read only relevant records; preserve IDs and his
 - [F16 Human navigation and mixed audiences](F16.md)
 - [F17 Automatic context reset removes the discussion](F17.md) — dated source-qualified diagnosis; mitigation and current runtime behavior unverified.
 
+- [F18 Research selection and disabled feedback workflow](F18.md) — clarified restart contract; future behavior untested; Pages overview stale.
+
 [Trial evidence and open capability questions](trial.md) retains the trial results, procedures and decision criteria imported from the Page.
 
 ## Status and evidence

@@ -1,5 +1,17 @@
 # Current handoff
 
+## 28 October: stopped research cleaned up; clarified fresh-session restart
+
+The 8983 research session is closed; all research descendants are stopped.
+[Restart handoff](research-restart-20261028.md) and root [PLAN.md](../../PLAN.md)
+preserve Jörn's clarified objective and scheduling decisions. Fresh session:
+new worktree off local main, independent substantial continuing brainstorming
+parallel to useful research, one LaTeX/PDF writeup. Optional unaccepted drafts
+are archived at `a3441d4e`, not adopted as the new research agenda.
+Feedback CLI/workflow is disabled at user request; fleet commit `b6b8e8b`.
+Unrelated main viewer edits are preserved. The friction Pages overview remains
+stale for this stopped attempt; no research or monitoring is running.
+
 ## 24 October: introduction acceptance waiting on Jörn; writer receives answer
 
 Jörn rejected `a39e93ff` in answered Desk `7b13611b` at 12:06:51 UTC,

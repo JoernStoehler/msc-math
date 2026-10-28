@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-28T10:27:54.445484+00:00",
-  "scope": "24 October portfolio PM handoff: human introduction FAIL remains live task state; root’s bounded candidate repair is complete and a fresh readability grade is pending. This does not imply a new mathematical campaign, whole-thesis completion, university submission or publication.",
-  "summary": "Operations issued narrow introduction-acceptance question d7d04463-2326-4af7-99c6-284d96328315 at 12:56:17 UTC on 24 October for candidate 16ca1458. questions get at 2026-10-24T12:57:24Z verifies waiting, no answer and replyTo writer 01a16da7-54ea-7ea3-8fe6-fd8a0a4e851c. Writer owns processing the answer; PM retains cross-project allocation. No manuscript work while waiting; human acceptance, main integration and whole-thesis PASS remain unestablished.",
+  "updated_at": "2026-10-28T22:29:36.063906+00:00",
+  "scope": "28 October research cleanup and fresh-session handoff. No active research assignment in this closed session; clarified autonomous programme retained in PLAN.md.",
+  "summary": "8983 research stopped and archived at a3441d4e. Fresh session to start in new worktree off main under clarified PLAN.md; no selected incumbent track list. All research workers stopped. Feedback disabled; unrelated edits preserved.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3452,7 +3452,7 @@
       "selection": "selected",
       "project": "workflows",
       "status": "done",
-      "owner": "01a17eff-43ec-7fe0-8645-c75d10308b95",
+      "owner": null,
       "outcome": "Six canonical shared workflows linked with project scope preserved. Actual msc fresh-consumer receipt and cross-repository source-repair task pass; no thesis source changed.",
       "depends_on": [],
       "authorization": "Jörn approved fleet active-source consolidation 28 October 2026, governing elapsed walltime and authorizing parallel work. No thesis work, publication, account or security changes.",
@@ -3464,6 +3464,24 @@
         "/workspaces/agent-fleet-tools/docs/consolidation-trial-results-2026-10-28.md"
       ],
       "updated_at": "2026-10-28T10:27:54.445484+00:00"
+    },
+    {
+      "id": "autonomous-research-restart-20261028",
+      "title": "Fresh autonomous research with continuous exploration and coherent LaTeX/PDF",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "parked",
+      "owner": null,
+      "outcome": "Fresh-session research contract retained; previous session closed without achieving the research objective. One readable checked LaTeX/PDF writeup remains the intended outcome.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md",
+        "meta-topics/project-management/research-restart-20261028.md"
+      ],
+      "authorization": "Current direct user request for new-session prompt, cleanup and main updates; original twelve-hour/local/remaining-quota envelope preserved. New research starts only in the user-selected fresh session.",
+      "updated_at": "2026-10-28T22:29:36.063906+00:00",
+      "next_step": "Incoming coordinator uses new worktree off main, measures remaining resources, starts substantial continuing alternative-track exploration in parallel with useful work, and maintains PLAN.md."
     }
   ],
   "decisions": [
@@ -4159,6 +4177,10 @@
     {
       "at": "2026-10-28T10:27:54.445484+00:00",
       "text": "Selected shared-source task complete for actual msc consumer: direct receipt and fixture artifact/owner repair passed. Global Claude body receipt remains with fleet owner until selected reset retry."
+    },
+    {
+      "at": "2026-10-28T22:29:36.063906+00:00",
+      "text": "Closed stopped research attempt; optional drafts archived at a3441d4e. Clarified user scope/value/scheduling/PDF contract in PLAN.md and restart handoff; disabled feedback source/CLI via fleet b6b8e8b. No research workers remain active."
     }
   ]
 }
