@@ -134,7 +134,7 @@ including messages relayed by Jörn and the human-mediated ChatGPT Pro round tri
 Standard native subagent-tree transport is outside its scope. Its catalog description
 supplies the trigger; the protocol is not duplicated in AGENTS.md or here.
 
-The [problem-structuring skill](../../.agents/skills/problem-structuring/SKILL.md)
+The [project-management skill](../../.agents/skills/orchestrate-project/SKILL.md)
 covers development of problems, goals and consequential decisions when that is needed for reliable autonomous progress. Investigate independently where possible;
 use joint interaction where user knowledge or judgment is needed. Useful, efficient
 interaction is part of that development; a clear task does not require an additional
