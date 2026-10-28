@@ -1,6 +1,6 @@
 # Status — msc-math
 
-v1.13 · 2026-10-28 · Shared-source consolidation
+v1.14 · 2026-10-28 · Shared-source consolidation
 
 ## Goal
 The intended outcome is submission and a passing result for Jörn's MSc thesis "Probing Viterbo's conjecture". It has not been submitted to the university; so far it has only received failing grades in preliminary checks (source: Jörn, desk question 6ded353d, 23 Oct). Checks found and their causes: [preliminary checks](docs/preliminary-checks-2026-10-23.md).
@@ -17,4 +17,6 @@ The intended outcome is submission and a passing result for Jörn's MSc thesis "
 Six project workflows now link to fleet-owned canonical sources. Actual fresh
 msc receipt and artifact/owner repair checks pass; project config values and
 unrelated work are preserved. [Evidence](/workspaces/agent-fleet-tools/docs/consolidation-implementation-2026-10-28.md).
+The Codex project adapter now links directly to the refactored fleet writeups;
+all 11 migrated targets resolve without a compatibility alias.
 This does not establish thesis readiness or resume thesis work.
