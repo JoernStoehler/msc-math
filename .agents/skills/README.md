@@ -1,4 +1,26 @@
-# Project skill ownership
+# Project skill discovery
+
+## Current ownership — 28 October 2026
+
+Jörn approved consolidation into `/workspaces/agent-fleet-tools`. Six project
+packages now link to canonical shared sources: `problem-structuring`,
+`harness-engineering`, `incident-log`, `lesswrong-fetch`,
+`codex-cli-claude-cloud` and `external-agent-communication`. The matching
+`.claude/skills` links reach those same bodies. Edit the shared sources rather
+than restoring project copies. The shared plugin bundle is uninstalled in Codex
+and locally disabled in Claude; other plugins and thesis-only skills stay scoped.
+
+Root `AGENTS.md` retains project scope/evidence/channel rules and selects
+`agent-platform-reference` for product mechanics. It preserves cloud/VM client
+routing separately from the workstation thread helper. The source consolidation
+authorizes no manuscript, research, publication or new experiment policy.
+
+The [shared ownership map](/workspaces/agent-fleet-tools/docs/skill-ownership.md)
+and [trial results](/workspaces/agent-fleet-tools/docs/consolidation-trial-results-2026-10-28.md)
+record sources and verification limits. The account below is dated provenance,
+not the current ownership or a pending authorization gate.
+
+## Historical local rollout
 
 The selected replacements, authorized by Jörn on 5 October 2026 and refined with his design judgment on 6 October, are:
 

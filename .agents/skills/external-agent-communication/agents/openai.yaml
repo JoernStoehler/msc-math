@@ -1,3 +1,0 @@
-interface:
-  display_name: "External Agent Communication"
-  short_description: "Exchange work across independent agent contexts"

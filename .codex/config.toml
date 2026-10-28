@@ -125,6 +125,7 @@ enabled = false
 
 # Jörn authorized replacement of the relevant skill set on 2026-10-05.
 # Disable the old plugin in this project to avoid competing owners; preserve
-# unrelated capabilities as unchanged local copies. Global installation remains.
+# unrelated capabilities. On 2026-10-28 the approved shared bundle was removed
+# globally in favor of direct canonical skill links; retain this disable guard.
 [plugins."agent-skills@agent-skills"]
 enabled = false

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Harness Engineering"
-  short_description: "Design and maintain Codex harness guidance"
-  default_prompt: "Use $harness-engineering to create or repair this Codex harness guidance."
