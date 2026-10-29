@@ -1,0 +1,69 @@
+[
+  {
+    "command": [
+      "/usr/bin/python",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/prepare.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 3.125845193862915,
+    "output": "{'winners': 50, 'seconds': 3.0534873008728027}\n"
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-O2",
+      "-std=c++17",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/catalogue.cpp",
+      "-o",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/catalogue"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.8052866458892822,
+    "output": ""
+  },
+  {
+    "command": [
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/catalogue",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/primitives.txt",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/catalogue.json"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.5184295177459717,
+    "output": "orders 362880 positive 79494 graphs 121 charts 190\n"
+  },
+  {
+    "command": [
+      "/usr/bin/python",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/optimize_exact.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 4.294530868530273,
+    "output": "{'status': 'exact arithmetic optimization on190 complete simple charts; enumeration coverage argument separate', 'chart_count': 190, 'maximum': ['1/125', '0', '0', '0'], 'maximum_numeric': 0.008, 'volume': ['8/625', '0', '-8/9375', '0'], 'volume_numeric': 0.012349556014932974, 'positive_gap': ['3/625', '0', '-8/9375', '0'], 'gap_numeric': 0.004349556014932974, 'log_systolic_derivative': ['12/625', '0', '-32/9375', '0'], 'log_systolic_derivative_numeric': 0.017398224059731897, 'seconds': 4.221806764602661}\n"
+  },
+  {
+    "command": [
+      "/usr/bin/python",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/check_radial_profile_witness.py",
+      "--core",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/exact_core.py",
+      "--out",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/radial-profile-witness-PASS.json"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.10624170303344727,
+    "output": "{\n  \"all_checks_passed\": true,\n  \"word\": [\n    0,\n    6,\n    5,\n    2,\n    1,\n    8,\n    4\n  ],\n  \"weights_coefficients_ascending\": [\n    [\n      \"17/200\",\n      \"0\",\n      \"1/40\",\n      \"0\"\n    ],\n    [\n      \"1/8\",\n      \"0\",\n      \"1/40\",\n      \"0\"\n    ],\n    [\n      \"1/8\",\n      \"0\",\n      \"1/40\",\n      \"0\"\n    ],\n    [\n      \"11/50\",\n      \"0\",\n      \"-1/25\",\n      \"0\"\n    ],\n    [\n      \"1/25\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ],\n    [\n      \"1/4\",\n      \"0\",\n      \"-1/20\",\n      \"0\"\n    ],\n    [\n      \"31/200\",\n      \"0\",\n      \"3/200\",\n      \"0\"\n    ]\n  ],\n  \"hinge_arguments_coefficients_ascending\": [\n    [\n      \"-59/40\",\n      \"0\",\n      \"1/8\",\n      \"0\"\n    ],\n    [\n      \"-9/40\",\n      \"0\",\n      \"-1/8\",\n      \"0\"\n    ],\n    [\n      \"-9/40\",\n      \"0\",\n      \"-1/8\",\n      \"0\"\n    ],\n    [\n      \"-9/40\",\n      \"0\",\n      \"-1/8\",\n      \"0\"\n    ],\n    [\n      \"1/5\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ],\n    [\n      \"-9/40\",\n      \"0\",\n      \"-1/8\",\n      \"0\"\n    ],\n    [\n      \"-9/8\",\n      \"0\",\n      \"3/40\",\n      \"0\"\n    ]\n  ],\n  \"response_terms_coefficients_ascending\": [\n    [\n      \"0\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ],\n    [\n      \"0\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ],\n    [\n      \"0\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ],\n    [\n      \"0\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ],\n    [\n      \"1/125\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ],\n    [\n      \"0\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ],\n    [\n      \"0\",\n      \"0\",\n      \"0\",\n      \"0\"\n    ]\n  ],\n  \"only_contributing_facet\": 1,\n  \"concentrated_response\": \"1/125\",\n  \"factor_exchange_symplectic_and_profile_preserving\": true,\n  \"six_kappa_less_than_1_over_125_less_than_seven_kappa\": true,\n  \"seventeen_facet_log_derivative_coefficients_ascending\": [\n    \"12/3125\",\n    \"0\",\n    \"-112/46875\",\n    \"0\"\n  ],\n  \"scope\": \"Exact witness, factor-exchange symmetry and scalar comparisons. The weighted upper bound additionally uses the previously audited complete all-word response bound.\"\n}\n"
+  },
+  {
+    "command": [
+      "/usr/bin/python",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/check_effective_constants.py",
+      "--core",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/exact_core.py",
+      "--out",
+      "/tmp/msc-math/restart/multicut/hko-ascent-replay-v2-isolated/constants-PASS.json"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 3.2773079872131348,
+    "output": "{\n  \"all_finite_checks_passed\": true,\n  \"scope\": \"Finite exact action-gap and rational inequalities; analytic coverage, pivot, rounding and Taylor proofs are separate reviewed arguments.\",\n  \"primitive_words\": 3000,\n  \"primitive_winners\": 50,\n  \"minimum_positive_action_gap_coefficients_ascending\": [\n    \"0\",\n    \"-1/20\",\n    \"0\",\n    \"3/20\"\n  ],\n  \"gap_exceeds_1_over_50\": true,\n  \"checks\": {\n    \"base_pivot_stays_above_c\": true,\n    \"neumann_inverse_factor_below_two\": true,\n    \"chart_l1_norm_below_two\": true,\n    \"second_derivative_below_twice_R\": true,\n    \"distance_coefficient_2000_suffices\": true,\n    \"quadratic_remainder_constant_suffices\": true,\n    \"deficit_below_1e_minus_20\": true,\n    \"retained_vertex_mass_nonempty\": true,\n    \"selected_pivot_preserved_by_rounding\": true,\n    \"normalized_action_square_coefficient\": true,\n    \"action_volume_product_coefficient\": true,\n    \"linear_gain_exceeds_one_percent\": true,\n    \"quadratic_cost_below_half_gain\": true\n  },\n  \"parameter\": \"1/1000000000000000000000000000000\",\n  \"relative_gain_lower_bound\": \"1/200000000000000000000000000000000\",\n  \"M\": \"200\",\n  \"c\": \"1/10000\",\n  \"R\": \"4000000000\",\n  \"distance_constant\": \"2000\",\n  \"A\": \"35200000\",\n  \"A_squared_over_four_plus_R\": \"309764000000000\",\n  \"action_remainder_bound\": \"1000000000000000\",\n  \"elapsed_seconds\": 3.2099740505218506\n}\n"
+  }
+]

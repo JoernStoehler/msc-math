@@ -1,0 +1,89 @@
+{
+  "started_utc": "2026-10-29T00:01:50.829925+00:00",
+  "run_directory": "/tmp/msc-math/restart/combinatorial-frontiers/fresh-global-replay-6bz4rq1u",
+  "source_directory": "/tmp/msc-math/restart/combinatorial-frontiers/global-replay",
+  "interpreter": "/workspaces/msc-math/.local-environments/miniforge/envs/sage/bin/python",
+  "input_sha256": {
+    "algebra.py": "19ec167bfa86576a0960d57dfd8fece9f9589cdbaad61bbb563c8dda4fd3b125",
+    "local_maximum.py": "99cfcd8de389b33bda0626b64cd2f2587e101e73ccfbd5c1b55783bbed218c1b",
+    "full_classification.py": "d29c74ffcd432a276ed7e56196824a81e66bea2aa14fce94c2d6b28625aa3b5a",
+    "dual_coverage.py": "125bf02e72133d653ad510f415111d5d54e77ed5cac04cb92ad604fb65ba3c13",
+    "README.md": "3d6ea1594363a32c4c261123f2762f643e784d001d8bccdb4aa4634a5e6934fd"
+  },
+  "steps": [
+    {
+      "command": [
+        "/workspaces/msc-math/.local-environments/miniforge/envs/sage/bin/python",
+        "algebra.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.719866,
+      "stdout": "algebra.out",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspaces/msc-math/.local-environments/miniforge/envs/sage/bin/python",
+        "local_maximum.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.267696,
+      "stdout": "local_maximum.out",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspaces/msc-math/.local-environments/miniforge/envs/sage/bin/python",
+        "dual_coverage.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 4.644208,
+      "stdout": "coverage.out",
+      "stderr": ""
+    }
+  ],
+  "interpreter_version": "3.13.15 | packaged by conda-forge | (main, Sep  2 2026, 22:01:58) [GCC 15.3.0]\nSageMath 10.9",
+  "conda_dependencies": {
+    "cddlib": {
+      "version": "1!0.94n",
+      "build": "h91791ec_0"
+    },
+    "pplpy": {
+      "version": "0.9.0",
+      "build": "py313h19e4ff6_1"
+    },
+    "ppl": {
+      "version": "1.2",
+      "build": "h6ec01c2_1006"
+    },
+    "sage": {
+      "version": "10.9",
+      "build": "py313h18cd520_0"
+    },
+    "mpfr": {
+      "version": "4.2.2",
+      "build": "ha2cb11d_1"
+    },
+    "python": {
+      "version": "3.13.15",
+      "build": "hf47f18c_103_cp313"
+    },
+    "gmp": {
+      "version": "6.3.0",
+      "build": "hfd2156b_3"
+    },
+    "sagelib": {
+      "version": "10.9",
+      "build": "np2py313h99781f1_0"
+    }
+  },
+  "output_sha256": {
+    "algebra.out": "c7a1ece46960dfb533a76f96b76e9cdf43d98062e60bfe1693fbab5be19bfeae",
+    "local_maximum.out": "c8147372547d8fedcaaaa325406601890ca397da2eeba2bd075d98ffbbed0567",
+    "coverage.out": "11b26542c94bf29f2bffc409d81ffd0b943ae2d0cbad7445482bfcb57e1ac854",
+    "full_classification.json": "ae6dffbbc029c3266321eea526782a0645683e0052d0a863537ceb6628736296",
+    "dual_coverage.json": "ac7689fc33158095c1a12d438a75dc87abdbc19b5fb878bbb3109912f1cb812f"
+  },
+  "finished_utc": "2026-10-29T00:01:56.853726+00:00",
+  "status": "PASS"
+}

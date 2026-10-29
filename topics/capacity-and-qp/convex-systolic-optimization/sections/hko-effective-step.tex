@@ -1,0 +1,79 @@
+% Quantitative companion to the twenty-row family, subject to root integration.
+% Include only with the audited effective-step.md/minor-bound.md companion
+% and check_effective_constants.py + constants-PASS.json in the replay package.
+% Reconcile earlier statements that no explicit parameter has been certified.
+\subsection{An effective remainder and an explicit small step}
+\label{subsec:hko-effective}
+
+The derivative argument can be made effective without enumerating all
+twenty-row permutations. The resulting numerical step is deliberately tiny;
+its value is a quantitative control of the true capacity, rather than a
+material increase in the counterexample's ratio.
+
+\begin{proposition}[Effective improvement]\label{prop:hko-effective}
+For the twenty-row family~\eqref{eq:ha-family},
+\[
+ \frac{\operatorname{sys}(H_t)}{\operatorname{sys}(H)}
+       >1+\frac{t}{200},\qquad 0<t\leq10^{-30}.
+\]
+In particular, $t=10^{-30}$ is an explicit improving parameter.
+\end{proposition}
+
+\begin{proof}[Quantitative argument]
+We state the estimates that connect the exact base certificate to the
+finite step; the accompanying quantitative proof supplies the pivot and
+rounding details and the exact arithmetic checks.
+Put $q(t)=1/(2c_{\mathrm{EHZ}}(H_t))$ and $q_0=\tau/5$.
+The minimum positive loss among the 3000 primitive triangle-pair actions is
+\[
+ \Delta=\frac{-\tau+3\tau^3}{20}>\frac1{50}.
+\]
+Every feasible weight vector on the moving twenty-row bank with
+$Q_t\geq q_0/2$ and $0\leq t\leq10^{-3}$ has five positive pivot
+coordinates bounded below by $1/4500$, with
+the inverse augmented base minor bounded by $200$ in infinity norm.
+Now fix a moving global maximizer with $0<t\leq10^{-30}$.
+Repairing closure through that minor gives a base-feasible vector $\beta_0$.
+The elementary chart bounds below first give
+$d=q_0-Q_0(\beta_0)<10^{-20}$. Decomposing its two factor weights into their at
+most forty occurrence-wise triangle vertices and deleting small marginal
+weights gives an exactly maximizing vector on the same word within
+$2000\sqrt d$ in $\ell^1$ norm. The gap $\Delta$ ensures that all retained
+triangle pairs are winning. For the stated parameter range this rounding
+preserves positivity of the selected pivot.
+
+The smooth pivot chart has Taylor remainder at most $4\cdot10^9t^2$,
+and its first-derivative function is $17600$-Lipschitz in the base weights.
+At an exact optimizer that derivative is at most $2q_0/125$ by the already
+proved all-word response bound. Completing the square in
+$-d+35200000t\sqrt d$ yields the global estimate
+\[
+ q(t)\leq q_0+\frac{2q_0}{125}t+10^{15}t^2,
+ \qquad 0<t\leq10^{-30}.
+\]
+This bounds the true optimal action from above, hence the capacity from
+below; it is not a feasible-branch capacity upper bound.
+
+On each original facet the new gauge is at least $1+tf_i$.
+Since $0\leq f_i\leq2/5$, the radial volume formula gives
+\[
+ \frac{\operatorname{Vol}(H_t)}{\operatorname{Vol}(H)}
+ \leq\int(1+tf)^{-4}\,d\nu
+ \leq1-4\nu[f]t+\frac85t^2.
+\]
+Using $q_0>1/10$ and the exact value of $\nu[f]$, the two estimates imply
+\[
+ \frac{q(t)^2\operatorname{Vol}(H_t)}
+      {q_0^2\operatorname{Vol}(H)}
+ \leq1-\frac{20+64\sqrt5}{9375}t+4\cdot10^{16}t^2
+ <1-\frac{t}{200}.
+\]
+Taking reciprocals and using $\operatorname{sys}=1/(8q^2\operatorname{Vol})$
+proves the claim.
+\end{proof}
+
+At $t=10^{-30}$ the certified lower bound on relative gain is
+$5\cdot10^{-33}$.
+The useful additional ingredient is the uniform quadratic remainder for
+the global optimal action. Finding a useful larger parameter or the maximum
+along this family remains a separate capacity problem.

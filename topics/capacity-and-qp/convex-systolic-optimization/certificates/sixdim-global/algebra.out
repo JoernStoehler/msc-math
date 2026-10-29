@@ -1,0 +1,4 @@
+determinant coefficient histogram {0: 5810, 1: 392, -1: 343}
+independent increasing-index clique recursion {7: 30, 5: 420}
+pyramid perfect-matchings check {0: 138, 1: 162, 2: 24} six rank-one within-path squares
+four signed F32 equality patterns are relabelings: PASS

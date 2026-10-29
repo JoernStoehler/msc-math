@@ -1,0 +1,237 @@
+% Global extension, independently mathematically audited 2026-10-28.
+% Exact polyhedral classification is computer-assisted; see retained verifier.
+\section{The sharp global six-simplex inequality}
+\label{sec:sixdim-global}
+
+The local example from Theorem~\ref{thm:sixdim-golden-local} is in fact
+optimal among all six-simplices. The proof combines a small hypergraph
+argument with an exact finite description of a linear-ordering relaxation.
+The finite description is independently reproduced with two exact polyhedral
+backends; the inequalities used after that description are explicit.
+
+\begin{theorem}\label{thm:sixdim-global}
+Every six-dimensional simplex $K$ satisfies
+\[
+ \frac{c_{\mathrm{EHZ}}(K)^3}{6\operatorname{vol}_6K}
+ \le \frac{945+75\sqrt5}{1922}.
+\]
+Equality holds precisely for the simplex in
+Theorem~\ref{thm:sixdim-golden-local}, up to translation, positive homothety,
+and linear symplectomorphism.
+\end{theorem}
+
+Put $q_*=(63+5\sqrt5)/1922$. By
+\eqref{eq:sixdim-simplex-ratio}, it suffices to maximize
+$|\operatorname{Pf}\Omega|$ on $C_6$. Let
+\[
+ D_6=\operatorname{conv}\bigl(\{\pm e_{ij}:1\le i<j\le6\}
+       \cup\{\pm t_{ijk}:1\le i<j<k\le6\}\bigr),
+\]
+so $D_6$ has
+seventy rank-two generators and is contained in $C_6$.
+
+\subsection{The rank-two hull}
+
+Introduce seven points $u_1,\ldots,u_6,u_7$ with $u_i=e_i$ for $i\le6$
+and $u_7=0$. For each three-element set $T=\{i,j,k\}$, choose the form
+\[
+ b_T=(u_i-u_k)\wedge(u_j-u_k).
+\]
+Then $D_6=\operatorname{conv}\{\pm b_T\}$. The orientation choices will
+not matter for an upper bound. If two triples share two labels, their forms
+share a wedge factor, so $b_T\wedge b_U=0$. Also $b_T\wedge b_T=0$.
+Consequently the Pfaffian cubic in coefficients of these forms is
+multiaffine, and contains no monomial involving both $T$ and $U$ when
+$|T\cap U|\ge2$.
+
+Cancel antipodal coefficients in a convex decomposition. It becomes
+$\Omega=\sum_Td_Tb_T$ with $\sum_T|d_T|\le1$. Homogeneity permits a
+nonzero global maximizer to be chosen with total mass one. Among global
+maximizers choose one with smallest support. If two supported types share
+two labels, fix their signs and their total absolute mass, and vary the
+split between them. The Pfaffian is affine in that split. Its absolute
+value therefore attains a maximum at an endpoint, removing one supported
+type without lowering the objective. This contradicts minimality. Thus
+some global maximum is supported on a family of triples whose pairwise
+intersections have size at most one.
+
+We record the elementary classification needed here. A maximal such family
+on seven labels has either five or seven triples. Indeed, each triple uses
+three of the twenty-one label pairs, so there are at most seven triples.
+No label can have degree zero: otherwise maximality requires all pairs on
+the other six labels to be covered, which would give degree $5/2$ at each
+of those labels. If a label has degree one, with its only triple $vab$,
+all six pairs among the remaining four labels $R$ must be covered.
+Without a triple contained in $R$, this requires six additional triples,
+forcing all twenty-one pairs to be covered and contradicting degree one.
+With a triple $xyz\subset R$, the three pairs $wx,wy,wz$, where
+$R=\{w,x,y,z\}$, require three separate triples using $a$ or $b$.
+One of the pairs $wa,wb$ would then repeat. Hence every label has degree
+at least two, and there are at least five triples. Six triples would leave
+three uncovered pairs with even degree at every label, hence an uncovered
+triangle, contradicting maximality.
+
+With five triples the degree sequence is $(3,2,2,2,2,2,2)$. The three
+triples through the degree-three label match the other six labels. The two
+remaining triples partition those six labels, and each matching pair crosses
+that partition. Up to relabeling this is
+\[
+ \{135,246,127,347,567\}.
+\]
+With seven triples every label pair is covered exactly once: the family is
+the Fano plane.
+
+For three members of a linear triple family, the Pfaffian coefficient is
+zero if their union has at most six labels, since the forms lie in a
+difference space of dimension at most five. When their union has seven
+labels, their six edge factors form a spanning tree and the coefficient is
+$\pm1$. For the five-triple configuration, taking absolute values therefore
+gives the polynomial
+\[
+ xy(z+u+v)+zuv.
+\]
+Its maximum under nonnegative total mass one is $q_*$, as computed in
+\eqref{eq:sixdim-F32}. For the Fano configuration the unsigned polynomial
+is the Fano-plane Lagrangian, because the nonzero triples are precisely
+three concurrent Fano lines.
+
+Here is a short bound for the latter polynomial $P$. On the boundary,
+remove a zero-weight point. The four remaining Fano triples are transversal
+to a partition of the six remaining points into three pairs. Hence $P$ is
+at most the product of the three class masses, and is at most $1/27$.
+At a full-support maximum, the seven partial derivatives all equal $3P$.
+Their sum counts every pair exactly once, giving
+\[
+ 21P=\sum_{i<j}x_ix_j\le\frac37,
+ \qquad P\le\frac1{49}.
+\]
+Thus $P\le1/27<q_*$. Together with the explicit attaining example, this
+proves
+\begin{equation}\label{eq:sixdim-ranktwo-bound}
+ \max_{\Omega\in D_6}|\operatorname{Pf}\Omega|=q_*.
+\end{equation}
+
+\subsection{The finite polyhedral decomposition}
+
+All pairings in this subsection use the fifteen upper-triangular entries.
+Define
+\[
+ F=\frac15\begin{pmatrix}0&M\\-M^T&0\end{pmatrix},
+ \quad M=2I-\mathbf1\mathbf1^T,
+ \qquad
+ p_0=\begin{pmatrix}0&N\\-N^T&0\end{pmatrix},
+ \quad N=I-\mathbf1\mathbf1^T.
+\]
+The form $F$ is a normalized three-fence. Let $\mathcal F$ be its orbit
+under the seven-label permutation action. The action on forms comes from
+relabeling the seven barycentric gradients and has determinant $\pm1$;
+it preserves $C_6$, $D_6$ and the absolute Pfaffian. Its dual action on
+functionals is contragredient.
+
+The retained replay in
+\path{certificates/sixdim-global/README.md} specifies four small programs:
+\begin{center}
+\begin{tabular}{ll}
+\path{algebra.py} & \path{local_maximum.py}\\
+\path{full_classification.py} & \path{dual_coverage.py}
+\end{tabular}
+\end{center}
+The latter two use exact cdd and PPL polyhedral backends. Their generated
+outputs and a fresh copied-package run receipt are retained beside the
+programs. This is a computer-assisted completeness check, not a formalized
+proof in a proof assistant.
+
+The exact finite calculations establish the following facts:
+\begin{enumerate}
+\item $Q_6=D_6^\circ$ has exactly $1560$ vertices: the $720$ order
+functionals and the $840$ elements of the dual orbit of $p_0$.
+\item $\mathcal F$ has $840$ elements. The canonical pairing is
+$p_0\cdot F=6/5$, whereas $p_0\cdot F'\le4/5$ for every other
+$F'\in\mathcal F$. Every fence satisfies every order inequality.
+\item The vertex $p_0$ has eighteen neighbors in $Q_6$, all order
+functionals. They are exactly the eighteen orders with $F\cdot p=1$.
+The face $B=\{X\in D_6:p_0\cdot X=1\}$ has eighteen rank-two vertices
+and affine dimension fourteen.
+\end{enumerate}
+
+For completeness, the completeness check in the first item uses graph
+connectivity, not a sample of vertices. Six adjacent-transposition generators
+preserve the seventy inequalities of $Q_6$ and generate the two disjoint
+orbits. At an order representative, both exact polyhedral backends give
+$186$ extreme tangent rays, whose exact endpoints are $165$ order vertices
+and $21$ fractional vertices. At $p_0$ they give eighteen rays, all with
+order endpoints. Both representatives have active rank fifteen. The candidate
+set is therefore closed under every neighbor in the one-skeleton. Since a
+bounded polytope has connected one-skeleton, there are no further vertices.
+
+Cut $Q_6$ by the $840$ inequalities $F'\cdot p\le1$. Each cut removes
+its corresponding fractional vertex and meets all its incident edges at
+existing integral neighbors. This can be done sequentially without creating
+vertices: all other fractional vertices lie strictly inside the current cut,
+so their tangent cones are unchanged; their original edges to integral
+neighbors remain feasible in full. Thus each later cut has the same crossing
+edges and introduces no new endpoint. The resulting polytope is precisely
+the convex hull of the order functionals. Polarity gives
+\[
+ C_6=\operatorname{conv}(D_6\cup\mathcal F).
+\]
+
+Moreover, the midpoint of any two distinct fences lies in $D_6$. On an
+order functional both endpoint scores are at most one; on a fractional
+functional at most one is $6/5$, while the other is at most $4/5$.
+Replacing equal masses of two fences by their midpoint repeatedly reduces
+any convex combination to a point of $D_6$ or a combination of $D_6$ and
+one fence. Each fence violates exactly one facet inequality of $D_6$.
+Consequently $C_6$ is covered by $D_6$ and the $840$ pyramids
+$\operatorname{conv}(F',B_{F'})$. It remains to bound one pyramid.
+
+\subsection{A quadratic bound on a fence pyramid}
+
+Write $X=\sum_{i=1}^{18}x_iv_i\in B$, with $x_i\ge0$ and
+$\sum_i x_i=1$. Exact Pfaffian expansion gives
+\[
+ \operatorname{Pf}(tF+sX)
+ =\frac4{125}t^3+\frac2{25}t^2s+Q(X)ts^2
+       +\operatorname{Pf}(X)s^3.
+\]
+Here $Q(X)=x^THx/10$, where $H$ is a symmetric integer matrix with zero
+diagonal and entries $0,1,2$. The graph of entries equal to two is the
+disjoint union of six three-vertex paths. In each path, the two leaves have
+entry zero between them; entries between distinct paths are zero or one.
+These explicit coefficient properties give
+\[
+ \mathbf1\mathbf1^T-H
+ =\sum_{\text{six paths }(c,l,r)}
+       (e_c-e_l-e_r)(e_c-e_l-e_r)^T+R,
+ \qquad R\ge0\ \text{entrywise}.
+\]
+Hence $0\le Q(X)\le1/10$. By~\eqref{eq:sixdim-ranktwo-bound}, for
+$t,s\ge0$,
+\[
+ |\operatorname{Pf}(tF+sX)|
+ \le\frac4{125}t^3+\frac2{25}t^2s+\frac1{10}ts^2+q_*s^3
+ \le q_*(t+s)^3.
+\]
+The last inequality is strict when $t>0$, because $q_*>1/30$.
+This proves the global bound, with strictness outside $D_6$.
+
+\subsection{Equality}
+
+Begin with any global maximizer in $D_6$ and apply the signed mass-merging
+procedure. At each interior split, the absolute value of an affine function
+already has its global maximum; that affine function must be constant.
+Thus the procedure gives a finite path of global maximizers to a supported
+linear triple packing. The Fano case is too small. In the five-triple case,
+equality forces the golden weights and common signs for the two central
+variables and for the three outer variables. All four resulting sign
+patterns are relabelings of $\Omega_*$: $(1\,3)(2\,4)$ flips the two
+triangle signs, and $(1\,2)(3\,4)(5\,6)$ negates the entire form.
+
+Every endpoint is therefore a strict local maximum on $C_6$, by
+Theorem~\ref{thm:sixdim-golden-local}. A nonconstant segment of global
+maximizers cannot end at such a point. Working backward through the finite
+merging path shows that the original form was the same endpoint. Thus every
+maximizer is a seven-label relabeling of $\Omega_*$. Identical normalized
+barycentric-gradient pairings determine simplices up to affine
+symplectomorphism, proving the equality statement in
+Theorem~\ref{thm:sixdim-global}.

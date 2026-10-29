@@ -1,5 +1,24 @@
 # View workstation files in a browser
 
+**Current delivery check, 29 October 2026, 00:31 UTC:** the former `/files`
+route below is unavailable. `msc-math-files.service` is disabled and inactive;
+the current Tailscale Serve map has no `/files` mount. A request for this
+checkout's PDF at the old address returned Desk's HTML shell, despite HTTP
+200. Do not use the historical prefix as a working delivery link or restart
+the inactive service merely because this document once described it as enabled.
+
+For current delivery, use the active client's file links, or the selected
+[review-files workflow](../../.agents/skills/review-files/SKILL.md) for an
+expiring browser view of explicitly named artifacts. Retained device copies
+use the [share-files workflow](../../.agents/skills/share-files/SKILL.md).
+Verify the actual response type and content before reporting a browser link
+as working. No persistent replacement URL has been verified by this check.
+The research report remains retained with its source packet in this checkout.
+
+The server documentation below describes the retained implementation and its
+**historical** deployment, not the current host routing. Its former links may
+remain in older records; no bulk link migration or host-route change is selected.
+
 The project tool is [scripts/serve-files.py](../scripts/serve-files.py). It uses
 Python's standard HTTP server and installed Pandoc; it has no Python package
 dependencies. One server serves multiple checkouts, scratch directories and
@@ -7,9 +26,9 @@ artifacts. The server is read-only; HTML runs normally in the browser.
 Install Pandoc with `sudo apt install pandoc` on Debian/Ubuntu or
 `brew install pandoc` on macOS if it is missing.
 
-## URL rule
+## Historical URL rule
 
-On this workstation, prefix an absolute file path with
+The former deployment prefixed an absolute file path with
 `https://joern-pc.tailc5e761.ts.net/files`. Expand `~` and URL-encode special
 characters, retaining `/`. For example:
 
@@ -60,8 +79,8 @@ appropriate roots and replace the workstation hostname in the URL convention.
 
 ## Workstation service and HTTPS
 
-**4 October evening repair:** the viewer now runs from main as an enabled
-persistent systemd user service. Live HTTPS file checks returned HTTP 200.
+**Historical 4 October evening repair:** the viewer then ran from main as an
+enabled persistent systemd user service. Live HTTPS file checks returned HTTP 200.
 The consolidation-time outage remains a historical observation.
 
 The workstation unit is `~/.config/systemd/user/msc-math-files.service`, with

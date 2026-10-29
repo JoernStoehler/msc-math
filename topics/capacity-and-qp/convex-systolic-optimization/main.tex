@@ -1,0 +1,194 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=29mm]{geometry}
+\usepackage{graphicx,booktabs,array,enumitem}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\usepackage{url}
+\hypersetup{pdftitle={Convex reductions in symplectic systolic optimization},pdfauthor={AI-assisted research report prepared for Jörn Stöhler}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\area}{\operatorname{area}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\Vol}{\operatorname{Vol}}
+\newcommand{\Pf}{\operatorname{Pf}}
+\newcommand{\EHZ}{\mathrm{EHZ}}
+\title{Convex reductions in symplectic systolic optimization}
+\author{AI-assisted research report prepared for Jörn Stöhler}
+\date{29 October 2026\\Report revision 2026-10-29-r3}
+\begin{document}
+\maketitle
+\begin{abstract}
+The pentagon product of Haim--Kislev and Ostrover violates Viterbo's
+volume--capacity inequality, but sharp optimization remains meaningful within
+specified geometric classes. We prove that this product maximizes the EHZ
+systolic ratio over its entire affine orbit, with equality only at symplectic
+similarities. A coordinated twenty-row inward deformation nevertheless has a
+strictly positive first variation of the ratio and an explicit improving
+parameter. Seven of its ten cuts suffice for a seventeen-facet ascent, so the
+product is not a local maximizer among all convex four-bodies.
+
+For a product of two triangles, every affine position retaining Lagrangian
+factor planes has ratio at most $2/3$, sharply, while an explicit rational
+non-Lagrangian position has ratio $18/25$. This does not locate its full
+affine optimum.
+
+For four-simplices we give a graph proof and equality classification for the
+sharp bound $c_{\EHZ}^2/(2\Vol_4)\leq3/4$, previously established by
+Haim--Kislev. For six-simplices an exact computer-assisted polyhedral
+decomposition proves the sharp bound
+$c_{\EHZ}^3/(6\Vol_6)\leq(945+75\sqrt5)/1922$ and a unique equality class.
+In a different convex reduction, we prove a sharp difference-volume bound for
+intersections of two confocal paraboloids in every dimension. Its planar case,
+together with reciprocal-body geometry, gives
+$\area(\sigma K-\sigma K)\leq5\area(\sigma K)$ for complex squaring
+$\sigma(z)=z^2$ and symmetric convex $K$; this yields a four-dimensional
+capacity bound under right quaternionic $I$-symmetry. Finally, every convex
+partner of a corner-truncated parallelogram satisfies the strict Viterbo
+inequality, although an explicit family disproves the proposed optimizer.
+\end{abstract}
+\tableofcontents
+
+\section{Convex reductions after the pentagon counterexample}
+
+Let $c=c_{\EHZ}$ be the Ekeland--Hofer--Zehnder capacity, normalized by
+$c(B^{2n}(r))=\pi r^2$. In dimension four we write
+\[
+ \rho(K)=\frac{c(K)^2}{2\Vol_4(K)}.
+\]
+The ball has $\rho=1$. Haim--Kislev and Ostrover exhibited a convex
+Lagrangian product of two regular pentagons~\cite{HKO2026} with
+$\rho=(3+\sqrt5)/5>1$. Thus the bound $\rho\leq1$ cannot hold for
+all convex bodies. This changes the optimization question rather than
+removing it: which classes retain sharp inequalities, what are their
+extremizers, and which representations make their capacities tractable?
+
+We use the finite EHZ action formula, convex difference bodies, and planar
+translation covers to study these questions. The reductions keep track of
+their geometric scope: an affine orbit differs from a Hausdorff neighborhood,
+and a sharp planar constant need not be sharp after a symplectic transfer.
+
+\subsection{Results and their scopes}
+
+Section~\ref{sec:affine-hko} optimizes over every linear image of the
+pentagon product. Such a map can destroy the Lagrangian factor planes. The
+action-body representation retains these deformations and supplies the sharp
+bound and its complete equality class. Section~\ref{sec:nonlagrangian-product}
+shows, for a different product of two triangles, that leaving Lagrangian
+position can strictly improve the ratio.
+
+Section~\ref{sec:hko-ascent} studies a different deformation space:
+simultaneous inward facet splittings. Its exact first variation and complete
+shortest-word catalogue yield a positive derivative at the pentagon product.
+The appendix proves the general variation formula used there. The derivative
+establishes existence of improving bodies arbitrarily close to the product;
+the weighted response shows that any seven of the ten chosen cuts suffice.
+For the original twenty-facet family, a quantitative remainder also certifies
+the parameter $t=10^{-30}$, with a deliberately tiny relative gain.
+
+Section~\ref{sec:simplex-sharp} gives a graph proof of the sharp
+four-simplex bound $\rho\leq3/4$. Haim--Kislev established the bound in her
+2019 thesis; the graph proof and equality description are the contributions
+here. Sections~\ref{sec:sixdim-hypergraph}--\ref{sec:sixdim-global} prove the
+sharp global six-simplex bound. Its polyhedral completeness step uses exact
+cdd and PPL computation, with replay code retained alongside the paper.
+
+Section~\ref{sec:squared} proves the all-dimensional two-paraboloid
+difference-volume theorem, then the sharp planar inequality for squared
+bodies. The capacity consequence uses Chaidez--Tanny's squared Finsler
+codisks. Neither the sharp planar constant nor its limiting extremizers
+establish sharpness of the resulting four-dimensional constant $5/4$ for
+$\rho$.
+
+Section~\ref{sec:truncated-square-cover} proves the strict inequality for
+every convex partner of a corner-truncated parallelogram and obtains an open
+Hausdorff neighborhood of second factors with the same property. An explicit
+capacity-one competitor disproves the optimizer proposed in
+\cite{BMP2026}; its ratio remains below one.
+
+\subsection{Conventions and the finite capacity formula}
+
+We use a fixed standard symplectic form $\omega_0$ on $\mathbb R^4$.
+Interleaved coordinates have
+$\omega_0=dz_1\wedge dz_2+dz_3\wedge dz_4$; product coordinates
+$(q,p)\in\mathbb R^2\times\mathbb R^2$ instead have
+$\omega_0=\sum_jdq_j\wedge dp_j$. These are the same convention after
+the indicated coordinate permutation.
+
+For a bounded full-dimensional polytope containing the origin, write
+$K=\{z:a_i\cdot z\leq1\}$. The Haim--Kislev formula~\cite{HK2017} takes the
+maximum, over facet orders and weights satisfying
+\[
+ \beta_i\geq0,\qquad \sum_i\beta_i=1,\qquad
+ \sum_i\beta_i a_{\sigma(i)}=0,
+\]
+of the ordered quadratic action
+\[
+ Q=\sum_{i<j}\beta_i\beta_j\omega_0(a_{\sigma(i)},a_{\sigma(j)}),
+ \qquad c(K)=\frac1{2Q_{\max}}.
+\]
+The displayed traversal convention reverses the alternative order used in
+some statements of the formula. Maximization over all orders makes the
+scalar value identical. A single feasible word gives an upper bound for
+capacity. Equality or a lower bound requires completeness of the candidates,
+which will be proved separately wherever it is used.
+
+\input{sections/affine-hko}
+\input{sections/triangle-position}
+\input{sections/hko-ascent}
+\input{sections/hko-seventeen-facets}
+\input{sections/hko-effective-step}
+\input{sections/simplex}
+\input{sections/sixdim-simplex}
+\input{sections/sixdim-global}
+\input{sections/squared}
+\input{sections/product-cover}
+\input{sections/product-shadow}
+
+\clearpage
+\section{Methods, scope, and companion material}
+
+The action-body construction turns affine capacity optimization into a
+support-function and Pfaffian problem. It yields the full-affine pentagon
+bound and both simplex bounds. In four dimensions the simplex interaction
+graph admits a direct proof; in six dimensions the global equality theorem
+also depends on an exact cdd/PPL vertex classification. These are class
+bounds, while the pentagon ascent uses a different reduction: labeled
+shortest-orbit measures turn simultaneous cuts into a first-variation
+problem. Seven selected cuts give seventeen facets; the original twenty-facet
+family also has an explicit but tiny improving step. The ascent leaves the
+unrestricted four-dimensional optimum open.
+
+The planar results use geometric rather than action-polytope reductions.
+Shadow deformations and confocal paraboloids give a sharp difference-area
+constant for squared bodies, but the Chaidez--Tanny capacity transfer does
+not establish a sharp four-dimensional constant. Translation covers and
+lattice overlaps give a strict inequality for every partner of a truncated
+parallelogram, even though its proposed minimum-area partner fails. The
+actual minimizing partner and bounds for intersections of three or more
+confocal paraboloids remain open here.
+
+\paragraph{Source and data availability.}
+This PDF is report revision \texttt{2026-10-29-r3} and is to travel with its
+same-revision source-and-evidence companion archive. That archive supplies
+the LaTeX source, figure sources, exact inputs and replay programs under
+\path{certificates/}, scoped reviews, and an SHA-256 file manifest. The
+finite certificate arrays and full enumeration outputs are not printed in
+this PDF. The replay commands and software requirements are in the
+respective certificate READMEs. A successful replay checks the stated
+finite predicates; the geometric implications are the written proofs here.
+
+\clearpage
+\appendix
+\input{sections/multicut}
+
+\bibliographystyle{abbrv}
+\bibliography{references}
+\end{document}

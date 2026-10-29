@@ -1,0 +1,105 @@
+% Frozen refinement module; requires hko-ascent-main.tex notation and results.
+\subsection{Seventeen facets and the exact response to unequal cut speeds}
+\label{subsec:hko-seventeen}
+
+The twenty-row family admits a sharper facet-count conclusion. Keep the ten
+profiles of~\eqref{eq:ha-profile} fixed, but give their new rows nonnegative
+speeds $w=(w_0,\ldots,w_9)$:
+\[
+ H_{t,w}=\{x:a_i\cdot x\leq1,\
+                 (a_i+tw_iD_i)\cdot x\leq1,\ 0\leq i<10\}.
+\]
+Its profile on facet $i$ is $w_if_i$. Write
+\[
+ \kappa=\int_{F_i}f_i\,d\nu
+        =\frac{8(5+\sqrt5)}{46875};
+\]
+this value is independent of the facet and includes its cone-volume mass
+$1/10$.
+
+\begin{proposition}[Exact weighted response]\label{prop:ha-weighted}
+For every $w_i\geq0$, the supremum over all finite maximizing words and their
+weak occupation limits is
+\begin{equation}\label{eq:ha-weighted-response}
+ \sup_\gamma\sum_{i=0}^9w_i\int_{F_i}f_i\,d\mu_\gamma
+       =\frac{\max_iw_i}{125}.
+\end{equation}
+Consequently
+\begin{equation}\label{eq:ha-weighted-derivative}
+ D^+\log\operatorname{sys}(H_{t,w})
+       =4\left(\kappa\sum_iw_i-\frac{\max_iw_i}{125}\right).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Nonnegativity and Proposition~\ref{prop:ha-certificate}, together with
+Lemma~\ref{lem:ha-repeat}, give the upper bound
+\[
+ \sum_iw_i\int_{F_i}f_i\,d\mu_\gamma
+ \leq(\max_iw_i)\int f\,d\mu_\gamma
+ \leq\frac{\max_iw_i}{125}.
+\]
+For the reverse bound we exhibit a maximizing word whose entire response
+is concentrated on one facet. Put $u=\tau^2$ and take
+\begin{align*}
+ \sigma&=(0,6,5,2,1,8,4),\\
+ \beta&=\frac1{200}
+ (17+5u,\ 25+5u,\ 25+5u,\ 44-8u,\ 8,\ 50-10u,\ 31+3u).
+\end{align*}
+The weights are strictly positive, sum to one, close the normal word, and
+give $Q=\tau/5$. Its KKT reconstruction has constant radial hinge arguments,
+in this order,
+\[
+ \ell_{\sigma_r}-\frac35
+ =\frac1{40}(-59+5u,\ -9-5u,\ -9-5u,\ -9-5u,\
+                       8,\ -9-5u,\ -45+3u).
+\]
+Since $0<u<1$, only the facet labeled $1$ contributes. Its weight is
+$1/25$ and its hinge value is $1/5$, giving response $1/125$ on that facet
+and zero on all others. These are literal exact predicates checked by the
+supplementary witness replay; the same point is chart~11 of the complete
+catalogue, at parameter $3/10-\tau^2/50$.
+
+Simultaneous rotation of the q- and p-planes by $2\pi/5$ preserves $H$,
+the symplectic form, and this labeled profile family. The symplectic
+involution
+\[
+ S(q,p)=(J_2p,-J_2q)
+\]
+also preserves $H$ and exchanges facet $i$ with facet $5+i$, including
+their cut velocities. These symmetries act transitively on the ten facets.
+Thus every facet admits a shortest word with response $1/125$ concentrated
+there. Choose a facet with maximal $w_i$ to obtain the lower bound in
+\eqref{eq:ha-weighted-response}. The derivative formula follows from
+Theorem~\ref{thm:mc-derivative} and the volume response
+$\kappa\sum_iw_i$.
+\end{proof}
+
+\begin{corollary}[A seventeen-facet ascent]\label{cor:ha-seventeen}
+Choose any seven of the ten cuts in~\eqref{eq:ha-directions}, with unit
+speed, and omit the other three new rows. For all sufficiently small
+positive $t$ the resulting body has seventeen genuine facets, and
+\[
+ D^+\log\operatorname{sys}(H_{t,w})
+ =\frac{4(56\sqrt5-95)}{46875}>0.
+\]
+Within the cone of nonnegative speeds on these fixed ten profiles, seven
+new rows is the smallest number that can give a positive first variation.
+\end{corollary}
+
+\begin{proof}
+The exact comparisons are
+\[
+ 6\kappa=\frac{240+48\sqrt5}{46875}
+   <\frac{375}{46875}=\frac1{125}
+   <\frac{280+56\sqrt5}{46875}=7\kappa.
+\]
+Seven unit speeds therefore give the displayed positive derivative. Every
+selected new row and every old row is a genuine facet by the open-patch
+argument following~\eqref{eq:ha-family}, so the facet count is seventeen.
+If instead at most six speeds are nonzero and $w\ne0$, then
+$\sum_iw_i\leq6\max_iw_i$, making
+\eqref{eq:ha-weighted-derivative} strictly negative. This proves the claimed
+minimal count for this fixed profile cone; it does not exclude ascent using
+different profiles or a different perturbation with fewer new facets.
+\end{proof}

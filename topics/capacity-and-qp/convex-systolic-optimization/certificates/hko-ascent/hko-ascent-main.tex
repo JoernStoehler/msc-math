@@ -1,0 +1,249 @@
+% Frozen main-section module, 29 October 2026.
+% Requires amsmath, amssymb, amsthm; theorem, lemma, proposition environments.
+% General derivative appendix supplies Theorem thm:mc-derivative.
+\section{A simultaneous-cut improvement of the pentagon product}
+\label{sec:hko-ascent}
+
+The pentagon product is not a local maximum when the number of facets is
+unrestricted. We prove this by a fixed family of twenty supporting
+inequalities. The calculation combines the simultaneous-splitting derivative
+with a reduction tailored to its cut profiles and an exhaustive exact
+calculation of the remaining shortest-word responses. No particular nonzero
+improving parameter is certified here.
+
+Let $P\subset\mathbb R^2$ be the regular pentagon with vertices
+$(\cos(2\pi k/5),\sin(2\pi k/5))$, $0\leq k<5$, and let
+$J_2(x,y)=(-y,x)$. In coordinates $(q,p)$ put
+\[
+ H=P\times_L(-J_2P),\qquad
+ J(q,p)=(-p,q),\qquad \tau=\tan(\pi/5).
+\]
+Let $n_i$ be the support-normalized outward normal of the edge from vertex
+$i$ to vertex $i+1$ of $P$, with indices taken modulo five, and set
+$m_i=-J_2n_i$. Thus $n_0=(1,\tau)$ and
+$|n_i|=|m_i|=\sqrt5-1$. The ten normals of $H$ are
+$a_i=(n_i,0)$ and $a_{5+i}=(0,m_i)$. Define
+\begin{align}
+ D_i&=\left(-\frac35n_i,\frac{J_2n_i}{|n_i|}\right),&
+ D_{5+i}&=\left(-\frac{J_2m_i}{|m_i|},-\frac35m_i\right),
+ \label{eq:ha-directions}\\
+ H_t&=\{x:a_j\cdot x\leq1,\ (a_j+tD_j)\cdot x\leq1,
+                         \ 0\leq j<10\}.\label{eq:ha-family}
+\end{align}
+Every old inequality is retained, so $H_t\subset H$ for $t\geq0$.
+For sufficiently small $t$ these are full-dimensional bounded polytopes and
+$H_t\to H$ in Hausdorff distance. Equivalently,
+\[
+ H_t=H\cap L_t^{-1}H,\qquad
+ L_t=\begin{pmatrix}aI_2&-bJ_2\\ bJ_2&aI_2\end{pmatrix},\quad
+ a=1-\frac35t,\quad b=\cos(\pi/5)t.
+\]
+There are exactly twenty genuine facets for all sufficiently small $t>0$.
+Indeed, on the relative interior of each old facet, $D_i\cdot x$ takes
+both positive and negative values on open patches. A negative patch retains
+the old facet with every competing inequality strict. At a positive patch,
+the point $x/(1+tD_i\cdot x)$ lies on the new hyperplane, strictly satisfies
+the old inequality, and keeps all other inequalities strict for small $t$.
+Thus each old and each new row supports a facet.
+
+\begin{theorem}[Strict inward ascent]\label{thm:ha-ascent}
+For the family~\eqref{eq:ha-family}, with
+$\operatorname{sys}(K)=c_{\mathrm{EHZ}}(K)^2/(2\operatorname{Vol}_4(K))$,
+\begin{equation}\label{eq:ha-slope}
+ \left.\frac{d}{dt}\right|_{0+}\log\operatorname{sys}(H_t)
+       =\frac{20+64\sqrt5}{9375}>0.
+\end{equation}
+Consequently $\operatorname{sys}(H_t)>\operatorname{sys}(H)$ for every
+sufficiently small positive $t$. In particular, $H$ is not a local maximum
+among convex bodies in the Hausdorff topology.
+\end{theorem}
+
+The statement concerns at most twenty facets and does not contradict local
+maximality with an upper bound of eleven facets. The existence of a small
+improving interval follows from the positive derivative; the proof gives no
+explicit endpoint for that interval.
+
+\subsection{The cut profile and the repeated-word issue}
+
+On each original facet the inward profile is
+\begin{equation}\label{eq:ha-profile}
+ f_i=(\ell_i-3/5)_+,\qquad
+ \ell_i(q,p)=\frac{J_2n_i}{|n_i|}\cdot p,
+ \qquad
+ f_{5+i}=(\ell_{5+i}-3/5)_+,\quad
+ \ell_{5+i}(q,p)=-\frac{J_2m_i}{|m_i|}\cdot q.
+\end{equation}
+These profiles are convex on their respective facets and constant along
+their own characteristic directions $Ja_i$. The constancy is essential:
+general convex profiles need not admit the reduction below.
+
+Use the active-word action
+$Q(\sigma,\beta)=\sum_{r<s}\beta_r\beta_s
+\langle Ja_{\sigma_r},a_{\sigma_s}\rangle$, with
+$\sum\beta_ra_{\sigma_r}=0$, $\sum\beta_r=1$, and $\beta_r\geq0$.
+Write $Q_*=1/(2c_{\mathrm{EHZ}}(H))=\tau/5$.
+For a maximizing word, $\mu_\gamma$ denotes its normalized-time occupation
+measure on the disjoint union of labeled facets. The general derivative
+theorem uses all finite maximizing words, including repeated labels;
+an existence theorem for a simple shortest word alone would not suffice.
+
+\begin{lemma}[Removal of repeated visits]\label{lem:ha-repeat}
+Let $K$ be a Lagrangian product of planar polygons with no antipodal facet
+normals. Suppose each continuous convex facet profile is constant on lines
+parallel to its own characteristic direction. Every finite maximizing word
+has a simple maximizing word with at least as large an occupation response.
+The same supremum therefore bounds the weak closure of the finite-word
+occupation measures.
+\end{lemma}
+
+\begin{proof}
+Delete zero weights. Suppose a full normal $a=(n,0)$ occurs twice, at
+positions $r<s$. Transfer weight by
+$\beta_r(z)=\beta_r+z$, $\beta_s(z)=\beta_s-z$ on
+$[-\beta_r,\beta_s]$, fixing all other weights. Closure and normalization
+are preserved. The action is affine in $z$, since its quadratic coefficient
+pairs $a$ with itself. The repeated-word polar-loop bound $Q\leq Q_*$,
+together with the interior maximum at $z=0$, makes this affine function
+constant. Equality of the normals alone would not imply constancy.
+
+At every interior parameter, the active normals span both factor planes:
+a positive closed combination without antipodal directions contains at least
+three distinct directions. The augmented normal matrix has rank five,
+because averaging a relation $u\cdot a_j+c=0$ against the positive weights
+first gives $c=0$, then $u=0$. Thus the KKT multiplier $\lambda(z)$ is unique
+and affine in $z$. With $T=(2Q_*)^{-1}$, the reconstructed vertices are
+\[
+ x_k(z)=-T\lambda(z)+2TJ\sum_{j<k}\beta_j(z)a_{\sigma_j}.
+\]
+They lie in $K$ on their labeled facets by the reconstruction argument in
+Theorem~\ref{thm:mc-derivative}.
+
+Choose the cyclic start just before the first duplicate and put $v=2TJa$.
+Every fixed-weight segment translates with derivative $u$ or $u+v$,
+according to which interval between the duplicates contains it. All
+q-facet equations give $n_j\cdot u_q=0$, so $u_q=0$. The p-facet equations
+give $m_j\cdot u_p=0$ outside the interval and
+$m_j\cdot(u_p+v_p)=0$ inside. There are at least three distinct p-normal
+directions; one interval contains two nonparallel ones. Hence $u_p=0$ or
+$u_p=-v_p$, and therefore $u=0$ or $u=-v$.
+
+Both duplicate segments consequently move and change length only along
+their own characteristic direction. Their profile values $c_r,c_s$ stay
+constant, and their combined response
+$(\beta_r+z)c_r+(\beta_s-z)c_s$ is affine. Every other weight is fixed and
+its segment translates affinely; integrating its convex profile gives a
+convex function of $z$. The total response is convex. By continuity it
+extends to the endpoints, where the zero-weight occurrence is deleted.
+One endpoint has at least the original response. The p-normal case is
+identical with the factors exchanged. Iteration removes all repetitions.
+Continuity on the compact disjoint facet union passes the bound to weak
+limits of the occupation measures.
+\end{proof}
+
+\subsection{Complete calculation of the simple-word response}
+
+\begin{proposition}[Exact finite response certificate]\label{prop:ha-certificate}
+For the profiles~\eqref{eq:ha-profile},
+\begin{equation}\label{eq:ha-response}
+ \max_{\text{simple maximizing }\gamma}\int f\,d\mu_\gamma=\frac1{125}.
+\end{equation}
+The complete maximizing weight family is covered by 190 charts: 50 points
+on six-label words and 140 closed intervals on seven-label words.
+\end{proposition}
+
+\begin{proof}
+We describe both the exhaustive reduction and the exact predicates checked
+by the accompanying portable certificate.
+The normalized closure polytope in either factor is
+\[
+ C_q=\{u\geq0:\sum u_i=1,\ \sum u_in_i=0\},\qquad
+ C_p=\{v\geq0:\sum v_i=1,\ \sum v_im_i=0\}.
+\]
+Its vertices have support at most three by rank of the three affine
+constraints. No support of size one or two closes. Solving all ten
+three-element supports gives precisely five positive vertices in each
+factor, with exact weights in $\mathbb Q(\tau)$.
+
+For a fixed word, split its weights as $(tu,(1-t)v)$. Same-factor pairings
+vanish, so $Q=t(1-t)B_\sigma(u,v)$ with $B_\sigma$ bilinear.
+Every positive global maximizer has $t=1/2$. Decomposing $u,v$ into closure
+vertices expresses its value as a convex combination of triangle-pair
+actions. Each pair action is at most $Q_*$, so every pair with positive
+product coefficient must attain $Q_*$. Conversely, mixtures supported on
+a complete bipartite set of winning pairs attain $Q_*$.
+
+There are $25\cdot5!=3000$ triangle-pair cyclic six-orders. Exact evaluation
+checks that all have action at most $\tau/5$, with precisely 50 equality
+words. Every simple support word extends by zero weights to a cyclic
+ten-order. Fixing label zero first gives all $9!=362880$ such orders.
+For each, form the $5\times5$ graph of its winning induced triangle pairs.
+Every maximizing weight pair is covered by a maximal complete bipartite
+subgraph. These are enumerated as follows: for every nonempty row subset
+$R$, form its common-neighbor set $C$, retain it when $C\ne\varnothing$
+and $R$ is exactly the common-neighbor set of $C$. This is precisely the
+maximality condition. Delete labels absent from the union of its triangle
+supports and deduplicate by the remaining cyclic word and the two vertex
+subsets. This loses no maximizing weight or response.
+
+The exhaustive scan gives 79494 orders with winning pairs, 121 distinct
+nonempty pair graphs, and 190 distinct charts. Fifty charts use one closure
+vertex in each factor. Seventy use two q-vertices and one p-vertex; seventy
+use one q-vertex and two p-vertices. No other chart occurs. Thus every
+nonconstant weight family is an interval $\beta(z)=b+zd$, $0\leq z\leq1$.
+The catalogue argument needs only the convex hull of the two vertices,
+not an additional assertion about adjacency in the closure pentagon.
+
+On each chart, solve the rank-five KKT equations exactly. The multiplier
+and orbit vertices are affine in $z$, as are the radial coordinates
+$\ell_i(z)$. Each radial coordinate is constant along its labeled segment.
+The response therefore has the form
+\[
+ R(z)=\sum_i(b_i+zd_i)\max(0,h_i+zk_i).
+\]
+Partition $[0,1]$ at every exact hinge zero. On each resulting interval
+$R$ is quadratic. Its maximum is attained at an endpoint or at the interior
+stationary point of a strictly concave quadratic. The checker evaluates all
+these candidates with exact field arithmetic and isolated signs for the
+root $0<\tau<1$ of $\tau^4-10\tau^2+5=0$.
+Of the 190 chart maxima, 110 equal zero and 80 equal $1/125$.
+For example, the chart with word $(0,6,5,2,1,8,4)$ attains $1/125$ at
+the parameter $z=3/10-\tau^2/50$ in the certificate's endpoint ordering.
+This proves~\eqref{eq:ha-response}.
+\end{proof}
+
+The portable replay contains the literal normal construction, all positive
+triangle weights, the complete cyclic-order enumeration, and the exact
+piecewise-quadratic calculation. It requires Python's standard library and
+a C++17 compiler. Its checker recomputes all outputs in a fresh output
+directory and compares them with the retained certificate. A separate
+Sage-field and Python enumeration reproduced the complete 190-chart set;
+an independent replay also reproduced all exact response maxima. These
+checks support the stated finite predicates; the coverage implication is
+the argument above.
+
+\subsection{Volume and the strict derivative}
+
+\begin{proof}[Proof of Theorem~\ref{thm:ha-ascent}]
+Each labeled facet has normalized cone-volume mass $1/10$. Its profile is
+independent of the edge coordinate and cuts a cap from the other pentagon.
+The cap depth is $\delta=2/5<1-\cos(2\pi/5)$, so the cap is a triangle
+with area $\delta^2\cot(\pi/5)$. The hinge's mean on this triangle is
+$\delta/3$, and the pentagon area is $A=5\tau/(1+\tau^2)$. All ten facet
+averages agree. Consequently
+\begin{equation}\label{eq:ha-volume}
+ \int f\,d\nu=\frac{\delta^3}{3\tau A}
+             =\frac8{625}-\frac{8\tau^2}{9375}.
+\end{equation}
+Lemma~\ref{lem:ha-repeat} and Proposition~\ref{prop:ha-certificate} identify
+the supremum over all finite maximizing words, and hence their weak closure,
+with $1/125$. The full-rank support hypothesis of
+Theorem~\ref{thm:mc-derivative} holds because both planar normal sets have no
+antipodal pairs. That theorem applies directly to the fixed twenty-row bank:
+\[
+ D^+\log\operatorname{sys}(H_t)
+ =4\left(\frac8{625}-\frac{8\tau^2}{9375}-\frac1{125}\right)
+ =\frac{20+64\sqrt5}{9375}>0.
+\]
+Since $H_t\to H$, the definition of a positive right derivative gives the
+claimed strict improvements arbitrarily close to $H$.
+\end{proof}

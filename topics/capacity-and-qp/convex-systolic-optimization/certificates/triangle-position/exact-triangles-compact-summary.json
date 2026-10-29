@@ -1,0 +1,31 @@
+{
+  "verified": true,
+  "full_h": "5/27",
+  "rho": "18/25",
+  "lagrangian_max": "2/3",
+  "coefficient_groups": {
+    "1,1": {
+      "max_cross": 4,
+      "count": 30,
+      "max_action": "1/6"
+    },
+    "1,-1": {
+      "max_cross": 6,
+      "count": 30,
+      "max_action": "5/27"
+    },
+    "-1,1": {
+      "max_cross": 6,
+      "count": 30,
+      "max_action": "5/27"
+    },
+    "-1,-1": {
+      "max_cross": 4,
+      "count": 30,
+      "max_action": "1/18"
+    }
+  },
+  "rank_one_vertices": 18,
+  "cross_facets": 30,
+  "note": "Global determinant bound is the analytic Cauchy-Binet argument in the LaTeX proof."
+}

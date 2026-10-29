@@ -1,0 +1,190 @@
+% Frozen contribution: geometry_frontiers, 29 October 2026.
+% Integrate after affine-hko-section.tex. Uses that section's action-body lemma.
+% Certificate: exact_triangles_compact.py (Sage QQ/PPL).
+\section{A product whose optimal affine position is not Lagrangian}
+\label{sec:nonlagrangian-product}
+
+The affine optimality of the pentagon product does not follow from a general
+principle reducing products to Lagrangian position. Even a product of two
+triangles has an affine image whose systolic ratio exceeds that of every
+Lagrangian position of the same product. Here ``Lagrangian position'' means
+that both original factor planes become Lagrangian; all independent affine
+changes within those planes are allowed.
+
+\begin{theorem}\label{thm:nonlagrangian-triangles}
+Let
+\[
+ \Delta=\{(s,t)\in\mathbb R^2:s\leq1,\ t\leq1,\ -s-t\leq1\},
+ \qquad K=\Delta\times\Delta.
+\]
+Among invertible linear maps $B$ for which both factor planes of $BK$
+are Lagrangian, the maximum systolic ratio is $2/3$. The matrix
+\[
+ A=\begin{pmatrix}
+ 1&0&0&0\\
+ 1&-1&1&0\\
+ 0&1&0&0\\
+ -1/4&-1/2&0&-1/4
+ \end{pmatrix}
+\]
+satisfies
+\[
+ c_{\EHZ}(AK)=\frac{27}{10},\qquad
+ \Vol_4(AK)=\frac{81}{16},\qquad
+ \rho(AK)=\frac{18}{25}>\frac23.
+\]
+Consequently, no maximum of the systolic ratio on the full affine orbit
+of $K$ occurs in Lagrangian position. By affine equivalence, the same
+conclusion holds for the product of any two nondegenerate triangles.
+\end{theorem}
+
+The comparison covers \emph{every} Lagrangian position. Both ratios are below
+one, so the result gives no Viterbo counterexample. It does not compute the
+full affine maximum.
+
+\subsection{Closure and the explicit non-Lagrangian image}
+
+Use the conventions of Lemma~\ref{lem:affine-action-body}. The area of
+$\Delta$ is $9/2$, so $\Vol_4(K)=81/4$. Its six support-normalized normals are
+\[
+ a_0=e_1,\quad a_1=e_2,\quad a_2=-e_1-e_2,\qquad
+ a_3=e_3,\quad a_4=e_4,\quad a_5=-e_3-e_4.
+\]
+Closure forces every feasible weight vector to have the form
+\begin{equation}\label{eq:triangle-product-weights}
+ \beta_0=\beta_1=\beta_2=\frac t3,\qquad
+ \beta_3=\beta_4=\beta_5=\frac{1-t}{3},\qquad 0\leq t\leq1.
+\end{equation}
+Cyclic shifts of an order do not change its action: the change caused by
+moving its first weighted normal to the end is its pairing with twice the
+sum of the remaining weighted normals, which vanishes by closure. Thus the
+$120$ orders starting with $0$ cover all orders. The endpoints in
+\eqref{eq:triangle-product-weights} include smaller supports.
+
+For $x=(1,1,-2,1,1,-1)$, direct multiplication gives
+\[
+ \Omega=A^{-1}JA^{-\mathsf T},\qquad
+ \det A=\frac14,\qquad \mathfrak p(x)=4.
+\]
+For each order its action is
+\[
+ Q_\sigma(t)=\frac19\bigl[a t^2+b(1-t)^2+d t(1-t)\bigr],
+ \qquad a,b\in\{-1,1\}.
+\]
+The following finite table gives the greatest mixed coefficient $d$ in
+each of the four groups. Each group contains $30$ cyclic orders. A witness
+in every row also makes the bound sharp in that group.
+\begin{center}
+\begin{tabular}{ccclc}
+\toprule
+$a$&$b$&$\max d$&Attaining order&$\max_{\sigma,t} Q_\sigma(t)$\\
+\midrule
+$1$&$1$&$4$&$(0,1,3,2,5,4)$&$1/6$\\
+$1$&$-1$&$6$&$(0,5,1,3,2,4)$&$5/27$\\
+$-1$&$1$&$6$&$(0,3,2,5,1,4)$&$5/27$\\
+$-1$&$-1$&$4$&$(0,2,5,1,3,4)$&$1/18$\\
+\bottomrule
+\end{tabular}
+\end{center}
+All entries follow by summing the $15$ pairings of the listed six normals;
+the accompanying exact verifier enumerates precisely these $120$ orders.
+Since $t(1-t)\geq0$, the maximum mixed coefficient bounds the whole group.
+The four elementary quadratic maxima occur at $t=1/2,2/3,1/3,1/2$,
+respectively. Therefore the full Haim--Kislev maximum is
+\[
+ h_{\mathcal W_K}(x)=\frac5{27}.
+\]
+The affine capacity formula gives $c_{\EHZ}(AK)=27/10$, and the volume and
+ratio in the theorem follow. The table proves the required global capacity
+calculation, rather than merely exhibiting one feasible action.
+
+\subsection{The entire Lagrangian subclass}
+
+For a nondegenerate skew matrix, both diagonal $2\times2$ blocks vanish
+if and only if both diagonal blocks of its inverse vanish. Since
+$B^{\mathsf T}JB=-\Omega^{-1}$, the two factor planes are Lagrangian exactly
+when
+\[
+ \Omega=\begin{pmatrix}0&M\\-M^{\mathsf T}&0\end{pmatrix},\qquad
+ M\in GL(2,\mathbb R).
+\]
+Conversely, every such $M$ occurs, by taking $B=\operatorname{diag}(M^{-1},I_2)$.
+Write $h(M)$ for the action support at this cross form. Homogeneity and
+$|\det B|^{-1}=|\det M|$ give
+\begin{equation}\label{eq:triangles-cross-ratio}
+ \rho(BK)=\frac{|\det M|}{162h(M)^2}.
+\end{equation}
+
+The same-factor terms now vanish, so each order has action
+$t(1-t)$ times a linear form in $M$. Reversal of an order negates this
+linear form. Consequently the global maximum occurs at $t=1/2$, and
+$h(M)$ is a finite support function. Set
+\[
+ C=\{M:h(M)\leq1/12\},\qquad
+ u_1=(1,0)^{\mathsf T},\quad u_2=(0,1)^{\mathsf T},\quad
+ u_3=(1,-1)^{\mathsf T}.
+\]
+The second finite identity used in the proof is
+\begin{equation}\label{eq:triangles-rankone-hull}
+ C=\conv\left\{\pm\frac32u_i u_j^{\mathsf T}:1\leq i,j\leq3\right\}.
+\end{equation}
+To verify it exactly, form the $120$ action rows at weights $1/6$, multiply
+them by $12$, and impose their upper bounds $1$. Rational polyhedral
+reduction gives a bounded four-dimensional polytope with $30$ facets and
+exactly the $18$ vertices displayed in \eqref{eq:triangles-rankone-hull}.
+The verifier asserts equality of these two vertex sets, not an approximate
+match. This finite hull identity is the only polyhedral calculation used
+in the following determinant bound.
+
+Let $D=\conv\{\pm u_1,\pm u_2,\pm u_3\}$. Grouping any convex combination
+in \eqref{eq:triangles-rankone-hull} by its first index writes
+\[
+ M=\frac32\sum_{i=1}^3u_i v_i^{\mathsf T},\qquad
+ v_i\in\alpha_i D,\quad \alpha_i\geq0,\quad\sum_i\alpha_i=1.
+\]
+Each determinant of two vertices of $D$ has absolute value at most one.
+By bilinearity and convexity this implies $|\det(v_i,v_j)|\leq\alpha_i\alpha_j$.
+The two-dimensional Cauchy--Binet identity now yields
+\[
+ |\det M|
+ \leq\frac94\sum_{i<j}|\det(u_i,u_j)|\,|\det(v_i,v_j)|
+ \leq\frac94\sum_{i<j}\alpha_i\alpha_j
+ \leq\frac34.
+\]
+The last step follows from $\sum_i\alpha_i^2\geq1/3$.
+Equality is attained by $\alpha_i=1/3$ and $v_i=u_i/3$, giving
+\[
+ M_* =\frac12\sum_i u_i u_i^{\mathsf T}
+ =\begin{pmatrix}1&-1/2\\-1/2&1\end{pmatrix},\qquad
+ \det M_*=\frac34.
+\]
+It also has $h(M_*)=1/12$: a smaller value would allow dilation within $C$
+and contradict the determinant bound. For any nonzero $M$, the matrix
+$M/(12h(M))$ belongs to $C$. Equation~\eqref{eq:triangles-cross-ratio} therefore
+gives
+\[
+ \rho(BK)\leq\frac{144}{162}\cdot\frac34=\frac23,
+\]
+with equality for $M_*$. This proves the sharp global comparison.
+
+Finally, a full affine maximum exists. By
+Lemma~\ref{lem:affine-action-body}, the action support is a norm. The continuous
+function $|\Pf|$ attains a positive maximum on its compact unit ball. Any
+maximizing form is nondegenerate and hence is congruent to the standard
+symplectic form; it is realized by an invertible linear image. Since its
+ratio is at least $18/25$, no maximizing position has Lagrangian factor planes.
+
+\paragraph{Exact checks and scope.}
+The retained verifier
+\path{certificates/triangle-position/exact_triangles_compact.py}
+uses rational arithmetic
+and Sage's PPL backend to reconstruct both finite identities from the six
+normals. It verifies the four action-coefficient groups, the explicit matrix,
+and the $18$-vertex identity. An independent calculation also checks the
+global determinant maximum by enumerating stationary points on faces of
+dimensions at most two. The proof above replaces that larger face calculation
+by Cauchy--Binet. These checks do not establish priority in the literature.
+Published bounds for triangle--convex Lagrangian products concern a different
+comparison class. The bounded source comparison is recorded at
+\path{reviews/triangle-position-prior-comparison.md}; it does not establish
+priority.

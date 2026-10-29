@@ -1,0 +1,5495 @@
+{
+  "status": "exact arithmetic optimization on190 complete simple charts; enumeration coverage argument separate",
+  "chart_count": 190,
+  "maximum": [
+    "1/125",
+    "0",
+    "0",
+    "0"
+  ],
+  "maximum_numeric": 0.008,
+  "volume": [
+    "8/625",
+    "0",
+    "-8/9375",
+    "0"
+  ],
+  "volume_numeric": 0.012349556014932974,
+  "positive_gap": [
+    "3/625",
+    "0",
+    "-8/9375",
+    "0"
+  ],
+  "gap_numeric": 0.004349556014932974,
+  "log_systolic_derivative": [
+    "12/625",
+    "0",
+    "-32/9375",
+    "0"
+  ],
+  "log_systolic_derivative_numeric": 0.017398224059731897,
+  "seconds": 4.174983024597168,
+  "charts": [
+    {
+      "chart": 0,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        6,
+        5,
+        2,
+        8,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 1,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        5,
+        6,
+        2,
+        8,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 2,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 3,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        4,
+        6,
+        5,
+        2,
+        8
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 4,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        4,
+        5,
+        6,
+        2,
+        8
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 5,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 1,
+      "sigma": [
+        1,
+        8,
+        4,
+        6,
+        5,
+        2
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 6,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 1,
+      "sigma": [
+        1,
+        8,
+        4,
+        5,
+        6,
+        2
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 7,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 1,
+      "sigma": [
+        1,
+        6,
+        2,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 8,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 1,
+      "sigma": [
+        1,
+        2,
+        8,
+        4,
+        6,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 9,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 1,
+      "sigma": [
+        1,
+        2,
+        8,
+        4,
+        5,
+        6
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 10,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        4,
+        5,
+        1
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 11,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        6,
+        5,
+        2,
+        1,
+        8,
+        4
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 12,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        5,
+        6,
+        2,
+        1,
+        8,
+        4
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 13,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        6,
+        5,
+        1,
+        2,
+        8,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 14,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        5,
+        6,
+        1,
+        2,
+        8,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 15,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        5,
+        1,
+        6,
+        2,
+        8,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 16,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        6,
+        2,
+        1,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 17,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        6,
+        1,
+        2,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 18,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        1,
+        6,
+        2,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 19,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        4,
+        6,
+        5,
+        2,
+        1,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 20,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        4,
+        5,
+        6,
+        2,
+        1,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 21,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        4,
+        6,
+        5,
+        1,
+        2,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 22,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        4,
+        5,
+        6,
+        1,
+        2,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 23,
+      "q_vertices_mask": 12,
+      "p_vertices_mask": 1,
+      "sigma": [
+        0,
+        4,
+        5,
+        1,
+        6,
+        2,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 24,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        8,
+        7,
+        4,
+        5,
+        2
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 25,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        8,
+        4,
+        5,
+        2
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 26,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        2,
+        8,
+        7,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 27,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        2,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 28,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        2,
+        7,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 29,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        8,
+        7,
+        4,
+        3,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 30,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        8,
+        4,
+        3,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 31,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        8,
+        7,
+        3,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 32,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        8,
+        3,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 33,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        3,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 34,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        8,
+        7,
+        4,
+        3,
+        5,
+        2
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 35,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        8,
+        4,
+        3,
+        5,
+        2
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 36,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        8,
+        7,
+        3,
+        4,
+        5,
+        2
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 37,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        8,
+        3,
+        4,
+        5,
+        2
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 38,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        3,
+        8,
+        4,
+        5,
+        2
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 39,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        2,
+        8,
+        7,
+        4,
+        3,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 40,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        2,
+        8,
+        4,
+        3,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 41,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        2,
+        7,
+        8,
+        4,
+        3,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 42,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        2,
+        8,
+        7,
+        3,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 43,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        2,
+        8,
+        3,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 44,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        2,
+        7,
+        8,
+        3,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 45,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        3,
+        2,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 46,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        7,
+        2,
+        3,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 47,
+      "q_vertices_mask": 24,
+      "p_vertices_mask": 2,
+      "sigma": [
+        1,
+        2,
+        7,
+        3,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 48,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        8,
+        7,
+        4,
+        6,
+        5,
+        2
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 49,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        7,
+        8,
+        4,
+        6,
+        5,
+        2
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 50,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        8,
+        7,
+        4,
+        5,
+        6,
+        2
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 51,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        7,
+        8,
+        4,
+        5,
+        6,
+        2
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 52,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        6,
+        2,
+        8,
+        7,
+        4,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 53,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        7,
+        6,
+        2,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 54,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        6,
+        7,
+        2,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 55,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        6,
+        2,
+        7,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 56,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        2,
+        8,
+        7,
+        4,
+        6,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 57,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        7,
+        2,
+        8,
+        4,
+        6,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 58,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        2,
+        7,
+        8,
+        4,
+        6,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 59,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        2,
+        8,
+        7,
+        4,
+        5,
+        6
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 60,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        7,
+        2,
+        8,
+        4,
+        5,
+        6
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 61,
+      "q_vertices_mask": 8,
+      "p_vertices_mask": 3,
+      "sigma": [
+        1,
+        2,
+        7,
+        8,
+        4,
+        5,
+        6
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 62,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        7,
+        3,
+        9,
+        5,
+        1
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 63,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        7,
+        3,
+        5,
+        9,
+        1
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 64,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        1,
+        7,
+        3,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 65,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        5,
+        1,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 66,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        1,
+        7,
+        3,
+        5,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 67,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 4,
+      "sigma": [
+        1,
+        7,
+        3,
+        9,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 68,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 4,
+      "sigma": [
+        1,
+        7,
+        4,
+        3,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 69,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 4,
+      "sigma": [
+        1,
+        7,
+        3,
+        4,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 70,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 4,
+      "sigma": [
+        1,
+        7,
+        4,
+        3,
+        5,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 71,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 4,
+      "sigma": [
+        1,
+        7,
+        3,
+        4,
+        5,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 72,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        7,
+        3,
+        9,
+        4,
+        5,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 73,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        7,
+        4,
+        3,
+        9,
+        5,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 74,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        7,
+        3,
+        4,
+        9,
+        5,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 75,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        7,
+        4,
+        3,
+        5,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 76,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        7,
+        3,
+        4,
+        5,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 77,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        5,
+        1,
+        7,
+        3,
+        9,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 78,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        1,
+        7,
+        3,
+        9,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 79,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        1,
+        7,
+        4,
+        3,
+        9,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 80,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        1,
+        7,
+        3,
+        4,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 81,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        5,
+        1,
+        7,
+        4,
+        3,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 82,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        4,
+        5,
+        1,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 83,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        5,
+        1,
+        7,
+        3,
+        4,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 84,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        1,
+        7,
+        4,
+        3,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 85,
+      "q_vertices_mask": 17,
+      "p_vertices_mask": 4,
+      "sigma": [
+        0,
+        1,
+        7,
+        3,
+        4,
+        5,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 86,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        3,
+        9,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 87,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        8,
+        7,
+        3,
+        9,
+        4,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 88,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        8,
+        3,
+        9,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 89,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        3,
+        8,
+        9,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 90,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        8,
+        7,
+        4,
+        3,
+        9,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 91,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        8,
+        4,
+        3,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 92,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        8,
+        7,
+        3,
+        4,
+        9,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 93,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        8,
+        3,
+        4,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 94,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        3,
+        8,
+        4,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 95,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        8,
+        7,
+        4,
+        3,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 96,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        8,
+        4,
+        3,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 97,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        8,
+        7,
+        3,
+        4,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 98,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        8,
+        3,
+        4,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 99,
+      "q_vertices_mask": 16,
+      "p_vertices_mask": 6,
+      "sigma": [
+        1,
+        7,
+        3,
+        8,
+        4,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 100,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        7,
+        6,
+        3,
+        9,
+        1
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 101,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        7,
+        3,
+        9,
+        1
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 102,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        1,
+        7,
+        6,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 103,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        1,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 104,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        1,
+        6,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 105,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        7,
+        6,
+        3,
+        2,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 106,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        7,
+        3,
+        2,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 107,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        7,
+        6,
+        2,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 108,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        7,
+        2,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 109,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        2,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 110,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        7,
+        6,
+        3,
+        2,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 111,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        7,
+        3,
+        2,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 112,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        7,
+        6,
+        2,
+        3,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 113,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        7,
+        2,
+        3,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 114,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        2,
+        7,
+        3,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 115,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        1,
+        7,
+        6,
+        3,
+        2,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 116,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        1,
+        7,
+        3,
+        2,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 117,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        1,
+        6,
+        7,
+        3,
+        2,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 118,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        1,
+        7,
+        6,
+        2,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 119,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        1,
+        7,
+        2,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 120,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        1,
+        6,
+        7,
+        2,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 121,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        2,
+        1,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 122,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        6,
+        1,
+        2,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 123,
+      "q_vertices_mask": 3,
+      "p_vertices_mask": 8,
+      "sigma": [
+        0,
+        1,
+        6,
+        2,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 124,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        7,
+        6,
+        3,
+        9,
+        5,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 125,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        6,
+        7,
+        3,
+        9,
+        5,
+        1
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 126,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        7,
+        6,
+        3,
+        5,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 127,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        6,
+        7,
+        3,
+        5,
+        9,
+        1
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 128,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        1,
+        7,
+        6,
+        3,
+        9,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 129,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        6,
+        1,
+        7,
+        3,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 130,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        1,
+        6,
+        7,
+        3,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 131,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        5,
+        1,
+        7,
+        6,
+        3,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 132,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        6,
+        5,
+        1,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 133,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        5,
+        6,
+        1,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 134,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        5,
+        1,
+        6,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 135,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        1,
+        7,
+        6,
+        3,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 136,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        6,
+        1,
+        7,
+        3,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 137,
+      "q_vertices_mask": 1,
+      "p_vertices_mask": 12,
+      "sigma": [
+        0,
+        1,
+        6,
+        7,
+        3,
+        5,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 138,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        3,
+        2,
+        9,
+        8
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 139,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        3,
+        9,
+        8
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 140,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 141,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        3,
+        2,
+        8,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 142,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        3,
+        8,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 143,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        9,
+        8,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 144,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        9,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 145,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        4,
+        6,
+        2,
+        9,
+        8
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 146,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        4,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 147,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        4,
+        6,
+        2,
+        8,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 148,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        3,
+        2,
+        9,
+        8,
+        4
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 149,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        3,
+        9,
+        8,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 150,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        3,
+        9,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 151,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        3,
+        2,
+        8,
+        9,
+        4
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 152,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        3,
+        8,
+        9,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 153,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        4,
+        6,
+        3,
+        2,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 154,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        4,
+        6,
+        2,
+        3,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 155,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        4,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 156,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        4,
+        6,
+        2,
+        8,
+        3,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 157,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        3,
+        4,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 158,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        3,
+        2,
+        8,
+        4,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 159,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        6,
+        2,
+        3,
+        8,
+        4,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 160,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        4,
+        6,
+        3,
+        2,
+        8,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 161,
+      "q_vertices_mask": 6,
+      "p_vertices_mask": 16,
+      "sigma": [
+        0,
+        4,
+        6,
+        2,
+        3,
+        8,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 162,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        6,
+        5,
+        2,
+        9,
+        8,
+        4
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 163,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        5,
+        6,
+        2,
+        9,
+        8,
+        4
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 164,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        6,
+        5,
+        2,
+        8,
+        9,
+        4
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 165,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        5,
+        6,
+        2,
+        8,
+        9,
+        4
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 166,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        6,
+        2,
+        9,
+        8,
+        4,
+        5
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 167,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        9,
+        4,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 168,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        4,
+        9,
+        5
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 169,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        4,
+        6,
+        5,
+        2,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 170,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        4,
+        5,
+        6,
+        2,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 171,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        6,
+        5,
+        2,
+        8,
+        4,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 172,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        5,
+        6,
+        2,
+        8,
+        4,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 173,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        4,
+        5,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 174,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        4,
+        6,
+        5,
+        2,
+        8,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 175,
+      "q_vertices_mask": 4,
+      "p_vertices_mask": 17,
+      "sigma": [
+        0,
+        4,
+        5,
+        6,
+        2,
+        8,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 176,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        7,
+        6,
+        3,
+        2,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 177,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        7,
+        3,
+        2,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 178,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        7,
+        6,
+        2,
+        3,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 4,
+      "candidates": 7
+    },
+    {
+      "chart": 179,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        7,
+        2,
+        3,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 180,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        2,
+        7,
+        3,
+        9,
+        8
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "3/10",
+        "0",
+        "-1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 181,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        2,
+        8,
+        7,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 182,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        7,
+        6,
+        2,
+        8,
+        3,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 183,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        7,
+        2,
+        8,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 184,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        2,
+        7,
+        8,
+        3,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 185,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        7,
+        6,
+        3,
+        2,
+        8,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 186,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        7,
+        3,
+        2,
+        8,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 187,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        7,
+        6,
+        2,
+        3,
+        8,
+        9
+      ],
+      "maximum": [
+        "1/125",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.008,
+      "arg": [
+        "7/10",
+        "0",
+        "1/50",
+        "0"
+      ],
+      "breaks": 3,
+      "candidates": 4
+    },
+    {
+      "chart": 188,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        7,
+        2,
+        3,
+        8,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    },
+    {
+      "chart": 189,
+      "q_vertices_mask": 2,
+      "p_vertices_mask": 24,
+      "sigma": [
+        0,
+        6,
+        2,
+        7,
+        3,
+        8,
+        9
+      ],
+      "maximum": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "maximum_numeric": 0.0,
+      "arg": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "breaks": 2,
+      "candidates": 2
+    }
+  ]
+}

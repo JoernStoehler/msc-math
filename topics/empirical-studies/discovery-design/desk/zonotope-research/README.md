@@ -44,6 +44,18 @@ zero-pairing condition for extremizing forms. The universal conjecture remains
 open in this desk; the updated recommendation is to pause its scalar attack
 unless a concrete cancellation-control method becomes available.
 
+The [29 October restart packet](rank-four-restart-20261029/README.md) now retains
+independently audited component arguments through **seven generators**, an
+arbitrary-size degree-one/two row criterion, and nonproduct eight-generator
+equality examples. Its corrected assembled LaTeX note passed a fresh independent
+whole-text audit, conditional on the cited three-dimensional projection theorem.
+A subsequent all-size iteration exactly falsified an all-direction projection
+strengthening; a corrected maximum-radius formulation is equivalent to the
+original conjecture and remains unproved. The universal conjecture remains
+open; no capacity implication or novelty claim is made. Further eight-generator
+search was stopped by the coordinator; the packet records the exact witness
+and remaining all-size proof discriminator.
+
 ## Why this is a body measurement
 
 The convention is coordinates `(q1,q2,p1,p2)` and half-segments `[-v_i,v_i]`.

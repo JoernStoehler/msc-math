@@ -1,0 +1,17 @@
+{
+  "topics/capacity-and-qp/convex-systolic-optimization/main.tex": "8dfdab1b28d76474f27331a5fa1e9efb5fc09a3e189590bd9c4d6e789fe15960",
+  "topics/capacity-and-qp/convex-systolic-optimization/paper.pdf": "44f25ad8b229dd443ad33cdb4a3832163dd2143fb144772198b8fe9bb9f71c52",
+  "topics/capacity-and-qp/convex-systolic-optimization/references.bib": "a06d3114291db7906afa9533b9cfb50c389207ffd36740d16558a91181ff973a",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/affine-hko.tex": "a68ee995bb2faaedd648caa38d8739214ec1730a21a2e2e7edad41e48815ed52",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-ascent.tex": "82492c317c30d94a4592e339f2d6cc8878e8842efb3731b5428821a3dd6af4d2",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/multicut.tex": "b6fc94d31b01aa3f26b9fb30532e5ecd5caffedf73fd9826033f40e2fa593ceb",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/product-cover.tex": "b435b439785b07a919c751696feebf12309fca26b6a36c82831c5a50a92b76af",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/product-global.tex": "9becc6479478e605e667b76c584cdbff3bf2e4457c99f8fead51ceb8e30d3438",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/product-neighborhood.tex": "646b2c86d0cad1af5542495d99b0e93ff7689a91c106b3b0ac48d93702cc1c82",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/product-shadow.tex": "2592989c1c8c5a8d805b94aac9dd2f116b83f0e56e7e9e02b1e42ab97c27401f",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/simplex.tex": "4244fe719a882979447ab9e8a900fa7d6b92232d503b59769162f190aa9634b7",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/sixdim-global.tex": "04943166843d3dd9b5e4137f5ed3ad228922b804fd9bb0e062df0953c6a87ac1",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/sixdim-simplex.tex": "1fe02ea42bf37b0c28e91d68238d7e2f3365fb3a73ca6fec284c24c5309eb712",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/squared.tex": "c5057a3bac9125af51cdaa9874793681d731170af3cd5222232e1c2cc523c757",
+  "topics/capacity-and-qp/convex-systolic-optimization/sections/triangle-position.tex": "09be9372bdc32a54022d8a06a206c9a5765f304a01438491529174c5e2f96f7b"
+}

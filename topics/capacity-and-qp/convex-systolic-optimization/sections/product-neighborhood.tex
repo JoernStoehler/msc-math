@@ -1,0 +1,75 @@
+\subsection{A uniform gap and nearby norms}
+
+The pointwise strict inequality has a useful uniform consequence.  Here
+neighborhoods are taken in the Hausdorff topology on planar convex bodies;
+translations of either factor do not affect the capacity or the area.
+
+\begin{corollary}\label{cor:truncated-neighborhood}
+Let $Q$ be a genuine corner-truncated parallelogram.  There are a constant
+$\delta_Q>0$ and a neighborhood $\mathcal U_Q$ of $Q$ such that, for every
+planar convex body $K$,
+\[
+ c_{\mathrm{EHZ}}(K\times_L Q)^2
+ \le (1-\delta_Q)\,2|K|\,|Q|,
+\]
+and, for every $Q'\in\mathcal U_Q$,
+\[
+ c_{\mathrm{EHZ}}(K\times_L Q')^2<2|K|\,|Q'|.
+\]
+In particular, this gives open sets of admissible factors containing
+pentagons without parallel sides and smooth strictly convex bodies.
+\end{corollary}
+
+\begin{proof}
+Use the affine normalization and four normal templates of the preceding
+proof.  Let $m_Q$ be the infimum of $|K|$ over convex bodies containing
+translates of all four templates.  This infimum is finite, and the normal
+cover criterion identifies the constraint with
+$c_{\mathrm{EHZ}}(K\times_L Q)\ge1$.
+
+We first check attainment.  If $K$ contains a vertical unit segment, the
+triangles joining that segment to points of minimum and maximum first
+coordinate have disjoint interiors.  Consequently
+$\operatorname{width}_{e_1}K\le2|K|$.  The horizontal unit segment similarly
+gives $\operatorname{width}_{e_2}K\le2|K|$.  A minimizing sequence with bounded
+area is therefore uniformly bounded after translation.  Blaschke selection
+provides a Hausdorff limit.  The four template containments persist in the
+limit, since their translation vectors are bounded and may be passed to
+subsequences.  In particular, the limit contains the nondegenerate triangle
+$T$ and is a convex body.  Continuity of area proves that it attains $m_Q$.
+The strict theorem, applied to this minimizer, gives
+\[
+ m_Q>\frac1{2|Q|}.
+\]
+Indeed its capacity is at least one.  Rescaling the first factor to capacity
+one now gives the first assertion with
+$\delta_Q=1-(2m_Q|Q|)^{-1}>0$.
+
+Translate $Q$ so that the origin lies in its interior and choose
+$\varepsilon\in(0,1)$ small enough that
+\[
+ (1-\delta_Q)\left(\frac{1+\varepsilon}{1-\varepsilon}\right)^2<1.
+\]
+For all $Q'$ in a sufficiently small Hausdorff neighborhood of $Q$,
+\[
+ (1-\varepsilon)Q\subset Q'\subset(1+\varepsilon)Q.
+\]
+Monotonicity and homogeneity of capacity, together with area monotonicity,
+yield
+\[
+ \frac{c_{\mathrm{EHZ}}(K\times_L Q')^2}{2|K|\,|Q'|}
+ \le
+ \left(\frac{1+\varepsilon}{1-\varepsilon}\right)^2
+ \frac{c_{\mathrm{EHZ}}(K\times_L Q)^2}{2|K|\,|Q|}
+ <1.
+\]
+Small generic perturbations of the five vertices remove the parallel edge
+pairs, while smooth strictly convex bodies approximate $Q$ in Hausdorff
+distance.  Both therefore occur in this neighborhood.
+\end{proof}
+
+\begin{remark}
+This argument establishes existence of the gap and of the neighborhood.
+It gives no explicit value of $\delta_Q$ or radius of $\mathcal U_Q$, and it
+does not identify the minimizing partner.
+\end{remark}

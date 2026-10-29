@@ -1,0 +1,99 @@
+% Optional follow-on to truncated-square-section.tex; same notation and labels.
+\subsection{An affine-area deformation through pentagonal covers}
+
+The comparison above comes from a deformation of the proposed cover itself.
+It is not merely a comparison between unrelated polygons. Write
+$e=AB-g^2>0$ and put
+\[
+ z_F=\frac{A^2a}{d},\qquad z_M=\frac{A^2a}{e}.
+\]
+For $z_F\leq z\leq z_M$, define
+\[
+ D_z=\left(z,\frac gA z-A\right),\quad
+ L_z=-\frac aA D_z,\quad R_z=L_z+(1,0),\quad
+ t_z=C+\frac gA D_z,
+\]
+and let
+\[
+ P_z=\operatorname{conv}\{L_z,D_z,R_z,t_z,C\},\qquad C=(A,B).
+\]
+At the left endpoint $R_z,t_z,C$ are collinear and $P_{z_F}=K_{A,B}$.
+At the right endpoint $D_z,R_z,t_z$ are collinear and $P_{z_M}$ is the
+proposed trapezoid $K_0$ of \cite[Figure~11]{BMP2026}.
+Indeed its ten template vertices obey exactly the three four-point
+collinearities used there to specify $K_0$: the line $L_zD_z$ contains
+$0$ and $t_z-C$; the line $D_zt_z$ contains $(A,0)$ and $R_z$;
+and the line $L_zC$ contains $t_z-(A,0)$ and $D_z+e_2$.
+
+\begin{proposition}\label{prop:truncated-shadow}
+For every $z\in[z_F,z_M]$,
+\begin{equation}\label{eq:shadow-cover-area}
+ c_{\mathrm{EHZ}}(P_z\times_L Q_{A,B})=1,\qquad
+ |P_z|=\frac{1+Ag}{2}+\frac{g(g-A^2)}{2A^2}z.
+\end{equation}
+For $z_F<z<z_M$, the five displayed vertices are genuine vertices of
+$P_z$. All moving templates undergo translations parallel to the same
+vector $(1,g/A)$.
+\end{proposition}
+
+\begin{proof}
+The identities
+\[
+ d-e=gB>0,\qquad e-ag=B(1-B)>0,\qquad e-Aa=g(1-B)>0
+\]
+show that
+\[
+ 0<z_F<z_M<\min\{A,A^2/g\}.
+\]
+The cross products of consecutive edge vectors of the displayed cycle
+$L_z,D_z,R_z,t_z,C$ are, in that order,
+\[
+ 1-\frac{gz}{A^2},\quad
+ a-\frac{ez}{A^2},\quad
+ g\left(-a+\frac{dz}{A^2}\right),\quad
+ g\left(A+\frac{az}{A}\right),\quad
+ A+\frac{az}{A}.
+\]
+They are nonnegative, with only the stated endpoint degeneracies. The
+vertical levels satisfy
+$D_{z,y}<L_{z,y}=R_{z,y}<t_{z,y}<C_y$; the two chains from $D_z$ to
+$C$ are consequently monotone, and the cycle is the boundary of the
+claimed convex polygon.
+
+The four templates have the placements $T$, $-T+t_z$, $H+L_z$, and
+$V+D_z$. Their containment follows from the following segment identities:
+\begin{align*}
+ 0&=L_z+a(D_z-L_z),&
+ (A,0)&=D_z+A(R_z-D_z),\\
+ t_z-C&=L_z+B(D_z-L_z),&
+ D_z+e_2&=L_z+\frac{z}{A^2+az}(C-L_z),\\
+ t_z-(A,0)&=L_z+\frac{Bz}{A^2+az}(C-L_z).
+\end{align*}
+Every coefficient lies strictly between zero and one. Thus the covering
+theorem gives capacity at least one.
+
+The horizontal chord $L_zR_z$ has length one and is a longest horizontal
+chord. Below its height the chord length increases linearly from zero.
+Immediately above it, the derivative of the chord length is negative:
+putting $v=t_z-R_z$ and $w=C-L_z$, both $v_y,w_y$ are positive and
+\[
+ \frac{v_x}{v_y}-\frac{w_x}{w_y}
+ =\frac{\det(v,w)}{v_yw_y}<0,
+ \qquad
+ \det(v,w)=-\frac{ag(A^2+az)}{A^2}.
+\]
+Horizontal chord length is a concave function of height in a convex
+planar body. Hence no horizontal segment longer than one fits, which
+proves the reverse capacity inequality. Finally, the shoelace formula
+for the five displayed vertices gives \eqref{eq:shadow-cover-area}.
+\end{proof}
+
+If $g>A^2$, moving from $z_M$ toward $z_F$ strictly decreases area while
+preserving capacity. Thus the proposed optimizer is not even a local
+minimum of capacity-one cover area in this parameter region. If
+$g<A^2$, the opposite endpoint minimizes area within this particular
+family. At $g=A^2$, the entire interval consists of equal-area,
+capacity-one covers, including genuine pentagons between the two
+trapezoidal endpoints. These assertions concern the explicit deformation;
+they do not establish global minimality of either endpoint or of the
+intermediate pentagons.

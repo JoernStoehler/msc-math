@@ -1,0 +1,31 @@
+{
+  "all_checks_passed": true,
+  "matched_exact_outputs": [
+    "primitives.json",
+    "catalogue.json",
+    "exact-results.json",
+    "radial-profile-witness-PASS.json",
+    "constants-PASS.json"
+  ],
+  "comparison_excludes_only_runtime_fields_seconds_and_elapsed_seconds": true,
+  "effective_gain_scope": "All ten unit cuts in the original twenty-row family only; not the seventeen-facet subfamily.",
+  "explicit_parameter": "1/10^30",
+  "relative_gain_lower_bound": "1/(200*10^30)",
+  "complete_charts": 190,
+  "max_response_coefficients_ascending": [
+    "1/125",
+    "0",
+    "0",
+    "0"
+  ],
+  "positive_log_derivative_coefficients_ascending": [
+    "12/625",
+    "0",
+    "-32/9375",
+    "0"
+  ],
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "compiler_executable": "/usr/bin/c++",
+  "elapsed_seconds": 13.139429330825806,
+  "write_effects": "Only this fresh output directory, including copied sources, compiled executable, Python bytecode and generated JSON/log files."
+}

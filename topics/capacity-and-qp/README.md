@@ -8,6 +8,14 @@ stationary witness for one word and the global scalar capacity. A numerical
 solver diagnostic, an exact stationary witness and a complete certified search
 are three different outputs.
 
+The separate [convex systolic optimization report](convex-systolic-optimization/README.md)
+collects the 28–29 October autonomous research: full-affine HKO rigidity versus
+simultaneous-cut ascent, simplex optimization through action/Pfaffian bodies,
+squared-body difference geometry, and strict inequalities for truncated
+parallelogram products. Its proof sources, finite certificates, scoped reviews
+and reproduction instructions live together in that packet. It is not part of
+the selected thesis manuscript; its README records the current review limits.
+
 The importable implementation remains in
 [`symplectic::algorithms::capacity_4d`](../../crates/symplectic/src/algorithms/capacity_4d/mod.rs).
 The [`QP development packet`](development/README.md)

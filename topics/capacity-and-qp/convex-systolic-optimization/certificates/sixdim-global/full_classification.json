@@ -1,0 +1,33 @@
+{
+  "fence_orbit": 840,
+  "order_orbit": 720,
+  "generators_preserve_70_rows": true,
+  "V_rank": 15,
+  "order_affine_rank": 15,
+  "canonical_order": {
+    "active_count": 35,
+    "active_rank": 15,
+    "cdd_rays": 186,
+    "ppl_rays": 186,
+    "order_endpoints": 165,
+    "fence_endpoints": 21,
+    "distinct_endpoints": 186,
+    "endpoint_tight_distribution": {
+      "35": 165,
+      "18": 21
+    }
+  },
+  "canonical_fence": {
+    "active_count": 18,
+    "active_rank": 15,
+    "cdd_rays": 18,
+    "ppl_rays": 18,
+    "order_endpoints": 18,
+    "fence_endpoints": 0,
+    "distinct_endpoints": 18,
+    "endpoint_tight_distribution": {
+      "35": 18
+    }
+  },
+  "cpu_seconds": 3.123019694
+}

@@ -1,0 +1,198 @@
+% Local certificate used in the global theorem in sixdim-global.tex.
+% Requires theorem/lemma/proposition and standard amsmath/amssymb macros.
+\section{A six-dimensional simplex and a hypergraph Lagrangian}
+\label{sec:sixdim-hypergraph}
+
+In dimension six, the standard simplex no longer maximizes the systolic
+ratio, as Haim--Kislev observed numerically in her 2019 thesis
+\cite[Remark~1.3]{HaimKislev2019CubesSimplices}. The pairing formulation gives a particularly simple exact example
+and explains a numerical optimizer through a classical hypergraph
+Lagrangian. We prove that the example is a strict local maximum among simplices,
+modulo the natural symmetries; Section~\ref{sec:sixdim-global} proves it is
+globally optimal and classifies equality.
+
+For an alternating $6\times6$ matrix $\Omega$, put
+\[
+ S_6(\Omega)=\max_{\sigma\in\mathfrak S_6}
+             \sum_{i<j}\Omega_{\sigma(i),\sigma(j)},\qquad
+ C_6=\{\Omega:S_6(\Omega)\le1\}.
+\]
+The same barycentric-gradient argument as in the preceding section gives
+\begin{equation}\label{eq:sixdim-simplex-ratio}
+ \frac{c_{\mathrm{EHZ}}(K)^3}{6\operatorname{vol}_6K}
+ =\frac{15|\operatorname{Pf}\Omega|}{S_6(\Omega)^3}
+\end{equation}
+for every six-simplex. Indeed the capacity is $1/(2S_6)$ and the volume
+is $1/(6!|\operatorname{Pf}\Omega|)$. Every nondegenerate alternating
+$\Omega$ occurs, and identical pairings determine labeled simplices up
+to affine symplectomorphism.
+
+Write $e_{ij}$ for an alternating coordinate vector and
+$t_{ijk}=e_{ij}-e_{ik}+e_{jk}$ for $i<j<k$. Consider the five forms
+\begin{equation}\label{eq:sixdim-five-vertices}
+ v_1=t_{135},\qquad v_2=-t_{246},\qquad
+ v_3=e_{12},\qquad v_4=e_{34},\qquad v_5=e_{56}.
+\end{equation}
+Each has $S_6(v_i)=1$: a coordinate order score is $\pm1$, as is the
+score on an oriented triangle. The order $(1,3,5,2,6,4)$ has score $1$
+on all five. Consequently $S_6=1$ on their entire convex hull.
+
+\begin{theorem}\label{thm:sixdim-golden-local}
+Let
+\[
+ a=\frac{13+3\sqrt5}{62},\qquad b=\frac{6-\sqrt5}{31},\qquad
+ \Omega_*=a(t_{135}-t_{246})+b(e_{12}+e_{34}+e_{56}).
+\]
+Then $S_6(\Omega_*)=1$ and
+\[
+ \operatorname{Pf}\Omega_* =\frac{63+5\sqrt5}{1922}.
+\]
+The corresponding six-simplex has systolic ratio
+\[
+ \frac{945+75\sqrt5}{1922}>\frac59,
+\]
+strictly exceeding the standard simplex's ratio. It is a strict local
+maximum among six-simplices modulo translations, positive dilations
+and linear symplectomorphisms.
+\end{theorem}
+
+The value is approximately $0.5789308524$; its cube root is approximately
+$0.8334423504$. Leipold reports the nearby root-normalized numerical value
+$0.8334409621$~\cite[Section~12.4 and Appendix]{Leipold2026}. Numerical
+proximity alone does not identify the two simplex configurations. The
+exact proof here establishes this candidate's global optimality below.
+
+\subsection{The five-vertex face and its cubic}
+
+Direct Pfaffian expansion gives
+\begin{equation}\label{eq:sixdim-F32}
+ \operatorname{Pf}(xv_1+yv_2+zv_3+uv_4+vv_5)
+ =xy(z+u+v)+zuv.
+\end{equation}
+Here the scalar variable $v$ in the right-hand side is distinct from the
+indexed forms $v_i$. This is the edge polynomial of the $3$-uniform
+hypergraph
+\[
+ F_{3,2}=\{123,124,125,345\}.
+\]
+Its Lagrangian and maximizing weights are classical: Baber and Talbot
+record exactly these weights and the value
+$(189+15\sqrt5)/961$ with their normalization, which is six times the
+polynomial in~\eqref{eq:sixdim-F32}~\cite[Theorem~22]{BaberTalbot2012}.
+Thus the symplectic ratio in Theorem~\ref{thm:sixdim-golden-local} is
+$5/2$ times that hypergraph Lagrangian. We include the short maximization
+argument to keep the geometric result independent of any extremal
+hypergraph theorem.
+
+For nonnegative weights summing to one, put $t=z+u+v$. The arithmetic--
+geometric mean inequality gives
+\[
+ xy(z+u+v)+zuv
+ \le \frac{(1-t)^2t}{4}+\frac{t^3}{27}
+ =:G(t),\qquad 0\le t\le1.
+\]
+Equality requires $x=y=(1-t)/2$ and $z=u=v=t/3$, apart from irrelevant
+zero-mass endpoint cases. Comparing the endpoints and the two critical
+points of
+\[
+ G(t)=\frac t4-\frac{t^2}{2}+\frac{31t^3}{108}
+\]
+gives its unique maximum at
+$t_*=(18-3\sqrt5)/31$. This is precisely the stated pair of weights
+$a,b$. Moreover the restricted Hessian is negative definite. To see this,
+write $x=(1-t)/2+\delta$, $y=(1-t)/2-\delta$, and
+$(z,u,v)=(t/3+\eta_1,t/3+\eta_2,t/3+\eta_3)$ with
+$\sum\eta_i=0$. The polynomial becomes
+\[
+ G(t)-t\delta^2-\frac t6\sum_i\eta_i^2+\eta_1\eta_2\eta_3.
+\]
+At $t=t_*$, $G''(t_*)=-\sqrt5/6<0$; the other quadratic terms are
+strictly negative on the three remaining tangent directions.
+
+We next verify that this weight simplex is an actual face of the full
+fifteen-dimensional polytope $C_6$. This point matters: optimization on
+five chosen generators alone would not imply local maximality under
+arbitrary affine deformations.
+
+For an order $\sigma$, let $p_\sigma$ be its fifteen-coordinate sign
+vector. Let $\tau=(1\,3\,5)(2\,4\,6)$ act on the labels of an order.
+Let $\mathcal I$ consist of the three cyclic images under $\tau$ of each
+of the following seven orders:
+\begin{equation}\label{eq:sixdim-active-orders}
+ \begin{array}{cccc}
+ 123564,&132564,&134256,&134526,\\
+ 135264,&135426,&135642.&
+ \end{array}
+\end{equation}
+These are exactly the twenty-one orders having score $1$ on all five
+forms in~\eqref{eq:sixdim-five-vertices}. Their common affine equality
+set $p_\sigma\cdot\Omega=1$ is four-dimensional. More explicitly,
+subtracting the displayed equations gives
+\[
+ \begin{gathered}
+ \Omega_{14}=\Omega_{16}=\Omega_{23}=\Omega_{25}
+ =\Omega_{36}=\Omega_{45}=0,\\
+ \Omega_{13}=\Omega_{35}=-\Omega_{15},\qquad
+ \Omega_{24}=\Omega_{46}=-\Omega_{26},\\
+ \Omega_{13}-\Omega_{24}+\Omega_{12}+\Omega_{34}+\Omega_{56}=1.
+ \end{gathered}
+\]
+These are eleven independent affine equations and identify the equality
+set with $\sum_{i=1}^5\lambda_i v_i$, $\sum_i\lambda_i=1$.
+For $i=1,\ldots,5$, respectively, the orders
+\[
+ 125364,\quad123456,\quad213564,\quad142356,\quad123645
+\]
+have score $-1$ on $v_i$ and score $1$ on the other four forms. Their
+inequalities read $1-2\lambda_i\le1$, forcing $\lambda_i\ge0$.
+It follows that the common face is exactly
+$F=\operatorname{conv}\{v_1,\ldots,v_5\}$.
+
+\subsection{A certificate against every transverse affine deformation}
+
+Set $q(\Omega)=\operatorname{Pf}\Omega$. Let $\mathcal J$ be the
+three cyclic images of the distinguished order $135264$ in
+\eqref{eq:sixdim-active-orders}. Differentiating the Pfaffian at
+$\Omega_*$ gives the exact identity
+\begin{equation}\label{eq:sixdim-gradient-certificate}
+ \nabla q(\Omega_*)
+ =\alpha\sum_{\sigma\in\mathcal I\setminus\mathcal J}p_\sigma
+  +\beta\sum_{\sigma\in\mathcal J}p_\sigma,
+ \quad
+ \alpha=\frac{41-12\sqrt5}{5766}>0,
+ \quad\beta=\frac{-19+29\sqrt5}{1922}>0.
+\end{equation}
+This is a fifteen-coordinate identity over $\mathbb Q(\sqrt5)$; the
+explicit orders and coefficients give a small independently checkable
+certificate.
+
+For every feasible displacement $h$ from $\Omega_*$, each active order
+satisfies $p_\sigma\cdot h\le0$. The positivity in
+\eqref{eq:sixdim-gradient-certificate} implies
+$\nabla q(\Omega_*)\cdot h\le0$, with equality precisely when $h$ lies
+in the tangent space of $F$. On that tangent space, the Hessian is
+negative definite by the preceding computation.
+
+These two facts imply strict local maximality on $C_6$. Indeed, if
+nonzero feasible displacements $h_k\to0$ satisfied
+$q(\Omega_*+h_k)\ge q(\Omega_*)$, pass to a convergent subsequence of
+$h_k/\|h_k\|$, with unit limit $d$. Taylor expansion first forces
+$\nabla q(\Omega_*)\cdot d=0$, so $d$ belongs to the face tangent
+space. The Hessian is strictly negative in direction $d$. The linear
+term is nonpositive for every $h_k$, so the second-order Taylor expansion
+now gives a strict decrease for large $k$, a contradiction.
+
+Finally, radial normalization by $S_6$ identifies nearby nondegenerate
+pairing forms, modulo dilation, with a neighborhood in the boundary of
+$C_6$. Formula~\eqref{eq:sixdim-simplex-ratio} transfers the strict
+local Pfaffian maximum to the stated strict local systolic maximum,
+modulo affine symplectomorphisms and translations. This proves
+Theorem~\ref{thm:sixdim-golden-local}.
+
+The local certificate uses no complete facet enumeration of the
+linear-ordering polytope. The global proof in the next section uses an
+exact computer-assisted vertex classification. The contrast with
+dimension four is structural: a quadratic graph
+optimization is replaced by a cubic hypergraph optimization, and the
+hypergraph $F_{3,2}$ already appears using only coordinate and triangle
+forms.

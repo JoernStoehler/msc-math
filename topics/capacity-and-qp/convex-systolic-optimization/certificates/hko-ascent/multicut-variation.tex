@@ -1,0 +1,305 @@
+% Standalone section module; requires amsmath, amssymb, amsthm and the
+% theorem/proposition/corollary/remark environments. Bibliography: HK2017,HKO2026.
+\section{First variation under simultaneous facet splittings}
+\label{sec:multicut-variation}
+
+Fixed-facet variations do not describe the birth of several facets at once.
+Here the relevant first-order datum is a convex function on each old facet:
+it records the maximum depth of the competing cuts. We obtain its exact
+capacity response from labeled occupation measures of shortest polygonal
+characteristics. The resulting convex-order criterion is a criterion for
+\emph{first-order stationarity}. It does not prove a Hausdorff neighborhood
+of local maximality for the pentagon counterexample.
+
+Let $K=\{x\in\mathbb R^{2n}:a_i\cdot x\leq1,\ 1\leq i\leq m\}$
+be a bounded polytope containing the origin in its interior, with genuine
+facets $F_i$. Use $\omega(u,v)=\langle Ju,v\rangle$, where $J^2=-I$.
+For a finite word of facet labels and weights, put
+\begin{equation}\label{eq:mc-word}
+ Q(\sigma,\beta)=\sum_{r<s}\beta_r\beta_s
+ \omega(a_{\sigma_r},a_{\sigma_s}),\qquad
+ \sum_r\beta_ra_{\sigma_r}=0,\quad
+ \sum_r\beta_r=1,\quad\beta_r\geq0.
+\end{equation}
+Haim--Kislev's formula~\cite{HK2017} gives
+$Q_*:=\max Q=1/(2c_{\mathrm{EHZ}}(K))$ using words without repeated labels.
+Repeated words also satisfy $Q\leq Q_*$: their unit-period polar loop has
+velocity $2Ja_{\sigma_r}$ for time $\beta_r$, action $2Q$, and dual energy
+$\frac14\int h_K(-J\dot z)^2=1$. Normalizing its action to one in the dual
+action principle gives $c_{\mathrm{EHZ}}(K)\leq1/(2Q)$. Translating the loop
+to zero mean changes neither quantity. For redundant rows the support values
+are at most one, so the same inequality holds.
+
+We impose the following condition:
+\begin{quote}
+Every finite maximizing word, after deleting its zero weights, has
+$\operatorname{rank}\{(a_{\sigma_r},1)\}_r=2n+1$.
+\end{quote}
+We call this the \emph{full-rank support condition}. It concerns the constraint
+matrix, not the Hessian of the quadratic program.
+
+A maximizing word reconstructs a shortest boundary characteristic, as shown
+below. Parametrize it on $[0,1]$ with velocity $2TJ a_{\sigma_r}$ for time
+$\beta_r$, where $T=c_{\mathrm{EHZ}}(K)$. Its labeled occupation measure
+$\mu_\gamma$ is a probability on the disjoint union
+$X=\bigsqcup_iF_i$: time on a segment with label $i$ is assigned to that
+copy of $F_i$, including at ridges. Let $\mathcal M$ be the weak closure of
+the measures of \emph{all finite maximizing words}, allowing repetitions.
+The normalized cone-volume probability is
+\begin{equation}\label{eq:mc-nu}
+ d\nu|_{F_i}=\frac{dS}{2n\,\operatorname{Vol}_{2n}(K)|a_i|}.
+\end{equation}
+
+\begin{theorem}[Simultaneous-splitting derivative]\label{thm:mc-derivative}
+Assume the full-rank support condition. For each facet choose a nonempty
+finite list $D_{ij}\in\mathbb R^{2n}$ and set
+\[
+ K_t=\{x:(a_i+tD_{ij})\cdot x\leq1\text{ for every }i,j\},\qquad
+ f_i(x)=\max_jD_{ij}\cdot x\quad(x\in F_i).
+\]
+For this fixed finite list, the right derivative exists and equals
+\begin{equation}\label{eq:mc-derivative}
+ \left.\frac{d}{dt}\right|_{0+}
+ \log\frac{c_{\mathrm{EHZ}}(K_t)^n}{n!\operatorname{Vol}_{2n}(K_t)}
+ =2n\left(\int_X f\,d\nu-
+                  \max_{\mu\in\mathcal M}\int_X f\,d\mu\right).
+\end{equation}
+In particular, the hypothesis holds for every Lagrangian product of two
+planar polygons having no antipodal facet normals, including the HKO product.
+\end{theorem}
+
+\begin{proof}
+We give the sensitivity and placement arguments explicitly, since neither
+requires a smooth optimizing branch.
+
+\emph{A local chart at every limiting optimizer.}
+For the fixed augmented row list, the moving optimum $q(t)$ is the maximum
+over finitely many permutations and their feasible weights. This remains
+true with redundant or repeated presentation rows: genuine facets give one
+inequality and the polar-loop bound above gives the other. Along any sequence
+$t\downarrow0$, compactness of the weight simplex and finiteness of the words
+give maximizing weights $\beta_t\to\beta_0$ in one word. Capacity continuity
+makes $\beta_0$ a base maximizer.
+Choose $2n+1$ positive coordinates $I$ forming an invertible constraint minor,
+and denote the remaining weights by $z$. With columns
+$B_r(t)=(a_{\sigma_r}+tD_r,1)$, solve
+\[
+ \beta_I(t,z)=B_I(t)^{-1}\bigl(e-B_J(t)z\bigr),
+ \qquad e=(0,\ldots,0,1)^T.
+\]
+The solved weights stay positive near $(0,z_0)$; the other coordinates merely
+satisfy $z\geq0$. In particular $\beta(0,z_t)$ is base-feasible.
+Writing $F(t,z)=Q_t(\beta(t,z))$, we obtain
+\[
+ q(t)-Q_*\leq F(t,z_t)-F(0,z_t)
+             =t\,\partial_tF(0,z_0)+o(t).
+\]
+Conversely the section with $z=z_0$ fixed gives the reverse lower bound for
+every base optimizer. Thus $q'(0+)$ exists and is the maximum of these
+section derivatives. This comparison also covers singular Hessians and
+continua of maximizing weights.
+
+\emph{Placement of a maximizing word.}
+Delete zero weights and write $a_r=a_{\sigma_r}$,
+$s_r=\sum_{k<r}\beta_ka_k$, and $p_r=\partial_{\beta_r}Q$.
+Stationarity and full rank give unique multipliers satisfying
+\[
+ p_r=\lambda\cdot a_r+\eta,
+ \qquad \eta=2Q_*=1/T,
+ \qquad p_r=-2\omega(a_r,s_r)=2a_r\cdot Js_r.
+\]
+The vertices $x_r=-T\lambda+2TJs_r$ therefore satisfy $a_r\cdot x_r=1$.
+The segment to $x_{r+1}$ has direction $Ja_r$, so its active facet equation
+holds throughout. To obtain every other facet inequality, insert an arbitrary
+normal $a_k$ at any point of the loop, subdividing its current segment if
+necessary. Give the inserted row weight $\varepsilon\geq0$ and compensate
+with the positive minor. Its reduced objective derivative is
+\[
+ p_{\rm new}-\lambda\cdot a_k-\eta
+   =\frac{a_k\cdot x-1}{T}.
+\]
+Global optimality among repeated words makes this nonpositive. Hence the
+whole loop lies in $K$, on its labeled facets, and has action $T$.
+
+\emph{The midpoint formula.}
+Differentiate a feasible section of this word with row velocities $D_r$.
+The differentiated constraints give
+$\sum_ra_r\beta'_r=-\sum_r\beta_rD_r$ and $\sum_r\beta'_r=0$.
+The direct row derivative of $Q$ is
+\[
+ \sum_r\bigl[-2\beta_r\omega(D_r,s_r)
+              -\beta_r^2\omega(D_r,a_r)\bigr].
+\]
+Adding the weight derivative $-\sum_r\beta_r\lambda\cdot D_r$ yields
+\begin{equation}\label{eq:mc-midpoint}
+ Q'=\frac1T\sum_r\beta_rD_r\cdot x_r^{\rm mid},
+ \qquad x_r^{\rm mid}=x_r+T\beta_rJa_r.
+\end{equation}
+The self term in the preceding display is essential: the evaluation point
+is the segment midpoint, not its starting point.
+For every optimizer in the finite bank, $D_r\cdot x\leq f_i(x)$ on its
+segment labeled $i$. Affine midpoint integration therefore gives
+$q'(0+)\leq T^{-1}\max_{\mathcal M}\int f\,d\mu$.
+For the reverse inequality, take any finite maximizing base word and
+subdivide every segment at the finitely many switches of the maximum
+$f_i=\max_jD_{ij}\cdot x$. Assign a maximizing row on each resulting interval.
+After deleting zero-length pieces, this is a positive repeated word with the
+same base objective and full rank. A feasible continuation exists, and the
+polar-loop inequality bounds its objective by $q(t)$.
+Equation~\eqref{eq:mc-midpoint} now integrates $f$ exactly. Taking the supremum
+and then weak closure gives
+\[
+ q'(0+)=2Q_*\max_{\mu\in\mathcal M}\int f\,d\mu,
+ \qquad \frac{c'(0+)}{c(K)}=-2\max_{\mu\in\mathcal M}\int f\,d\mu.
+\]
+The maximum over $\mathcal M$ exists because $X$ is compact.
+
+\emph{Volume and the product hypothesis.}
+Away from the ridges, the radial gauge of $K_t$ has derivative $f_i$ on
+$F_i$. The radial volume formula and dominated convergence, using the fixed
+finite row list, give
+\[
+ V'(0+)=-\sum_i\int_{F_i}\frac{f_i}{|a_i|}\,dS
+        =-2nV\int f\,d\nu.
+\]
+This proves~\eqref{eq:mc-derivative}.
+For a planar Lagrangian product, a positive-$Q$ word must use both factors.
+Closure separates into the two planes. A positive closed combination of
+nonzero planar normals without antipodal pairs spans its plane; hence the
+active normals span $\mathbb R^4$. If $v\cdot a_r+s=0$ on their positive
+support, weighting and summing gives $s=0$, then $v=0$. The augmented rank is
+therefore five, also for repeated words.
+\end{proof}
+
+\begin{corollary}[A common convex-order ensemble]\label{cor:mc-convex-order}
+Under the theorem's hypothesis, the following are equivalent:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item Every fixed finite simultaneous-splitting direction has nonpositive
+first systolic variation.
+\item The weakly closed convex hull of $\mathcal M$ contains a probability
+$\bar\mu$ such that
+$\int f\,d\bar\mu\geq\int f\,d\nu$ for every continuous function convex
+on each facet copy.
+\end{enumerate}
+It is enough in \textup{(i)} to use inward cuts retaining every old facet.
+Any such $\bar\mu$ has the same mass and first moment as $\nu$ on each facet.
+\end{corollary}
+\begin{proof}
+Finite maxima of affine functions are uniformly dense in the continuous
+convex functions on a compact facet. Every affine function there is $D\cdot x$
+because $a_i\cdot x=1$. Thus the theorem turns (i) into
+$\sup_{\mathcal M}\int f\,d(\mu-\nu)\geq0$ for every facetwise convex $f$.
+Let $B=\overline{\operatorname{conv}}\mathcal M$. For a finite list
+$f_1,\ldots,f_k$, the compact convex set of vectors
+$(\int f_j\,d(\mu-\nu))_{j=1}^k$, $\mu\in B$, meets the positive orthant.
+Otherwise separation supplies nonnegative coefficients $\alpha_j$ whose
+sum $\sum_j\alpha_jf_j$ contradicts the preceding inequality.
+Compactness and the finite-intersection property now give one common
+$\bar\mu$ for all $f$. The converse is immediate.
+Adding one common large constant to all facet profiles makes them
+nonnegative, allowing the zero row to be retained; the difference of two
+probability integrals annihilates that constant. Finally test both signs of
+facetwise affine functions to obtain the mass and first-moment identities.
+\end{proof}
+
+The common-ensemble requirement is stronger than finding a different
+successful orbit for each single cut. Nor does first-order nonincrease give
+an unrestricted neighborhood theorem: zero derivatives and estimates whose
+constants deteriorate with cut count or slope still require analysis.
+
+\subsection{Two limitations of finite orbit reductions}
+
+The HKO body is $H=P\times_LR(-\pi/2)P$, where $P$ is the circumradius-one
+regular pentagon. Put $\alpha=\pi/5$, $\tau=\tan\alpha$, and
+\[
+ a_0=(1,\tau,0,0),\qquad w=(-\sin\alpha,\cos\alpha).
+\]
+On $F_0=E_0\times R(-\pi/2)P$, the functional $\ell(q,p)=w\cdot p$
+attains its maximum one exactly on $E_0\times\{w\}$.
+
+\begin{proposition}[No finite pure-word ensemble is universal]
+No finite convex combination of occupation measures of finite pure
+facet-word characteristics of $H$ dominates $\nu$ for every facetwise convex
+profile. Here a pure segment has velocity a positive multiple of one
+$Ja_i$ and carries that label; shortestness is not required.
+\end{proposition}
+\begin{proof}
+On a segment labeled zero, $\ell$ is constant since
+$w\cdot(1,\tau)=0$. Its value is strictly below one: a nonconstant
+p-segment cannot lie in the singleton exposing slice at $w$.
+A finite bank therefore has a common bound $\ell\leq h<1$ on all its
+zero-labeled segments. For $h<r<1$, the profile
+$f_0=(\ell-r)_+$, $f_i=0$ for $i\ne0$, vanishes on the bank but has
+positive $\nu$-integral. It is realized by the single extra row
+$a_0+t(-r,-r\tau,w_1,w_2)$.
+More explicitly, for $\delta=1-r<1-\cos(2\alpha)$, the pentagon cap
+has slice width $2z\cot\alpha$, so
+\[
+ \int_Xf\,d\nu=\frac{\cot\alpha}{30\operatorname{area}(P)}\delta^3>0.
+\]
+\end{proof}
+
+The existing at-most-eleven-facet HKO proof already identifies the failure
+of fixed positive-weight banks at redundant limits and uses cut-dependent
+families with vanishing weights. The proposition gives a geometric form of
+that obstruction; it does not contradict that theorem. Infinite ensembles
+and weak limits remain available in Corollary~\ref{cor:mc-convex-order}.
+For an action-$T$ word, the wedge at $w$ also gives the quantitative bound
+$1-\ell\geq T\beta\sec\alpha\tan\alpha$ on a zero-labeled segment of
+weight $\beta$, by comparing its length with the wedge's slice width.
+
+A second obstruction concerns eliminating repeated normals by moving their
+weights to an endpoint. That operation need not maximize a convex profile's
+occupation response, even along a family of genuine HKO minimizers.
+For the following explicit example set $r=\sqrt5$, $\tau=\sqrt{5-2r}$,
+$u=(3-r)/2$, $v=\tau(1+r)/2$, and $s=r-1$. The ten normals are
+\[
+\begin{split}
+ &(1,\tau,0,0),\ (-u,v,0,0),\ (-s,0,0,0),\ (-u,-v,0,0),\ (1,-\tau,0,0),\\
+ &(0,0,\tau,-1),\ (0,0,v,u),\ (0,0,0,s),\ (0,0,-v,u),\ (0,0,-\tau,-1).
+\end{split}
+\]
+
+\begin{proposition}[An interior response maximum]\label{prop:mc-interior}
+Let $b=(5-r)/20$ and consider
+\[
+ \sigma=(0,6,7,3,2,8,3,9),\qquad 0\leq q\leq1,
+\]\[
+ \beta(q)=\left(\frac r{10},\frac{5+r}{40},\frac{5-r}{40},
+ b(1-q),b,\frac{5-r}{40},bq,\frac{5+r}{40}\right).
+\]
+Every member is a maximizing word. For the facetwise convex profile
+$f_3(x)=|x-c_3|^2$, $f_i=0$ otherwise, where
+$c_3=(-1/4,\tau(\tau^2-9)/8,0,0)$ is the facet centroid, its response is
+\[
+ g(q)=\int f\,d\mu_q
+ =\frac{2-r}{4}q^2+\frac{-19+9r}{16}q+\frac{195-77r}{240}.
+\]
+Its maximum occurs at $q_*=(7-r)/8$ and satisfies
+$g(q_*)-\max\{g(0),g(1)\}=(r-1)/128>0$.
+\end{proposition}
+\begin{proof}
+Substitution gives closure and $Q=\tau/5$ at both endpoints. The objective
+is affine in the transfer between two identical normals, since
+$\omega(a_3,a_3)=0$, so it is constant throughout. This is the HKO optimum
+by~\cite{HKO2026}; the placement argument above applies.
+For a direct calculation of the response, the two row-three segment
+midpoints are
+\[
+ m_1(q)=\frac14\bigl(-1-r,-\tau(1+r),\tau(r+q),1+rq\bigr),\qquad
+ m_2(q)=\frac14\bigl(-1,-\tau(2+r),\tau(q-3-r),1-r+rq\bigr).
+\]
+Their weights are $b(1-q)$ and $bq$. Exact integration of a quadratic along
+a straight segment of weight $\beta$ gives
+$\beta(|m-c_3|^2+T^2\beta^2|a_3|^2/3)$.
+Here $T=5/(2\tau)$ and $T^2b^2|a_3|^2/3=(5-r)/24$.
+Inserting the displayed midpoints yields $g$; differentiating this
+strictly concave quadratic proves the claimed maximum and gap.
+\end{proof}
+
+Uniform approximation of this profile by finite maxima of affine functions
+preserves the strict endpoint gap. Thus the phenomenon also occurs for a
+finite inward split bank. It refutes the proposed convexity argument for
+deleting repetitions; it does not show that the two displayed endpoint words
+are best among \emph{all} simple HKO words, and does not exhibit an improving
+systolic variation.

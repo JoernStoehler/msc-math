@@ -1,0 +1,279 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{enumitem}
+\usepackage{needspace}
+\setlist{nosep}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\pf}{\operatorname{Pf}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\vol}{\operatorname{vol}}
+\newcommand{\one}{\mathbf 1}
+\title{A rank-four Pfaffian inequality: proofs through seven generators and an eight-generator equality family}
+\author{}
+\date{29 October 2026}
+\begin{document}
+\maketitle
+\noindent\textbf{Review status (29 October 2026).} Independent agent audits cover the component notes and this corrected assembled text. The whole-text audit found no mathematical gap, conditional on the cited FMMZ projection theorem. This is not formal verification; a successful build alone is not mathematical validation.
+
+
+\begin{abstract}
+For a real skew matrix $W$ of rank at most four, write $\Phi(W)=\sum_{i<j}|W_{ij}|$ and $\Psi(W)=\sum_{|I|=4}|\pf(W_I)|$. We give a proof of $4\Psi\leq\Phi^2$ for at most seven generators, and for every number of generators when the pairing graph has a vertex of degree one or two. The latter proof uses one established three-dimensional zonoid projection inequality; all other ingredients are proved here. We also give an exact nonproduct equality family with eight generators. The unrestricted inequality remains open in this note. No symplectic-capacity consequence is claimed. No novelty or priority claim is made.
+\end{abstract}
+
+\section{Statement and notation}
+For a finite real skew-symmetric matrix $W=(W_{ij})$, let
+\[
+ \Phi(W)=\sum_{i<j}|W_{ij}|,\qquad
+ \Psi(W)=\sum_{i<j<k<\ell}|\pf(W_{ijkl})|.
+\]
+Here $W_{ijkl}$ is the principal $4\times4$ submatrix in increasing index order, and
+\[
+ \pf(W_{ijkl})=W_{ij}W_{k\ell}-W_{ik}W_{j\ell}+W_{i\ell}W_{jk}.
+\]
+The support graph has one vertex per index and an edge $ij$ whenever $W_{ij}\ne0$. In the rank-four setting, $W$ is the skew Gram matrix of generators for a four-dimensional symplectic form; the quantities above are respectively the generator-pairing mass and the sum of absolute $4$-minors.
+
+\begin{conjecture}[Unrestricted rank-four inequality]
+For every finite real skew-symmetric matrix $W$ with $\operatorname{rank}W\leq4$,
+\[
+                         4\Psi(W)\leq\Phi(W)^2.
+\]
+\end{conjecture}
+
+We prove the conjecture when the matrix has at most seven indices, and in arbitrary dimension under the sparse-row condition in Theorem~\ref{thm:sparserow}. We do not prove it for general matrices with eight or more indices. The cited input is isolated explicitly below; the remaining arguments are direct proofs in this note.
+
+\section{Two elementary ingredients}
+\subsection{The planar strip bound}
+For vectors $r,s\in\R^m$, write $\|r\wedge s\|_1=\sum_{i<j}|r_i s_j-r_j s_i|$.
+
+\begin{lemma}[Planar strip lemma]\label{lem:strip}
+Let $\alpha,\beta\geq0$, $\alpha+\beta=1$, and set
+\[
+ R=\|r\|_1+\|s\|_1,\qquad h=\alpha s-\beta r,\qquad H=\|h\|_1.
+\]
+Then
+\[
+                         \|r\wedge s\|_1\leq H(R-H).
+\]
+The same inequality holds after restricting $r,s$ to any subset of coordinates.
+\end{lemma}
+\begin{proof}
+Put $A=\|r\|_1$ and $B=\|s\|_1$. The planar zonotope
+\[
+ Z=\sum_{i=1}^m[-(r_i,s_i),(r_i,s_i)]
+\]
+has area $4\|r\wedge s\|_1$. It is contained in the rectangle $[-A,A]\times[-B,B]$ and the strip $|{-\beta x+\alpha y}|\leq H$. The triangle and reverse-triangle inequalities give
+\[
+ |\beta A-\alpha B|\leq H\leq\beta A+\alpha B.
+\]
+If $\alpha\beta>0$, the rectangle cut by this strip has area
+\[
+ 4AB-\frac{(\beta A+\alpha B-H)^2}{\alpha\beta}.
+\]
+Subtracting this expression from $4H(A+B-H)$ gives
+\[
+ \frac{(\beta A-\alpha B+(\alpha-\beta)H)^2}{\alpha\beta}\geq0.
+\]
+Thus $4\|r\wedge s\|_1\leq4H(A+B-H)$. If $\alpha\beta=0$, the assertion is the coordinatewise determinant bound $\|r\wedge s\|_1\leq\|r\|_1\|s\|_1$. Coordinate restriction does not change the argument.
+\end{proof}
+
+\subsection{The cited three-dimensional zonoid input}
+The only external mathematical input in the arbitrary-size sparse-row theorem is the following established result.
+
+\begin{lemma}[FMMZ, Theorem 5.1 in dimension three]\label{lem:fmmz}
+For arbitrary real vectors $g,h,k\in\R^m$,
+\[
+ \|g\wedge h\wedge k\|_1\,\|h\|_1
+ \leq \|g\wedge h\|_1\,\|h\wedge k\|_1.
+ \tag{2.1}
+\]
+\end{lemma}
+\begin{proof}[Normalization from the cited theorem]
+Apply the orthogonal-direction case of the three-dimensional zonoid projection inequality in \cite[Theorem~5.1]{FMMZ} to the centered zonotope with half-generators $(g_i,h_i,k_i)$. Its volume is $8\|g\wedge h\wedge k\|_1$; its projection length onto the middle axis is $2\|h\|_1$; and its two coordinate-plane projection areas are $4\|g\wedge h\|_1$ and $4\|h\wedge k\|_1$. Cancelling the common factor $16$ gives (2.1). Degenerate cases follow by continuity.
+\end{proof}
+
+Fradelizi, Madiman, Meyer, and Zvavitch prove the projection inequality for three-dimensional zonoids in their paper; see the bibliography. This input is not the stronger projection conjecture that fails in dimension three in later work.
+
+\section{A sparse-row theorem in every dimension}
+\begin{lemma}[A decomposable-bivector consequence]\label{lem:decomp}
+Let $r,s\in\R^m$, let $g=r+s$ and $h=\alpha s-\beta r$ with $\alpha,\beta\geq0$, $\alpha+\beta=1$, and put $R=\|r\|_1+\|s\|_1$, $H=\|h\|_1$. If $B$ is a decomposable bivector and $h\wedge B=0$, then
+\[
+                         \|g\wedge B\|_1\leq\|B\|_1(R-H).
+\]
+\end{lemma}
+\begin{proof}
+If $h\ne0$, write $B=h\wedge k$ (including $B=0$). Lemma~\ref{lem:strip} and Lemma~\ref{lem:fmmz} give
+\[
+ \|g\wedge B\|_1=\|g\wedge h\wedge k\|_1
+ \leq\frac{\|g\wedge h\|_1\|h\wedge k\|_1}{H}
+ \leq(R-H)\|B\|_1,
+\]
+where $g\wedge h=r\wedge s$. If $h=0$, then $r=\alpha g$ and $s=\beta g$, so $R=\|g\|_1$; the coordinatewise wedge triangle inequality yields the result.
+\end{proof}
+
+\begin{theorem}[Sparse-row case]\label{thm:sparserow}
+Let $W$ be a finite real skew-symmetric matrix of rank at most four. If its support graph has a vertex of degree one or two, then
+\[
+                         4\Psi(W)\leq\Phi(W)^2.
+\]
+\end{theorem}
+\begin{proof}
+Relabel the distinguished index as $n$. We first treat degree two and write, after reorientation,
+$W_{1n}=t\alpha$, $W_{2n}=t\beta$, where $t>0$, $\alpha,\beta>0$, and $\alpha+\beta=1$. Let $B$ be the skew block on indices $3,\ldots,n-1$, and set
+\[
+ \begin{aligned}
+ r&=(W_{1j})_{j=3}^{n-1},& s&=(W_{2j})_{j=3}^{n-1},& g&=r+s,& h&=\alpha s-\beta r,\\
+ R&=\|r\|_1+\|s\|_1,& H&=\|h\|_1,& c&=W_{12},& b_0&=\|B\|_1.
+\end{aligned}
+\]
+The $6\times6$ Pfaffians involving $n,1$ and any four block indices imply that all $4$-Pfaffians of $B$ vanish, so $\operatorname{rank}B\leq2$ and $B$ is decomposable. Those involving $n,1,2$ and any three block indices give $h\wedge B=0$.
+
+Let $C$ be the sum of the old (not using $n$) absolute $4$-Pfaffians. Sorting these minors by their use of indices $1,2$ gives
+\[
+ C=\|g\wedge B\|_1+\|cB-r\wedge s\|_1.
+\]
+Indeed, the minors using exactly one of $1,2$ have total $\|r\wedge B\|_1+\|s\wedge B\|_1=\|g\wedge B\|_1$, since $h\wedge B=0$; those using both have coordinates $cB-r\wedge s$. The new minors, those using $n$, have total $t(b_0+H)$. By Lemma~\ref{lem:decomp}, Lemma~\ref{lem:strip}, and $r\wedge s=g\wedge h$,
+\[
+ C\leq b_0(R-H)+|c|b_0+H(R-H)
+   \leq(b_0+H)(|c|+R-H).
+\]
+Set $U=b_0+H$ and $V=|c|+R-H$. Then $\Phi= t+U+V$ and $\Psi\leq tU+UV$, whence
+\[
+ \Phi^2-4\Psi\geq(t+U+V)^2-4U(t+V)=(U-t-V)^2\geq0.
+\]
+
+For degree one, suppose the only nonzero entry in row $n$ is $W_{1n}=a$. Let $B$ be the complementary block on indices $2,\ldots,n-1$, and let $r=(W_{1j})_{j=2}^{n-1}$. The Pfaffians involving $n$ show $\operatorname{rank}B\leq2$. The old/new decomposition and the coordinate wedge triangle inequality give
+\[
+ \Psi=\|r\wedge B\|_1+|a|\|B\|_1
+ \leq(\|r\|_1+|a|)\|B\|_1,
+ \qquad \Phi=\|r\|_1+|a|+\|B\|_1.
+\]
+Thus $4\Psi\leq\Phi^2$ by $4xy\leq(x+y)^2$.
+\end{proof}
+
+\section{At most five generators}
+\begin{proposition}\label{prop:five}
+If $W$ has at most five indices, then $4\Psi(W)\leq\Phi(W)^2$.
+\end{proposition}
+\begin{proof}
+For four or fewer indices, there is at most one Pfaffian. If its three products have magnitudes $ab,cd,ef$, then $4(ab+cd+ef)\leq(a+b+c+d+e+f)^2$ by applying $4xy\leq(x+y)^2$ to each pair and summing. For five indices, let $a_e=|W_e|$ for each support edge $e$. By the triangle inequality, $\Psi$ is at most
+\[
+ M_2=\sum_{\substack{\{e,f\}:\ e\cap f=\emptyset}}a_ea_f.
+\]
+The graph whose vertices are support edges and whose adjacencies join disjoint edges is triangle-free: three pairwise disjoint edges would require six original vertices. For any triangle-free graph $G$ and nonnegative vertex weights $x_v$ of total mass $S$, one has $\sum_{uv\in E(G)}x_ux_v\leq S^2/4$. To see this, maximize the sum on the weight simplex and choose a maximizer with smallest support. Two nonadjacent positive-weight vertices would allow moving all their combined mass to one of them without decreasing the objective, contradicting minimal support. The support is therefore a clique, of size at most two, where the claim is $xy\leq(x+y)^2/4$. Apply this with vertex weights $a_e$ to get $\Psi\leq M_2\leq\Phi^2/4$.
+\end{proof}
+
+\section{Six generators: an extreme-direction argument}
+\begin{theorem}\label{thm:six}
+If $W$ is a $6\times6$ real skew-symmetric matrix of rank at most four, then $4\Psi(W)\leq\Phi(W)^2$.
+\end{theorem}
+\begin{proof}
+Write $W$ in blocks as
+\[
+ W=\begin{pmatrix}W_0&y\\-y^T&0\end{pmatrix},
+\]
+where $W_0$ is $5\times5$. Set $F=\Phi(W_0)$, $G=\Psi(W_0)$, and $\delta=F^2-4G\geq0$ by Proposition~\ref{prop:five}. Pfaffian expansion along the final index shows that feasibility $\operatorname{rank}W\leq4$ is one linear constraint $P\cdot y=0$ on $y\in\R^5$. The ten new Pfaffians are the coordinates of
+\[
+ (Ty)_{ijk}=(W_0)_{ij}y_k-(W_0)_{ik}y_j+(W_0)_{jk}y_i,
+ \qquad b(y)=\|Ty\|_1.
+\]
+For $a=\|y\|_1$, the desired gap is
+\[
+ \Phi(W)^2-4\Psi(W)=\delta+2Fa+a^2-4b(y).
+ \tag{6.1}
+\]
+The convex function $b$ reaches its maximum on $P^\perp\cap\{\|z\|_1\leq1\}$ at a vertex. Every such vertex has support at most two: a sign face on $k$ coordinates has dimension $k-1$, and one hyperplane can reduce it to a vertex only for $k\leq2$ (if $P=0$, the vertices are singletons). It remains to check directions of support one or two. We show for each such unit direction $z$ and every $t\geq0$ that the gap in (6.1), with $y=tz$, is nonnegative. Then $b(z)\leq(F+\sqrt\delta)/2$; convexity extends this bound to all feasible unit directions, and (6.1) is at least $(a-\sqrt\delta)^2$.
+
+For a one-coordinate direction $z=e_i$, feasibility says the old Pfaffian on the other four indices vanishes. Let $r$ be the mass of the old star at $i$ and $s$ the mass of the old internal edges on the other four vertices, so $F=r+s$. The old Pfaffian sum is at most $rs$, by assigning each surviving Pfaffian to a disjoint star/internal edge pair; the new sum at scale $t$ is $ts$. Hence
+\[
+ \Phi^2-4\Psi\geq(r+s+t)^2-4(rs+ts)=(r-s+t)^2.
+\]
+
+For a two-coordinate unit direction, after reorientation write $z=(\alpha,\beta,0,0,0)$ with $\alpha,\beta>0$, $\alpha+\beta=1$. On old indices $3,4,5$, let $B$ be the skew block and identify it with $q=(W_{45},-W_{35},W_{34})$; put $b_0=\|q\|_1$. Define $r=(W_{13},W_{14},W_{15})$, $s=(W_{23},W_{24},W_{25})$, $g=r+s$, $h=\alpha s-\beta r$, $R=\|r\|_1+\|s\|_1$, $H=\|h\|_1$, and $c=W_{12}$. The rank constraint gives $q\cdot h=0$. The old Pfaffian sum is exactly
+\[
+ C=|q\cdot g|+\|cq-g\times h\|_1,
+\]
+and the new sum at scale $t$ is $tU$, where $U=b_0+H$. The planar strip lemma gives $\|g\times h\|_1=\|r\wedge s\|_1\leq H(R-H)$. Also
+\[
+                        |q\cdot g|\leq b_0(R-H).
+\]
+For this last bound, maximize $|q\cdot g|$ on $q\cdot h=0$, $\|q\|_1\leq1$. Its extreme points have support one or two. A singleton requires $h_i=0$ and gives $|g_i|\leq R-H$. A two-coordinate point on $i,j$ gives the ratio
+$|r_i s_j-r_j s_i|/(|h_i|+|h_j|)\leq R'-H'\leq R-H$, by Lemma~\ref{lem:strip} on those two coordinates; here $R'=|r_i|+|s_i|+|r_j|+|s_j|$ and $H'=|h_i|+|h_j|$. Thus, with $V=|c|+R-H$,
+\[
+ C\leq b_0(R-H)+|c|b_0+H(R-H)\leq UV.
+\]
+The old edge mass is $U+V$, so $\Phi=U+V+t$ and $\Psi\leq UV+tU$. Therefore
+\[
+ \Phi^2-4\Psi\geq(U+V+t)^2-4U(V+t)=(U-V-t)^2.
+\]
+This handles every vertex direction and completes the convexity reduction.
+\end{proof}
+
+\section{Seven generators by minimal support and parity}
+\begin{lemma}[Minimal-support degree bound]\label{lem:degree}
+Fix $n\geq6$. If the maximum of $\Psi$ on rank-at-most-four skew matrices normalized by $\Phi=1$ exceeds $1/4$, then a global maximizer with the fewest nonzero entries has every support-graph degree at most $n-4$.
+\end{lemma}
+\begin{proof}
+The normalized set is compact, so a global maximizer with minimum support exists. Assume its value is above $1/4$. Delete an index $i$, obtaining an old block $W_0$ and column $y$, with $a=\|y\|_1$ and old mass $\Phi_0$. The minors using $i$ have sum $b(y)=\|Ty\|_1$, and $\Psi(W)=\Psi(W_0)+b(y)$. If $\operatorname{rank}W_0\leq2$, then $\Psi(W_0)=0$ and the triangle inequality gives $b(y)\leq a\Phi_0$; thus $4\Psi(W)\leq4a\Phi_0\leq(a+\Phi_0)^2$, as required. So at a maximizer with value above $1/4$, every deleted block has rank four. A zero row already has degree zero and satisfies the claimed bound; hence assume $y\ne0$ below.
+
+For rank-four $W_0$, the block extension has rank at most four exactly when $y\in\operatorname{range}(W_0)$. Indeed, a component of $y$ in $\ker W_0$ adds a rank-two skew block; a component in the range is removed by skew congruence. If $y=0$, its degree is already zero; otherwise fix its support $S=\supp(y)$. Replacing $y$ within $\operatorname{range}(W_0)\cap\R^S\cap\{\|z\|_1\leq a\}$ preserves rank and does not increase $\Phi$. The convex homogeneous function $b(z)=\|Tz\|_1$ has a maximum at a vertex of this polytope. Since the current $b(y)>0$ (otherwise deleting this column strictly improves $\Psi/\Phi^2$), a maximizing vertex has norm $a$; otherwise scaling it up increases $b$. Global maximality makes the replacement another maximizer, and minimal support forces it to retain all $|S|$ nonzero coordinates.
+
+The range of $W_0$ has codimension $(n-1)-4=n-5$. On a fixed sign face supported on $k$ coordinates, the $\ell_1$-sphere has dimension $k-1$; at most $n-5$ independent linear constraints can cut it to a vertex only if $k-1\leq n-5$. Thus $k\leq n-4$, as claimed. A zero row already satisfies the bound.
+\end{proof}
+
+\Needspace{6\baselineskip}
+\begin{theorem}\label{thm:seven}
+If $W$ has at most seven indices and rank at most four, then $4\Psi(W)\leq\Phi(W)^2$.
+\end{theorem}
+\begin{proof}
+The cases of at most six indices are already proved. If a seven-index counterexample existed, a global maximizer of $\Psi$ on $\{\operatorname{rank}W\leq4,\Phi(W)=1\}$ would also be a counterexample. Choose one with minimum support. Lemma~\ref{lem:degree} bounds every degree by three. They cannot all equal three, since seven vertices of degree three would have odd degree sum. Hence some row has degree at most two. Degree zero reduces to the six-index theorem; degree one or two is covered by Theorem~\ref{thm:sparserow}. Contradiction.
+\end{proof}
+
+\section{An eight-generator nonproduct equality family}
+The next construction proves equality on a family with eight generators; it does not imply the conjecture for other eight-generator matrices. Choose $x,y,z\in\R$ and put
+\[
+ p=x^2+y^2+z^2>0,\qquad s=|x|+|y|+|z|,\qquad
+ A=\begin{pmatrix}
+ 0&x&y&z\\-x&0&z&-y\\-y&-z&0&x\\-z&y&-x&0
+ \end{pmatrix}.
+\]
+Then $A^2=-pI$, $\pf(A)=p$, and $\|A\|_1=2s$. For $t\geq0$, define
+\[
+ W(t)=\begin{pmatrix}A&tI\\-tI&(t^2/p)A\end{pmatrix}.
+\]
+The Schur complement of $A$ vanishes, so $\operatorname{rank}W(t)=4$. Directly sorting the four-Pfaffians by their number of indices in each four-block gives
+\begin{align*}
+ \Phi(W(t))&=2s(1+t^2/p)+4t,\\
+ \Psi(W(t))&=p+t^4/p+4ts+4t^3s/p+4s^2t^2/p+2t^2
+             =\frac{(p+t^2+2ts)^2}{p}.
+\end{align*}
+Writing $u=\sqrt p$, these formulas yield the exact factorization
+\[
+ \frac{\Phi(W(t))}{2}-\sqrt{\Psi(W(t))}
+       =\frac{(s-u)(t-u)^2}{p}\geq0.
+\]
+Thus equality holds when $t=u$ (and also whenever $s=u$). If $xyz\ne0$, set $J=A/u$. Then $J$ is an orthogonal complex structure. The normalized matrix $u^{-1}W(u)=\left(\begin{smallmatrix}J&I\\-I&J\end{smallmatrix}\right)$ is the symplectic pairing matrix of the eight directions $e_1,\ldots,e_4,-Je_1,\ldots,-Je_4$ under $\omega_J(v,w)=v^TJw$. Every three of these directions are linearly independent: each column of $J$ has three nonzero coordinates, and applying the invertible map $J$ handles the corresponding mixed triples. A product of two planar zonotopes has all edge directions in the union of two complementary two-dimensional subspaces, each of which can contain at most two of these directions. Hence this zonotope is not linearly a product of two planar bodies. For $x=y=z=1$, its support graph is two copies of $K_4$ joined by a perfect matching, the complement of the cube graph, and is 4-regular.
+
+\begin{remark}
+This equality family does not settle the unrestricted conjecture at eight generators. In particular, it is an equality example, not an upper-bound theorem for all rank-four $8\times8$ matrices.
+\end{remark}
+
+\section{Limits}
+The proved conclusions are: the inequality for at most seven generators; the inequality for any number of generators when a support-graph vertex has degree one or two; and a nonproduct eight-generator equality family. The unrestricted conjecture for general eight-or-more-generator matrices remains open here. No literature-wide priority search or novelty claim is included.
+
+\begin{thebibliography}{1}
+\bibitem{FMMZ}
+M. Fradelizi, M. Madiman, M. Meyer, and A. Zvavitch,
+\newblock On the volume of the Minkowski sum of zonoids,
+\newblock \emph{Journal of Functional Analysis} \textbf{286} (2024), no.~3, Article 110247.
+\newblock DOI: \href{https://doi.org/10.1016/j.jfa.2023.110247}{10.1016/j.jfa.2023.110247};
+\href{https://arxiv.org/abs/2206.02123}{arXiv:2206.02123}.
+\end{thebibliography}
+\end{document}

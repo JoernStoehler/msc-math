@@ -1,0 +1,8 @@
+All720 exact order scores checked;21 active, normal rank11, face dimension4.
+All five isolators checked; exact F32 cubic independently recovered by perfect matchings.
+Pfaffian: (63/1922)+(5/1922)sqrt5 ratio: (945/1922)+(75/1922)sqrt5
+Positive gradient coefficients: (41/5766)+(-2/961)sqrt5 (-19/1922)+(29/1922)sqrt5
+Negative-definite restricted Hessian: leading minors [(-13/31)+(-3/31)sqrt5, (9/961)+(138/961)sqrt5, (3108/29791)+(-2316/29791)sqrt5, (-1695/29791)+(918/29791)sqrt5]
+Seven-facet symplectic stabilizer size: 3 maps to minusform: 3
+stabilizer: [(1, 2, 3, 4, 5, 6, 7), (3, 4, 5, 6, 1, 2, 7), (5, 6, 1, 2, 3, 4, 7)]
+PASS

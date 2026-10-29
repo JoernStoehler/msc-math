@@ -1,0 +1,184 @@
+% Insert after defining Q_{A,B} and its four templates, before the new cover.
+% Uses the notation A,B,g and labels in truncated-square-section.tex.
+\subsection{The Viterbo inequality for all partners}
+
+The covering description also proves the Viterbo inequality for the entire
+corner-truncated-square class, independently of which cover has minimum area.
+
+\begin{theorem}\label{thm:truncated-global-viterbo}
+Let $Q\subset\mathbb R^2$ be a parallelogram with one corner cut off by a
+line meeting the interiors of its two adjacent sides. For every planar
+convex body $K$ with nonempty interior,
+\[
+ c_{\mathrm{EHZ}}(K\times_L Q)^2<2|K|\,|Q|.
+\]
+In the normalization $Q=Q_{A,B}$ above, every capacity-one cover satisfies
+\begin{equation}\label{eq:truncated-global-area}
+ |K|>\frac{AB}{2AB-(A+B-1)^2}.
+\end{equation}
+Thus the strict-inequality assertion of \cite[Conjecture~6.1]{BMP2026}
+holds, although its proposed optimizer will be disproved below.
+\end{theorem}
+
+\begin{proof}
+An affine change in the $Q$-plane, paired with its inverse transpose in
+the $K$-plane, reduces to $Q_{A,B}$ without changing the capacity or the
+product of areas. Scaling $K$, we may assume its product capacity is one.
+It therefore contains translated copies of the four templates
+$T,-T,H,V$ from \eqref{eq:four-truncated-templates}.
+
+First, this implies a lattice covering property. Put
+\[
+ \Lambda=A\mathbb Z e_1+B\mathbb Z e_2.
+\]
+Split every fundamental rectangle by its diagonal parallel to $(A,B)$.
+The resulting triangulation has cells that are translates of $T$ or $-T$.
+We use the triangulation-covering lemma
+\cite[Lemma~4.3]{BMP2026}: if every cell of a planar triangulation fits by
+translation into a convex body, then every translate of that body meets
+the vertex set of the triangulation. It follows that
+\begin{equation}\label{eq:truncated-lattice-cover}
+ K+\Lambda=\mathbb R^2.
+\end{equation}
+
+Suppose first that $K$ contains a translate of the axis-parallel rectangle
+$[0,A]\times[0,B]$. Let $w_x,w_y$ be the coordinate widths of $K$.
+The four caps based on the rectangle's sides and reaching support-maximizing
+points of $K$ have pairwise disjoint interiors
+\cite[Lemma~7.1]{BMP2026}. Adding their areas to the rectangle's area gives
+\[
+ |K|\geq AB+\frac B2(w_x-A)+\frac A2(w_y-B)
+       =\frac{Bw_x+Aw_y}{2}\geq\frac{A+B}{2},
+\]
+because $H,V$ fit into $K$ and hence $w_x,w_y\geq1$.
+The cap lemma applies to an arbitrary convex body: only the four support
+maximizers and the rectangle are used, so one may equivalently apply its
+polygonal statement to their convex hull. This branch is strictly stronger
+than the desired bound, since
+\[
+ \frac{A+B}{2}-\frac{AB}{2AB-g^2}
+ =\frac{g\bigl(A(1-A)+B(1-B)\bigr)}{2(2AB-g^2)}>0.
+\]
+
+Now suppose no translate of that rectangle is contained in $K$.
+For each $t\in\mathbb R^2$, form a finite graph whose vertices are
+$(K-t)\cap\Lambda$, joining two vertices when their difference is
+$Ae_1$ or $Be_2$. It is nonempty by \eqref{eq:truncated-lattice-cover}.
+It is also a forest. Indeed, a cycle contains a simple rectilinear cycle;
+its bounded interior contains a fundamental lattice cell. The closure of
+that cell lies in the convex hull of the cycle vertices, hence in $K-t$.
+This would put a translate of $[0,A]\times[0,B]$ inside $K$, contrary
+to the present assumption. Thus, writing $N(t)$ for the number of vertices
+and $E_x(t),E_y(t)$ for the two types of edges,
+\[
+ E_x(t)+E_y(t)\leq N(t)-1.
+\]
+Integrate this inequality over a fundamental rectangle of $\Lambda$.
+Periodization of indicator functions gives
+\[
+ \int N(t)\,dt=|K|,\qquad
+ \int E_x(t)\,dt=|K\cap(K+Ae_1)|,\qquad
+ \int E_y(t)\,dt=|K\cap(K+Be_2)|.
+\]
+The fundamental rectangle has area $AB$, so
+\begin{equation}\label{eq:forest-overlap}
+ |K|-AB\geq |K\cap(K+Ae_1)|+|K\cap(K+Be_2)|.
+\end{equation}
+
+Finally, let $[u,u+e_1]\subset K$ be a placed copy of $H$.
+Convexity gives the homothetic inclusion
+\[
+ (1-A)K+A(u+e_1)\subset K\cap(K+Ae_1),
+\]
+because subtracting $Ae_1$ from the left-hand side gives
+$(1-A)K+Au\subset K$. Consequently
+\[
+ |K\cap(K+Ae_1)|\geq(1-A)^2|K|.
+\]
+The placed copy of $V$ gives the analogous bound
+$|K\cap(K+Be_2)|\geq(1-B)^2|K|$. Inserting these inequalities
+into \eqref{eq:forest-overlap} yields
+\[
+ \bigl(1-(1-A)^2-(1-B)^2\bigr)|K|\geq AB.
+\]
+The coefficient on the left equals $2AB-g^2>0$, which proves
+the weak form of \eqref{eq:truncated-global-area}. Together with
+$|Q_{A,B}|=(2AB-g^2)/(2AB)$, this proves the weak capacity-volume
+inequality for every partner.
+
+It remains to exclude equality. Suppose $|K|=AB/(2AB-g^2)$.
+Replace $K$ by the convex hull $P$ of one placed copy of each of the four
+templates. This polygon has at most ten vertices, is contained in $K$,
+and still has product capacity at least one. The weak inequality already
+proved gives $|P|\geq AB/(2AB-g^2)=|K|$, hence $P=K$.
+Thus an equality body is a polygon. The rectangle case was strict, so
+equality must hold in the two homothetic overlap inclusions. In particular,
+with $[u,v]=[u,u+e_1]\subset K$,
+\begin{equation}\label{eq:overlap-set-equality}
+ K\cap(K+Ae_1)=(1-A)K+Av.
+\end{equation}
+The equality of sets follows from their inclusion and equal areas.
+
+Let $n$ be an outward normal of any genuine facet of $K$.
+The right side of \eqref{eq:overlap-set-equality} has a genuine facet
+with that normal. An edge of an intersection of polygons comes from an
+edge of one of the intersected polygons. Its supporting value is therefore
+$h_K(n)+A\min\{0,n\cdot e_1\}$. Comparing supporting values in
+\eqref{eq:overlap-set-equality} gives
+\[
+ (1-A)h_K(n)+A\,n\cdot v
+ =h_K(n)+A\min\{0,n\cdot e_1\},
+\]
+so
+\[
+ h_K(n)=\max\{n\cdot u,n\cdot v\}.
+\]
+Every facet of $K$ consequently contains at least one endpoint of the unit
+horizontal segment. Each endpoint can belong to at most two genuine
+facets of a planar polygon. Hence $K$ has at most four facets.
+
+If $K$ has four facets, their coverage by the two endpoints forces $u,v$
+to be opposite vertices. Applying the same argument to the vertical
+overlap equality shows that the endpoints of the unit vertical segment
+are the other two opposite vertices. The two diagonals are perpendicular
+and both have length one, so $|K|=1/2$. This is impossible because
+$AB/(2AB-g^2)>1/2$.
+
+The only remaining case is a triangular $K$. After translation, write
+\[
+ K=M\operatorname{conv}\{0,e_1,e_2\},\qquad \det M\ne0.
+\]
+The product symmetry $c(K\times_L Q)=c(Q\times_L K)$, followed by the
+inverse-transpose linear change in the other factor, shows that $M^TQ$
+is a capacity-one partner of the standard triangle. Its two normal
+triangles triangulate the unit square grid. Applying the same
+triangulation-covering lemma therefore gives
+\[
+ Q+M^{-T}\mathbb Z^2=\mathbb R^2.
+\]
+This lattice has covolume
+\[
+ |\det M|^{-1}=\frac{1}{2|K|}=|Q|.
+\]
+A lattice cover at this exact area has multiplicity one almost everywhere:
+its multiplicity is at least one and its integral over a fundamental cell
+is the cell's area. In particular distinct translates have disjoint
+interiors, so these translates tile the plane.
+
+Every edge of a convex polygon that tiles by lattice translations has
+another edge parallel to it with the opposite outward normal. To see this,
+choose a relative-interior point of the edge which is not a vertex of any
+of the locally finitely many neighboring tiles. A tile covering points
+just beyond that edge must meet it in an edge with the opposite normal;
+interior overlap is impossible. But the truncation edge of $Q_{A,B}$ has
+no edge with the opposite normal. Thus $Q_{A,B}$ cannot be such a tile.
+This contradiction excludes equality and proves the strict inequality.
+\end{proof}
+
+The argument separates two possibilities: a full lattice cell already
+contained in $K$ gives a direct cap-area estimate, while its absence makes
+the lattice-point graphs acyclic and converts lattice covering into an
+upper bound on overlap. The unit normal segments supply the opposite,
+homothetic lower bounds on those overlaps. Equality would force a partner
+with at most four sides; the four-sided case has too little area, and the
+triangular case would force the truncated square to tile by translations.

@@ -1,9 +1,11 @@
 # Autonomous research: restart plan
 
-Updated 28 October 2026. The previous session is closed; no research worker is
-running. This is the starting contract for a fresh session in a new worktree
-from local `main`, not an assignment to the closed root or a selected list of
-mathematical targets.
+Updated 28 October 2026. The previous session is closed. This was the starting
+contract for the fresh session in a new worktree from local `main`; the active
+allocation and candidate status appear below. It is not an assignment to the
+closed root or a fixed list of mathematical targets.
+
+**Active-run recovery:** [ROOT-CONTINUATION.md](/tmp/msc-math/restart/ROOT-CONTINUATION.md) records the current task, owners and pending delivery checks across context refreshes. It is temporary coordination state; retained proof sources and this plan remain authoritative for their own claims.
 
 ## Outcome and audience
 
@@ -120,3 +122,53 @@ agent agreement into theorems. Independently assess the final assembled proof
 and the actual writeup's relevance/readability. Build and inspect the resulting
 PDF; compilation alone does not validate the mathematics. Keep the research
 objective intact across turns until the authorized run ends or Jörn stops it.
+
+## Current selection and discriminators — 29 October 00:26 UTC
+
+Root owns mathematical selection, final scientific taste, commits, cleanup and
+delivery. The canonical paper under
+`topics/capacity-and-qp/convex-systolic-optimization/` is at **45 pages in r2**;
+`paper_integration` owns r3 integration of the newly audited HKO results.
+Root inspected every page of r1; final r3 inspection and delta audit remain.
+`assembled_math_review` read all printed sections and found only a corrected
+indexing error; its exact hash report is pending. `assembled_reader_review` is
+running. Component and draft checks do not accept the final assembled paper
+or constitute a human PASS.
+
+| Selected report line | Evidence and exact limit | Owner / next discriminator |
+| --- | --- | --- |
+| **HKO: affine rigidity versus Hausdorff ascent** | Fresh audits pass the sharp `GL(4)` orbit bound/equality and the strict 20-facet ascent. The weighted-profile response is exactly `max(w)/125`; any seven unit cuts give a positive derivative with 17 genuine facets, while at most six positive speeds fail **within these fixed profiles**. Independently audited global remainder bounds certify the all-ten-unit-cut family at `t=10^-30` with relative gain `>5×10^-33`; this is a tiny effective witness, not a material ratio improvement. The known `F≤11` theorem is consistent. | Paper worker integrates r3 and reviewers check the changed text. `geometry_frontiers` and `multicut_variation` continue the stronger-descendant line, receiving owner multicut. Moderate `t≈0.3` has candidate `ρ≈1.051914`, but the current capacity calculation is only an upper bound: a bounded exact DFS (77,927 curvature and about 2,300 terminal-cycle checks) still needs completion and independent coverage audit. |
+| **All six-dimensional simplices** | Fresh global audit passes the sharp bound `ρ₆≤(945+75√5)/1922` and one equality class modulo translation, positive dilation and symplectic maps. Exact polytope coverage uses 720 order and 840 fence vertices with cdd/PPL certificate code; a direct facet enumeration timed out and is not evidence. | The packet includes the portable four-script replay and labels computer-assisted completeness; assembled reviewers and root check integrated proof and commands. |
+| **Two-paraboloid difference volume and squared planar bodies** | Fresh audit passes the all-dimensional theorem for intersections of **two** confocal paraboloids, with strict bound and sharp round-cap supremum. Its planar case proves `area(σK−σK)≤5area(σK)` and replaces the older scalar/log proof. Checked Chaidez–Tanny transfer gives `c_EHZ(X)²≤(5/2)Vol₄(X)` for right-quaternionic-`I` invariant convex `X`; four-dimensional sharpness is not claimed. | The packet uses the six-page geometric source and exact normalization; reviewers check the final combined exposition. No assertion for three or more paraboloids. |
+| **Truncated parallelogram products** | Fresh audit passes strict Viterbo for **every** convex partner of any genuine corner-truncated parallelogram, plus a uniform partner gap and a Hausdorff-open factor neighborhood. The proposed BMP optimizer is false by an audited trapezoid and pentagonal-shadow family, while the inequality holds. The corrected optimizer classification remains open. | The packet contains the strict theorem, neighborhood and counterfamily; reviewers check scope and final interfaces. `product_extremizers` has handed off and is released. |
+| **Planar triangle product positions** | Fresh audit passes sharp `ρ≤2/3` for all Lagrangian positions of two triangles, while one rational non-Lagrangian affine image has `ρ=18/25`. No full-affine optimum is claimed. | The packet contains the compact exact verifier; reviewers check assembled argument and wording. |
+| **Four-dimensional simplex method** | HK's 2019 MSc thesis already proves the sharp `3/4` bound. The new short triangle-free Pfaffian-graph proof and complete equality family are potential method/classification contributions; do not label the numerical bound new. | Worker cites HK2019 prominently; root checks novelty wording and integrated equality proof. |
+
+**Separate and open research.** The rank-four zonoid line has a retained,
+component-audited seven-page note: sharp inequality through seven generators,
+a nonproduct eight-generator equality family, and an all-size degree-1/2
+criterion. Its unrestricted conjecture and capacity consequence remain open.
+The bounded all-size mechanism attempt stopped at a concrete blocker;
+`rank_four_zonoids` is released. The note stays separate from the capacity
+paper. The primary further research line remains a materially stronger HKO
+descendant, with a 00:40 checkpoint and independent coverage review before any
+moderate-parameter claim. A research-value reviewer queued a possible test of
+two arbitrary characteristic-invariant hinges for 12-facet ascent; it has not
+started and has no staffed owner. The polar-product transfer branch remains
+parked; targeted source audit did not include a full Lean build. AI-assisted
+workflow findings are retained in `topics/literature/open-thesis/discovery.md`.
+
+**Delivery and resource boundary.** The 44-page handoff PDF has SHA256
+`44f25ad8b229dd443ad33cdb4a3832163dd2143fb144772198b8fe9bb9f71c52`;
+r2 is 45 pages and r3 with the 17-facet/effective-witness additions is under
+integration. The final r3 artifact still needs assembled-review hash reports,
+changed-math/delta audit, root all-page inspection and resolved reader findings.
+Root then retains domain sources and commits locally. No push, university
+submission or thesis promotion is selected. The cutoff remains 29 October
+10:05 UTC. Latest measured account-wide primary weekly quota is 50% remaining
+at 00:13:39; this is not strict campaign attribution or billed cost, and no
+reset was used. Root reserves roughly 15 weekly points operationally for final
+checks, without creating an approval gate. The 00:07:09 local owned subtree
+counted 37 descendants and 2,928,360 output tokens (root 150,007; workers
+2,778,353); this is not billed cost. A 15-minute OTel check missed one counter
+record and flagged large root context; overload remains unknown.

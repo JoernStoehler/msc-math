@@ -1,0 +1,21 @@
+{
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/affine-hko/verify.py": "3c0efef89a4f584c7206278cb0c1ed81fa18c668951a200d15c0c43b1e0c647a",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/exact_core.py": "77b33633828e4fe0e9842a58f1c8bbf8403ced3e362b19a9aa4c2ee0ea648d18",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/optimize_exact.py": "b881d3b697d2ac70a1c63478f5047060ffd5daeff17dcfb17903619f85832d41",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/prepare.py": "c6937f42719d748e39b9198808dd969b758cb54d7e82326f2c8799a44258952e",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/replay.py": "91ce69223f5bebbb1386235c85ce6987828988f462cfdcd6fe95c6c6a71defb2",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/sixdim-global/algebra.py": "19ec167bfa86576a0960d57dfd8fece9f9589cdbaad61bbb563c8dda4fd3b125",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/sixdim-global/dual_coverage.py": "125bf02e72133d653ad510f415111d5d54e77ed5cac04cb92ad604fb65ba3c13",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/sixdim-global/full_classification.py": "d29c74ffcd432a276ed7e56196824a81e66bea2aa14fce94c2d6b28625aa3b5a",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/sixdim-global/local_maximum.py": "99cfcd8de389b33bda0626b64cd2f2587e101e73ccfbd5c1b55783bbed218c1b",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/triangle-position/exact_triangles_compact.py": "8642702942c0c9e4ddb59ff44e837d45bd7d7c2063a7f1ea04bac97591f7b6f7",
+  "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/catalogue.cpp": "9fb174b147f3acafb186cc09dce6378deb09735261f0be4df52014bac24eb5d7",
+  "/tmp/msc-math/restart/product-extremizers/bmp.pdf": "095422463b0a7d2dba6bdd90f4d99deeda63144290a98e044a8d7eb2a7c8a3f5",
+  "/tmp/msc-math/restart/product-extremizers/bmp.txt": "d463cd2a49c6c77958b057a543ee64816c426868b508116909047f10cdf4fd88",
+  "/tmp/msc-math/restart/symmetry-sources/ct-v1.pdf": "8c5785f82ba2286c260d9a2beb9f2b49634ec32516ad89c0336c4850020feeff",
+  "/tmp/msc-math/restart/symmetry-sources/ct-v1.txt": "6bc3ee7159431dd25838e343054cc83002d13b4651d1c413190734987ab5b4d9",
+  "/tmp/msc-math/restart/symmetry-sources/mmr.pdf": "219dae1d5d375b87cebdfacff819db1fa12c500142edfd8d8334cb4129893267",
+  "/tmp/msc-math/restart/symmetry-sources/mmr.txt": "cc52cdf50978a33472d9a3fd3406ab888409fbd57d4f29c492df090cb8d69bad",
+  "/tmp/msc-math/restart/frontier-sources/simplex-novelty/hk-msc-2019.pdf": "083a9b1d33e70df83f47d4dbb3f48b80248055c0590ca85b32e7d183cc6956de",
+  "/tmp/msc-math/restart/frontier-sources/simplex-novelty/hk-msc-2019.txt": "c8189d38092fd961f6aed55f29548d9a5d0a117db55d8e724e0fad8520770fa4"
+}

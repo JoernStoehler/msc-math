@@ -1,5 +1,12 @@
 # Probing Viterbo's conjecture: a research guide for agents
 
+The separate [28–29 October research report](../topics/capacity-and-qp/convex-systolic-optimization/README.md)
+develops full-affine HKO optimality and unrestricted simultaneous-cut ascent,
+sharp six-simplex optimization, squared-body difference bounds and strict
+truncated-parallelogram product inequalities. Start at its result/evidence map
+for those claims and their review status. These results have not been promoted
+to the selected thesis chapters described below.
+
 This guide explains the main mathematical questions, how the results relate,
 and which sources support them. It is an initial curated account of a larger
 repository, prepared during the 10 October 2026 survey. It does not claim

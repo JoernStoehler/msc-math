@@ -1,0 +1,218 @@
+% Integration fragment; uses amsmath, amssymb, amsthm.
+% Source: Balitskiy--Mitrofanov--Polyanskii, arXiv:2603.12495v2
+% (19 August 2026), Theorem 3.3, Section 6.2, Conjecture 6.1.
+\section{Truncated parallelograms: strict Viterbo and competing covers}
+\label{sec:truncated-square-cover}
+
+Balitskiy, Mitrofanov and Polyanskii conjectured a particular optimal
+trapezoidal partner for every square with one corner truncated
+\cite[Section~6.2, Conjecture~6.1]{BMP2026}. We construct a different
+trapezoidal partner which improves their proposed optimum on an open set
+of truncation parameters. This disproves the optimizer assertion of that
+conjecture. We first prove its strict-inequality assertion for every convex
+partner, so the two assertions have different outcomes.
+
+We use their normal-triangle covering theorem
+\cite[Theorem~3.3]{BMP2026}: for a polygon $Q$, the inequality
+$c_{\mathrm{EHZ}}(K\times_L Q)\geq1$ is equivalent to $K$ containing a
+translate of each $Q$-normal triangle of unit $Q$-perimeter. Degenerate
+triangles, namely segments traversed in both directions, are included.
+The $Q$-perimeter of a closed polygonal curve with directed edge vectors
+$e_i$ is $\sum_i h_Q(e_i)$, where $h_Q$ denotes the support function.
+This quantity is unchanged by translating $Q$.
+
+Choose
+\[
+ 0<A,B<1,\qquad g=A+B-1>0,\qquad a=1-A,\qquad d=B-a^2.
+\]
+In particular $B>a$ and $d>0$. Put $r=g/B$ and $s=g/A$, and define
+\[
+ Q_{A,B}=\operatorname{conv}\{(0,0),(1,0),(1,1-r),(1-s,1),(0,1)\}.
+\]
+Both $r,s$ belong to $(0,1)$, so this is a genuine corner-truncated
+square. Its area is
+\begin{equation}\label{eq:truncated-Q-area}
+ |Q_{A,B}|=1-\frac{rs}{2}=1-\frac{g^2}{2AB}.
+\end{equation}
+
+The outward-normal directions of $Q_{A,B}$ are
+$\pm e_1,\pm e_2,(r,s)$. The only nondegenerate positively dependent
+triple is $-e_1,-e_2,(r,s)$; the only minimal positive pairs are the two
+opposite coordinate pairs. Consequently its complete list of unit normal
+templates, up to translation, consists of
+\begin{equation}\label{eq:four-truncated-templates}
+ T=\operatorname{conv}\{(0,0),(A,0),(A,B)\},\quad -T,\quad
+ H=[0,e_1],\quad V=[0,e_2].
+\end{equation}
+For completeness, traverse $T$ in the order $(A,B),(A,0),(0,0)$.
+Its edge directions are
+\[ -e_2,\quad -e_1,\quad(r,s), \]
+ and its $Q_{A,B}$-perimeter
+is one: the first two support-function contributions vanish, while
+$h_{Q_{A,B}}(A,B)=1$, because the cut line is
+$rx+sy=r+s-rs=g/(AB)$ and $(A,B)=(AB/g)(r,s)$.
+The two coordinate segments have unit perimeter because $Q_{A,B}$ has
+unit width in both coordinate directions. Reversing the order of the three
+edge directions gives the translation class $-T$.
+
+\input{sections/product-global}
+\input{sections/product-neighborhood}
+
+\begin{theorem}\label{thm:alternative-truncated-cover}
+With the preceding notation, let
+\[
+ D=\left(\frac{A^2a}{d},-\frac{A^2B}{d}\right),\qquad
+ L=-\frac aA D,\qquad R=L+(1,0),\qquad C=(A,B),
+\]
+and let $K_{A,B}=\operatorname{conv}\{L,D,R,C\}$. Then
+\begin{align}
+ c_{\mathrm{EHZ}}(K_{A,B}\times_L Q_{A,B})&=1,
+ \label{eq:alternative-capacity}\\
+ |K_{A,B}|&=F(A,B):=\frac{B(2A+B-1)}{2[B-(1-A)^2]},
+ \label{eq:alternative-area}\\
+ \rho(K_{A,B}\times_L Q_{A,B})
+ &=\frac{2Ad}{(A+g)(2AB-g^2)}<1.
+ \label{eq:alternative-sys}
+\end{align}
+The sides $LD$ and $RC$ are parallel. Thus $K_{A,B}$ is a trapezoid.
+\end{theorem}
+
+\begin{proof}
+Consider the affine-linear functions
+\[
+ \phi(x,y)=Bx+ay,\qquad
+ U(x,y)=y-\frac gA x-a,\qquad
+ G(x,y)=y-\frac{AB}{g}(x-A).
+\]
+Direct substitution, using $AB+ag=d$ and $d-Aa=g$, shows that
+\begin{equation}\label{eq:alternative-halfplanes}
+ K_{A,B}=\{(x,y):0\leq\phi(x,y)\leq B,\ U(x,y)\leq0,\ G(x,y)\geq0\}.
+\end{equation}
+Its successive vertices are $L,D,R,C$: $LD$ and $RC$ lie on the
+parallel lines $\phi=0$ and $\phi=B$, respectively; $LC$ lies on
+$U=0$ and $DR$ on $G=0$. All four sides have positive length under
+the stated strict inequalities.
+
+We exhibit placements of the four templates in
+\eqref{eq:four-truncated-templates}. The triangle $T$ is already contained
+in $K_{A,B}$. Indeed the values of $(\phi,U,G)$ at its successive vertices
+$(0,0),(A,0),(A,B)$ are
+\[
+ (0,-a,A^2B/g),\qquad (AB,-B,0),\qquad (B,0,B),
+\]
+which satisfy \eqref{eq:alternative-halfplanes}. The horizontal segment
+is $L+H=[L,R]$. The vertical segment is $D+V$: at $D$ its three values
+are $(0,-1,0)$, and at $D+e_2$ they are $(a,0,1)$. Here $0<a<B$.
+
+For the opposite triangle, put
+\[
+ t=\left(A+\frac{aAg}{d},\frac{aB(A+g)}d\right).
+\]
+The values of $(\phi,U,G)$ at the vertices
+$t,t-(A,0),t-(A,B)$ of $-T+t$ are, respectively,
+\[
+ \begin{array}{c|ccc}
+ &\phi&U&G\\ \hline
+ t&B&-g&aB\\
+ t-(A,0)&aB&0&aB+A^2B/g\\
+ t-(A,B)&0&-B&AB(1-B)/g
+ \end{array}
+\]
+and again satisfy all four half-plane inequalities. The normal-triangle
+criterion therefore gives $c_{\mathrm{EHZ}}(K_{A,B}\times_L Q_{A,B})\geq1$.
+
+The horizontal width of $K_{A,B}$ is exactly one. More explicitly,
+\[
+ L_x<D_x<A<R_x=L_x+1,
+\]
+since $A-D_x=Ag/d$ and $R_x-A=ag/d$ are positive.
+A horizontal segment longer than one cannot fit into $K_{A,B}$.
+Applying the same covering criterion after scaling thus gives the reverse
+capacity inequality, proving \eqref{eq:alternative-capacity}.
+
+The horizontal diagonal $LR$ has length one and splits the trapezoid
+into triangles with heights $AB/d$ and $Bg/d$. Hence
+\[
+ |K_{A,B}|=\frac{AB+Bg}{2d}=\frac{B(A+g)}{2d},
+\]
+which is \eqref{eq:alternative-area}. Combining this with
+\eqref{eq:truncated-Q-area} proves the displayed formula for the systolic
+ratio. Finally,
+\[
+ (A+g)(2AB-g^2)-2Ad=(1-B)g^2>0,
+\]
+so the ratio is strictly below one.
+\end{proof}
+
+\subsection{Comparison with the proposed optimizer}
+
+The parameters used in \cite[Section~6.2]{BMP2026} are
+\[
+ \alpha=1-A,\qquad\beta=1-B,\qquad\gamma=g.
+\]
+Indeed the cut line meets the coordinate axes at $(1/A,0)$ and
+$(0,1/B)$; the ratios defining $\alpha$ and $\beta$ are therefore
+$1-A$ and $1-B$. Substituting these values into the proposed optimizer's
+systolic-ratio formula, and using \eqref{eq:truncated-Q-area}, gives its
+capacity-one area
+\begin{equation}\label{eq:BMP-proposed-area}
+ M(A,B)=\frac{AB(1-g^2)}{2(AB-g^2)}.
+\end{equation}
+The denominator is positive throughout the parameter domain: for example,
+$g<A$ and $g<B$, so $g^2<AB$.
+
+The comparison factors exactly as
+\begin{equation}\label{eq:alternative-comparison}
+ M(A,B)-F(A,B)
+ =\frac{B(1-A)g^2(g-A^2)}{2d(AB-g^2)}.
+\end{equation}
+Consequently the new trapezoid has strictly smaller capacity-one area,
+and strictly larger systolic ratio, whenever
+\[
+ B>1-A+A^2.
+\]
+This is a nonempty open subset of the admissible parameters.
+Exchanging the coordinate axes and exchanging the two opposite triangle
+classes gives the symmetric competitor $F(B,A)$, which improves the
+proposed value whenever $A>1-B+B^2$.
+
+For a concrete rational instance take $A=11/20$ and $B=4/5$.
+Then
+\[
+ Q=\operatorname{conv}\{(0,0),(1,0),(1,9/16),(4/11,1),(0,1)\},
+ \qquad |Q|=\frac{303}{352}.
+\]
+The alternative trapezoid has vertices
+\[
+ L=\left(-\frac{891}{4780},\frac{396}{1195}\right),\quad
+ D=\left(\frac{1089}{4780},-\frac{484}{1195}\right),\quad
+ R=\left(\frac{3889}{4780},\frac{396}{1195}\right),\quad
+ C=\left(\frac{11}{20},\frac45\right).
+\]
+The two capacity-one areas and systolic ratios are
+\[
+ |K|=\frac{144}{239}<\frac{3861}{6350}=|K_0|,
+ \qquad
+ \rho(K\times_L Q)=\frac{2629}{2727}
+ >\frac{101600}{106353}=\rho(K_0\times_L Q).
+\]
+The ratio difference is exactly $931/106353$.
+
+The theorem provides explicit competitors, not a classification of optimal
+partners. In particular it does not prove that
+$\min\{M(A,B),F(A,B),F(B,A)\}$ is the minimum possible area of a
+$Q_{A,B}$-cover. It also gives no universal product systolic bound.
+The remaining global covering question includes covers with arbitrarily
+many sides, although each cover can be replaced by the hull of placements
+of the ten vertices in \eqref{eq:four-truncated-templates}.
+
+
+\begin{figure}[tb]
+ \centering
+ \includegraphics[width=\linewidth]{figures/truncated-covers.pdf}
+ \caption{The corner-truncated square, the proposed partner, and the
+ competing partner at the exact parameters $A=11/20$, $B=4/5$. The two
+ cover panels use the same scale; each contains translations of the four
+ unit normal templates.}
+ \label{fig:truncated-covers}
+\end{figure}

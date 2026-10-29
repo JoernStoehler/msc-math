@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "field": "Q(t), t=tan(pi/5)",
+  "feasible_action_rows": 18,
+  "projection_facet_identities": 4,
+  "facets_covered_by_symmetry": 62,
+  "outer_vertices": 50,
+  "unit_sphere_contacts": 10,
+  "seconds": 0.3881339740182739
+}

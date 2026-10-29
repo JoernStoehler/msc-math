@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-28T22:29:36.063906+00:00",
-  "scope": "28 October research cleanup and fresh-session handoff. No active research assignment in this closed session; clarified autonomous programme retained in PLAN.md.",
-  "summary": "8983 research stopped and archived at a3441d4e. Fresh session to start in new worktree off main under clarified PLAN.md; no selected incumbent track list. All research workers stopped. Feedback disabled; unrelated edits preserved.",
+  "updated_at": "2026-10-29T00:26:40Z",
+  "scope": "Autonomous Viterbo research in research-restart-20261028 worktree; cutoff 2026-10-29 10:05 UTC, local compute and remaining original quota.",
+  "summary": "Audited HKO strict ascent now has 17-facet seven-cut derivative and effective t=10^-30 twenty-facet witness. Canonical paper r2 45 pages; worker integrates r3. Root inspected all r1 pages, final r3 delta/all-page check open. Assembled math hash report and reader review pending. Moderate-t ratio candidate unproved; rank-four bounded line closed at blocker.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3471,17 +3471,506 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "parked",
-      "owner": null,
-      "outcome": "Fresh-session research contract retained; previous session closed without achieving the research objective. One readable checked LaTeX/PDF writeup remains the intended outcome.",
+      "status": "running",
+      "owner": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "outcome": "Canonical paper r2 45 pages; r3 with newly audited HKO results under integration. Root inspected all r1 pages, final r3 review and inspection open; assembled math hash report/reader verdict pending.",
       "depends_on": [],
       "sources": [
         "PLAN.md",
         "meta-topics/project-management/research-restart-20261028.md"
       ],
-      "authorization": "Current direct user request for new-session prompt, cleanup and main updates; original twelve-hour/local/remaining-quota envelope preserved. New research starts only in the user-selected fresh session.",
-      "updated_at": "2026-10-28T22:29:36.063906+00:00",
-      "next_step": "Incoming coordinator uses new worktree off main, measures remaining resources, starts substantial continuing alternative-track exploration in parallel with useful work, and maintains PLAN.md."
+      "authorization": "Direct user launch 28 October 2026: autonomous research and adjacent mathematics, up to99 agents, remaining original weekly quota/local compute, cutoff2026-10-29 10:05UTC; no reset/external spending/cloud/human clarification.",
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": "Receive r3 packet and reviewer reports, audit changed mathematics, inspect every final page, resolve findings, retain sources and commit locally."
+    },
+    {
+      "id": "restart-geometry-frontiers",
+      "title": "Geometry and local systolic frontier",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "running",
+      "owner": "/root/geometry_frontiers",
+      "outcome": "Full GL4 rigidity and 20-facet ascent audited. Moderate t≈0.3 candidate rho≈1.051914 remains unproved: current capacity estimate only an upper bound; bounded exact DFS coverage work ongoing.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": "Complete 77,927 curvature plus roughly 2,300 terminal-cycle exact checks by 00:40 checkpoint; obtain independent coverage audit before reporting ratio."
+    },
+    {
+      "id": "restart-combinatorial-frontiers",
+      "title": "Combinatorial/duality frontier",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Sharp global six-dimensional simplex bound and unique equality class passed fresh math and exact polytope-coverage audits; portable four-script replay handed to paper worker. HK2019 primary thesis confirms four-dimensional 3/4 bound is known.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-global-connections",
+      "title": "Wider convex/symplectic connections",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "All-dimensional two-confocal-paraboloid strict difference-volume theorem and sharp limit passed fresh audit; six-page geometric section handed to paper worker. Planar squared-body factor five and checked CT transfer follow; no three-paraboloid claim.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-frontier-sources",
+      "title": "Current mathematical frontier source audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "HK2019 MSc thesis retrieved and its four-simplex Theorem B identified; bounded HKO-instability prior-art search found no earlier unrestricted ascent in inspected primary sources.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-ai-math-methods",
+      "title": "Recent AI-assisted mathematics workflows",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Recent primary-source workflow update retained in topics/literature/open-thesis/discovery.md; polar-product claim carefully labeled.",
+      "depends_on": [],
+      "sources": [
+        "topics/literature/open-thesis/discovery.md"
+      ],
+      "updated_at": "2026-10-28T22:54:24Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-multicut-variation",
+      "title": "Multicut convex-order variation",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "running",
+      "owner": "/root/multicut_variation",
+      "outcome": "HKO strict ascent audited: weighted-profile response max(w)/125; any seven unit cuts give 17 genuine facets and positive derivative; at most six positive speeds fail within fixed profiles. Independently audited all-ten-cut t=10^-30 witness gains relative ratio >5e-33.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": "Handoff exact 17-facet/effective-witness sections to r3 paper worker; jointly with geometry seek stronger moderate-parameter descendant, requiring certified capacity lower bound/complete optimization."
+    },
+    {
+      "id": "restart-product-extremizers",
+      "title": "Global product extremizers and external truncated-square conjecture",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Strict Viterbo for every convex partner of a genuine corner-truncated parallelogram, uniform partner gap and Hausdorff-open factor neighborhood passed fresh audits; BMP proposed optimizer false, corrected classification open. Modules handed to paper worker.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-polar-embedding-review",
+      "title": "Independent polar embedding proof and transfer review",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Targeted external polar-product proof audit found no gap, no full Lean build. Unequal-strip lens and Toda-template volume obstructions show no HKO improvement by these transfers; branch parked.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "updated_at": "2026-10-28T23:11:23Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-research-value-review",
+      "title": "Open-ended mathematical value review",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Compared research lines and supplied squared-body tent proof, independently audited; recommended exploration beyond solved lines.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "updated_at": "2026-10-28T23:11:23Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-research-figures",
+      "title": "Simplex and squared-body research figures",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Scratch Pfaffian graph and cap diagrams generated and visually inspected; diagrams do not prove the scalar inequality.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by the active research coordinator within the 2026-10-29 10:05 UTC local research envelope; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-28T22:54:24Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-simplex-independent-audit",
+      "title": "Independent simplex and LOP4 proof audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Four-dimensional 3/4 and equality proof mathematically audited; HK2019 primary thesis now establishes bound is prior art, so only proof/equality method may be new.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by the active research coordinator within the 2026-10-29 10:05 UTC local research envelope; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-squared-body-audit",
+      "title": "Independent squared-body theorem audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Both planar factor-five theorem and stronger all-dimensional two-confocal-paraboloid theorem passed fresh mathematical audit; no result for three or more paraboloids.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by the active research coordinator within the 2026-10-29 10:05 UTC local research envelope; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-symmetry-implication-sources",
+      "title": "Source audit of squared-body symmetry implication",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Conditional Chaidez–Tanny transfer to right-quaternionic-I invariant four-bodies checked against primary source; four-dimensional sharpness not established.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by the active research coordinator within the 2026-10-29 10:05 UTC local research envelope; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-28T23:11:23Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-truncated-conjecture-audit",
+      "title": "Independent BMP Conjecture 6.1 counterexample audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Fresh global audit passes strict all-partner truncated-parallelogram theorem; separate neighborhood audit passes uniform gap and Hausdorff-open factor family. BMP optimizer counterfamily already audited.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by the active research coordinator within the 2026-10-29 10:05 UTC local research envelope; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-affine-hko-math-audit",
+      "title": "Independent full-orbit HKO mathematical audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Passed full GL4 compressed proof, normalization, projection and equality; independent replay separately checked certificate.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by active research coordinator within local research envelope ending 2026-10-29 10:05 UTC; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-28T23:11:23Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-affine-hko-exact-replay",
+      "title": "Independent HKO certificate replay",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Exact replay passed 18 rows, four identities, 62 facets, 360 feasible words and 80 transported identities; six altered controls rejected.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by active research coordinator within local research envelope ending 2026-10-29 10:05 UTC; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-28T23:11:23Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-rank-four-zonoids",
+      "title": "Rank-four zonoid Pfaffian inequality",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Separate seven-page note retained and component-audited; bounded all-size mechanism attempt stopped at concrete blocker. Universal conjecture remains open; owner released.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by active research coordinator within local research envelope ending 2026-10-29 10:05 UTC; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-sixdim-simplex",
+      "title": "Six-dimensional simplex action-polar local witness",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Global sharp rho6 bound (945+75sqrt5)/1922 and unique equality class passed fresh mathematical audit; exact 720-order/840-fence coverage uses cdd/PPL and portable scripts; direct facet enumeration timeout gives no evidence.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by active research coordinator within local research envelope ending 2026-10-29 10:05 UTC; root owns integration, commits and cleanup.",
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-paper-integration",
+      "title": "One coherent audited research paper",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "running",
+      "owner": "/root/paper_integration",
+      "outcome": "Canonical r2 paper has 45 pages; worker integrates r3 with audited 17-facet derivative and effective twenty-facet witness. Root already inspected all r1 pages; final r3 acceptance open.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": "Complete r3 integration/build/render and give exact source/PDF hashes and changed pages to root and assembled reviewers."
+    },
+    {
+      "id": "restart-assembled-math-review",
+      "title": "Fresh independent whole-paper mathematics review",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "running",
+      "owner": "/root/assembled_math_review",
+      "outcome": "Reviewer read all printed sections and found only an indexing error now corrected; exact hash report pending. New r3 HKO text still needs delta audit.",
+      "depends_on": [
+        "restart-paper-integration"
+      ],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": "Return exact reviewed hash/verdict; review changed r3 HKO sections and any substantive corrections before root acceptance."
+    },
+    {
+      "id": "restart-final-pdf-inspection",
+      "title": "Root all-page final PDF inspection",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "ready",
+      "owner": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "outcome": "Root inspected every r1 page; canonical r2 is 45 pages and r3 is under integration. Final r3 all-page inspection and delta check open.",
+      "depends_on": [
+        "restart-paper-integration",
+        "restart-assembled-math-review"
+      ],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": "After r3 build and reviewer delta findings, inspect every final rendered page and resolve layout/source mismatch."
+    },
+    {
+      "id": "restart-hko-descendant",
+      "title": "Substantially stronger HKO-descended body",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "running",
+      "owner": "/root/multicut_variation",
+      "outcome": "Effective all-ten-cut t=10^-30 witness now independently audited with relative gain >5e-33; 17-facet seven-cut derivative also audited. Material moderate-t candidate rho≈1.051914 remains unproved because capacity evidence is currently only an upper bound.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": "Finish exact DFS/coverage and independent audit for moderate parameter, or report obstruction at 00:40; do not claim numerical ratio improvement from current upper bound."
+    },
+    {
+      "id": "restart-nonlagrangian-triangles",
+      "title": "Triangle product position separation",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Fresh audit passes sharp 2/3 bound for Lagrangian positions of two triangles and rational non-Lagrangian affine example ratio18/25; no full-affine optimum. Module handed to paper worker.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-hko-ascent-audit",
+      "title": "Independent 20-facet HKO ascent audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Full analytic audit passed; independent catalogue/optimizer replays cover 3,000 primitives and 190 charts. Positive derivative disproves unrestricted Hausdorff local maximality, without certified explicit t.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-two-paraboloid-audit",
+      "title": "Independent all-dimensional difference-volume audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "All-dimensional two-confocal-paraboloid theorem, strictness, sharp limit and planar squared-body specialization passed fresh audit.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-truncated-global-audit",
+      "title": "Independent all-partner product theorem audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Strict all-convex-partner theorem passed fresh lattice-cover/forest/covariogram audit; open-neighborhood corollary separately checked.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
+      "updated_at": "2026-10-29T00:10:21Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-assembled-reader-review",
+      "title": "Independent assembled paper reader/value/source review",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "running",
+      "owner": "/root/assembled_reader_review",
+      "outcome": "Fresh reader-facing, value, source and figure review of the 44-page packet running; no verdict yet.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected by active research coordinator for final assembled paper assessment within local research envelope; root owns acceptance.",
+      "updated_at": "2026-10-29T00:14:22Z",
+      "next_step": "Report readability, selection, citation, figure and promise findings to root; correct and re-review changed text as needed."
+    },
+    {
+      "id": "restart-hko-17-facet-and-effective",
+      "title": "Audited 17-facet derivative and effective HKO witness",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Weighted-profile max response max(w)/125; seven unit cuts yield 17 genuine facets and positive derivative; six positive speeds cannot within fixed profiles. All-ten-unit-cut family at t=10^-30 has audited relative gain >5e-33.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Selected local research within the active autonomous research envelope; component result for r3 paper.",
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-two-hinge-12-facet",
+      "title": "Test two arbitrary characteristic-invariant hinges for 12-facet ascent",
+      "kind": "crux",
+      "selection": "unselected",
+      "project": "research-20261028",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Research-value review queued a possible next discriminator; no work started and no agent assigned.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md"
+      ],
+      "authorization": "Unselected candidate only; no execution assignment.",
+      "updated_at": "2026-10-29T00:26:40Z",
+      "next_step": "Root selects only if it outranks finishing r3 and current stronger-descendant work."
     }
   ],
   "decisions": [
@@ -3897,6 +4386,54 @@
       "value": "User authorized ten minutes walltime ending 2026-10-22T20:53:54Z and described API quota, agents and recursion as unlimited. Actual quota and billed usage unobserved. No ongoing automation.",
       "observed_at": "2026-10-22T20:49:02.336490+00:00",
       "basis": "Direct user instruction in current root thread."
+    },
+    {
+      "label": "28 October research restart live quota baseline",
+      "value": "Weekly primary89%remaining/11%used; ordinary usage allowed; secondary unreturned. No resets used. Cutoff2026-10-29 10:05UTC. Account-wide quantity; campaign attribution and billed spend unknown.",
+      "observed_at": "2026-10-28T22:35:45.527998+00:00",
+      "basis": "codex-resources codex-quota-status.py --json, account/rateLimits/read"
+    },
+    {
+      "label": "28 October research restart resource checkpoint",
+      "observed_at": "2026-10-28T22:50:56Z",
+      "value": "Account-wide primary weekly quota: 88% remaining at22:43:21 UTC and 86% remaining at22:50:56 UTC after 89% at22:35:45. Task attribution and billed spending unknown; no reset/cloud/external spending selected. Execution cutoff 2026-10-29 10:05 UTC.",
+      "basis": "Root read-only codex-resources snapshots relayed to coordination steward; rounded shared-account readings."
+    },
+    {
+      "label": "28 October bounded workload observation",
+      "observed_at": "2026-10-28T22:50:53Z",
+      "value": "15-minute OTel observation: root 26931 output tokens, local descendants 550168 output tokens, 23 local descendants. Live load and counter completeness unverified; root reports high coordination message burden and delegated factual state maintenance.",
+      "basis": "Root read-only coordination-load observation relayed to integration steward; telemetry is not billing or task-complete accounting."
+    },
+    {
+      "label": "28 October research restart quota checkpoint",
+      "observed_at": "2026-10-28T23:09:26Z",
+      "value": "Account-wide weekly primary 79% remaining/21% used, versus 89% remaining/11% used at22:35:45. Ten percentage-point account change is not strict campaign attribution. No resets used; task-attributed and billed spending unknown.",
+      "basis": "Root read-only account quota observation relayed to integration steward."
+    },
+    {
+      "label": "28 October local owned-subtree usage",
+      "observed_at": "2026-10-28T23:09:29Z",
+      "value": "31 owned local threads; 1,237,529 output tokens (root58,468; workers1,179,061), cached input228,832,896 and uncached input4,430,351. Unpriced models and shadow billing unknown. High coordinator message burden observed; whole-line delegation and paper integration ongoing.",
+      "basis": "Root local owned-subtree counter observation relayed to integration steward. These counters are not billed cost, live-load completeness or account quota attribution."
+    },
+    {
+      "label": "29 October research restart quota checkpoint",
+      "observed_at": "2026-10-29T00:01:29.646379Z",
+      "value": "Account-wide primary weekly 53% remaining/47% used, down from 89% remaining at22:35 UTC. Secondary unreturned, no reset used. Strict campaign attribution and billing unknown. Root operationally reserves roughly15 weekly percentage points for final checks, not a new approval gate.",
+      "basis": "Root read-only quota observation in current continuation record; rounded shared-account readings."
+    },
+    {
+      "label": "29 October local owned-subtree and OTel observation",
+      "observed_at": "2026-10-29T00:07:09Z",
+      "value": "37 local descendants; owned output 2,928,360 tokens (root150,007; workers2,778,353), cached input538,146,944, uncached input9,271,465. Fifteen-minute OTel exited2: one missing counter record and large-root-context advisory; overload unknown. These counts are not billed cost.",
+      "basis": "Root continuation record from local usage and OTel readers; no task-attributed spend or verified complete load inference."
+    },
+    {
+      "label": "29 October research restart quota checkpoint 00:13",
+      "observed_at": "2026-10-29T00:13:39.593628Z",
+      "value": "Account-wide primary weekly 50% remaining/50% used; secondary unreturned, ordinary use allowed, no reset. Strict campaign attribution and billed cost unknown. Operational reserve of roughly 15 weekly percentage points for final checks remains, not a user approval gate.",
+      "basis": "Root read-only account observation relayed to integration steward."
     }
   ],
   "links": [
@@ -4181,6 +4718,26 @@
     {
       "at": "2026-10-28T22:29:36.063906+00:00",
       "text": "Closed stopped research attempt; optional drafts archived at a3441d4e. Clarified user scope/value/scheduling/PDF contract in PLAN.md and restart handoff; disabled feedback source/CLI via fleet b6b8e8b. No research workers remain active."
+    },
+    {
+      "at": "2026-10-28T22:54:24Z",
+      "text": "Five provisional research lines funded; source/methods and figures returned, independent simplex/squared-body/BMP audits added. Root delegated factual PLAN/current/STATUS maintenance while retaining math integration, paper, commits and acceptance."
+    },
+    {
+      "at": "2026-10-28T23:11:23Z",
+      "text": "Independent audits passed squared planar factor five, full GL4 HKO and BMP optimizer counterfamily; simplex prior-art alert downgraded new-bound claim. Multicut fixed-bank theorem audited, rank-four zonoid and six-dimensional simplex lines opened; one scratch paper under integration."
+    },
+    {
+      "at": "2026-10-29T00:10:21Z",
+      "text": "Canonical paper worker owns selected audited modules; 20-facet HKO strict ascent, global six-simplex, two-paraboloid theorem and strict all-partner truncated product now passed fresh component audits. Root whole-paper math review and all-page PDF inspection remain open; stronger HKO descendant and separate rank-four mechanism continue."
+    },
+    {
+      "at": "2026-10-29T00:14:22Z",
+      "text": "Canonical 44-page packet handed to root; worker retains scoped corrective edits. Fresh assembled mathematical and reader reviews running; root final all-page inspection open. Effective HKO t=10^-30 route under development, not audited/certified."
+    },
+    {
+      "at": "2026-10-29T00:26:40Z",
+      "text": "Fresh audits pass weighted 17-facet HKO derivative and effective t=10^-30 twenty-facet gain. Paper r2 45 pages; r3 integration and review delta open. Moderate t≈0.3 ratio remains unproved; rank-four bounded attempt closed at blocker, two-hinge candidate unstaffed."
     }
   ]
 }

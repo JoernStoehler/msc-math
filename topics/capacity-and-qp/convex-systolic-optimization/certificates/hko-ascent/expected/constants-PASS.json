@@ -1,0 +1,118 @@
+{
+  "all_finite_checks_passed": true,
+  "scope": "Finite exact action-gap and rational inequalities; analytic coverage, pivot, rounding and Taylor proofs are separate reviewed arguments.",
+  "primitive_words": 3000,
+  "primitive_winners": 50,
+  "primitive_values_coefficients_ascending": [
+    [
+      "0",
+      "-1/5",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "-1/4",
+      "0",
+      "3/20"
+    ],
+    [
+      "0",
+      "-1/10",
+      "0",
+      "-1/10"
+    ],
+    [
+      "0",
+      "-3/20",
+      "0",
+      "1/20"
+    ],
+    [
+      "0",
+      "-1/20",
+      "0",
+      "-1/20"
+    ],
+    [
+      "0",
+      "-1/10",
+      "0",
+      "1/10"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "1/10",
+      "0",
+      "-1/10"
+    ],
+    [
+      "0",
+      "1/20",
+      "0",
+      "1/20"
+    ],
+    [
+      "0",
+      "3/20",
+      "0",
+      "-1/20"
+    ],
+    [
+      "0",
+      "1/10",
+      "0",
+      "1/10"
+    ],
+    [
+      "0",
+      "1/4",
+      "0",
+      "-3/20"
+    ],
+    [
+      "0",
+      "1/5",
+      "0",
+      "0"
+    ]
+  ],
+  "minimum_positive_action_gap_coefficients_ascending": [
+    "0",
+    "-1/20",
+    "0",
+    "3/20"
+  ],
+  "gap_exceeds_1_over_50": true,
+  "checks": {
+    "base_pivot_stays_above_c": true,
+    "neumann_inverse_factor_below_two": true,
+    "chart_l1_norm_below_two": true,
+    "second_derivative_below_twice_R": true,
+    "distance_coefficient_2000_suffices": true,
+    "quadratic_remainder_constant_suffices": true,
+    "deficit_below_1e_minus_20": true,
+    "retained_vertex_mass_nonempty": true,
+    "selected_pivot_preserved_by_rounding": true,
+    "normalized_action_square_coefficient": true,
+    "action_volume_product_coefficient": true,
+    "linear_gain_exceeds_one_percent": true,
+    "quadratic_cost_below_half_gain": true
+  },
+  "parameter": "1/1000000000000000000000000000000",
+  "relative_gain_lower_bound": "1/200000000000000000000000000000000",
+  "M": "200",
+  "c": "1/10000",
+  "R": "4000000000",
+  "distance_constant": "2000",
+  "A": "35200000",
+  "A_squared_over_four_plus_R": "309764000000000",
+  "action_remainder_bound": "1000000000000000",
+  "elapsed_seconds": 3.2681519985198975
+}
