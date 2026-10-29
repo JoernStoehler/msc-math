@@ -1,0 +1,74 @@
+{
+  "schema": "hko-postmortem-r3-validation-v1",
+  "observed_at_utc": "2026-10-29T10:31:00Z",
+  "report_md_sha256": "495154481ea74148229a52d5880cdc62b93959cf93971f399b22553f38f32be9",
+  "reading_html_sha256": "4e9c44fcc9642b5f68036e184ede8772210606e2ab7068c26f6845ed0e690701",
+  "local_markdown_links": 26,
+  "html_ids": 66,
+  "fragment_links": 30,
+  "duplicate_ids": [],
+  "missing_fragment_targets": [],
+  "sibling_file_hrefs": [],
+  "embedded_download_bytes_match_sources": true,
+  "python_ast": "PASS",
+  "svg_xml": "PASS",
+  "projection_json": "PASS",
+  "browser": {
+    "route": "isolated Playwright CLI Chrome session hko-postmortem-r3 via temporary 127.0.0.1:58763 file server",
+    "native_receipt": "run-code inspect-r3.js result returned 2026-10-29 about10:31UTC",
+    "wide": {
+      "viewport_width": 1440,
+      "document_width": 1440
+    },
+    "narrow": {
+      "viewport_width": 390,
+      "document_width": 390,
+      "main_width": 356,
+      "main_display_math_widths": [
+        356,
+        356,
+        356,
+        356,
+        356,
+        356
+      ],
+      "main_display_math_scroll_widths": [
+        356,
+        356,
+        356,
+        356,
+        356,
+        356
+      ],
+      "table_wrapper_widths": [
+        356,
+        356,
+        356,
+        356,
+        356
+      ],
+      "table_scroll_widths": [
+        640,
+        640,
+        640,
+        640,
+        640
+      ]
+    },
+    "mathml_nodes": 85,
+    "embedded_svg_loaded": true,
+    "cost_appendix_navigation_expands": true,
+    "scientific_source_navigation_target_exists": true,
+    "external_images": 0,
+    "relative_file_hrefs": []
+  },
+  "inspected_screenshots": {
+    "pw-math-r3.png": "d3c31825f5610abfee8a8e2b7bd61ceb37f3b81e99516d73dc2587b00adfc25b",
+    "pw-diagram-r3.png": "8232abd598c8223c9715936666c18a8bfd49c7e1728c4833ff850638c60bd264",
+    "pw-cost-r3.png": "f7e870c124d488d830defcc81ec29b6eb02e09a515c9c83c93b8e5e7d072df4a",
+    "pw-narrow-top-r3.png": "7793a5cda749ae7388e2827aee351e9d1715d08b934fd9e765211c82c90bd4fb",
+    "pw-narrow-math-r3.png": "d9e29203e9801de9e4c9c10e1ae59c1487acbc872bdebd4d9fe797a7cbeabfbc",
+    "pw-appendix-r3.png": "5da67398ffe386772882e8786a4b67d0fd42d1232e9e0b4997529070f7014744"
+  },
+  "scope": "Report reading surface and historical-source/accounting checks only; no scientific producer or proof rerun."
+}

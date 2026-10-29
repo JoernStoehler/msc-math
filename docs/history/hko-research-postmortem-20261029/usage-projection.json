@@ -1,0 +1,944 @@
+{
+  "schema": "msc-math-hko-postmortem-usage-projection-v1",
+  "source": "locally selected native Codex rollouts; installed subtree-usage.py ownership/dedup logic",
+  "accounting_helper_path": "/workspaces/agent-fleet-tools/skills/codex-resources/scripts/subtree-usage.py",
+  "accounting_helper_sha256": "55a7dd74e324e63c3271cccc2097d44279a7225e6a48a8de493faf742f760abf",
+  "historical_shadow_price_table_date": "2026-09-16",
+  "shadow_rates_usd_per_million_used": {
+    "gpt-6-astra": [
+      10,
+      1,
+      50
+    ]
+  },
+  "shadow_price_formula": "uncached=(input-cached-cache_write); long=input>272000; dollars=(uncached*in_rate*(2 if long else 1)+cached*cache_rate*(2 if long else 1)+cache_write*in_rate*1.25*(2 if long else 1)+output*out_rate*(1.5 if long else 1))/1000000",
+  "root_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+  "window_start_inclusive": "2026-10-28T22:35:36.893000+00:00",
+  "window_end_exclusive": "2026-10-29T01:25:00+00:00",
+  "thread_count_with_usage": 39,
+  "accounting_warnings": [],
+  "threads": [
+    {
+      "thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "parent_thread_id": null,
+      "agent_path": "root",
+      "first_usage_at": "2026-10-28T22:35:41.133000+00:00",
+      "last_usage_at": "2026-10-29T01:22:51.311000+00:00",
+      "response_records": 636,
+      "models": {
+        "gpt-6.1-sol": {
+          "responses": 636,
+          "input_tokens": 129961959,
+          "cached_input_tokens": 128849920,
+          "output_tokens": 279101,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a7-ff54-77d0-a96a-a3c890b2ea80",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/geometry_frontiers",
+      "first_usage_at": "2026-10-28T22:36:11.325000+00:00",
+      "last_usage_at": "2026-10-29T00:51:10.259000+00:00",
+      "response_records": 341,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 341,
+          "input_tokens": 49551298,
+          "cached_input_tokens": 48746368,
+          "output_tokens": 154578,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 64.52456800000002
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a8-1cf5-7fb0-b950-1f6f45c6e22b",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/combinatorial_frontiers",
+      "first_usage_at": "2026-10-28T22:36:18.248000+00:00",
+      "last_usage_at": "2026-10-29T00:03:13.259000+00:00",
+      "response_records": 247,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 247,
+          "input_tokens": 33969985,
+          "cached_input_tokens": 33559936,
+          "output_tokens": 103961,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 42.85847599999997
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a8-37f8-7673-8d67-94f932cec3d3",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/global_connections",
+      "first_usage_at": "2026-10-28T22:36:24.197000+00:00",
+      "last_usage_at": "2026-10-28T23:48:39.032000+00:00",
+      "response_records": 177,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 177,
+          "input_tokens": 22435699,
+          "cached_input_tokens": 22130944,
+          "output_tokens": 95649,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 29.960943999999998
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a8-5527-74d0-8a8f-f99bedd7447f",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/frontier_sources",
+      "first_usage_at": "2026-10-28T22:36:36.103000+00:00",
+      "last_usage_at": "2026-10-29T00:40:28.059000+00:00",
+      "response_records": 247,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 247,
+          "input_tokens": 32984104,
+          "cached_input_tokens": 32345600,
+          "output_tokens": 52553,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a8-6f22-7bb1-b2a4-4214699b8199",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/ai_math_methods",
+      "first_usage_at": "2026-10-28T22:36:40.289000+00:00",
+      "last_usage_at": "2026-10-28T22:48:36.745000+00:00",
+      "response_records": 51,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 51,
+          "input_tokens": 4891472,
+          "cached_input_tokens": 4782848,
+          "output_tokens": 17792,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a8-ac87-7e01-9583-197d2f2eaa1b",
+      "parent_thread_id": "01a184a7-ff54-77d0-a96a-a3c890b2ea80",
+      "agent_path": "/root/geometry_frontiers/smooth_obstruction",
+      "first_usage_at": "2026-10-28T22:36:54.105000+00:00",
+      "last_usage_at": "2026-10-28T23:50:17.601000+00:00",
+      "response_records": 115,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 115,
+          "input_tokens": 12914859,
+          "cached_input_tokens": 12576768,
+          "output_tokens": 69747,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a8-b3fb-74d3-9e84-3b393363d1eb",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/message_reviewer",
+      "first_usage_at": "2026-10-28T22:36:55.917000+00:00",
+      "last_usage_at": "2026-10-29T01:22:39.884000+00:00",
+      "response_records": 64,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 64,
+          "input_tokens": 1807164,
+          "cached_input_tokens": 1734528,
+          "output_tokens": 4267,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a9-0fc7-76c0-a9b8-c2e0d470c0e9",
+      "parent_thread_id": "01a184a8-1cf5-7fb0-b950-1f6f45c6e22b",
+      "agent_path": "/root/combinatorial_frontiers/rank_order",
+      "first_usage_at": "2026-10-28T22:37:18.182000+00:00",
+      "last_usage_at": "2026-10-28T23:38:11.053000+00:00",
+      "response_records": 183,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 183,
+          "input_tokens": 19550878,
+          "cached_input_tokens": 19175424,
+          "output_tokens": 127884,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184a9-42e5-7202-9a42-9489af314219",
+      "parent_thread_id": "01a184a8-37f8-7673-8d67-94f932cec3d3",
+      "agent_path": "/root/global_connections/squared_bound",
+      "first_usage_at": "2026-10-28T22:37:52.204000+00:00",
+      "last_usage_at": "2026-10-28T23:42:13.804000+00:00",
+      "response_records": 156,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 156,
+          "input_tokens": 18805889,
+          "cached_input_tokens": 18380032,
+          "output_tokens": 188806,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184aa-0bd9-7e70-b43c-06e5a07f90d9",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/multicut_variation",
+      "first_usage_at": "2026-10-28T22:38:25.028000+00:00",
+      "last_usage_at": "2026-10-29T01:09:02.224000+00:00",
+      "response_records": 318,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 318,
+          "input_tokens": 46642153,
+          "cached_input_tokens": 45960320,
+          "output_tokens": 183354,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 61.94635
+        }
+      }
+    },
+    {
+      "thread_id": "01a184aa-63cd-74e2-aff7-ac519055ba4e",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/product_extremizers",
+      "first_usage_at": "2026-10-28T22:38:48.113000+00:00",
+      "last_usage_at": "2026-10-29T00:04:55.104000+00:00",
+      "response_records": 190,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 190,
+          "input_tokens": 22621937,
+          "cached_input_tokens": 22368640,
+          "output_tokens": 107859,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 30.294559999999997
+        }
+      }
+    },
+    {
+      "thread_id": "01a184aa-b6c0-7843-836b-8e5c4d660845",
+      "parent_thread_id": "01a184a8-1cf5-7fb0-b950-1f6f45c6e22b",
+      "agent_path": "/root/combinatorial_frontiers/pfaffian_inequality",
+      "first_usage_at": "2026-10-28T22:39:06.073000+00:00",
+      "last_usage_at": "2026-10-28T23:38:28.041000+00:00",
+      "response_records": 251,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 251,
+          "input_tokens": 33471891,
+          "cached_input_tokens": 32900608,
+          "output_tokens": 195962,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184aa-cbcb-7722-8917-1dc98bb5fac9",
+      "parent_thread_id": "01a184aa-0bd9-7e70-b43c-06e5a07f90d9",
+      "agent_path": "/root/multicut_variation/variation_duality",
+      "first_usage_at": "2026-10-28T22:39:15.544000+00:00",
+      "last_usage_at": "2026-10-28T23:40:43.204000+00:00",
+      "response_records": 273,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 273,
+          "input_tokens": 41206572,
+          "cached_input_tokens": 40694400,
+          "output_tokens": 237776,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184ab-0520-7240-94b8-8bdba8b55275",
+      "parent_thread_id": "01a184aa-63cd-74e2-aff7-ac519055ba4e",
+      "agent_path": "/root/product_extremizers/shadow_reduction",
+      "first_usage_at": "2026-10-28T22:39:25.998000+00:00",
+      "last_usage_at": "2026-10-28T23:59:22.166000+00:00",
+      "response_records": 166,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 166,
+          "input_tokens": 19536621,
+          "cached_input_tokens": 19021696,
+          "output_tokens": 264061,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184ab-1230-7e33-9b41-a6dcc90f9a77",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/polar_embedding_review",
+      "first_usage_at": "2026-10-28T22:39:35.111000+00:00",
+      "last_usage_at": "2026-10-28T23:07:31.124000+00:00",
+      "response_records": 58,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 58,
+          "input_tokens": 6479821,
+          "cached_input_tokens": 6350080,
+          "output_tokens": 40936,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 9.694290000000002
+        }
+      }
+    },
+    {
+      "thread_id": "01a184ab-8b45-7430-bf01-7f49f5a99823",
+      "parent_thread_id": "01a184ab-1230-7e33-9b41-a6dcc90f9a77",
+      "agent_path": "/root/polar_embedding_review/holomorphic_ball_lemma",
+      "first_usage_at": "2026-10-28T22:40:00.506000+00:00",
+      "last_usage_at": "2026-10-28T23:06:28.216000+00:00",
+      "response_records": 26,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 26,
+          "input_tokens": 1975805,
+          "cached_input_tokens": 1889792,
+          "output_tokens": 22196,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184ad-e61d-7060-90b5-052ba9efd50e",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/research_value_review",
+      "first_usage_at": "2026-10-28T22:42:37.961000+00:00",
+      "last_usage_at": "2026-10-29T00:49:05.025000+00:00",
+      "response_records": 67,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 67,
+          "input_tokens": 7056882,
+          "cached_input_tokens": 6909952,
+          "output_tokens": 42614,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 10.509951999999997
+        }
+      }
+    },
+    {
+      "thread_id": "01a184b0-2830-7343-8209-f344576376f1",
+      "parent_thread_id": "01a184aa-63cd-74e2-aff7-ac519055ba4e",
+      "agent_path": "/root/product_extremizers/truncated_square",
+      "first_usage_at": "2026-10-28T22:45:06.838000+00:00",
+      "last_usage_at": "2026-10-28T23:56:48.996000+00:00",
+      "response_records": 134,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 134,
+          "input_tokens": 16713266,
+          "cached_input_tokens": 16372224,
+          "output_tokens": 169534,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184b2-6114-7853-ba1f-3e5b10c1a6cd",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/simplex_independent_audit",
+      "first_usage_at": "2026-10-28T22:47:32.117000+00:00",
+      "last_usage_at": "2026-10-28T23:24:55.900000+00:00",
+      "response_records": 54,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 54,
+          "input_tokens": 4384888,
+          "cached_input_tokens": 4305024,
+          "output_tokens": 42605,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 7.233914
+        }
+      }
+    },
+    {
+      "thread_id": "01a184b4-b9dd-7b22-872c-36f4af96272a",
+      "parent_thread_id": "01a184aa-0bd9-7e70-b43c-06e5a07f90d9",
+      "agent_path": "/root/multicut_variation/derivative_review",
+      "first_usage_at": "2026-10-28T22:50:03.161000+00:00",
+      "last_usage_at": "2026-10-29T00:17:12.857000+00:00",
+      "response_records": 123,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 123,
+          "input_tokens": 17720780,
+          "cached_input_tokens": 17249024,
+          "output_tokens": 150837,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184b5-00e7-79b1-b547-095bf32c7662",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/research_figures",
+      "first_usage_at": "2026-10-28T22:50:23.086000+00:00",
+      "last_usage_at": "2026-10-28T23:23:37.201000+00:00",
+      "response_records": 25,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 25,
+          "input_tokens": 1275732,
+          "cached_input_tokens": 1229696,
+          "output_tokens": 13782,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184b5-2d02-7e00-a0e6-aa85ffb44d86",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/truncated_conjecture_audit",
+      "first_usage_at": "2026-10-28T22:50:35.143000+00:00",
+      "last_usage_at": "2026-10-28T23:36:29.230000+00:00",
+      "response_records": 52,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 52,
+          "input_tokens": 3917278,
+          "cached_input_tokens": 3846400,
+          "output_tokens": 29390,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 6.024679999999999
+        }
+      }
+    },
+    {
+      "thread_id": "01a184b6-ed87-7c41-8437-a5b1a6fd09f3",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/integration_steward",
+      "first_usage_at": "2026-10-28T22:52:31.890000+00:00",
+      "last_usage_at": "2026-10-29T00:41:43.973000+00:00",
+      "response_records": 69,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 69,
+          "input_tokens": 6548420,
+          "cached_input_tokens": 6448000,
+          "output_tokens": 31866,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184b7-e6a0-7ab1-bfec-f8169f14e33d",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/squared_body_audit",
+      "first_usage_at": "2026-10-28T22:53:32.965000+00:00",
+      "last_usage_at": "2026-10-28T23:46:55.866000+00:00",
+      "response_records": 39,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 39,
+          "input_tokens": 2572092,
+          "cached_input_tokens": 2502016,
+          "output_tokens": 25106,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 4.458076
+        }
+      }
+    },
+    {
+      "thread_id": "01a184b8-2d13-70c2-9f8d-28469e57aea5",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/symmetry_implication_sources",
+      "first_usage_at": "2026-10-28T22:53:53.144000+00:00",
+      "last_usage_at": "2026-10-28T22:57:05.183000+00:00",
+      "response_records": 19,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 19,
+          "input_tokens": 1274154,
+          "cached_input_tokens": 1205760,
+          "output_tokens": 9610,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184bf-430a-7ae2-b2cc-e9ab1c04c07e",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/affine_hko_math_audit",
+      "first_usage_at": "2026-10-28T23:01:36.083000+00:00",
+      "last_usage_at": "2026-10-28T23:37:55.451000+00:00",
+      "response_records": 45,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 45,
+          "input_tokens": 3609024,
+          "cached_input_tokens": 3511296,
+          "output_tokens": 25366,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 5.756876
+        }
+      }
+    },
+    {
+      "thread_id": "01a184bf-69db-7023-8b99-653e04edd2bc",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/affine_hko_exact_replay",
+      "first_usage_at": "2026-10-28T23:01:45.806000+00:00",
+      "last_usage_at": "2026-10-29T01:19:13.677000+00:00",
+      "response_records": 118,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 118,
+          "input_tokens": 9638060,
+          "cached_input_tokens": 9459072,
+          "output_tokens": 41829,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184c4-d6ee-7650-988c-9450f9ce2ca0",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/rank_four_zonoids",
+      "first_usage_at": "2026-10-28T23:07:43.844000+00:00",
+      "last_usage_at": "2026-10-29T00:22:45.498000+00:00",
+      "response_records": 149,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 149,
+          "input_tokens": 17175408,
+          "cached_input_tokens": 16920832,
+          "output_tokens": 84963,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 23.71474199999999
+        }
+      }
+    },
+    {
+      "thread_id": "01a184c5-69f4-7020-b7c1-b85c11ceb61d",
+      "parent_thread_id": "01a184c4-d6ee-7650-988c-9450f9ce2ca0",
+      "agent_path": "/root/rank_four_zonoids/six_vertex_pfaffian",
+      "first_usage_at": "2026-10-28T23:08:46.622000+00:00",
+      "last_usage_at": "2026-10-28T23:47:42.891000+00:00",
+      "response_records": 162,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 162,
+          "input_tokens": 19800542,
+          "cached_input_tokens": 19427200,
+          "output_tokens": 184840,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184c5-8e8f-7ec0-ac92-af27670b21f8",
+      "parent_thread_id": "01a184c4-d6ee-7650-988c-9450f9ce2ca0",
+      "agent_path": "/root/rank_four_zonoids/zonoid_priorart",
+      "first_usage_at": "2026-10-28T23:08:25.830000+00:00",
+      "last_usage_at": "2026-10-29T00:18:03.307000+00:00",
+      "response_records": 82,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 82,
+          "input_tokens": 10105614,
+          "cached_input_tokens": 9689856,
+          "output_tokens": 44148,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184d1-c78d-7e22-924f-e8ca14047f6e",
+      "parent_thread_id": "01a184aa-0bd9-7e70-b43c-06e5a07f90d9",
+      "agent_path": "/root/multicut_variation/convex_ensemble",
+      "first_usage_at": "2026-10-28T23:21:48.068000+00:00",
+      "last_usage_at": "2026-10-28T23:40:01.649000+00:00",
+      "response_records": 129,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 129,
+          "input_tokens": 17083494,
+          "cached_input_tokens": 16680192,
+          "output_tokens": 112280,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184d3-d0dd-7b63-bb83-b8d4fe8d1220",
+      "parent_thread_id": "01a184c4-d6ee-7650-988c-9450f9ce2ca0",
+      "agent_path": "/root/rank_four_zonoids/six_theorem_audit",
+      "first_usage_at": "2026-10-28T23:24:00.027000+00:00",
+      "last_usage_at": "2026-10-29T00:19:53.651000+00:00",
+      "response_records": 69,
+      "models": {
+        "gpt-6-luna": {
+          "responses": 69,
+          "input_tokens": 11105204,
+          "cached_input_tokens": 10851840,
+          "output_tokens": 87602,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184de-39e9-7ba1-a2d5-dffe3541b8ff",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/sixdim_polytope_coverage",
+      "first_usage_at": "2026-10-28T23:35:25.419000+00:00",
+      "last_usage_at": "2026-10-28T23:46:27.001000+00:00",
+      "response_records": 79,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 79,
+          "input_tokens": 5457699,
+          "cached_input_tokens": 5398400,
+          "output_tokens": 32297,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184e2-2284-77f1-859a-d7d144006be7",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/sixdim_global_math_audit",
+      "first_usage_at": "2026-10-28T23:39:41.901000+00:00",
+      "last_usage_at": "2026-10-28T23:49:19.697000+00:00",
+      "response_records": 27,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 27,
+          "input_tokens": 1612165,
+          "cached_input_tokens": 1546752,
+          "output_tokens": 13930,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 2.897382
+        }
+      }
+    },
+    {
+      "thread_id": "01a184ea-c996-7833-95d9-5fccf5d3a66c",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/hko_ascent_math_audit",
+      "first_usage_at": "2026-10-28T23:49:08.963000+00:00",
+      "last_usage_at": "2026-10-29T01:11:20.830000+00:00",
+      "response_records": 133,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 133,
+          "input_tokens": 18722964,
+          "cached_input_tokens": 18388864,
+          "output_tokens": 65571,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 25.008414000000002
+        }
+      }
+    },
+    {
+      "thread_id": "01a184f2-e6e5-7e41-b364-702fa2305860",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/paper_integration",
+      "first_usage_at": "2026-10-28T23:57:58.614000+00:00",
+      "last_usage_at": "2026-10-29T01:18:22.608000+00:00",
+      "response_records": 471,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 471,
+          "input_tokens": 62354902,
+          "cached_input_tokens": 61747328,
+          "output_tokens": 141460,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    },
+    {
+      "thread_id": "01a184fe-b301-7ee1-a406-a5743be43ee1",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/assembled_math_review",
+      "first_usage_at": "2026-10-29T00:10:53.618000+00:00",
+      "last_usage_at": "2026-10-29T01:14:35.352000+00:00",
+      "response_records": 130,
+      "models": {
+        "gpt-6-astra": {
+          "responses": 130,
+          "input_tokens": 13512165,
+          "cached_input_tokens": 13053824,
+          "output_tokens": 54246,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 20.349534000000006
+        }
+      }
+    },
+    {
+      "thread_id": "01a184fe-e566-7820-b455-d1d3c2c20ed2",
+      "parent_thread_id": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
+      "agent_path": "/root/assembled_reader_review",
+      "first_usage_at": "2026-10-29T00:11:04.897000+00:00",
+      "last_usage_at": "2026-10-29T01:14:43.824000+00:00",
+      "response_records": 80,
+      "models": {
+        "gpt-6-sol": {
+          "responses": 80,
+          "input_tokens": 11984151,
+          "cached_input_tokens": 11680896,
+          "output_tokens": 29320,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      }
+    }
+  ],
+  "episodes": [
+    {
+      "name": "geometry_fixed_body_development",
+      "since_inclusive": "2026-10-29T00:14:26.973000+00:00",
+      "until_exclusive": "2026-10-29T00:51:10.249000+00:00",
+      "agent_path_prefixes": [
+        "/root/geometry_frontiers"
+      ],
+      "thread_ids_with_usage": [
+        "01a184a7-ff54-77d0-a96a-a3c890b2ea80"
+      ],
+      "models": {
+        "gpt-6-astra": {
+          "responses": 122,
+          "input_tokens": 19621529,
+          "cached_input_tokens": 19293056,
+          "output_tokens": 51301,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 25.14283600000001
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    },
+    {
+      "name": "fixed_body_mathematical_audit",
+      "since_inclusive": "2026-10-29T00:29:00+00:00",
+      "until_exclusive": "2026-10-29T00:56:00+00:00",
+      "agent_path_prefixes": [
+        "/root/hko_ascent_math_audit"
+      ],
+      "thread_ids_with_usage": [
+        "01a184ea-c996-7833-95d9-5fccf5d3a66c"
+      ],
+      "models": {
+        "gpt-6-astra": {
+          "responses": 51,
+          "input_tokens": 7957355,
+          "cached_input_tokens": 7727360,
+          "output_tokens": 26207,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 11.337660000000001
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    },
+    {
+      "name": "fixed_body_fresh_exact_replay",
+      "since_inclusive": "2026-10-29T00:38:53.079000+00:00",
+      "until_exclusive": "2026-10-29T00:48:50.385000+00:00",
+      "agent_path_prefixes": [
+        "/root/affine_hko_exact_replay"
+      ],
+      "thread_ids_with_usage": [
+        "01a184bf-69db-7023-8b99-653e04edd2bc"
+      ],
+      "models": {
+        "gpt-6-sol": {
+          "responses": 59,
+          "input_tokens": 4914542,
+          "cached_input_tokens": 4790144,
+          "output_tokens": 18171,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    },
+    {
+      "name": "multicut_discovery_to_approx_0004",
+      "since_inclusive": "2026-10-28T22:38:19.104000+00:00",
+      "until_exclusive": "2026-10-29T00:04:10.888000+00:00",
+      "agent_path_prefixes": [
+        "/root/multicut_variation"
+      ],
+      "thread_ids_with_usage": [
+        "01a184aa-0bd9-7e70-b43c-06e5a07f90d9",
+        "01a184aa-cbcb-7722-8917-1dc98bb5fac9",
+        "01a184b4-b9dd-7b22-872c-36f4af96272a",
+        "01a184d1-c78d-7e22-924f-e8ca14047f6e"
+      ],
+      "models": {
+        "gpt-6-astra": {
+          "responses": 218,
+          "input_tokens": 29600274,
+          "cached_input_tokens": 29212160,
+          "output_tokens": 102318,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 38.2092
+        },
+        "gpt-6-luna": {
+          "responses": 513,
+          "input_tokens": 73975101,
+          "cached_input_tokens": 72620672,
+          "output_tokens": 477807,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    },
+    {
+      "name": "multicut_extensions_after_approx_0004",
+      "since_inclusive": "2026-10-29T00:04:10.888000+00:00",
+      "until_exclusive": "2026-10-29T01:09:02.224000+00:00",
+      "agent_path_prefixes": [
+        "/root/multicut_variation"
+      ],
+      "thread_ids_with_usage": [
+        "01a184aa-0bd9-7e70-b43c-06e5a07f90d9",
+        "01a184b4-b9dd-7b22-872c-36f4af96272a"
+      ],
+      "models": {
+        "gpt-6-astra": {
+          "responses": 99,
+          "input_tokens": 16817660,
+          "cached_input_tokens": 16524160,
+          "output_tokens": 80859,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 23.502110000000012
+        },
+        "gpt-6-luna": {
+          "responses": 12,
+          "input_tokens": 2035745,
+          "cached_input_tokens": 2002944,
+          "output_tokens": 23086,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    },
+    {
+      "name": "whole_paper_writing_integration",
+      "since_inclusive": "2026-10-28T23:57:58+00:00",
+      "until_exclusive": "2026-10-29T01:18:23+00:00",
+      "agent_path_prefixes": [
+        "/root/paper_integration"
+      ],
+      "thread_ids_with_usage": [
+        "01a184f2-e6e5-7e41-b364-702fa2305860"
+      ],
+      "models": {
+        "gpt-6-sol": {
+          "responses": 471,
+          "input_tokens": 62354902,
+          "cached_input_tokens": 61747328,
+          "output_tokens": 141460,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    },
+    {
+      "name": "whole_paper_assembled_mathematical_review",
+      "since_inclusive": "2026-10-29T00:10:53+00:00",
+      "until_exclusive": "2026-10-29T01:14:36+00:00",
+      "agent_path_prefixes": [
+        "/root/assembled_math_review"
+      ],
+      "thread_ids_with_usage": [
+        "01a184fe-b301-7ee1-a406-a5743be43ee1"
+      ],
+      "models": {
+        "gpt-6-astra": {
+          "responses": 130,
+          "input_tokens": 13512165,
+          "cached_input_tokens": 13053824,
+          "output_tokens": 54246,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": 20.349534000000006
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    },
+    {
+      "name": "whole_paper_reader_review",
+      "since_inclusive": "2026-10-29T00:11:04+00:00",
+      "until_exclusive": "2026-10-29T01:14:44+00:00",
+      "agent_path_prefixes": [
+        "/root/assembled_reader_review"
+      ],
+      "thread_ids_with_usage": [
+        "01a184fe-e566-7820-b455-d1d3c2c20ed2"
+      ],
+      "models": {
+        "gpt-6-sol": {
+          "responses": 80,
+          "input_tokens": 11984151,
+          "cached_input_tokens": 11680896,
+          "output_tokens": 29320,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    },
+    {
+      "name": "whole_paper_final_archive_build_delivery_replay",
+      "since_inclusive": "2026-10-29T01:15:05+00:00",
+      "until_exclusive": "2026-10-29T01:19:14+00:00",
+      "agent_path_prefixes": [
+        "/root/affine_hko_exact_replay"
+      ],
+      "thread_ids_with_usage": [
+        "01a184bf-69db-7023-8b99-653e04edd2bc"
+      ],
+      "models": {
+        "gpt-6-sol": {
+          "responses": 30,
+          "input_tokens": 3523291,
+          "cached_input_tokens": 3495424,
+          "output_tokens": 11122,
+          "cache_write_input_tokens": 0,
+          "api_shadow_usd": null
+        }
+      },
+      "interpretation": "overlapping worker-window accounting; not marginal causal cost or root coordination allocation"
+    }
+  ]
+}

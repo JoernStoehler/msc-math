@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Source-backed postmortem of the exact twenty-facet HKO systolic improvement.">
+<title>How the exact HKO improvement was obtained</title>
+<style>
+:root { color-scheme: light; --ink:#19283b; --muted:#52627b; --line:#d4dce7; --accent:#174e94; }
+* { box-sizing: border-box; }
+body { margin:0; color:var(--ink); background:#fff; font:17px/1.65 Georgia,"Times New Roman",serif; }
+.layout { max-width:1240px; margin:0 auto; padding:36px 28px 90px; display:grid; grid-template-columns:210px minmax(0,850px); gap:44px; }
+nav { font:13px/1.45 system-ui,sans-serif; position:sticky; top:24px; align-self:start; max-height:calc(100vh - 48px); overflow-y:auto; }
+nav strong { display:block; margin-bottom:12px; color:var(--muted); font-weight:600; }
+nav summary { cursor:pointer; font-weight:600; margin-bottom:14px; }
+nav ul { list-style:none; margin:0; padding:0; }
+nav li { margin:0 0 10px; }
+nav li ul { margin:10px 0 0 12px; }
+nav a { color:var(--muted); text-decoration:none; }
+main { min-width:0; }
+h1,h2,h3 { font-family:system-ui,sans-serif; line-height:1.25; letter-spacing:-.025em; scroll-margin-top:24px; }
+h1 { font-size:37px; margin:0 0 20px; }
+h2 { font-size:26px; margin:48px 0 20px; padding-top:15px; border-top:1px solid var(--line); }
+h3 { font-size:20px; margin:32px 0 15px; }
+p { margin:0 0 19px; }
+a { color:var(--accent); text-underline-offset:3px; overflow-wrap:anywhere; }
+a:hover { text-decoration-thickness:2px; }
+strong { font-weight:700; }
+code { font:0.83em/1.4 ui-monospace,monospace; overflow-wrap:anywhere; }
+pre { overflow-x:auto; background:#f3f5f8; padding:16px; border-radius:6px; }
+figure { margin:28px 0; overflow-x:auto; }
+figure img { min-width:640px; }
+img { max-width:100%; height:auto; display:block; margin:0 auto; }
+figcaption { font-size:14px; line-height:1.45; color:var(--muted); margin:12px 0; }
+table { border-collapse:collapse; width:100%; font:13px/1.5 system-ui,sans-serif; margin:25px 0; }
+th,td { border-bottom:1px solid var(--line); padding:10px 9px; vertical-align:top; }
+th { background:#edf2f8; text-align:left; font-weight:600; }
+tbody tr:nth-child(even) { background:#f8fafc; }
+math[display="block"] { display:block; overflow-x:auto; padding:10px 0; margin:14px 0 22px; }
+.table-wrap { max-width:100%; overflow-x:auto; }
+.evidence { border:1px solid var(--line); border-radius:6px; padding:16px 18px; margin:28px 0; }
+.evidence summary { cursor:pointer; font:600 18px/1.4 system-ui,sans-serif; }
+.evidence[open] summary { margin-bottom:25px; }
+.evidence h1 { font-size:28px; }
+.source-list { font:13px/1.5 system-ui,sans-serif; padding-left:22px; }
+.source-list li { margin:0 0 16px; scroll-margin-top:24px; }
+.source-list code { font-size:12px; }
+.evidence-links { margin-top:24px; padding-top:14px; border-top:1px solid var(--line); }
+@media (max-width:1000px) {
+  .layout { display:block; max-width:850px; padding:28px 22px 65px; }
+  nav { position:static; max-height:none; margin-bottom:32px; padding-bottom:16px; border-bottom:1px solid var(--line); }
+  nav>ul { columns:2; column-gap:24px; }
+  nav ul ul { display:block; }
+  nav li { break-inside:avoid; }
+}
+@media (max-width:520px) {
+  body { font-size:16px; line-height:1.6; }
+  .layout { padding:24px 17px 55px; }
+  h1 { font-size:30px; }
+  h2 { font-size:23px; }
+  h3 { font-size:19px; }
+  nav { font-size:12px; }
+  nav>ul { columns:1; }
+  table { min-width:640px; }
+}
+@media print {
+  .layout { display:block; padding:0; }
+  nav { display:none; }
+  body { font-size:10.5pt; line-height:1.45; }
+  h1 { font-size:24pt; }
+  h2 { font-size:17pt; break-after:avoid; }
+  h3 { font-size:12pt; break-after:avoid; }
+  table { font-size:8pt; }
+  a { color:inherit; }
+  img { max-height:220px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav aria-label="Report sections"><details id="report-contents" open><summary>In this report</summary>$toc$</details></nav>
+<main>$body$</main>
+</div>
+</body>
+</html>
