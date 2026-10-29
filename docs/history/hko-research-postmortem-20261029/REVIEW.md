@@ -56,7 +56,7 @@ hash. The exact candidate, hashes and native return are also retained in
   or external image dependencies. The usage projection and extraction-script
   downloads are data URLs. Screenshots and DOM observations are working
   evidence under `/tmp/msc-math/postmortem-20261029/render-qa/`. The final
-  receipt is `playwright-final-metrics-r3.json`, mirrored with the final HTML
+  receipt is `playwright-final-metrics-r3b.json`, mirrored with the final HTML
   hash in `checks.json`; `headless-preliminary-metrics-r3.json` is the earlier
   500-pixel run and is not the final 390-pixel PASS receipt.
 - The initial MCP browser request did not return and was terminated. The
@@ -80,8 +80,31 @@ producer was used.
 
 The analysis thread `01a18716-e09c-7b71-93bc-c34b596b10eb` and four native
 children had 133,720 recorded output tokens at 10:35:53, with 809,103
-uncached and 26,755,840 cached input. This is an in-progress count just before
-commit/handoff, not a final billing total. The helper's dated table does not
+uncached and 26,755,840 cached input. This is an intermediate pre-handoff count,
+not a final billing total. The helper's dated table does not
 price its gpt-6.1-sol and gpt-6-luna models. The known QA browser session and
 temporary loopback server were closed after inspection. Root retains main
 integration and user-delivery ownership; this session edits only this folder.
+
+## Final stopping-scope clarification (r3b)
+
+The coordinator's last precision request narrowed the 01:07 wording to
+“ending new research selection” and “the boundary for new discovery
+allocation.” Subsequent proof repair, review, integration and delivery are
+therefore not described as having stopped then. No mathematical result,
+accounting total or counterfactual conclusion changed. The HTML was rebuilt
+and the actual 1440/390 browser checks repeated on that final copy. Its SHA
+is `687264c49d622d0f33aa2daa8a2aa4d5315540052fe140dadb5848d27bb1844f`;
+`checks.json` and `reviewed-inputs.json` now identify that copy. Both known
+QA sessions and their temporary servers were closed after their checks.
+
+Native `/root/postmortem_review` approved the exact r3b inputs and prepared
+message. Its final return is retained verbatim:
+
+> APPROVE hko-postmortem-r3b
+>
+> The wording now clearly distinguishes ending new research selection at 01:07 from the subsequent review, integration, and delivery work. The prepared message remains accurate, and the optimality of that allocation decision is appropriately left unresolved.
+
+The exact candidate, frozen input hashes and native return are in
+`/tmp/msc-math/message-reviews/hko-postmortem-r3b/`. This final approval
+supersedes r3 for delivery; r3 remains evidence of the preceding review.

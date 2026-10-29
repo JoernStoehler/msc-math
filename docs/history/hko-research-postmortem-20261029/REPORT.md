@@ -1,6 +1,6 @@
 # How the exact HKO improvement was obtained
 
-29 October 2026 · research postmortem · r3 · [review: postmortem_review]
+29 October 2026 · research postmortem · r3b · [review: postmortem_review]
 
 The run produced an explicit convex four-polytope with EHZ systolic ratio
 **1.0519141388294875…**, above the Haim–Kislev–Ostrover pentagon-product value
@@ -21,8 +21,8 @@ algorithmic choice available at the time. Neither makes finding the family
 or proving complete capacity coverage trivial.
 
 There is also a remaining allocation question. Delivery of the first report
-was completed, but the inspected evidence does not establish that stopping
-research at 01:07 (before final delivery at 01:22) was the best use of the authorized remaining time and
+was completed, but the inspected evidence does not establish that ending new
+research selection at 01:07 (before final delivery at 01:22) was the best use of the authorized remaining time and
 quota. A concrete continuation of the successful family remained available.
 That is an opportunity-cost uncertainty, not evidence that further research
 would have succeeded. The original run took 2 h 47 min to final delivery; the
@@ -594,7 +594,8 @@ Confidence: high on final presentation; limited on avoidable authoring cost.
 current comparison of the ready next discriminator against the remaining
 resources and other plausible directions.
 
-**What changes:** At the stop boundary, explicitly evaluate the seven- and
+**What changes:** At the boundary for new discovery allocation, explicitly
+evaluate the seven- and
 eight-label stationary branches between \(t=.3\) and \(.5\), using feasible
 witnesses to reject weak candidates before paying for another full
 certificate. Compare that bounded continuation with new hinge shapes and
