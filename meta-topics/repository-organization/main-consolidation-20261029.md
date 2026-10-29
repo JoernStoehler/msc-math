@@ -14,8 +14,8 @@ Main `/workspaces/msc-math` fast-forwarded `38c0488e` → `c6be4c33`, adopting
 and the untracked `meta-topics/project-management/live-task-graph.md` were
 saved in a scoped Git stash and reapplied without conflict. Their useful
 implementation and binding are retained in this consolidation; no unrelated
-sibling worktree is adopted or deleted. The research worktree now has an active
-independent postmortem owner and must be kept.
+sibling worktree is adopted or deleted. The research worktree was kept while its independent postmortem ran; the
+subsequent cleanup is recorded below.
 
 The living [PLAN](../../PLAN.md), [STATUS](../../STATUS.md) and
 [handoff](../project-management/handoff.md) now expose the current result map,
@@ -107,3 +107,14 @@ refactor. The protected PDF, ZIP and proof sources have not changed.
 - Actual main routes resolve: root `README.md` → `docs/research-guide.md` → the report README, and both capacity/QP and variation topic READMEs → that same report. The report's affine-HKO, HKO-ascent, moderate-HKO, and two-hinge proof/certificate files and scoped reviews exist. The guide and topics state the exact finite ratio `1.0519141388294875...`, full affine HKO orbit scope, seventeen-facet ascent, limited first-variation two-hinge result, and separation from the selected MSc thesis.
 
 Main's three pre-existing viewer edits and untracked live-task-graph file remained untouched. This is an integrity and discoverability check after merge, not a new proof audit, full finite rerun, or human acceptance. Root owns the pending project-management reconciliation and final commit.
+
+## Requested worktree cleanup
+
+At Jörn’s 29 October follow-up, the research worktree
+`/home/joern/.codex/worktrees/research-restart-20261028/msc-math` was clean at
+`3fbacd31`, identical to main. `git worktree remove` and ordinary `git branch -d`
+removed it and `research/autonomous-restart-20261028`. All research and analysis
+commits remain in main history. `git worktree prune --dry-run` found no stale
+administrative records. Other sessions’ ten registered worktrees and their
+branches, including the stopped-attempt archive, were preserved. The current
+review link serves main files and is independent of the removed worktree.

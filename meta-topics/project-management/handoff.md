@@ -50,5 +50,6 @@ original run's full API equivalent, per-failed-probe prices, precise depth-grid
 selection criterion and optimal stopping judgment remain unknown as explained
 in the report. No new scientific producer, reset, external spend or cloud run
 was used. Author and root are released after delivery; no analysis monitoring,
-research continuation, thesis adoption or publication is running. Keep the
-research worktree/branch as retained provenance; no cleanup was selected.
+research continuation, thesis adoption or publication is running. At Jörn’s subsequent cleanup request, the clean merged research worktree
+and its branch were removed; all commits remain on main through `3fbacd31`.
+Other sessions’ worktrees and the stopped-attempt archive were preserved.

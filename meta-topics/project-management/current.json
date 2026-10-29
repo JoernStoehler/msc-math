@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-29T10:46:14Z",
+  "updated_at": "2026-10-29T10:56:57Z",
   "scope": "Main consolidation and next-sprint handoff, authorized29Oct09:45:22 through10:15:22UTC with5quota points; independent postmortem has its separate1h/25point grant. No new mathematics, thesis promotion or remote publication selected.",
-  "summary": "Main consolidation and independently reviewed HKO postmortem are complete. The exact improving-body report, causal/cost evidence and counterfactuals are retained and discoverable on main; owners released. Frozen scientific report/ZIP and selected thesis remain unchanged. Further research allocation and thesis acceptance remain open and unassigned.",
+  "summary": "Main consolidation and independently reviewed HKO postmortem are complete. The exact improving-body report, causal/cost evidence and counterfactuals are retained and discoverable on main; owners released. Frozen scientific report/ZIP and selected thesis remain unchanged. Further research allocation and thesis acceptance remain open and unassigned. Requested cleanup removed the clean merged research worktree and branch; all commits remain on main and other sessions’ worktrees are preserved.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -4137,7 +4137,7 @@
       "project": "research-20261028",
       "status": "done",
       "owner": null,
-      "outcome": "Main adopts the three research/discovery commits with original viewer/graph work preserved and completed. Living PLAN/handoff simplified; H_t continuation inputs retained; main artifact/certificate bindings pass; dashboard source contract/validator and8HTTPtests pass; viewer15tests pass. Scientific baseline and thesis remain separately unreconciled. The separate independently reviewed postmortem is now integrated; see its task and retained report.",
+      "outcome": "Main adopts the three research/discovery commits with original viewer/graph work preserved and completed. Living PLAN/handoff simplified; H_t continuation inputs retained; main artifact/certificate bindings pass; dashboard source contract/validator and8HTTPtests pass; viewer15tests pass. Scientific baseline and thesis remain separately unreconciled. The separate independently reviewed postmortem is now integrated; see its task and retained report. On Jörn’s subsequent cleanup request, the clean fully merged research worktree/branch were removed; other sessions’ worktrees were preserved.",
       "depends_on": [
         "restart-main-adoption-20261029"
       ],
@@ -4149,7 +4149,7 @@
         "meta-topics/repository-organization/main-consolidation-20261029.md"
       ],
       "authorization": "Direct Jörn request29Oct09:45: merge/consolidate own work including open work, allow finishing/refactor;30min/5quota points, use subagents. No remote publication selected.",
-      "updated_at": "2026-10-29T10:46:14Z",
+      "updated_at": "2026-10-29T10:56:57Z",
       "next_step": "Use main for the next explicitly selected research sprint; no scientific campaign is running."
     },
     {
@@ -5008,6 +5008,10 @@
     {
       "at": "2026-10-29T10:46:14Z",
       "text": "Integrated the independent exact-HKO outcome postmortem from2ea8b588/a58c055a. Preserved approved report bytes and evidence, added main discovery routes and dashboard sources, verified named-file delivery. Closed author/root assignments; no new science or thesis promotion selected. Unsupported depth-selection, full cost and stopping conclusions remain explicit."
+    },
+    {
+      "at": "2026-10-29T10:56:57Z",
+      "text": "Jörn asked whether git worktree cleanup was complete. Removed the clean research-restart worktree and its fully merged branch using ordinary Git checks; main retains3fbacd31 and all ancestors. Prune dry-run reports no stale records. Other sessions’ ten worktrees and archive branches preserved."
     }
   ]
 }

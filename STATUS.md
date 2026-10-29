@@ -1,6 +1,6 @@
 # Status — msc-math
 
-v1.29 · 2026-10-29 · Main consolidation and postmortem complete
+v1.30 · 2026-10-29 · Main complete; research worktree retired
 
 ## Goal
 The intended outcome is submission and a passing result for Jörn's MSc thesis "Probing Viterbo's conjecture". It has not been submitted to the university; so far it has only received failing grades in preliminary checks (source: Jörn, desk question 6ded353d, 23 Oct). Checks found and their causes: [preliminary checks](docs/preliminary-checks-2026-10-23.md).
