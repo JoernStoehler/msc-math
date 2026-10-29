@@ -1,0 +1,27 @@
+# Final r6 reader delta
+
+29 October 2026, 01:13 UTC. Frozen canonical PDF: `topics/capacity-and-qp/convex-systolic-optimization/paper.pdf`, 56 pages, SHA-256 `a87d422c1ee43ca10454b5c7fa25eeb3f35f1b9ea424734aa501fe6c7e13f0b3`. Read-only review by `/root/assembled_reader_review`; no manuscript edits. This builds on the full-paper reader review at r1 and r4 delta review. I inspected the final PDF text at the abstract, roadmap, §4.5–4.6, §10, Appendices B–C and references; searched the entire extracted text for stale scope language; read the matching source, packet READMEs and scoped reports; and rendered final PDF pages 18 and 49–56 for visual inspection, then verified the sole final TeX/PDF delta on page 44 against the frozen earlier r6 text. Root owns all-56-page inspection. A separate assembled mathematical reviewer owns proof validity.
+
+## Verdict
+
+**Reader pass for the r6 PDF with its promised companion.** The main narrative remains clear: exact `H_{3/10}` improves the HKO benchmark at a finite parameter; the affine HKO bound is sharp in a narrower orbit; seven selected cuts give a seventeen-facet first-order ascent; and the new two-cut result is a different, scoped first-order obstruction. The abstract reasonably leads with the stronger explicit body and leaves the specialized two-cut statement to the results roadmap and §4.6. The source and byline remain appropriately framed as an AI-assisted report prepared for Jörn, with no claim of human refereeing, categorical novelty, world record, global four-dimensional optimum, monotonicity along the cut family, or local maximality for twelve-facet bodies.
+
+The r4 PDF-alone Appendix B caveat is resolved. The final printed Appendix B gives the uniform positive-pivot lemma, norm bounds for the moving chart, Taylor/Lipschitz control, gap-based rounding of near-maximizers to exact base maximizers, the resulting **global** action estimate, and the volume comparison through the stated `t/200` interval. Only finite primitive-gap and constant checks remain in the companion, explicitly identified as such. This is the right computer-assisted division between analytic argument in the PDF and exact finite predicates in the packet.
+
+The new §4.6 and Appendix C are readable and have the necessary quantifiers. Proposition 4.7 assumes a single nonnegative affine hinge on a labeled HKO facet, invariant along that facet's characteristic. Its consequence explicitly retains all ten old inequalities and adds at most two such rows. Appendix C prints quotient coordinates and density, the four literal shortest-word families with complete endpoint weights, the scalar hinge cases, and both distinct-facet and same-facet arguments. It derives nonpositive **first variation** only, and explicitly excludes a twelve-facet neighborhood theorem, higher-order zero-slope claims, and non-invariant hinges. The original seven-cut threshold remains limited to its ten fixed radial profiles; the report does not conflate it with the two-hinge obstruction.
+
+The new printed pages are legible: mathematical displays, the two family tables, and bibliography fit without clipping. Appendix B runs across pages 49–53 with natural breaks; Appendix C begins on page 53 and ends on page 55. Root's separate whole-PDF visual check remains necessary.
+
+## Companion traceability
+
+`certificates/hko-two-hinge/README.md` names the standalone standard-library checker and its declared sibling inputs under `certificates/hko-ascent/`; all exist. Its `MANIFEST.sha256` passed for all listed packet files. `reviews/hko-two-hinge-mathematics.md` records the scoped analytic PASS and names the corrected final proof hash; `reviews/independent-two-hinge/` contains an independently implemented literal checker, expected output and replay receipt. The receipt's old absolute scratch paths are labeled as provenance rather than dependencies. The hko-t03 README now correctly distinguishes completed scoped mathematical/fresh-copy replay PASS from later article review, and its updated manifest passes. I did not rerun either finite program; no new execution was needed for this reader check.
+
+The `README.md` correctly states that the r6 assembled mathematical delta review and root visual/editorial judgment are still open at this review time. The promised same-revision source-and-evidence ZIP and top-level SHA manifest are pending root export. The needed source, figure scripts, exact certificates, reviews, and historical f11 packet are present in the checkout. The final archive must include and hash them; the PDF should travel with it as §10 says. Its absence at this stage is not a contradiction in the printed report or a reason to reject this reader delta.
+
+## Final scope correction
+
+The only source delta after the initial r6 freeze adds “and retaining the original facet inequalities” to the §10 two-hinge summary. I compared the new PDF text with the earlier r6 extraction; only that paragraph reflowed. The new wording matches Proposition 4.7 and Appendix C and is legible on page 44. No other reader-facing change needs a new delta.
+
+## Limits
+
+This is an editorial/evidence-interface pass, not independent proof verification. I did not inspect every rendered page, rerun Sage/C++ or the two-hinge checker, or repeat the bounded literature searches. Agent component PASS reports do not imply external refereeing or Jörn's acceptance. The separate assembled r6 mathematical review and root's complete visual inspection are still required before final delivery.

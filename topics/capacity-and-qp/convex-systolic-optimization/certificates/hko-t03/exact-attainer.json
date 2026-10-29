@@ -1,0 +1,28 @@
+{
+  "parameter": "3/10",
+  "word": [
+    0,
+    1,
+    6,
+    7,
+    3,
+    12,
+    9
+  ],
+  "positive_exact_weights": [
+    "123/8152*u^2 + 1271/8152",
+    "205/8152*u^2 + 697/8152",
+    "205/8152*u^2 + 965/8152",
+    "95/4076*u^2 + 535/4076",
+    "-41/1019*u^2 + 451/2038",
+    "50/1019",
+    "-395/8152*u^2 + 1945/8152"
+  ],
+  "Q": "205/1019*u",
+  "capacity_if_upper_bound_passes": "-1019/2050*u^3 + 1019/205*u",
+  "volume": "-99664289/260891200*u^2 + 300748771/52178240",
+  "ratio_if_upper_bound_passes": "-10215144983296281/101526851561587210*u^2 + 112189738379624723/101526851561587210",
+  "ratio_numeric": 1.0519141388294875,
+  "improvement_numeric": 0.004700543329529324,
+  "status": "Exact feasible attainer and exact volume; global capacity upperQ bound remains separate."
+}

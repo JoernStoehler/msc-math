@@ -22,18 +22,18 @@
 \newcommand{\EHZ}{\mathrm{EHZ}}
 \title{Convex reductions in symplectic systolic optimization}
 \author{AI-assisted research report prepared for Jörn Stöhler}
-\date{29 October 2026\\Report revision 2026-10-29-r3}
+\date{29 October 2026\\Report revision 2026-10-29-r6}
 \begin{document}
 \maketitle
 \begin{abstract}
-The pentagon product of Haim--Kislev and Ostrover violates Viterbo's
-volume--capacity inequality, but sharp optimization remains meaningful within
-specified geometric classes. We prove that this product maximizes the EHZ
-systolic ratio over its entire affine orbit, with equality only at symplectic
-similarities. A coordinated twenty-row inward deformation nevertheless has a
-strictly positive first variation of the ratio and an explicit improving
-parameter. Seven of its ten cuts suffice for a seventeen-facet ascent, so the
-product is not a local maximizer among all convex four-bodies.
+The pentagon product $H$ of Haim--Kislev and Ostrover violates Viterbo's
+volume--capacity inequality. We give an explicit twenty-facet intersection
+$H_{3/10}$ with exactly computed EHZ capacity and volume, and systolic ratio
+$1.051914\ldots>(3+\sqrt5)/5=\rho(H)$. Yet $H$ maximizes the ratio over its
+entire affine orbit, with equality only at symplectic similarities. Separately,
+the same cut family has strictly positive first variation at $H$; any seven
+of its ten cuts yield a seventeen-facet ascent. Thus $H$ is not a local
+maximizer among all convex four-bodies.
 
 For a product of two triangles, every affine position retaining Lagrangian
 factor planes has ratio at most $2/3$, sharply, while an explicit rational
@@ -85,13 +85,16 @@ shows, for a different product of two triangles, that leaving Lagrangian
 position can strictly improve the ratio.
 
 Section~\ref{sec:hko-ascent} studies a different deformation space:
-simultaneous inward facet splittings. Its exact first variation and complete
-shortest-word catalogue yield a positive derivative at the pentagon product.
-The appendix proves the general variation formula used there. The derivative
-establishes existence of improving bodies arbitrarily close to the product;
-the weighted response shows that any seven of the ten chosen cuts suffice.
-For the original twenty-facet family, a quantitative remainder also certifies
-the parameter $t=10^{-30}$, with a deliberately tiny relative gain.
+simultaneous inward facet splittings. An exact capacity and volume
+computation for its twenty-facet member $H_{3/10}$ gives ratio
+$1.051914\ldots$, strictly above the pentagon product. A separate
+first-variation calculation establishes improving bodies arbitrarily close
+to the product; its weighted response shows that any seven of the ten cuts
+suffice for a seventeen-facet ascent. For arbitrary affine cuts constant
+along their own facet characteristics, one or two added rows have
+nonpositive first variation; this is not a twelve-facet neighborhood theorem.
+The appendices prove the general variation formula, a quantitative
+near-zero action remainder, and the two-cut obstruction.
 
 Section~\ref{sec:simplex-sharp} gives a graph proof of the sharp
 four-simplex bound $\rho\leq3/4$. Haim--Kislev established the bound in her
@@ -143,8 +146,18 @@ which will be proved separately wherever it is used.
 \input{sections/affine-hko}
 \input{sections/triangle-position}
 \input{sections/hko-ascent}
+\input{sections/hko-moderate}
 \input{sections/hko-seventeen-facets}
-\input{sections/hko-effective-step}
+\input{sections/hko-two-hinge-main}
+
+\paragraph{Quantitative near-zero control.}
+A uniform quadratic remainder for the true global optimal action makes the
+positive first variation effective. For the original family with all ten
+unit cuts it certifies $\rho(H_t)/\rho(H)>1+t/200$ when
+$0<t\leq10^{-30}$. The pivot-and-rounding proof in
+Appendix~\ref{sec:hko-effective} illustrates a quantitative sensitivity
+method; this bound is not asserted for the seventeen-facet subfamilies.
+
 \input{sections/simplex}
 \input{sections/sixdim-simplex}
 \input{sections/sixdim-global}
@@ -160,11 +173,15 @@ support-function and Pfaffian problem. It yields the full-affine pentagon
 bound and both simplex bounds. In four dimensions the simplex interaction
 graph admits a direct proof; in six dimensions the global equality theorem
 also depends on an exact cdd/PPL vertex classification. These are class
-bounds, while the pentagon ascent uses a different reduction: labeled
-shortest-orbit measures turn simultaneous cuts into a first-variation
-problem. Seven selected cuts give seventeen facets; the original twenty-facet
-family also has an explicit but tiny improving step. The ascent leaves the
-unrestricted four-dimensional optimum open.
+bounds, while the HKO intersection uses a complete exact capacity computation
+at one moderate parameter. The separate first-variation reduction uses
+labeled shortest-orbit measures: seven selected cuts give a seventeen-facet
+ascent near $H$, while adding two arbitrary characteristic-invariant affine
+hinges and retaining the original facet inequalities cannot give positive
+first variation. The latter is a scoped first-order
+statement, not a local-maximality theorem for all twelve-facet bodies.
+Neither calculation determines the unrestricted
+four-dimensional optimum or the maximum along the twenty-facet family.
 
 The planar results use geometric rather than action-polytope reductions.
 Shadow deformations and confocal paraboloids give a sharp difference-area
@@ -176,7 +193,7 @@ actual minimizing partner and bounds for intersections of three or more
 confocal paraboloids remain open here.
 
 \paragraph{Source and data availability.}
-This PDF is report revision \texttt{2026-10-29-r3} and is to travel with its
+This PDF is report revision \texttt{2026-10-29-r6} and is to travel with its
 same-revision source-and-evidence companion archive. That archive supplies
 the LaTeX source, figure sources, exact inputs and replay programs under
 \path{certificates/}, scoped reviews, and an SHA-256 file manifest. The
@@ -188,6 +205,8 @@ finite predicates; the geometric implications are the written proofs here.
 \clearpage
 \appendix
 \input{sections/multicut}
+\input{sections/hko-effective-step}
+\input{sections/hko-two-hinge-appendix}
 
 \bibliographystyle{abbrv}
 \bibliography{references}

@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-29T01:06:44.448141+00:00",
+  "command": "python check-two-hinge-literals.py > two-hinge-literals.out",
+  "exit_code": 0,
+  "method": "Independent standard-library Q(tau) arithmetic; tau root isolated by rational bisection. No imports from submitted certificate. The helper prefix in check-weighted-witness.py is a necessary local dependency.",
+  "source_hashes": {
+    "/tmp/msc-math/restart/assembled-math-review/check-two-hinge-literals.py": "8226dfe03c4ae4419d1afd980f744ad57c5e808d0636263399ee7b4fba2cddfd",
+    "/tmp/msc-math/restart/assembled-math-review/check-weighted-witness.py": "a372bf6309a86480a5e5530c2ab7396952a3add8841aa37945f0ffe1ccb6de71",
+    "/tmp/msc-math/restart/assembled-math-review/two-hinge-literals.out": "3b4ed533785084ff310dd7a6e2d98847446aa52e02ad391e24b87e7d716a7fb3",
+    "/tmp/msc-math/restart/multicut/two-arbitrary-hinges/two-hinge-obstruction.tex": "e20b6fc6a49ac3cf04cf56299249ff667d00e0e6234c6c501faa21cba1674d94"
+  },
+  "scope": "Literal printed family tables, exact containment/KKT/coordinates/action, and scalar identities/signs. Analytic implications reviewed separately."
+}

@@ -1,0 +1,142 @@
+% Owned contribution: geometry_frontiers. Insert after the HKO ascent section.
+% Uses eq:ha-family and the article's standard macros. Citation: Lawrence1991.
+\subsection{An explicit finite improvement}
+\label{subsec:hko-finite-improvement}
+
+The same fixed family also gives a visible improvement at a moderate
+parameter; this does not follow from the positive derivative alone.
+For $H_t$ in \eqref{eq:ha-family}, we certify the capacity at $t=3/10$.
+The capacity decreases slightly, but the volume decreases by enough to raise
+the systolic ratio.
+
+\begin{theorem}[A twenty-facet improvement of HKO]
+\label{thm:hko-finite-improvement}
+Let $K=H_{3/10}$ and $\tau=\tan(\pi/5)$. Then $K$ is a simple convex
+four-polytope with twenty facets and seventy-five vertices, and
+\[
+ c_{\EHZ}(K)=\frac{1019}{410\tau}
+           =\frac{1019}{1025}c_{\EHZ}(H),\qquad
+ \Vol_4(K)=\frac{502711205+99664289\sqrt5}{130445600}.
+\]
+Its systolic ratio satisfies
+\[
+ \rho(K)=1.0519141388294875\ldots
+        >\rho(H)=\frac{3+\sqrt5}{5}.
+\]
+More precisely,
+\[
+ \rho(K)-\rho(H)
+ =\frac{7965280+4064064\sqrt5}
+        {5(502711205+99664289\sqrt5)}>0.
+\]
+\end{theorem}
+
+This is a complete capacity computation for one body, rather than an
+upper bound obtained from one closed characteristic. It does not optimize
+$t$ or assert a sharp upper bound for all convex bodies.
+
+\begin{proof}
+Write the twenty support-normalized normals as
+\[
+ N=(a_0,\ldots,a_9,a_0+\tfrac3{10}D_0,\ldots,
+                    a_9+\tfrac3{10}D_9).
+\]
+Denote the row with label $i\in\{0,\ldots,19\}$ by $n_i$.
+The exact calculation uses the number field
+$\mathbb Q(\tau)$ with $\tau^4-10\tau^2+5=0$ and $0<\tau<1$.
+We describe both the finite predicates and the argument that makes them
+complete.
+
+\emph{Geometry.}
+Solving every invertible four-row subsystem of $Nx\leq\mathbf1$ and testing
+all twenty inequalities gives seventy-five vertices. Exactly four linearly
+independent rows are active at every vertex, and all twenty labels occur.
+This proves simplicity and that every listed inequality defines a genuine
+facet. It also determines all nonempty pairwise facet intersections.
+
+\emph{Which words need checking.}
+Haim--Kislev's geometric simple-minimizer theorem~\cite[Theorem~1.5]{HK2017} provides a minimizing
+characteristic using each facet velocity at most once. Consecutive facet
+labels $i,j$ must meet and satisfy $\omega(n_i,n_j)\geq0$: the arriving
+segment reaches the $j$th support hyperplane from inside the body.
+The exact transition graph has $120$ directed edges, including zero-pairing
+edges. Thus some capacity-maximizing word is a simple cycle of this graph.
+
+For a word, let $C\beta=e$ be closure and normalization, and let
+$Q(\beta)=\tfrac12\beta^{\mathsf T}G\beta$. If
+$z\in\ker C$ has $z^{\mathsf T}Gz>0$, the word cannot have an interior
+maximum. Zero extension of $z$ gives the same obstruction for every
+larger word containing it in cyclic order. The certificate verifies
+$77\,927$ symmetry representatives of such obstructions by exact nullspace
+and quadratic-form calculations. Cyclic invariance on the constraint
+kernel follows from closure; the twenty symmetry actions are checked exactly.
+
+An integer depth-first traversal then enumerates all simple cycles, stopping
+only at a certified obstructed prefix. Every remaining cycle occurs in the
+checked list. The traversal covers $43\,110$ cycles, represented by $2326$
+words after symmetry, with no unaccounted cycle. This coverage check uses no
+floating-point curvature decision.
+
+\emph{The scalar maximum on each remaining word.}
+Deleting zero weights from the geometric maximizing word places it in the
+relative interior of its searched active cycle. Thus boundary maxima are
+covered by their positive support.
+After removing dependent equality constraints, every interior maximum obeys
+\[
+ G\beta+C^{\mathsf T}\lambda=0,\qquad C\beta=e.
+\]
+For an invertible KKT matrix the solution is computed exactly; a negative
+weight excludes that stationary point. Singular systems are handled as
+affine families. Their objective is constant: a kernel element $(z,\eta)$
+satisfies $Cz=0$, $Gz+C^{\mathsf T}\eta=0$, and hence $e\cdot\eta=0$.
+Consequently $Q=-e\cdot\lambda/2$ has the same value throughout the family.
+
+Of the $1030$ singular families, $984$ have objective at most the target
+$205\tau/1019$. Another $21$ are infeasible by the elementary inclusion
+\[
+ \frac{25}{28}H\subset K,
+ \qquad Q_{\max}(K)\leq\frac\tau5\left(\frac{28}{25}\right)^2.
+\]
+Indeed, every moving normal has support at most
+$1+(2/5)(3/10)=28/25$ on $H$.
+The remaining $25$ families are proved infeasible by exact vertex enumeration
+in their free parameters. This is exhaustive: their nonnegative weights
+would lie in the compact simplex, the parameter map is injective, and any
+nonempty bounded parameter polyhedron has a vertex determined by independent
+active zero-weight equations. Thus no singular or flat family is omitted.
+The resulting global upper bound is
+\[
+ Q_{\max}(K)\leq\frac{205}{1019}\tau.
+\]
+
+Equality is witnessed by the word $(0,1,6,7,3,12,9)$ with positive weights
+\[
+ \frac1{8152}\bigl(
+ 1271+123\tau^2,\ 697+205\tau^2,\ 965+205\tau^2,\
+ 1070+190\tau^2,\ 1804-328\tau^2,\ 400,\
+ 1945-395\tau^2\bigr).
+\]
+The exact checks verify closure, normalization, positivity, and objective
+$205\tau/1019$. The Haim--Kislev formula therefore gives the claimed capacity.
+
+\emph{Volume and ratio.}
+For a simple four-polytope, Lawrence's formula~\cite{Lawrence1991} is
+\[
+ \Vol_4(K)=\frac1{4!}\sum_v
+ \frac{(\ell\cdot v)^4}
+ {|\det N_{I(v)}|\prod_{j=1}^4(\ell N_{I(v)}^{-1})_j},
+\]
+where $I(v)$ lists the four active normals and $\ell$ is nonconstant on every
+edge. Exact evaluations with $\ell=(1,2,4,8)$ and $(1,3,9,27)$ have nonzero
+denominators and agree with the stated volume. Substituting the capacity
+and simplifying in $\mathbb Q(\sqrt5)$ proves the displayed positive ratio
+difference.
+\end{proof}
+
+The portable certificate at \path{certificates/hko-t03/README.md}
+reconstructs the twenty normals, validates the
+integer transition graph, checks every curvature exclusion and stationary
+family, verifies the positive attaining weights, and recomputes the volume.
+The coverage proof is independent of the numerical search that proposed the
+word list. The computation concerns the exact algebraic body $H_{3/10}$;
+it does not replace it by rounded input data.

@@ -1,79 +1,311 @@
-% Quantitative companion to the twenty-row family, subject to root integration.
-% Include only with the audited effective-step.md/minor-bound.md companion
-% and check_effective_constants.py + constants-PASS.json in the replay package.
-% Reconcile earlier statements that no explicit parameter has been certified.
-\subsection{An effective remainder and an explicit small step}
-\label{subsec:hko-effective}
+\section{A quantitative near-zero remainder for the HKO cuts}
+\label{sec:hko-effective}
 
 The derivative argument can be made effective without enumerating all
-twenty-row permutations. The resulting numerical step is deliberately tiny;
-its value is a quantitative control of the true capacity, rather than a
-material increase in the counterexample's ratio.
+twenty-row permutations. Its numerical step is deliberately tiny and
+illustrates quantitative control of the true capacity. The separate exact
+computation in Theorem~\ref{thm:hko-finite-improvement} gives a substantially
+larger ratio increase at a moderate parameter.
 
 \begin{proposition}[Effective improvement]\label{prop:hko-effective}
-For the twenty-row family~\eqref{eq:ha-family},
+For the original family~\eqref{eq:ha-family}, with all ten unit-speed cuts,
 \[
  \frac{\operatorname{sys}(H_t)}{\operatorname{sys}(H)}
        >1+\frac{t}{200},\qquad 0<t\leq10^{-30}.
 \]
-In particular, $t=10^{-30}$ is an explicit improving parameter.
 \end{proposition}
 
-\begin{proof}[Quantitative argument]
-We state the estimates that connect the exact base certificate to the
-finite step; the accompanying quantitative proof supplies the pivot and
-rounding details and the exact arithmetic checks.
-Put $q(t)=1/(2c_{\mathrm{EHZ}}(H_t))$ and $q_0=\tau/5$.
-The minimum positive loss among the 3000 primitive triangle-pair actions is
-\[
- \Delta=\frac{-\tau+3\tau^3}{20}>\frac1{50}.
-\]
-Every feasible weight vector on the moving twenty-row bank with
-$Q_t\geq q_0/2$ and $0\leq t\leq10^{-3}$ has five positive pivot
-coordinates bounded below by $1/4500$, with
-the inverse augmented base minor bounded by $200$ in infinity norm.
-Now fix a moving global maximizer with $0<t\leq10^{-30}$.
-Repairing closure through that minor gives a base-feasible vector $\beta_0$.
-The elementary chart bounds below first give
-$d=q_0-Q_0(\beta_0)<10^{-20}$. Decomposing its two factor weights into their at
-most forty occurrence-wise triangle vertices and deleting small marginal
-weights gives an exactly maximizing vector on the same word within
-$2000\sqrt d$ in $\ell^1$ norm. The gap $\Delta$ ensures that all retained
-triangle pairs are winning. For the stated parameter range this rounding
-preserves positivity of the selected pivot.
+We give the analytic estimates, including the uniform pivot and the passage
+from near-maximizers to exact base maximizers. The finite primitive action
+gap and rational constant comparisons have an exact replay; see
+\path{certificates/hko-ascent/README.md}.
 
-The smooth pivot chart has Taylor remainder at most $4\cdot10^9t^2$,
-and its first-derivative function is $17600$-Lipschitz in the base weights.
-At an exact optimizer that derivative is at most $2q_0/125$ by the already
-proved all-word response bound. Completing the square in
-$-d+35200000t\sqrt d$ yields the global estimate
+Put $q(t)=1/(2c_{\EHZ}(H_t))$, $q_0=\tau/5$, and
+$V_0=\Vol_4(H)$. The twenty presentation rows have the form
+$a_r+tD_r$: one copy of each base normal has $D_r=0$, and its other copy
+has the velocity in~\eqref{eq:ha-directions}. A simple word in this bank
+therefore contains at most two occurrences of each base normal. For an
+ordered word, let
 \[
- q(t)\leq q_0+\frac{2q_0}{125}t+10^{15}t^2,
- \qquad 0<t\leq10^{-30}.
+ B_r(t)=(a_r+tD_r,1),\qquad e=(0,0,0,0,1)^{\mathsf T},
+ \qquad Q_t(\beta)=\tfrac12\beta^{\mathsf T}G_t\beta,
 \]
-This bounds the true optimal action from above, hence the capacity from
-below; it is not a feasible-branch capacity upper bound.
+where $G_t$ is the symmetric ordered-action matrix. Write $D$ for the
+matrix whose columns are $(D_r,0)$. Feasibility means
+$B(t)\beta=e$ and $\beta\geq0$. The Haim--Kislev formula supplies a
+maximizing simple word for every $t$, while $H_t\subset H$ gives
+$q(t)\geq q_0$. The all-word response bound proved in
+Lemma~\ref{lem:ha-repeat} and Proposition~\ref{prop:ha-certificate} implies
+that every exactly maximizing base word with a feasible smooth
+continuation has action derivative at most
+\begin{equation}\label{eq:he-base-derivative}
+ g_*=\frac{2q_0}{125}.
+\end{equation}
+Indeed, the midpoint identity~\eqref{eq:mc-midpoint} makes that derivative
+$2q_0\sum_r\beta_rD_r\cdot x_r^{\rm mid}$, bounded by $2q_0$ times the
+total radial-hinge response. Repeated occurrences are covered by the
+proved reduction, not by an assumption that all maximizers are simple.
+The exact primitive calculation also gives
+\begin{equation}\label{eq:he-primitive-gap}
+ \Delta=\frac{-\tau+3\tau^3}{20}>\frac1{50}
+\end{equation}
+as the minimum positive loss from $q_0$ among the $3000$ triangle-pair
+cyclic six-orders. These finite predicates are checked in the companion;
+the following implications are analytic.
 
-On each original facet the new gauge is at least $1+tf_i$.
-Since $0\leq f_i\leq2/5$, the radial volume formula gives
+\begin{lemma}[A positive pivot for moving near-maximizers]
+\label{lem:he-pivot}
+Let $0\leq t\leq10^{-3}$, and let a feasible nonnegative simple word on the
+twenty-row bank have $Q_t(\beta)\geq q_0/2$. Five positive coordinates
+$I$ have weights greater than $1/4500$, and their augmented base columns
+form an invertible matrix $B_I(0)$ satisfying
 \[
- \frac{\operatorname{Vol}(H_t)}{\operatorname{Vol}(H)}
+ |\det B_I(0)|>\tfrac12,\qquad
+ \|B_I(0)^{-1}\|_2<66,\qquad
+ \|B_I(0)^{-1}\|_\infty<200.
+\]
+\end{lemma}
+
+\begin{proof}
+Let $N=\sqrt5-1=|a_r|$. Both retained and moved rows obey
+$|D_r|\leq\sqrt{1+(3N/5)^2}<5/4$, while $N<5/4$.
+Bilinearity and $\sum_{r<s}\beta_r\beta_s\leq1/2$ give
+\[
+ |Q_t(\beta)-Q_0(\beta)|
+ \leq\frac{25}{16}t+\frac{25}{32}t^2
+ <\frac1{60}<\frac{q_0}{6}.
+\]
+Here $Q_0(\beta)$ uses the base normals but need not have base closure.
+Thus $Q_0(\beta)>q_0/3>1/30$. If $s$ is the total $q$-factor mass,
+write $Q_0=s(1-s)B(x,y)$ for normalized occurrence distributions in
+the two factors. Each cross pairing has absolute value at most
+$N^2<25/16$, so $|B(x,y)|\leq25/16$ and
+\[
+ s,1-s\geq s(1-s)>\frac8{375}.
+\]
+
+Perturbed closure gives the base residual directly, including the
+retained rows with zero velocity:
+\[
+ \left\|\sum_r\beta_ra_r\right\|
+ =t\left\|\sum_r\beta_rD_r\right\|
+\leq\tfrac54t\leq2t.
+\]
+After division by either factor mass, the mean residual of its
+normalized pentagon-direction distribution is at most
+$2t/(8/375)\leq3/32<1/8$. Passing from normals of length $N>1$
+to unit normals only decreases it.
+
+Aggregate each normalized factor distribution by its five normal
+directions and order those masses decreasingly. Let $r$ be the sum of
+the three smallest. The resultant of the two largest unit directions
+has norm at least $(1-r)\cos72^\circ>(1-r)/4$; the other three
+contribute at most $r$ in the opposite direction. A mean norm below
+$1/8$ therefore forces $r>1/16$. Each of the three largest masses is
+at least $r/3>1/48$. Multiplying by the factor mass gives aggregate
+weight greater than $1/2250$ on each chosen direction. At most two row
+occurrences represent one direction, so one occurrence has weight
+greater than $1/4500$.
+
+Choose two distinct $q$ directions and three distinct $p$ directions
+among these. Their five augmented columns are independent. The
+absolute determinant is the product of a two-normal planar determinant
+$N^2|\sin(k\pi/5)|>1/2$ and a three-normal affine determinant, which
+has one of the exact values $(5\tau+\tau^3)/2$ or $5\tau-\tau^3$,
+both greater than one. Thus the five-column determinant exceeds
+$1/2$. Each augmented column has norm
+$\sqrt{1+N^2}=\sqrt{7-2\sqrt5}<8/5$. Hadamard's inequality bounds
+each cofactor by $(8/5)^4<6.56$ and the adjugate's Frobenius norm by
+$32.8$. Dividing by the determinant yields
+$\|B_I(0)^{-1}\|_2<66$ and hence
+$\|B_I(0)^{-1}\|_\infty<200$.
+The argument is independent of word order and includes zero-velocity
+old rows. For completeness, perturbing these five columns by
+$tD_I$ changes their determinant by at most
+$5(5/4)t(1.61)^4<1/8$ on the stated interval; the moving minor also
+stays invertible.
+\end{proof}
+
+\begin{proof}[Proof of Proposition~\ref{prop:hko-effective}]
+Fix $0<t\leq10^{-30}$ and a simple word attaining $q(t)$, with weights
+$\beta_t$. It satisfies the lemma because $q(t)\geq q_0$.
+Set $M=200$, and keep the nonpivot weights $z=(\beta_t)_J$ fixed.
+Solve the five pivot weights for $0\leq s\leq t$ by
+\begin{equation}\label{eq:he-chart}
+ \beta_I(s)=B_I(s)^{-1}\bigl(e-B_J(s)z\bigr),\qquad
+ \beta_J(s)=z.
+\end{equation}
+Let $\beta_0=\beta(0)$. Since $B(0)\beta_t=e-tD\beta_t$,
+\[
+ \beta_{0,I}-(\beta_t)_I
+       =tB_I(0)^{-1}D\beta_t.
+\]
+The last row of $D$ is zero. Using $|D_r|<2$ gives an infinity-norm
+change at most $2Mt$. Hence every pivot of $\beta_0$ exceeds
+$1/4500-400\cdot10^{-30}>c:=10^{-4}$. The other weights are unchanged;
+$\beta_0$ is a base-feasible probability vector on the same word.
+
+Here are uniform chart bounds, valid more generally for
+$0\leq s\leq10^{-8}$. The infinity norm of the five-column
+perturbation matrix is at most ten. The Neumann bound gives
+$\|B_I(s)^{-1}\|_\infty\leq2M$. The exact difference and differentiated
+constraint equations are
+\[
+ \begin{aligned}
+ \beta_I(s)-\beta_{0,I}&=-sB_I(s)^{-1}D\beta_0,\\
+ \beta'_I(s)&=-B_I(s)^{-1}D\beta(s),\\
+ \beta''_I(s)&=-2B_I(s)^{-1}D_I\beta'_I(s).
+ \end{aligned}
+\]
+Thus $\|\beta(s)\|_1\leq1+20Ms<2$,
+$\|\beta'(s)\|_1\leq40M$, and
+$\|\beta''(s)\|_1\leq1600M^2$. For the last bound, each
+coordinate of $\beta'_I$ has magnitude at most $8M$, each
+coordinate of $\beta''_I$ at most $320M^2$, and there are five.
+These estimates concern the algebraic chart; its weights need not
+stay positive throughout the larger auxiliary interval.
+
+Put $F(s)=Q_s(\beta(s))$. Each moving normal has norm below two there,
+so entries of $G_s,G'_s,G''_s$ are bounded in absolute value by
+$4,8,8$, respectively. Differentiation gives
+\[
+\begin{aligned}
+ |F''(s)|
+ &\leq4\bigl[(40M)^2+2(1600M^2)\bigr]\\
+ &\quad+2\cdot8\cdot(40M)\cdot2+\tfrac12\cdot8\cdot2^2\\
+ &=19200M^2+1280M+16<2\cdot10^5M^2.
+\end{aligned}
+\]
+With $R=10^5M^2=4\cdot10^9$, Taylor's theorem yields
+\begin{equation}\label{eq:he-taylor}
+ q(t)=F(t)\leq Q_0(\beta_0)+t\,g(\beta_0)+Rt^2,
+\end{equation}
+where $g$ is the derivative at zero of the fixed-pivot algebraic
+chart. For any base-feasible probability vector $\beta$ on this word,
+\[
+ g(\beta)=\tfrac12\beta^{\mathsf T}G'_0\beta
+                 +(G_0\beta)\cdot u(\beta),\qquad
+ u_I(\beta)=-B_I(0)^{-1}D\beta,\quad u_J=0.
+\]
+The bounds $\|u(\beta)\|_1\leq10M$,
+$\max|G_0|\leq4$, and $\max|G'_0|\leq8$ imply
+\begin{equation}\label{eq:he-lipschitz}
+ |g(\beta)|\leq4+40M\leq44M,\qquad
+ |g(\beta)-g(\beta')|\leq88M\|\beta-\beta'\|_1
+\end{equation}
+for base-feasible probability vectors $\beta,\beta'$ on this word.
+The direct quadratic term contributes at most $8\|\beta-\beta'\|_1$;
+the other term contributes at most $80M\|\beta-\beta'\|_1$.
+
+Let $d=q_0-Q_0(\beta_0)\geq0$. From $q(t)\geq q_0$,
+\eqref{eq:he-taylor}, and~\eqref{eq:he-lipschitz},
+\begin{equation}\label{eq:he-small-deficit}
+ d\leq44Mt+Rt^2<10^{-20},
+ \qquad Q_0(\beta_0)>q_0/2.
+\end{equation}
+We now round $\beta_0$ to an exact maximizing base word without
+changing its order or losing the positive pivot.
+
+Let $s$ be its $q$-factor mass and let $u,v$ be its normalized
+factor weights. Each occurrence-wise planar closure polytope has at
+most forty vertices: each vertex uses one of five closing triangles
+and one of at most two occurrences of each of its three normals.
+The same count holds for a subword, which defines a face of the
+full occurrence polytope. Write convex decompositions
+$u=\sum_i\lambda_i u_i$ and $v=\sum_j\gamma_jv_j$, with at most forty
+vertices per factor. If $q_{ij}$ is the action of triangle pair
+$(u_i,v_j)$ at balanced factor mass in this fixed order, put
+$S=\sum_{ij}\lambda_i\gamma_jq_{ij}$. Then
+\begin{equation}\label{eq:he-deficit}
+ Q_0(\beta_0)=4s(1-s)S,\qquad
+ d=4q_0(s-\tfrac12)^2+4s(1-s)(q_0-S).
+\end{equation}
+Every $q_{ij}\leq q_0$, and every strict loss is at least
+$\Delta$ from~\eqref{eq:he-primitive-gap}. As
+$Q_0(\beta_0)>q_0/2$, we have $4s(1-s)>1/2$.
+If $\varepsilon$ is the total product mass of nonwinning pairs,
+\begin{equation}\label{eq:he-bad-mass}
+ \varepsilon\leq\frac{q_0-S}{\Delta}\leq\frac{2d}{\Delta},
+ \qquad 2|s-\tfrac12|\leq\sqrt{d/q_0}.
+\end{equation}
+
+For $\varepsilon>0$, delete from each marginal every vertex whose
+coefficient is less than $2\sqrt\varepsilon$ and renormalize.
+At most forty vertices are deleted per marginal, so the discarded
+mass is at most $80\sqrt\varepsilon<1$ by
+\eqref{eq:he-small-deficit}. A surviving bad pair would have product
+mass at least $4\varepsilon$, contradicting the definition of
+$\varepsilon$. Thus all surviving pairs win. If $\varepsilon=0$,
+keep the original positive supports. Denote the resulting mixtures
+by $u^*,v^*$ and put $\beta^*=(u^*/2,v^*/2)$ on the same ordered
+occurrences. It is base-feasible and $Q_0(\beta^*)=q_0$.
+Each marginal changes by at most $160\sqrt\varepsilon$ in
+$\ell^1$, so~\eqref{eq:he-bad-mass} gives
+\begin{equation}\label{eq:he-rounding}
+ \|\beta_0-\beta^*\|_1
+ \leq 2|s-\tfrac12|
+       +\tfrac12\|u-u^*\|_1+\tfrac12\|v-v^*\|_1
+ \leq\left(\frac1{\sqrt{q_0}}
+             +160\sqrt{\frac2\Delta}\right)\sqrt d
+ \leq2000\sqrt d.
+\end{equation}
+By~\eqref{eq:he-small-deficit}, this is less than
+$2\cdot10^{-7}<c/2$. Every selected pivot weight of $\beta^*$
+is therefore positive. The same fixed-pivot chart gives a feasible
+smooth continuation through this exact base maximizer.
+Its derivative obeys~\eqref{eq:he-base-derivative}, and
+\eqref{eq:he-lipschitz}--\eqref{eq:he-rounding} give
+\[
+ g(\beta_0)\leq g_*+A\sqrt d,\qquad
+ A=88M\cdot2000=35\,200\,000.
+\]
+This applies the response bound only to an exact maximizing word;
+the near-maximizer is handled by the quantified rounding.
+
+Substituting into~\eqref{eq:he-taylor} and maximizing
+$-d+At\sqrt d$ over $d\geq0$ by completing the square gives a
+bound for the \emph{true global} action:
+\begin{equation}\label{eq:he-global-action}
+ q(t)\leq q_0+g_*t+(A^2/4+R)t^2
+       \leq q_0+\frac{2q_0}{125}t+10^{15}t^2.
+\end{equation}
+Indeed $A^2/4+R=309\,764\,000\,000\,000<10^{15}$.
+No selected feasible branch is substituted for the global optimum.
+
+For volume, on an old facet the gauge of $H_t$ is at least
+$1+tf_i$, because the old and moved rows both occur. Other
+inequalities only increase the gauge. The normalized cone-volume
+measure $\nu$ of~\eqref{eq:mc-nu} and the radial volume formula yield
+\[
+ \frac{\Vol_4(H_t)}{V_0}
  \leq\int(1+tf)^{-4}\,d\nu
  \leq1-4\nu[f]t+\frac85t^2.
 \]
-Using $q_0>1/10$ and the exact value of $\nu[f]$, the two estimates imply
+Here $0\leq f_i\leq2/5$, and the second derivative of
+$(1+u)^{-4}$ is at most twenty for $u\geq0$.
+Put $a=2/125$, $v=4\nu[f]$, and use~\eqref{eq:ha-volume}:
 \[
- \frac{q(t)^2\operatorname{Vol}(H_t)}
-      {q_0^2\operatorname{Vol}(H)}
- \leq1-\frac{20+64\sqrt5}{9375}t+4\cdot10^{16}t^2
- <1-\frac{t}{200}.
+ \eta:=v-2a=\frac{20+64\sqrt5}{9375}>\frac1{100}.
 \]
-Taking reciprocals and using $\operatorname{sys}=1/(8q^2\operatorname{Vol})$
-proves the claim.
+As $q_0>1/10$, \eqref{eq:he-global-action} gives
+\[
+ \left(\frac{q(t)}{q_0}\right)^2
+ \leq(1+at+10^{16}t^2)^2
+ \leq1+2at+3\cdot10^{16}t^2.
+\]
+Multiplying this nonnegative bound by the volume bound and
+discarding only negative cross terms gives
+\[
+ \frac{q(t)^2\Vol_4(H_t)}{q_0^2V_0}
+ \leq1-\eta t+4\cdot10^{16}t^2
+ <1-\frac{t}{200},
+\]
+because $4\cdot10^{16}t<1/200$ on the stated interval.
+Finally $\operatorname{sys}(H_t)=1/(8q(t)^2\Vol_4(H_t))$,
+so taking reciprocals proves the proposition.
 \end{proof}
 
-At $t=10^{-30}$ the certified lower bound on relative gain is
-$5\cdot10^{-33}$.
-The useful additional ingredient is the uniform quadratic remainder for
-the global optimal action. Finding a useful larger parameter or the maximum
-along this family remains a separate capacity problem.
+At $t=10^{-30}$ this gives only the certified lower bound
+$5\cdot10^{-33}$ on relative gain. The reusable ingredient is the
+uniform quadratic remainder for the global optimal action; determining
+the maximum along the family remains a separate problem.

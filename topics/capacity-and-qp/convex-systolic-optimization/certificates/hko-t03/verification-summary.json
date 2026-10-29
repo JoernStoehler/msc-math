@@ -1,0 +1,13 @@
+{
+  "verified_finite_predicates": true,
+  "parameter": "3/10",
+  "facets": 20,
+  "capacity": "1019/(410*tau)",
+  "capacity_relative_to_HKO": "1019/1025",
+  "Qmax": "205/1019*u",
+  "volume": "-99664289/260891200*u^2 + 300748771/52178240",
+  "systolic_ratio": "-10215144983296281/101526851561587210*u^2 + 112189738379624723/101526851561587210",
+  "systolic_ratio_numeric": 1.0519141388294875,
+  "improvement_over_HKO_numeric": 0.004700543329529324,
+  "mathematical_coverage": "COVERAGE-PROOF.md; independently audit published geometric simple-minimizer premise, cyclic curvature inheritance, graph enumeration and singular-family feasibility."
+}

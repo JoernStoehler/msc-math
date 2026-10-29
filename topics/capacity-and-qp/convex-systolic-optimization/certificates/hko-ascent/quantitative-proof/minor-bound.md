@@ -1,7 +1,9 @@
 # Uniform augmented-minor bound near the HKO maximum
 
 This note gives explicit pivot-weight and inverse bounds for the 20-row
-family. Rows consist of two copies of each of the ten HKO normals. Write
+family. Rows consist of two copies of each of the ten HKO normals. All words
+covered by the pivot bound are simple in this twenty-row presentation, so
+each base normal occurs at most twice. Write
 \(N=\sqrt5-1=|n_i|=|m_i|\), and \(Q_*=\tau/5\).
 
 ## Exactly closed base weights

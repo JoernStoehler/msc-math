@@ -46,7 +46,8 @@ change these primitive action values. Also `q0>1/10`.
 ## 1. Uniform positive pivot for any moving maximizer
 
 The companion `minor-bound.md` proves the following bounds for a feasible
-moving-row weight vector with `Q_t>=q0/2` and `0<=t<=10^-3`:
+simple moving-row word and its weights with `Q_t>=q0/2` and
+`0<=t<=10^-3`:
 
 * five augmented base columns `B_I(0)=(a_r,1)` have selected occurrence
   weights at least `1/4500`;
@@ -214,7 +215,7 @@ winning, so `Q0(beta*)=q0`. The triangle vertices have L1 norm one; hence
 ||beta0-beta*||_1
  <= 2|s-1/2|+(1/2)||u-u*||_1+(1/2)||v-v*||_1
  <= [1/sqrt(q0)+160 sqrt(2/Delta)] sqrt(d)
- < 2000 sqrt(d).                               (10)
+ <= 2000 sqrt(d).                              (10)
 ```
 
 By (7), this distance is less than `2·10^-7<c/2`. Thus every selected pivot
@@ -285,8 +286,9 @@ sys(H_t)/sys(H) > 1/(1-t/200) > 1+t/200.
 
 In particular `t=10^-30` is explicitly improving, with relative gain greater
 than `5·10^-33`. This bound is intentionally tiny. It is not a numerically
-meaningful improvement of the ratio, and it does not establish where along
-the family the ratio reaches a useful larger maximum.
+meaningful improvement of the ratio. The separate exact computation at
+`t=3/10` gives a substantially larger increase; neither result determines
+the maximum along the family.
 
 ## Reusable content and limitations
 

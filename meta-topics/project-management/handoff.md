@@ -1,5 +1,33 @@
 # Current handoff
 
+## 29 October: autonomous research report complete
+
+The selected autonomous research lines are complete and their owners released.
+The report remains separate from the selected MSc thesis. Its final 56-page
+PDF at `topics/capacity-and-qp/convex-systolic-optimization/paper.pdf` has
+SHA-256 `a87d422c1ee43ca10454b5c7fa25eeb3f35f1b9ea424734aa501fe6c7e13f0b3`.
+An exact-hash assembled mathematical PASS (`reviews/REPORT-r6-delta.md`),
+reader PASS with companion (`reviews/REVIEW-r6.md`), and root's all-page visual
+inspection support this version. The fixed $H_{3/10}$ capacity/volume theorem
+passed separate mathematical audit and fresh-copy exact replay. Printed
+Appendix B contains the quantitative near-zero proof; Appendix C gives only
+a first-order obstruction for at most two characteristic-invariant affine
+hinges with the old rows retained, including both same- and distinct-facet
+placements. No twelve-facet neighborhood theorem follows.
+
+The final source/evidence ZIP passes all internal/nested manifest checks,
+independent fresh-copy fast replays and an extracted warning-free LaTeX build;
+its rebuilt PDF text is byte-identical to the reviewed PDF. Root checked the
+actual temporary PDF/ZIP downloads against retained hashes. The
+[delivery record](../../topics/capacity-and-qp/convex-systolic-optimization-delivery.md)
+retains exact identities and the independent report. All selected research and
+delivery tasks are complete with owners released. No new research, thesis
+adoption, publication or university submission is selected. The run ended
+before its 29 October 10:05 UTC cutoff. The latest account-wide primary quota observation at 01:16:19 UTC is
+37% remaining/63% used, with no reset consumed or external spend; task
+attribution and billed cost are unknown. The earlier stopped-session and thesis notes below are history,
+not current research assignments.
+
 ## 28 October: stopped research cleaned up; clarified fresh-session restart
 
 The 8983 research session is closed; all research descendants are stopped.

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-29T00:26:40Z",
+  "updated_at": "2026-10-29T01:20:25Z",
   "scope": "Autonomous Viterbo research in research-restart-20261028 worktree; cutoff 2026-10-29 10:05 UTC, local compute and remaining original quota.",
-  "summary": "Audited HKO strict ascent now has 17-facet seven-cut derivative and effective t=10^-30 twenty-facet witness. Canonical paper r2 45 pages; worker integrates r3. Root inspected all r1 pages, final r3 delta/all-page check open. Assembled math hash report and reader review pending. Moderate-t ratio candidate unproved; rank-four bounded line closed at blocker.",
+  "summary": "Autonomous research run complete: final 56-page r6 paper, exact-hash assembled mathematical/reader PASS, all-page visual inspection, verified source/evidence ZIP, independent extracted-copy replays and LaTeX build, and matching private PDF/ZIP downloads. All research and delivery owners released. No thesis promotion, further research, remote publication or university submission selected.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3471,17 +3471,20 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "running",
-      "owner": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
-      "outcome": "Canonical paper r2 45 pages; r3 with newly audited HKO results under integration. Root inspected all r1 pages, final r3 review and inspection open; assembled math hash report/reader verdict pending.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Completed final r6 56-page research PDF and source/evidence ZIP. Exact-hash assembled mathematical and reader PASS; root all-page visual check; 165/165 archive hashes and nested manifests; independent extracted-copy fast replays and warning-free LaTeX build; final HTTP PDF/ZIP hashes match. Scope and verification limits are retained in the delivery record. Local integration complete; no selected thesis edit or external publication.",
       "depends_on": [],
       "sources": [
         "PLAN.md",
-        "meta-topics/project-management/research-restart-20261028.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/README.md",
+        "meta-topics/project-management/handoff.md",
+        "topics/capacity-and-qp/convex-systolic-optimization/source-and-evidence.zip",
+        "topics/capacity-and-qp/convex-systolic-optimization-delivery.md"
       ],
       "authorization": "Direct user launch 28 October 2026: autonomous research and adjacent mathematics, up to99 agents, remaining original weekly quota/local compute, cutoff2026-10-29 10:05UTC; no reset/external spending/cloud/human clarification.",
-      "updated_at": "2026-10-29T00:26:40Z",
-      "next_step": "Receive r3 packet and reviewer reports, audit changed mathematics, inspect every final page, resolve findings, retain sources and commit locally."
+      "updated_at": "2026-10-29T01:20:25Z",
+      "next_step": "No automatic continuation. Any thesis adoption or new research requires a separately selected task."
     },
     {
       "id": "restart-geometry-frontiers",
@@ -3489,15 +3492,16 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "running",
-      "owner": "/root/geometry_frontiers",
-      "outcome": "Full GL4 rigidity and 20-facet ascent audited. Moderate t≈0.3 candidate rho≈1.051914 remains unproved: current capacity estimate only an upper bound; bounded exact DFS coverage work ongoing.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Exact fixed HKO t=3/10 body and portable complete-capacity/volume packet delivered: 20 facets, 75 simple vertices, ratio 1.0519141388294875... above HKO. Separate mathematical audit and fresh-copy replay passed; printed theorem in final r6.",
       "depends_on": [],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-moderate.tex",
+        "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-t03/README.md"
       ],
-      "updated_at": "2026-10-29T00:26:40Z",
-      "next_step": "Complete 77,927 curvature plus roughly 2,300 terminal-cycle exact checks by 00:40 checkpoint; obtain independent coverage audit before reporting ratio."
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
     },
     {
       "id": "restart-combinatorial-frontiers",
@@ -3569,15 +3573,17 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "running",
-      "owner": "/root/multicut_variation",
-      "outcome": "HKO strict ascent audited: weighted-profile response max(w)/125; any seven unit cuts give 17 genuine facets and positive derivative; at most six positive speeds fail within fixed profiles. Independently audited all-ten-cut t=10^-30 witness gains relative ratio >5e-33.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Weighted seven-cut 17-facet ascent, effective all-ten-cut near-zero certificate and exact first-order obstruction for one or two characteristic-invariant affine hinges delivered and independently audited. Old rows retained; same- and distinct-facet cuts covered; no arbitrary twelve-facet local maximality.",
       "depends_on": [],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-ascent.tex",
+        "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-two-hinge-main.tex",
+        "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-two-hinge/README.md"
       ],
-      "updated_at": "2026-10-29T00:26:40Z",
-      "next_step": "Handoff exact 17-facet/effective-witness sections to r3 paper worker; jointly with geometry seek stronger moderate-parameter descendant, requiring certified capacity lower bound/complete optimization."
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
     },
     {
       "id": "restart-product-extremizers",
@@ -3786,16 +3792,18 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "running",
-      "owner": "/root/paper_integration",
-      "outcome": "Canonical r2 paper has 45 pages; worker integrates r3 with audited 17-facet derivative and effective twenty-facet witness. Root already inspected all r1 pages; final r3 acceptance open.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Final 56-page r6 research PDF integrated and warning-free at SHA256 a87d422c1ee43ca10454b5c7fa25eeb3f35f1b9ea424734aa501fe6c7e13f0b3. Includes audited moderate HKO theorem, full quantitative Appendix B and two-hinge Appendix C. All 56 pages rendered; root owns delivery.",
       "depends_on": [],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/main.tex",
+        "topics/capacity-and-qp/convex-systolic-optimization/paper.pdf",
+        "topics/capacity-and-qp/convex-systolic-optimization/README.md"
       ],
       "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
-      "updated_at": "2026-10-29T00:26:40Z",
-      "next_step": "Complete r3 integration/build/render and give exact source/PDF hashes and changed pages to root and assembled reviewers."
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
     },
     {
       "id": "restart-assembled-math-review",
@@ -3803,18 +3811,19 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "running",
-      "owner": "/root/assembled_math_review",
-      "outcome": "Reviewer read all printed sections and found only an indexing error now corrected; exact hash report pending. New r3 HKO text still needs delta audit.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Exact-hash assembled mathematical PASS through final r6 PDF, including full Appendix B and two-hinge Appendix C; final §10 retained-row phrase checked in addendum. Agent review is not external refereeing.",
       "depends_on": [
         "restart-paper-integration"
       ],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/REPORT-r6-delta.md",
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/reviewed-r6-scope-final-hashes.json"
       ],
       "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
-      "updated_at": "2026-10-29T00:26:40Z",
-      "next_step": "Return exact reviewed hash/verdict; review changed r3 HKO sections and any substantive corrections before root acceptance."
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
     },
     {
       "id": "restart-final-pdf-inspection",
@@ -3822,19 +3831,20 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "ready",
-      "owner": "01a184a6-b383-7673-8fdd-fff5c4b49ad2",
-      "outcome": "Root inspected every r1 page; canonical r2 is 45 pages and r3 is under integration. Final r3 all-page inspection and delta check open.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Root visually inspected all 56 pages of final r6 PDF SHA256 a87d422c1ee43ca10454b5c7fa25eeb3f35f1b9ea424734aa501fe6c7e13f0b3; no defects found. Root retaining layout report.",
       "depends_on": [
         "restart-paper-integration",
         "restart-assembled-math-review"
       ],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/paper.pdf",
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/"
       ],
       "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
-      "updated_at": "2026-10-29T00:26:40Z",
-      "next_step": "After r3 build and reviewer delta findings, inspect every final rendered page and resolve layout/source mismatch."
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
     },
     {
       "id": "restart-hko-descendant",
@@ -3842,16 +3852,17 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "running",
-      "owner": "/root/multicut_variation",
-      "outcome": "Effective all-ten-cut t=10^-30 witness now independently audited with relative gain >5e-33; 17-facet seven-cut derivative also audited. Material moderate-t candidate rho≈1.051914 remains unproved because capacity evidence is currently only an upper bound.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Fixed HKO t=3/10 twenty-facet theorem: exact capacity c/c_H=1019/1025, exact volume and ratio 1.0519141388294875... above HKO. Independent coverage/volume audit and fresh-copy full replay PASS; no family maximum or monotonicity claim.",
       "depends_on": [],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-moderate.tex",
+        "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-t03/README.md"
       ],
       "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
-      "updated_at": "2026-10-29T00:26:40Z",
-      "next_step": "Finish exact DFS/coverage and independent audit for moderate parameter, or report obstruction at 00:40; do not claim numerical ratio improvement from current upper bound."
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
     },
     {
       "id": "restart-nonlagrangian-triangles",
@@ -3878,13 +3889,14 @@
       "project": "research-20261028",
       "status": "done",
       "owner": null,
-      "outcome": "Full analytic audit passed; independent catalogue/optimizer replays cover 3,000 primitives and 190 charts. Positive derivative disproves unrestricted Hausdorff local maximality, without certified explicit t.",
+      "outcome": "Independent analytic audit passed unrestricted 20-facet ascent and later two-hinge first-order obstruction for at most two characteristic-invariant affine hinges with original rows retained. These do not establish an arbitrary twelve-facet neighborhood theorem.",
       "depends_on": [],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/hko-ascent-mathematics.md",
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/hko-two-hinge-mathematics.md"
       ],
       "authorization": "Selected within the active local autonomous research envelope ending 2026-10-29 10:05 UTC; root owns integration acceptance, commits and delivery.",
-      "updated_at": "2026-10-29T00:10:21Z",
+      "updated_at": "2026-10-29T01:17:08Z",
       "next_step": null
     },
     {
@@ -3927,16 +3939,16 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "running",
-      "owner": "/root/assembled_reader_review",
-      "outcome": "Fresh reader-facing, value, source and figure review of the 44-page packet running; no verdict yet.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Final exact-hash r6 reader PASS with companion, after printed Appendix B, updated hko-t03 evidence status and retained-row scope phrase. Reader review did not replace root all-page visual check or mathematical review.",
       "depends_on": [],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/REVIEW-r6.md"
       ],
       "authorization": "Selected by active research coordinator for final assembled paper assessment within local research envelope; root owns acceptance.",
-      "updated_at": "2026-10-29T00:14:22Z",
-      "next_step": "Report readability, selection, citation, figure and promise findings to root; correct and re-review changed text as needed."
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
     },
     {
       "id": "restart-hko-17-facet-and-effective",
@@ -3946,31 +3958,91 @@
       "project": "research-20261028",
       "status": "done",
       "owner": null,
-      "outcome": "Weighted-profile max response max(w)/125; seven unit cuts yield 17 genuine facets and positive derivative; six positive speeds cannot within fixed profiles. All-ten-unit-cut family at t=10^-30 has audited relative gain >5e-33.",
+      "outcome": "Weighted-profile response max(w)/125 gives local ascent from any seven selected unit cuts and 17 facets; six-cut limit holds only for these fixed profiles. Printed Appendix B gives full quantitative proof of gain >t/200 for all ten unit cuts at 0<t<=10^-30; finite checks in companion.",
       "depends_on": [],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-seventeen-facets.tex",
+        "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-effective-step.tex"
       ],
       "authorization": "Selected local research within the active autonomous research envelope; component result for r3 paper.",
-      "updated_at": "2026-10-29T00:26:40Z",
+      "updated_at": "2026-10-29T01:17:08Z",
       "next_step": null
     },
     {
       "id": "restart-two-hinge-12-facet",
       "title": "Test two arbitrary characteristic-invariant hinges for 12-facet ascent",
       "kind": "crux",
-      "selection": "unselected",
+      "selection": "selected",
       "project": "research-20261028",
-      "status": "ready",
+      "status": "done",
       "owner": null,
-      "outcome": "Research-value review queued a possible next discriminator; no work started and no agent assigned.",
+      "outcome": "Exact analytic obstruction: with all ten original HKO facet inequalities retained, at most two added characteristic-invariant affine hinges have nonpositive first logarithmic systolic variation, even on the same facet. Higher-order zero directions, non-invariant hinges and arbitrary twelve-facet local maximality remain open.",
       "depends_on": [],
       "sources": [
-        "PLAN.md"
+        "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-two-hinge-main.tex",
+        "topics/capacity-and-qp/convex-systolic-optimization/sections/hko-two-hinge-appendix.tex",
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/hko-two-hinge-mathematics.md"
       ],
-      "authorization": "Unselected candidate only; no execution assignment.",
-      "updated_at": "2026-10-29T00:26:40Z",
-      "next_step": "Root selects only if it outranks finishing r3 and current stronger-descendant work."
+      "authorization": "Root selected a bounded two-hinge discriminator within the active local research envelope; completed and reviewed, with no further research selected.",
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-hko-moderate-math-audit",
+      "title": "Independent moderate HKO mathematical coverage and volume audit",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Independent mathematical audit PASS for fixed t=3/10 exact capacity coverage, Haim-Kislev minimizer premise, Lawrence volume formula, 20 facets/75 simple vertices and strict ratio comparison.",
+      "depends_on": [],
+      "sources": [
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/hko-t03-mathematics.md",
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/hko-t03-volume-source.md"
+      ],
+      "authorization": "Selected within active local autonomous research envelope; root owns integration, commits and delivery.",
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-hko-moderate-fresh-replay",
+      "title": "Frozen fresh-copy moderate HKO replay",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Independent fresh-copy exact replay PASS for frozen t=3/10 packet: 77,927 curvature exclusions, 2,326 leaf classes, geometry/volume and ratio assertions; altered controls rejected.",
+      "depends_on": [],
+      "sources": [
+        "topics/capacity-and-qp/convex-systolic-optimization/reviews/hko-t03-independent-replay.md",
+        "topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-t03/README.md"
+      ],
+      "authorization": "Selected within active local autonomous research envelope; root owns integration, commits and delivery.",
+      "updated_at": "2026-10-29T01:17:08Z",
+      "next_step": null
+    },
+    {
+      "id": "restart-final-delivery-package",
+      "title": "Source ZIP, manifest, replay and verified link",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Completed final r6 56-page research PDF and source/evidence ZIP. Exact-hash assembled mathematical and reader PASS; root all-page visual check; 165/165 archive hashes and nested manifests; independent extracted-copy fast replays and warning-free LaTeX build; final HTTP PDF/ZIP hashes match. Scope and verification limits are retained in the delivery record. Local integration complete; no selected thesis edit or external publication.",
+      "depends_on": [],
+      "sources": [
+        "topics/capacity-and-qp/convex-systolic-optimization/README.md",
+        "topics/capacity-and-qp/convex-systolic-optimization/paper.pdf",
+        "docs/file-viewer.md",
+        "topics/capacity-and-qp/convex-systolic-optimization/source-and-evidence.zip",
+        "topics/capacity-and-qp/convex-systolic-optimization-delivery.md"
+      ],
+      "authorization": "Selected within active local autonomous research envelope; root owns integration, commits and delivery.",
+      "updated_at": "2026-10-29T01:20:25Z",
+      "next_step": "No automatic continuation. Any thesis adoption or new research requires a separately selected task."
     }
   ],
   "decisions": [
@@ -4434,6 +4506,18 @@
       "observed_at": "2026-10-29T00:13:39.593628Z",
       "value": "Account-wide primary weekly 50% remaining/50% used; secondary unreturned, ordinary use allowed, no reset. Strict campaign attribution and billed cost unknown. Operational reserve of roughly 15 weekly percentage points for final checks remains, not a user approval gate.",
       "basis": "Root read-only account observation relayed to integration steward."
+    },
+    {
+      "label": "29 October research restart quota checkpoint 00:38",
+      "observed_at": "2026-10-29T00:38:17.993705Z",
+      "value": "Account-wide primary weekly 43% remaining/57% used; secondary unreturned, no reset. Strict campaign attribution and billed cost unknown. Root operational roughly15-point reserve for final checks unchanged.",
+      "basis": "Root read-only account observation relayed to integration steward."
+    },
+    {
+      "label": "29 October research restart quota checkpoint 01:16",
+      "observed_at": "2026-10-29T01:16:19.793744Z",
+      "value": "Account-wide primary weekly 63% used/37% remaining; reset 2026-11-04T10:05:56Z. Secondary unreturned; ordinary usage allowed, no reset consumed or external spend. From 89% remaining at 22:35, account-wide change is 52 percentage points, not strict campaign attribution or billing.",
+      "basis": "Root read-only Codex app-server account/rateLimits/read observation relayed to coordination steward."
     }
   ],
   "links": [
@@ -4738,6 +4822,18 @@
     {
       "at": "2026-10-29T00:26:40Z",
       "text": "Fresh audits pass weighted 17-facet HKO derivative and effective t=10^-30 twenty-facet gain. Paper r2 45 pages; r3 integration and review delta open. Moderate t≈0.3 ratio remains unproved; rank-four bounded attempt closed at blocker, two-hinge candidate unstaffed."
+    },
+    {
+      "at": "2026-10-29T00:41:20Z",
+      "text": "r3 48-page paper locally committed as3af33818; assembled math and root all-page inspection pass. Moderate t=3/10 finite candidate awaits separate audits; two-hinge 12-facet test selected to01:00. Delivery ZIP/manifest/replay/link still open; no thesis promotion."
+    },
+    {
+      "at": "2026-10-29T01:17:08Z",
+      "text": "Final 56-page r6 paper with audited fixed HKO t=3/10 theorem, complete quantitative Appendix B and scoped two-invariant-hinge Appendix C passed exact-hash assembled math/reader review and root all-page inspection. Research/editor/review owners released. Parent remains active for source ZIP, fresh-copy archive replay, verified links, commit and delivery; no thesis promotion or further research selected. Latest account-wide primary quota 37% remaining at 01:16 UTC."
+    },
+    {
+      "at": "2026-10-29T01:20:25Z",
+      "text": "Closed autonomous research after final r6 exact-hash mathematics/reader and all-page visual PASS, source ZIP/internal+nested manifests, independent extracted-copy fast replays/LaTeX build and matching private PDF/ZIP HTTP checks. All selected research/delivery owners released; thesis adoption and new research remain unassigned."
     }
   ]
 }

@@ -14,6 +14,10 @@ use the [share-files workflow](../../.agents/skills/share-files/SKILL.md).
 Verify the actual response type and content before reporting a browser link
 as working. No persistent replacement URL has been verified by this check.
 The research report remains retained with its source packet in this checkout.
+The named-file `review-files` route was exercised in the same run: its browser
+endpoint returned `application/pdf` and bytes matching the retained report's
+SHA-256. That verifies this temporary delivery route, not restoration of the
+old persistent server or access from every personal device.
 
 The server documentation below describes the retained implementation and its
 **historical** deployment, not the current host routing. Its former links may

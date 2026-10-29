@@ -24,6 +24,8 @@ fixed profiles. No categorical novelty claim is part of this package.
 The base main module's nonquantitative statements refer to its derivative
 proof; the effective extension supplies the additional quantitative result.
 
+Packet integration corrected an endpoint inequality in `quantitative-proof/effective-step.md`: the distance bound is non-strict when the deficit is zero. It explicitly limits the quantitative pivot lemma to simple twenty-row words and updates the note's context after the separate exact `t=3/10` result. No finite checker, expected output, or analytic constant changed. `MANIFEST.json` records the current companion bytes; the original frozen v2 ZIP (SHA-256 `4059b495ff7418d6b80ce77bcede6a8c348cd1d1aa783d50dd1de6dc77c5a989`) remains historical provenance.
+
 ## Dependencies and one command
 
 - Python 3.11 or later, standard library only.

@@ -1,0 +1,11 @@
+{
+  "parameter": "3/10",
+  "vertices": 75,
+  "edges": 120,
+  "discovery_graph_matches_exact": true,
+  "volume": "-99664289/260891200*u^2 + 300748771/52178240",
+  "volume_numeric": 5.562221570778812,
+  "all_twenty_facets_genuine": true,
+  "volume_methods": "Lawrence simple-polytope formula; two exact generic linear functionals",
+  "seconds": 7.201085740001872
+}

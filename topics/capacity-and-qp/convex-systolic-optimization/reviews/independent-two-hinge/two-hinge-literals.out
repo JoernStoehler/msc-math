@@ -1,0 +1,2 @@
+PASS: all four literal printed words, oriented endpoint vectors and midpoint, normalization, nonnegativity, closure, action tau/5, full KKT equations, all segment facet containments, edge coordinates, affine y and occupation-weight laws.
+PASS: scalar perfect-square identity, endpoint comparison identities, concavity sign, upper-density ratio, density normalization and mean. The interval partition, Jensen and two-cut arguments are reviewed analytically in REPORT-r6-delta.md.

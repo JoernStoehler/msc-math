@@ -1,0 +1,30 @@
+{
+  "parameter": "3/10",
+  "checked_leaf_words": 2326,
+  "counts": {
+    "inconsistent": 22,
+    "singular": 1030,
+    "negative": 1162,
+    "nonnegative": 112,
+    "singular_consistent": 1030,
+    "singular_inconsistent": 0,
+    "singular_coarse_excluded": 21,
+    "singular_feasible": 0,
+    "singular_below_target": 984,
+    "singular_vertex_excluded": 25
+  },
+  "best_Q": "205/1019*u",
+  "best_Q_numeric": 0.14616410033473892,
+  "word": [
+    0,
+    1,
+    6,
+    7,
+    3,
+    12,
+    9
+  ],
+  "weights": null,
+  "seconds": 69.1928368289955,
+  "curvature_exclusion_input_count_separately_verified": 77927
+}
