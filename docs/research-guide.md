@@ -1,11 +1,17 @@
 # Probing Viterbo's conjecture: a research guide for agents
 
 The separate [28–29 October research report](../topics/capacity-and-qp/convex-systolic-optimization/README.md)
-develops full-affine HKO optimality and unrestricted simultaneous-cut ascent,
-sharp six-simplex optimization, squared-body difference bounds and strict
-truncated-parallelogram product inequalities. Start at its result/evidence map
-for those claims and their review status. These results have not been promoted
-to the selected thesis chapters described below.
+proves HKO optimality over its full `GL(4)` orbit, including maps that mix the
+factor planes. Its specified seven-cut family gives nearby seventeen-facet
+ascent, and its exact twenty-facet body at `t=3/10` has ratio
+`1.0519141388294875...`, above HKO. One or two characteristic-invariant
+affine hinges with all original rows retained have nonpositive **first**
+systolic variation; this is not a local theorem for arbitrary twelve-facet
+bodies. The report also treats simplices, squared bodies and truncated
+parallelogram products. Its final PDF has scoped independent agent mathematical,
+reader, finite-replay and all-page layout checks with a source/evidence
+companion; these are not human or external refereeing. None of these results
+has been promoted to the selected thesis chapters described below.
 
 This guide explains the main mathematical questions, how the results relate,
 and which sources support them. It is an initial curated account of a larger
@@ -187,6 +193,18 @@ numerical neighborhood samples do not replace this route. The selected theorem f
 controls one facet birth; its selected manuscript integration and the
 unrestricted facet-count question remain separate.
 
+The later [research report](../topics/capacity-and-qp/convex-systolic-optimization/README.md)
+is compatible with this local theorem: its nearby ascent uses seven of ten
+specified inward cuts and has seventeen genuine facets. Within that fixed
+profile cone, six positive cut speeds do not ascend; this is no general
+minimal-facet theorem. The same report proves an exact ratio
+`1.0519141388294875...` at its twenty-facet `t=3/10` member, by complete
+capacity and volume certification. Its separate obstruction for at most two
+characteristic-invariant affine hinges retains every original facet inequality
+and concerns first variation only, not arbitrary twelve-facet local
+maximality. The [variation account](../topics/variation-and-local-maxima/README.md)
+routes the distinct proof packets.
+
 The selected chapter also includes a separate rational hexagon–quadrilateral
 product with ratio one and a non-strict ten-facet local maximum. Its equality
 family has two parameters after quotienting by symmetries. Here first-order
@@ -234,6 +252,13 @@ the other. The [maintained research
 note](../topics/products/pentagon-affine-products/README.md) contains full proofs,
 equality cases, source checks and further angular results outside the selected
 chapter. Arbitrary pentagons are not covered by the affine theorem.
+
+The newer [full-orbit theorem](../topics/capacity-and-qp/convex-systolic-optimization/sections/affine-hko.tex)
+strengthens this independent-factor result: every invertible linear image of
+the HKO product has ratio at most `(3+sqrt(5))/5`, including maps that mix or
+destroy the Lagrangian factor planes. Equality is precisely a positive
+dilation and linear symplectic image, up to translation. It does not settle
+the fixed regular pentagon paired with an arbitrary asymmetric planar body.
 
 A different extension fixes one regular pentagon Q and permits **any centrally
 symmetric convex planar partner** K. The

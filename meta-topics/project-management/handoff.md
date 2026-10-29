@@ -1,6 +1,26 @@
 # Current handoff
 
-## 29 October: autonomous research report complete
+## 29 October 07:48: discovery repaired; research allocation reopened
+
+The first r6 paper and evidence delivery remain complete. Its result scopes
+are now encountered through the guide, product/variation accounts, current
+research-frontier view and a separate-research thesis-dashboard notice.
+[Source/consumer validation and stopping-evidence record](research-discovery-reconciliation-20261029.md).
+The frozen paper/ZIP and selected thesis sources/manifest are unchanged.
+
+Fleet orchestrator `01a18670-a310-73b1-a872-6e1218f239c6` reopened the broader
+expected-value stopping/continuation question; report completion is not proof
+that stopping at01:20 was optimal. No inspected comparative rationale justifies
+that early stop. The 37% quota reading is historical, not a current balance.
+An existing H_t branch-change/parameter discriminator is ready but unfunded;
+other mathematical openings and their blockers are in [PLAN.md](../../PLAN.md).
+No scientific producer is started by this discovery task. Main checkout still
+needs a separately selected local adoption preserving its dirty viewer files
+and untracked live-task graph; no main merge, thesis promotion or publication
+was performed here. These open outcomes remain assigned or unassigned in
+[current.json](current.json), rather than hidden behind the delivered PDF.
+
+## 29 October 01:20: first research report delivered
 
 The selected autonomous research lines are complete and their owners released.
 The report remains separate from the selected MSc thesis. Its final 56-page

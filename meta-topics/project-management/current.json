@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-29T01:20:25Z",
+  "updated_at": "2026-10-29T07:49:38Z",
   "scope": "Autonomous Viterbo research in research-restart-20261028 worktree; cutoff 2026-10-29 10:05 UTC, local compute and remaining original quota.",
-  "summary": "Autonomous research run complete: final 56-page r6 paper, exact-hash assembled mathematical/reader PASS, all-page visual inspection, verified source/evidence ZIP, independent extracted-copy replays and LaTeX build, and matching private PDF/ZIP downloads. All research and delivery owners released. No thesis promotion, further research, remote publication or university submission selected.",
+  "summary": "First56-page r6 report remains delivered. Research-worktree discovery repair is complete: scoped guide/topic/frontier routes, actual reader uptake,219relative links and focused local Chrome renders checked; frozen paper/ZIP/thesis untouched. Main adoption remains unassigned. Fleet orchestrator owns reopened expected-value stopping/continuation judgment; no new scientific producer assigned here. Full dashboard validator retains known obsolete-source failure.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -3471,9 +3471,9 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "done",
-      "owner": null,
-      "outcome": "Completed final r6 56-page research PDF and source/evidence ZIP. Exact-hash assembled mathematical and reader PASS; root all-page visual check; 165/165 archive hashes and nested manifests; independent extracted-copy fast replays and warning-free LaTeX build; final HTTP PDF/ZIP hashes match. Scope and verification limits are retained in the delivery record. Local integration complete; no selected thesis edit or external publication.",
+      "status": "running",
+      "owner": "01a18670-a310-73b1-a872-6e1218f239c6",
+      "outcome": "The first coherent r6 report and artifact delivery are complete. Fleet orchestrator reopened the broader expected-value stopping/continuation judgment; no inspected comparative allocation rationale established optimality of stopping at01:20. Durable discovery is being repaired separately; no new scientific producer is assigned by this repair.",
       "depends_on": [],
       "sources": [
         "PLAN.md",
@@ -3483,8 +3483,8 @@
         "topics/capacity-and-qp/convex-systolic-optimization-delivery.md"
       ],
       "authorization": "Direct user launch 28 October 2026: autonomous research and adjacent mathematics, up to99 agents, remaining original weekly quota/local compute, cutoff2026-10-29 10:05UTC; no reset/external spending/cloud/human clarification.",
-      "updated_at": "2026-10-29T01:20:25Z",
-      "next_step": "No automatic continuation. Any thesis adoption or new research requires a separately selected task."
+      "updated_at": "2026-10-29T07:46:27Z",
+      "next_step": "Compare ready H_t branch-continuation and new alternatives against scientific upside, resource observations and original10:05 cutoff; explicitly disposition continuation versus stopping."
     },
     {
       "id": "restart-geometry-frontiers",
@@ -4043,6 +4043,64 @@
       "authorization": "Selected within active local autonomous research envelope; root owns integration, commits and delivery.",
       "updated_at": "2026-10-29T01:20:25Z",
       "next_step": "No automatic continuation. Any thesis adoption or new research requires a separately selected task."
+    },
+    {
+      "id": "restart-discovery-reconciliation-20261029",
+      "title": "Final research results have durable discovery routes",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "done",
+      "owner": null,
+      "outcome": "Repaired guide, product/variation accounts, research-frontier HTML and separate-research thesis-dashboard wording. Fresh reader followed source/proof/review paths and recovered exact scopes;219local relative target checks pass; representative HTTP bytes match; wide/narrow local Chrome renders inspected. Frozen paper/ZIP/selected thesis unchanged. Full dashboard validator still has known pre-existing obsolete-source reference.",
+      "depends_on": [],
+      "sources": [
+        "docs/research-guide.md",
+        "topics/products/README.md",
+        "topics/variation-and-local-maxima/README.md",
+        "docs/dashboard/research-frontier.html",
+        "docs/dashboard/thesis.html",
+        "meta-topics/project-management/research-discovery-reconciliation-20261029.md"
+      ],
+      "authorization": "Fleet orchestrator delegation29Oct07:37: proportionate maintained discovery repairs in research worktree; no main merge/thesis promotion/publication/proof rerun.",
+      "updated_at": "2026-10-29T07:49:38Z",
+      "next_step": "Fleet root receives committed repair; separately disposition main adoption and broader research allocation."
+    },
+    {
+      "id": "restart-main-adoption-20261029",
+      "title": "Research discoveries are accessible from main checkout",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "research-20261028",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Main38c0488e lacks the two completed research commits and this discovery repair. Main has unrelated dirty viewer files and an untracked live-task graph that must survive integration.",
+      "depends_on": [
+        "restart-discovery-reconciliation-20261029"
+      ],
+      "sources": [
+        "PLAN.md",
+        "STATUS.md"
+      ],
+      "updated_at": "2026-10-29T07:46:27Z",
+      "next_step": "Fleet root selects a concrete local adoption route, preserves main edits and verifies main discovery; current repair explicitly does not merge main."
+    },
+    {
+      "id": "restart-research-allocation-reassessment-20261029",
+      "title": "Research continuation or stopping is supported by comparative value evidence",
+      "kind": "task",
+      "selection": "selected",
+      "project": "research-20261028",
+      "status": "running",
+      "owner": "01a18670-a310-73b1-a872-6e1218f239c6",
+      "outcome": "First report delivered, broader autonomous-research stopping judgment reopened. Last value reviews favored ambitious exploration; completing the two-hinge discriminator did not exhaust known opportunities. Historical37% quota is not a fresh balance.",
+      "depends_on": [],
+      "sources": [
+        "PLAN.md",
+        "meta-topics/project-management/research-discovery-reconciliation-20261029.md"
+      ],
+      "updated_at": "2026-10-29T07:46:27Z",
+      "next_step": "Compare a bounded existing H_t seven/eight-label branch discriminator, three invariant hinges and fresh alternatives; select or reject continuation explicitly without treating report completion as optimal-stop evidence."
     }
   ],
   "decisions": [
@@ -4834,6 +4892,14 @@
     {
       "at": "2026-10-29T01:20:25Z",
       "text": "Closed autonomous research after final r6 exact-hash mathematics/reader and all-page visual PASS, source ZIP/internal+nested manifests, independent extracted-copy fast replays/LaTeX build and matching private PDF/ZIP HTTP checks. All selected research/delivery owners released; thesis adoption and new research remain unassigned."
+    },
+    {
+      "at": "2026-10-29T07:46:27Z",
+      "text": "Reopened broader research allocation/stopping judgment under fleet root after completed first report; recorded unassigned main adoption and ready but unfunded H_t branch continuation. Bounded discovery source repair in research checkout, without changing frozen mathematics or selected thesis."
+    },
+    {
+      "at": "2026-10-29T07:49:38Z",
+      "text": "Completed bounded durable research discovery repair with actual source-consumer uptake,219local relative-link checks and inspected local Chrome renders. Frozen r6/thesis artifacts untouched. Broader allocation remains reopened under fleet root; main adoption and known full-dashboard obsolete-source failure remain distinct."
     }
   ]
 }

@@ -13,6 +13,7 @@ fixed-regular-factor partner study. The selected thesis is a separate consumer.
 | Why can planar products be computed with short words? | [Six-facet reduction](product-qp-six-facet-reduction.tex): some global HK maximizer uses at most three facets per factor, with mass one half in each. | Jörn accepted the proof on 28 July 2026; included in [Chapter 4](../../thesis/chapters/04-quadratic-program.tex). Existence of a sparse maximizer does not classify every optimizer. |
 | What is the rotated regular-pentagon profile? | [Chapter 9](../../thesis/chapters/09-rotated-regular-polygons.tex) proves the secant capacity / secant-squared systolic profile by endpoint interpolation, an attaining word and symmetry. | The underlying analytic argument is accepted; human acceptance of the selected exposition is separate. The HKO endpoint capacity is an external input. |
 | What survives independent factor deformations? | [Affine proof packet](pentagon-affine-products/README.md): for nonsingular `G,H`, `c(GP5 ×_L HP5)=w²/max|n_i^T G^-1 H^-T n_j|`, `w=1+cos(pi/5)`. The sharp ratio is `(3+sqrt(5))/5`, with its stated equality class. | Agent-reviewed theorem included in [Chapter 10](../../thesis/chapters/10-affine-pentagons.tex). This covers affinely regular pentagons, not arbitrary pentagons or every ten-facet body. It does not import the HKO endpoint value. Human proof acceptance and novelty are unestablished. |
+| What if a linear map also mixes the pentagon planes? | [Full HKO affine-orbit theorem](../capacity-and-qp/convex-systolic-optimization/sections/affine-hko.tex): for every `A` in `GL(4)`, `rho(AH) <= (3+sqrt(5))/5`, with equality only at positive symplectic dilations, up to translation. | Strengthens the independent-factor theorem above: the images need not retain Lagrangian factor planes. Final r6 report has scoped independent agent math, reader, exact-replay and root all-page layout checks with companion; no human/external PASS or thesis promotion. It does not optimize over arbitrary ten-facet bodies. |
 | What are all odd regular rotation profiles? | [All-odd angular theorem](pentagon-affine-products/odd-regular-angular-width.md): for odd `n,m>=5`, `c(P_n ×_L R_theta P_m)=(1+h_n)(1+h_m) sec d_lcm(n,m)(theta)`. The sharp ratio is `(3+sqrt(5))/5`, with equality exactly at `n=m=5`, `theta=pi/10+k pi/5`. | New research, independently checked by [two](pentagon-affine-products/odd-regular-angular-width-audit.md) [agents](pentagon-affine-products/odd-regular-angular-width-second-audit.md), outside the selected thesis. Strict angular containment holds except for 5×5; the independent-affine extension beyond 5×5, human acceptance and novelty remain open. |
 | What if only the pentagon factor is fixed? | [Symmetric-partner proof](pentagon-arbitrary-partner/symmetric-partner-lemma.md): every centrally symmetric full-dimensional planar convex partner has capacity equal to the difference-body width value. The sharp ratio is `(10+6sqrt(5))/25`, attained exactly by the prescribed decagon up to translation and positive dilation. | Agent-checked analytic theorem, covering smooth bodies as well as polygons. Jörn selected the pentagon instance; it is now integrated as [Section 11](../../thesis/chapters/10b-symmetric-partners.tex). Source/math review, build and focused page checks passed; human proof/prose acceptance and a whole-PDF PASS remain open. |
 | Does that symmetric-partner theorem extend beyond pentagons? | [Odd-regular theorem](pentagon-arbitrary-partner/odd-regular-symmetric-partner.md): all odd `n>=5` have the width formula with centrally symmetric partners, a sharp constant `kappa_n<1`, and affine-image transfer. | Agent-checked analytic theorem, dated 3 October. Human acceptance, thesis selection of the generalization and publication novelty are open. It is not merely a proposed extension. |
@@ -22,12 +23,17 @@ fixed-regular-factor partner study. The selected thesis is a separate consumer.
 | What is special about triangles? | [Triangle classification](product-triangle-bounce-classification.tex) proves strict directed triangle-cycle realization and the two-/three-bounce capacity comparison under its upstream hypotheses. | Agent-reviewed, awaiting Jörn. Its placement argument does not establish physicality for general locally admissible words. |
 | Can rotating a symplectic product improve its ratio? | [Product-position chapter](../../thesis/chapters/11-product-position.tex) and [convention/endpoint packet](product-rotation/README.md) give the universal initial regime and a triangle example with a worse Lagrangian endpoint. | Exact argument with bounded rational/matrix check. The sufficient interval need not be maximal; no novelty or human prose acceptance is asserted. |
 
-The fixed-pentagon symmetric-partner theorem, the independent affine-pentagon
-bound and the [local at-most-eleven-facet maximum](../variation-and-local-maxima/README.md)
+The fixed-pentagon symmetric-partner theorem, the full HKO affine-orbit bound,
+the narrower independent affine-factor theorem and the
+[local at-most-eleven-facet maximum](../variation-and-local-maxima/README.md)
 have different domains. Arbitrary symmetric partners need not be pentagons;
-independent linear pentagon factors retain product structure; nearby at-most-eleven-facet
-perturbations can break it. None of these results proves a global maximum over
-all convex bodies or all ten-facet polytopes.
+full-orbit maps may mix the factor planes; nearby at-most-eleven-facet
+perturbations can change the affine shape. The global ratio question for a
+fixed regular pentagon paired with an **arbitrary asymmetric planar partner**
+remains open. None of these results proves a global maximum over all convex
+bodies or all ten-facet polytopes. The separate [simultaneous-cut research](../variation-and-local-maxima/README.md)
+refutes unrestricted local and global HKO maximality without resolving that
+fixed-pentagon product-family question.
 
 ## Why the sparse reduction matters
 

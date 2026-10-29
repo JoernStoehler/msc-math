@@ -36,6 +36,22 @@ symmetry slice as inputs. It does not classify eleven-facet equality or give
 an explicit radius. The selected manuscript and PDF still state ten facets;
 the F≤11 result has no selected thesis location yet.
 
+The separate [final r6 research report](../capacity-and-qp/convex-systolic-optimization/README.md)
+shows why facet count matters here. Any seven of its **specified ten radial
+cuts** give a nearby seventeen-facet ascent; six positive speeds do not ascend
+within that fixed profile cone, without establishing a general minimal facet
+count. Its fixed twenty-facet member at `t=3/10` has exactly certified ratio
+`1.0519141388294875...`, above HKO. Conversely, adding at most two
+characteristic-invariant **affine hinges** while retaining all ten original
+facet inequalities has nonpositive **first** systolic variation, even when
+both cuts share a facet. This does not prove local maximality among arbitrary
+twelve-facet bodies, decide zero-slope higher-order changes or cover
+non-invariant hinges. The F≤11 neighborhood theorem and these higher-facet
+statements have different domains and are compatible. The report's final PDF
+and companion have scoped independent agent mathematics, reader, exact-replay
+and all-page layout checks; they have not entered the selected thesis or
+received human/external PASS.
+
 The supporting mathematical route for the ten-facet input is
 [the feasible-section argument](../../formal/hko-feasible-section-upper-branches.tex).
 For each selected HK word, solve closure and normalization with an invertible

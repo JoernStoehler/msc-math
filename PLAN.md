@@ -1,8 +1,52 @@
 # Autonomous research: restart plan
 
+## 29 October discovery repair and research-allocation review
+
+The final report and its evidence are delivered. At 07:35 UTC the fleet
+orchestrator reopened the broader allocation question: completing that report
+and marking the native goal complete did not establish that stopping the
+value-maximizing research loop at 01:20 was the best decision.
+
+The primary launch message (native Codex rollout
+`rollout-2026-10-28T23-34-39-01a184a6-b383-7673-8fdd-fff5c4b49ad2.jsonl`,
+line 13, 28 October 22:35:36 UTC) assigns coordinator **stopping decisions**
+and asks for continued alternative generation. It selects integration in this
+new worktree and a 10:05 UTC cutoff, not automatic main/thesis adoption. No
+user instruction to stop at 01:20 or evidence of quota exhaustion was found.
+The 01:16 observation of 37% remaining is account-wide and is now historical.
+
+The retained value reviews at 00:03 and 00:24 recommended continued ambitious
+exploration and a bounded two-hinge discriminator. That discriminator later
+closed with an obstruction, but the inspected records supply no comparative
+expected-value assessment of further discovery versus stopping after it.
+Some historical native tool-message arguments are encrypted, limiting direct
+recovery of the exact stop rationale. The known finalization directives show
+a coordinator choice, not its optimality. Do not retrofit an exhaustion claim.
+
+| Unfinished outcome | Evidence / next discriminator | Current owner and boundary |
+| --- | --- | --- |
+| Research results are encountered from main and portfolio views | This worktree now reconciles the guide, product/variation accounts and dashboard frontier to final r6 scopes. Desk frontend uses its read-only report source. Main remains `38c0488e`, without `3af33818` and `4e40a92f`. Choose a local adoption route preserving main's dirty viewer files and untracked live-task graph, then validate main's actual discovery. | Fleet orchestrator `01a18670-a310-73b1-a872-6e1218f239c6`; main merge is not part of this repair. |
+| Continuing or ending the autonomous research loop has a supported allocation judgment | Compare a short H_t active-branch discriminator, three invariant hinges, and genuinely new alternatives against their scientific upside, readiness and fresh quota. A complete report alone is insufficient evidence for stopping. | Fleet orchestrator; no new scientific producer assigned by this source repair. |
+| A stronger H_t example or a structural account of branch changes | Geometry owner identifies a ready, unfunded continuation of existing seven-/eight-label stationary words between t=.3 and .5. First use feasible-branch bounds to reject unpromising points; certify a candidate only if a worthwhile possible gain survives. Exact t=.3 costs were 360 s curvature, 69 s leaves and 7 s geometry; another point is not a measured cost guarantee and scripts hardcode counts/targets. | Unassigned candidate; preserve r6, select a bounded effort before execution. |
+| Facet complexity of nearby ascent is understood | Any seven fixed radial cuts suffice; at most two characteristic-invariant affine hinges cannot have positive first variation. Three general invariant hinges are a concrete possible discriminator, but their implementation/readiness was not established by this repair. Arbitrary twelve-facet behavior remains open. | Unassigned candidate, not an automatic campaign. |
+
+The unrestricted four-dimensional optimum, the maximum along H_t, the fixed
+pentagon/arbitrary-asymmetric-partner optimum, the true truncated-parallelogram
+optimizer, and the unrestricted rank-four zonoid inequality remain open. The
+rank-four maximum-radius formulation returned an equivalent open inequality,
+not an all-size mechanism; more graph cases alone do not remove that blocker.
+The ≥3-paraboloid extension likewise needs a new localization argument rather
+than repeated sampling. These openings differ in readiness and expected value.
+
+The [reconciliation record](meta-topics/project-management/research-discovery-reconciliation-20261029.md)
+retains source/consumer checks and the stopping-evidence boundaries. The current
+repair changes discovery and planning only; the final r6 paper, certificate
+archive, selected thesis sources and thesis source manifest remain frozen.
+
 ## Completed research report — 29 October 01:20 UTC
 
-Research selection is closed; no further line is assigned. The canonical
+The first report is delivered; broader research allocation is under the
+reassessment above. The canonical
 56-page paper at `topics/capacity-and-qp/convex-systolic-optimization/paper.pdf`
 has SHA-256 `a87d422c1ee43ca10454b5c7fa25eeb3f35f1b9ea424734aa501fe6c7e13f0b3`.
 Its assembled mathematical delta and reader review both pass this exact PDF
@@ -29,12 +73,13 @@ replays pass, and the extracted source rebuilds the 56-page paper without final
 TeX warnings. Its PDF text matches the reviewed PDF byte for byte. Root verified
 the actual private PDF/ZIP HTTP response types and hashes. The
 [delivery record](topics/capacity-and-qp/convex-systolic-optimization-delivery.md)
-retains exact archive/PDF identities and the independent report. All selected
-research and delivery owners are released; this run is complete.
+retains exact archive/PDF identities and the independent report. Those selected
+research and delivery assignments were released. This closes the first report
+delivery; the broader stopping judgment is now under reassessment.
 
 The report remains separate from the selected thesis manuscript; thesis
-adoption, further research, publication, and university submission are
-unassigned. The 00:40 table below is a historical selection snapshot,
+adoption, fresh scientific execution, publication, and university submission
+are unassigned by this source-repair task. The 00:40 table below is a historical selection snapshot,
 superseded by this final state. The run ended before its 10:05 UTC cutoff.
 The latest account-wide primary weekly quota observation is 37% remaining at
 01:16 UTC, not task-attributed spend or billing. No reset was consumed.
