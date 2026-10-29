@@ -11,6 +11,11 @@ requirements against current official university sources before hand-in; these
 copies do not establish current rules or the project's current administrative
 status.
 
+The [dated official-status checklist](official-status-checklist.md) separates
+public requirements checked on 2026-10-22 from unverified individual facts.
+It records the remaining status, colloquium, AI-use and submission clarifications;
+it does not establish an outstanding hand-in or authorize institutional contact.
+
 Official source page:
 <https://www.uni-augsburg.de/de/studium/organisation-beratung/pruefungen/infos-und-antrage/mathematisch-naturwissenschaftlich-technische-fakultat-pruefungen/>
 

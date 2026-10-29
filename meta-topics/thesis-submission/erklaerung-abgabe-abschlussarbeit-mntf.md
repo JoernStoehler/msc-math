@@ -110,10 +110,16 @@ Interner Vermerk:
 
 ## Thesis project notes
 
-- TODO(source-refresh): verify whether the final handin uses the standard
-  number of exemplars from the Ausgabebescheid or the "one printed copy fewer +
-  extra CD" option.
-- TODO(source-refresh): if the university expects a USB stick rather than a CD
-  for the repo or PDF bundle, record that current instruction in
-  `README.md` and treat the PDF form's CD wording as
-  historical form wording.
+- The public form offers the specified printed copies or one fewer printed
+  copy plus an additional PDF CD. Any different medium/channel, including USB
+  or email-only delivery, needs a specific official instruction for Jörn's
+  case; it is not established by this form. Record the latest notice and its
+  date in the [status checklist](official-status-checklist.md).
+- Compatibility of the disclosed breadth of AI use with this declaration is
+  unresolved. Obtain the applicable chair guide and written clarification from
+  the responsible examiner/Prüfungsamt or examination committee, including the
+  required disclosure location, granularity and any separate signed statement.
+  Compare those requirements with the final candidate's disclosure and actual
+  verification state. The [checklist](official-status-checklist.md#ai-use-and-declaration-clarification)
+  records the public sources and remaining questions; advisor approval and the
+  reflection chapter do not by themselves settle the declaration requirements.
