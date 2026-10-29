@@ -23,6 +23,25 @@ baseline of 70% used at 09:56:46. This shared three-point movement is not an
 exact analysis charge. Both grants select no ongoing execution after delivery;
 future research requires a new bounded selection and fresh resource observation.
 
+## Pre-reset proposal — 29 October, awaiting current review
+
+The current portfolio request asks for a finite token-intensive deliverable by
+20:00 Berlin after initial review, not renewal of the old research campaign.
+Proposed **H**: continue both retained H_t branch words at t=7/20 and 2/5;
+deliver reusable code and a checked four-case table with closure/normalization,
+positivity, rank flags and objective/volume consistency. Numerical diagnostics
+are not rigorous parameter rejection; feasible words give upper capacity bounds,
+not certified gains. A missing/uncomputed case leaves this leaf incomplete.
+t=9/20 is optional only after the committed panel/checks are finished.
+
+Planning estimate for the reduced panel: 45–65 minutes, not calibrated; worker
+return target 19:40 Berlin leaves integration before 20:00. No full new-point
+certificate, family optimum, broad campaign or thesis adoption is selected.
+The portfolio lead owns review/dispatch and current quota checks; no research
+worker is running from this proposal. [Selection and cost evidence](/workspaces/agent-fleet-tools/research/reports/pre-reset-2026-10-29/REVIEW.md).
+The other mathematical alternatives below remain live; their deferral for this
+short window is not an expected-value judgment for later research.
+
 ## Next research choice
 
 | Candidate outcome | Scientific value and current evidence | Next discriminator and stop rule |

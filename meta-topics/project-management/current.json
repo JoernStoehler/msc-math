@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-29T10:56:57Z",
+  "updated_at": "2026-10-29T17:26:02Z",
   "scope": "Main consolidation and next-sprint handoff, authorized29Oct09:45:22 through10:15:22UTC with5quota points; independent postmortem has its separate1h/25point grant. No new mathematics, thesis promotion or remote publication selected.",
   "summary": "Main consolidation and independently reviewed HKO postmortem are complete. The exact improving-body report, causal/cost evidence and counterfactuals are retained and discoverable on main; owners released. Frozen scientific report/ZIP and selected thesis remain unchanged. Further research allocation and thesis acceptance remain open and unassigned. Requested cleanup removed the clean merged research worktree and branch; all commits remain on main and other sessions’ worktrees are preserved.",
   "tasks": [
@@ -4176,6 +4176,30 @@
       "authorization": "Direct Jörn postmortem request29Oct09:53 and separate1h/25%quota budget; one thoroughly analyzed valuable outcome preferred over thin breadth.",
       "updated_at": "2026-10-29T10:46:14Z",
       "next_step": "No active analysis assignment. Use the retained report in future research selection; source gaps are bounded in its evidence section, not new automatic work."
+    },
+    {
+      "id": "hko-pre-reset-screen-20261029",
+      "title": "Two-parameter H_t screen proposed for pre-reset window",
+      "kind": "task",
+      "selection": "unselected",
+      "project": "msc-math",
+      "status": "ready",
+      "owner": null,
+      "outcome": "Reproducible checked four-case continuation table for both retained words at t=7/20 and2/5, with numerical diagnostics separated from rigorous exclusions and no certified-gain claim.",
+      "depends_on": [],
+      "authorization": "Planning and review authorized by current portfolio request; research dispatch awaits Jörn review. No historical campaign allowance inherited.",
+      "next_step": "Current portfolio lead presents packet, then dispatches if selected with timing recalculated. Target return19:40Berlin, integration before20:00.",
+      "sources": [
+        "PLAN.md",
+        "topics/variation-and-local-maxima/hko-cut-family/README.md"
+      ],
+      "external_sources": [
+        "/workspaces/agent-fleet-tools/research/reports/pre-reset-2026-10-29/REVIEW.md"
+      ],
+      "evidence_refs": [
+        "Current portfolio thread01a188a1-b9ad-7500-971a-5f9c395888fb"
+      ],
+      "updated_at": "2026-10-29T17:26:02Z"
     }
   ],
   "decisions": [
@@ -4672,6 +4696,12 @@
       "observed_at": "2026-10-29T10:44:46.302721+00:00",
       "value": "Primary weekly73%used/27%remaining versus analysis baseline70/30 at09:56:46. Shared three-point movement includes concurrent/unrelated work; not exact analysis cost or billing. Analysis started09:56:27, one-hour deadline10:56:27, separate25-point ceiling. No reset, external spend, cloud or scientific producer. Author five-thread intermediate10:35:53 accounting133720output,809103uncached+26755840cached input is pre-handoff, not final bill.",
       "basis": "Fresh account/rateLimits/read via maintained helper; author native budget/usage receipt and retained REVIEW.md."
+    },
+    {
+      "label": "29 October pre-reset planning observation",
+      "value": "24% weekly remaining/76% used, shared account; no task-attributed token-to-quota factor. User reports20:00Berlin reset, scheduler unchanged and not verified here. No research grant selected.",
+      "observed_at": "2026-10-29T17:13:52Z",
+      "basis": "codex-resources read-only helper; sanitized evidence in fleet pre-reset cost report."
     }
   ],
   "links": [
