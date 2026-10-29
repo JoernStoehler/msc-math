@@ -76,11 +76,19 @@ next actions in STATUS and thesis-work.
 Jörn separately requested a complete causal/cost/counterfactual postmortem,
 prioritizing the exact HKO-improving body outcome over shallow breadth.
 Independent session `01a18716-e09c-7b71-93bc-c34b596b10eb` started09:56:27UTC,
-deadline10:56:27, with a separate25-point quota ceiling and account baseline
-70%used at09:56:46. It owns only
-`docs/history/hko-research-postmortem-20261029/` on the retained research branch.
-Root `01a184a6-b383-7673-8fdd-fff5c4b49ad2` receives, reviews and integrates its
-report. Completing main consolidation does not close that active analysis.
+with a10:56:27 deadline, separate25-point ceiling and70%used account baseline.
+Its [completed report](../../docs/history/hko-research-postmortem-20261029/report.html)
+and evidence are now integrated from `2ea8b588` and `a58c055a`. Root read the
+analysis, requested causal/cost precision, checked the final reading surface,
+and accepted the exact r3b approval after an open-ended independent critique.
+A separate read-only main check found all15 author files and13 reviewed-input
+hashes identical to the approved inputs. The actual temporary HTML download
+has the approved SHA `687264c49d622d0f33aa2daa8a2aa4d5315540052fe140dadb5848d27bb1844f`.
+Account10:44:46 was73%used/27%remaining; the three-point shared-account change
+is not exact analysis attribution. No scientific producer or reset was used.
+The former active-analysis statements above are historical; author/root are
+released after delivery. The retained report explicitly bounds missing full
+pricing, per-probe attribution, depth selection and stopping-decision evidence.
 
 ## Independent main artifact check
 

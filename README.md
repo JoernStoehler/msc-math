@@ -8,6 +8,8 @@ been submitted for final grading.
   result map and ranked open discriminators; [STATUS.md](STATUS.md) lists open
   outcomes. The [HKO cut-family handoff](topics/variation-and-local-maxima/hko-cut-family/README.md)
   retains exact conventions and labelled candidate inputs for the next bounded step.
+  The [HKO postmortem](docs/history/hko-research-postmortem-20261029/report.html)
+  explains the successful body’s causal path, costs and specific shortcuts.
 - **Understand the research:** the [research guide](docs/research-guide.md)
   explains the questions and support. Topic accounts cover
   [polytope geometry](topics/polytope-geometry/README.md),

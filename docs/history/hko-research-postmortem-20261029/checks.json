@@ -1,0 +1,74 @@
+{
+  "schema": "hko-postmortem-r3b-validation-v1",
+  "observed_at_utc": "2026-10-29T10:40:15.230996+00:00",
+  "report_md_sha256": "85e67ad592312a16e0ea372dd49b04d815955e58f5213817bc0d26d997db00a6",
+  "reading_html_sha256": "687264c49d622d0f33aa2daa8a2aa4d5315540052fe140dadb5848d27bb1844f",
+  "local_markdown_links": 27,
+  "html_ids": 66,
+  "fragment_links": 30,
+  "duplicate_ids": [],
+  "missing_fragment_targets": [],
+  "sibling_file_hrefs": [],
+  "embedded_download_bytes_match_sources": true,
+  "python_ast": "PASS",
+  "svg_xml": "PASS",
+  "projection_json": "PASS",
+  "browser": {
+    "route": "isolated Playwright CLI Chrome session hko-postmortem-r3b via temporary 127.0.0.1:58763 file server",
+    "native_receipt": "Final inspect-r3b.js native raw JSON result returned about10:40UTC, repeating1440/390 layout, math, appendix and source-link checks after stopping-scope wording clarification.",
+    "wide": {
+      "viewport_width": 1440,
+      "document_width": 1440
+    },
+    "narrow": {
+      "viewport_width": 390,
+      "document_width": 390,
+      "main_width": 356,
+      "main_display_math_widths": [
+        356,
+        356,
+        356,
+        356,
+        356,
+        356
+      ],
+      "main_display_math_scroll_widths": [
+        356,
+        356,
+        356,
+        356,
+        356,
+        356
+      ],
+      "table_wrapper_widths": [
+        356,
+        356,
+        356,
+        356,
+        356
+      ],
+      "table_scroll_widths": [
+        640,
+        640,
+        640,
+        640,
+        640
+      ]
+    },
+    "mathml_nodes": 85,
+    "embedded_svg_loaded": true,
+    "cost_appendix_navigation_expands": true,
+    "scientific_source_navigation_target_exists": true,
+    "external_images": 0,
+    "relative_file_hrefs": []
+  },
+  "inspected_screenshots": {
+    "pw-math-r3b.png": "d3c31825f5610abfee8a8e2b7bd61ceb37f3b81e99516d73dc2587b00adfc25b",
+    "pw-diagram-r3b.png": "8232abd598c8223c9715936666c18a8bfd49c7e1728c4833ff850638c60bd264",
+    "pw-cost-r3b.png": "f7e870c124d488d830defcc81ec29b6eb02e09a515c9c83c93b8e5e7d072df4a",
+    "pw-narrow-top-r3b.png": "9c566d52996fe52f0487dd09b239e4f7dd749a675031726f920512917ae1bd5b",
+    "pw-narrow-math-r3b.png": "a6477489d8b52615954736d6001f4cb958305c8545690504d5aff1fd73de9908",
+    "pw-appendix-r3b.png": "5da67398ffe386772882e8786a4b67d0fd42d1232e9e0b4997529070f7014744"
+  },
+  "scope": "Report reading surface and historical-source/accounting checks only; no scientific producer or proof rerun."
+}

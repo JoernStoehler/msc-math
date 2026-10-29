@@ -1,0 +1,22 @@
+digraph HKO {
+  graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep="0.3", ranksep="0.45"];
+  node [shape=box, style="rounded,filled", fillcolor="#f4f7fb", color="#a6b5ca", fontname="DejaVu Sans", fontsize=12, margin="0.16,0.12"];
+  edge [color="#52627b", arrowsize=0.65, fontname="DejaVu Sans", fontsize=10];
+  A [label="Ten coordinated\nradial cuts", fillcolor="#e7efff"];
+  B [label="Local ascent theorem"];
+  C [label="Candidate fixed body\nat t = 3/10", fillcolor="#e7efff"];
+  F [label="17-facet ascent and\ntiny effective interval"];
+  D [label="Complete capacity bound\nand attaining orbit", fillcolor="#e7efff"];
+  V [label="Exact geometry\nand volume", fillcolor="#e7efff"];
+  E [label="Exact improvement,\naudited and written up", fillcolor="#dcefe4", color="#6c977d"];
+  {rank=same; B; C;}
+  {rank=same; F; D; V;}
+  A -> B;
+  A -> C;
+  B -> F;
+  B -> C [style=dashed, label="motivated", constraint=false];
+  C -> D;
+  C -> V;
+  D -> E;
+  V -> E;
+}

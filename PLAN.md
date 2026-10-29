@@ -6,19 +6,22 @@ Updated 29 October 2026. This is the living entry for research selection after t
 
 Optimize expected mathematical value to symplectic geometers, allowing linear, unbounded upside. Judge a result by significance and a method by conceptual interest, reuse and ability to enable further research. Develop diverse alternatives **in parallel with** useful known work; reassess their value as evidence arrives. The coordinator makes explicit stopping and allocation decisions. Finite computation, agent review and a finished report do not alone prove a result's novelty, unrestricted theorem, or optimal time to stop.
 
-The first [56-page research report](topics/capacity-and-qp/convex-systolic-optimization/README.md) and [source/evidence delivery](topics/capacity-and-qp/convex-systolic-optimization-delivery.md) are complete. Its 01:20 stop was a coordinator choice; inspected records contain no comparative expected-value justification that further research then had lower value. The broader continuation decision is open. Main now contains the research commits through `c6be4c33`; independent source/artifact uptake checks pass. The [consolidation record](meta-topics/repository-organization/main-consolidation-20261029.md) records the preserved viewer fixes, source validation and open-work handoff. No new mathematical producer, thesis adoption, publication or university submission is selected by the present consolidation.
+The first [56-page research report](topics/capacity-and-qp/convex-systolic-optimization/README.md) and [source/evidence delivery](topics/capacity-and-qp/convex-systolic-optimization-delivery.md) are complete. Ending new research selection at 01:07 was a coordinator choice; inspected records contain no comparative expected-value justification that further research then had lower value. The broader continuation decision is open. Main now contains the research commits through `c6be4c33`; independent source/artifact uptake checks pass. The [consolidation record](meta-topics/repository-organization/main-consolidation-20261029.md) records the preserved viewer fixes, source validation and open-work handoff. No new mathematical producer, thesis adoption, publication or university submission is selected by the present consolidation.
 
-**Live consolidation allowance:** 29 October 09:45:22–10:15:22 UTC, at most five account-wide primary weekly quota points from the 70%-used baseline observed at 09:45:59; stop at 75% used. This permits main consolidation and validation, not a new mathematical campaign. The original 10:05 research cutoff and 01:16 37%-remaining reading are historical, not the live allowance or a task-spend estimate. Root owns the present consolidation; a future sprint needs an explicit bounded selection and fresh resource observation.
-
-**Parallel postmortem:** independent session `01a18716-e09c-7b71-93bc-c34b596b10eb`
-started 09:56:27 UTC and has its separate one-hour/25-quota-point ceiling through
-10:56:27. It fully analyzes the exact HKO-improving body's causal path, episode
-costs and minimal-knowledge counterfactuals before extending to other outcomes.
-Root receives, reviews and integrates the report. It works only in its owned
-`docs/history/hko-research-postmortem-20261029/` folder on the research branch;
-that folder is pending and is not a main-checkout deliverable yet. Its account
-baseline was 70% used at09:56:46. Shared-account movement cannot be attributed
-exactly between consolidation, analysis and unrelated work.
+**Completed consolidation and analysis:** main consolidation finished at 10:09 UTC
+within its 09:45:22–10:15:22 / five-point grant. The separate postmortem began
+09:56:27 with a one-hour / 25-point ceiling and is now complete, independently
+reviewed and integrated. The [readable analysis](docs/history/hko-research-postmortem-20261029/report.html)
+fully traces the exact HKO-improving body through discovery, global capacity,
+volume, checking, writing and delivery. Its [cost evidence](docs/history/hko-research-postmortem-20261029/cost-evidence.md)
+separates worker envelopes, dated partial API equivalents and shared quota;
+its counterfactuals distinguish minimal extra knowledge from stronger hindsight.
+The original run ended new research selection at 01:07 and delivered at 01:22;
+no inspected comparative value judgment establishes optimal stopping.
+At 10:44:46 the account showed 73% used / 27% remaining, versus the analysis
+baseline of 70% used at 09:56:46. This shared three-point movement is not an
+exact analysis charge. Both grants select no ongoing execution after delivery;
+future research requires a new bounded selection and fresh resource observation.
 
 ## Next research choice
 

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-29T10:04:39Z",
+  "updated_at": "2026-10-29T10:46:14Z",
   "scope": "Main consolidation and next-sprint handoff, authorized29Oct09:45:22 through10:15:22UTC with5quota points; independent postmortem has its separate1h/25point grant. No new mathematics, thesis promotion or remote publication selected.",
-  "summary": "Main consolidation complete: research artifacts and open-work handoff adopted, preserved viewer cache fix tested, dashboard source contract and HTTP checks pass. Frozen report/ZIP/thesis unchanged. Next research allocation remains unassigned; independent HKO postmortem01a18716 is active under a separate1h/25-point grant, received by root01a184a6.",
+  "summary": "Main consolidation and independently reviewed HKO postmortem are complete. The exact improving-body report, causal/cost evidence and counterfactuals are retained and discoverable on main; owners released. Frozen scientific report/ZIP and selected thesis remain unchanged. Further research allocation and thesis acceptance remain open and unassigned.",
   "tasks": [
     {
       "id": "msc-math-done",
@@ -4119,13 +4119,14 @@
       "project": "research-20261028",
       "status": "ready",
       "owner": null,
-      "outcome": "First coherent r6 report and exact evidence are delivered and now adopted into main. The optimality of the01:20 stopping choice remains unsupported by inspected comparative evidence. Next research selection is open, with durable H_t/rank-four/hinge/partner candidates in PLAN; no scientific execution is launched by consolidation.",
+      "outcome": "First coherent r6 report and exact evidence are delivered and now adopted into main. The optimality of ending new research selection at01:07 remains unsupported by inspected comparative evidence. Next research selection is open, with durable H_t/rank-four/hinge/partner candidates in PLAN; no scientific execution is launched by consolidation.",
       "depends_on": [],
       "sources": [
         "PLAN.md",
-        "meta-topics/project-management/research-discovery-reconciliation-20261029.md"
+        "meta-topics/project-management/research-discovery-reconciliation-20261029.md",
+        "docs/history/hko-research-postmortem-20261029/REPORT.md"
       ],
-      "updated_at": "2026-10-29T09:59:59Z",
+      "updated_at": "2026-10-29T10:46:14Z",
       "next_step": "At the next selected research sprint compare the durable H_t branch discriminator, structural alternatives and fresh suggestions using current resources; make the allocation/stopping judgment explicit."
     },
     {
@@ -4136,7 +4137,7 @@
       "project": "research-20261028",
       "status": "done",
       "owner": null,
-      "outcome": "Main adopts the three research/discovery commits with original viewer/graph work preserved and completed. Living PLAN/handoff simplified; H_t continuation inputs retained; main artifact/certificate bindings pass; dashboard source contract/validator and8HTTPtests pass; viewer15tests pass. Scientific baseline and thesis remain separately unreconciled. Independent postmortem remains active under its own grant.",
+      "outcome": "Main adopts the three research/discovery commits with original viewer/graph work preserved and completed. Living PLAN/handoff simplified; H_t continuation inputs retained; main artifact/certificate bindings pass; dashboard source contract/validator and8HTTPtests pass; viewer15tests pass. Scientific baseline and thesis remain separately unreconciled. The separate independently reviewed postmortem is now integrated; see its task and retained report.",
       "depends_on": [
         "restart-main-adoption-20261029"
       ],
@@ -4148,8 +4149,8 @@
         "meta-topics/repository-organization/main-consolidation-20261029.md"
       ],
       "authorization": "Direct Jörn request29Oct09:45: merge/consolidate own work including open work, allow finishing/refactor;30min/5quota points, use subagents. No remote publication selected.",
-      "updated_at": "2026-10-29T10:04:39Z",
-      "next_step": "Use main for the next selected research sprint. Root continues receiving/reviewing/integrating the separate postmortem; no scientific campaign launched here."
+      "updated_at": "2026-10-29T10:46:14Z",
+      "next_step": "Use main for the next explicitly selected research sprint; no scientific campaign is running."
     },
     {
       "id": "hko-research-postmortem-20261029",
@@ -4157,18 +4158,24 @@
       "kind": "task",
       "selection": "selected",
       "project": "research-20261028",
-      "status": "running",
-      "owner": "01a18716-e09c-7b71-93bc-c34b596b10eb",
-      "outcome": "Independent session started09:56:27UTC, deadline10:56:27, separate25quota-point ceiling. Priority is the exact H_(3/10) body exceeding HKO: results, enabling/side/open steps, measured/qualified episode costs and minimal-knowledge skippability counterfactuals. No science producers or main/shared-PM edits.",
+      "status": "done",
+      "owner": null,
+      "outcome": "Complete causal/cost/counterfactual analysis of the exact H_(3/10)>HKO written-up outcome, with other outcomes distinguished. Independent open-ended source/reader critique and exact r3b approval pass. Main preserves all15 author files and13 approved-input hashes; final readable HTML, wide/narrow inspection and actual delivery-byte checks pass. Full pricing, precise depth-grid selection and optimal stopping remain explicitly unresolved.",
       "depends_on": [],
       "sources": [
-        "PLAN.md",
-        "topics/capacity-and-qp/convex-systolic-optimization/README.md",
-        "meta-topics/project-management/research-discovery-reconciliation-20261029.md"
+        "docs/history/hko-research-postmortem-20261029/README.md",
+        "docs/history/hko-research-postmortem-20261029/report.html",
+        "docs/history/hko-research-postmortem-20261029/REPORT.md",
+        "docs/history/hko-research-postmortem-20261029/cost-evidence.md",
+        "docs/history/hko-research-postmortem-20261029/causal-evidence.md",
+        "docs/history/hko-research-postmortem-20261029/REVIEW.md",
+        "docs/history/hko-research-postmortem-20261029/checks.json",
+        "docs/history/hko-research-postmortem-20261029/reviewed-inputs.json",
+        "docs/history/hko-research-postmortem-20261029/usage-projection.json"
       ],
       "authorization": "Direct Jörn postmortem request29Oct09:53 and separate1h/25%quota budget; one thoroughly analyzed valuable outcome preferred over thin breadth.",
-      "updated_at": "2026-10-29T09:59:59Z",
-      "next_step": "Author returns framing/midpoint/final report with source/reader critique to root01a184a6-b383-7673-8fdd-fff5c4b49ad2; root reviews and integrates its owned report branch."
+      "updated_at": "2026-10-29T10:46:14Z",
+      "next_step": "No active analysis assignment. Use the retained report in future research selection; source gaps are bounded in its evidence section, not new automatic work."
     }
   ],
   "decisions": [
@@ -4659,6 +4666,12 @@
       "value": "At10:04:50UTC account primary weekly71%used/29%remaining, one point above09:45 baseline70%. This includes concurrently running postmortem and other work; exact consolidation attribution/billing is unknown. Consolidation deadline10:15:22; postmortem separately10:56:27. No reset used.",
       "observed_at": "2026-10-29T10:04:50.139269+00:00",
       "basis": "Fresh codex app-server account/rateLimits/read allowlisted metadata."
+    },
+    {
+      "label": "29October postmortem closing integration account observation",
+      "observed_at": "2026-10-29T10:44:46.302721+00:00",
+      "value": "Primary weekly73%used/27%remaining versus analysis baseline70/30 at09:56:46. Shared three-point movement includes concurrent/unrelated work; not exact analysis cost or billing. Analysis started09:56:27, one-hour deadline10:56:27, separate25-point ceiling. No reset, external spend, cloud or scientific producer. Author five-thread intermediate10:35:53 accounting133720output,809103uncached+26755840cached input is pre-handoff, not final bill.",
+      "basis": "Fresh account/rateLimits/read via maintained helper; author native budget/usage receipt and retained REVIEW.md."
     }
   ],
   "links": [
@@ -4991,6 +5004,10 @@
     {
       "at": "2026-10-29T10:04:39Z",
       "text": "Completed main consolidation with preserved viewer/graph edits, durable H_t candidate handoff, concise living plan, corrected source classification and passing actual-main dashboard/HTTP and viewer checks. Scientific baseline stays unreconciled. Independent postmortem remains active; consolidation completion does not close analysis."
+    },
+    {
+      "at": "2026-10-29T10:46:14Z",
+      "text": "Integrated the independent exact-HKO outcome postmortem from2ea8b588/a58c055a. Preserved approved report bytes and evidence, added main discovery routes and dashboard sources, verified named-file delivery. Closed author/root assignments; no new science or thesis promotion selected. Unsupported depth-selection, full cost and stopping conclusions remain explicit."
     }
   ]
 }
