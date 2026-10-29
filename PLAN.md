@@ -1,261 +1,42 @@
-# Autonomous research: restart plan
+# Research plan — Probing Viterbo's conjecture
 
-## 29 October discovery repair and research-allocation review
+Updated 29 October 2026. This is the living entry for research selection after the first autonomous report. The dated plan and selection table remain recoverable with `git show c6be4c33:PLAN.md`; [reconciliation](meta-topics/project-management/research-discovery-reconciliation-20261029.md) records the source/consumer checks and limits of the stopping evidence. [STATUS.md](STATUS.md) lists open outcomes and owners; [current.json](meta-topics/project-management/current.json) owns assignments and resource observations.
 
-The final report and its evidence are delivered. At 07:35 UTC the fleet
-orchestrator reopened the broader allocation question: completing that report
-and marking the native goal complete did not establish that stopping the
-value-maximizing research loop at 01:20 was the best decision.
+## Objective and present decision
 
-The primary launch message (native Codex rollout
-`rollout-2026-10-28T23-34-39-01a184a6-b383-7673-8fdd-fff5c4b49ad2.jsonl`,
-line 13, 28 October 22:35:36 UTC) assigns coordinator **stopping decisions**
-and asks for continued alternative generation. It selects integration in this
-new worktree and a 10:05 UTC cutoff, not automatic main/thesis adoption. No
-user instruction to stop at 01:20 or evidence of quota exhaustion was found.
-The 01:16 observation of 37% remaining is account-wide and is now historical.
+Optimize expected mathematical value to symplectic geometers, allowing linear, unbounded upside. Judge a result by significance and a method by conceptual interest, reuse and ability to enable further research. Develop diverse alternatives **in parallel with** useful known work; reassess their value as evidence arrives. The coordinator makes explicit stopping and allocation decisions. Finite computation, agent review and a finished report do not alone prove a result's novelty, unrestricted theorem, or optimal time to stop.
 
-The retained value reviews at 00:03 and 00:24 recommended continued ambitious
-exploration and a bounded two-hinge discriminator. That discriminator later
-closed with an obstruction, but the inspected records supply no comparative
-expected-value assessment of further discovery versus stopping after it.
-Some historical native tool-message arguments are encrypted, limiting direct
-recovery of the exact stop rationale. The known finalization directives show
-a coordinator choice, not its optimality. Do not retrofit an exhaustion claim.
+The first [56-page research report](topics/capacity-and-qp/convex-systolic-optimization/README.md) and [source/evidence delivery](topics/capacity-and-qp/convex-systolic-optimization-delivery.md) are complete. Its 01:20 stop was a coordinator choice; inspected records contain no comparative expected-value justification that further research then had lower value. The broader continuation decision is open. Main now contains the research commits through `c6be4c33`; independent source/artifact uptake checks pass. The [consolidation record](meta-topics/repository-organization/main-consolidation-20261029.md) records the preserved viewer fixes, source validation and open-work handoff. No new mathematical producer, thesis adoption, publication or university submission is selected by the present consolidation.
 
-| Unfinished outcome | Evidence / next discriminator | Current owner and boundary |
+**Live consolidation allowance:** 29 October 09:45:22–10:15:22 UTC, at most five account-wide primary weekly quota points from the 70%-used baseline observed at 09:45:59; stop at 75% used. This permits main consolidation and validation, not a new mathematical campaign. The original 10:05 research cutoff and 01:16 37%-remaining reading are historical, not the live allowance or a task-spend estimate. Root owns the present consolidation; a future sprint needs an explicit bounded selection and fresh resource observation.
+
+**Parallel postmortem:** independent session `01a18716-e09c-7b71-93bc-c34b596b10eb`
+started 09:56:27 UTC and has its separate one-hour/25-quota-point ceiling through
+10:56:27. It fully analyzes the exact HKO-improving body's causal path, episode
+costs and minimal-knowledge counterfactuals before extending to other outcomes.
+Root receives, reviews and integrates the report. It works only in its owned
+`docs/history/hko-research-postmortem-20261029/` folder on the research branch;
+that folder is pending and is not a main-checkout deliverable yet. Its account
+baseline was 70% used at09:56:46. Shared-account movement cannot be attributed
+exactly between consolidation, analysis and unrelated work.
+
+## Next research choice
+
+| Candidate outcome | Scientific value and current evidence | Next discriminator and stop rule |
 | --- | --- | --- |
-| Research results are encountered from main and portfolio views | This worktree now reconciles the guide, product/variation accounts and dashboard frontier to final r6 scopes. Desk frontend uses its read-only report source. Main remains `38c0488e`, without `3af33818` and `4e40a92f`. Choose a local adoption route preserving main's dirty viewer files and untracked live-task graph, then validate main's actual discovery. | Fleet orchestrator `01a18670-a310-73b1-a872-6e1218f239c6`; main merge is not part of this repair. |
-| Continuing or ending the autonomous research loop has a supported allocation judgment | Compare a short H_t active-branch discriminator, three invariant hinges, and genuinely new alternatives against their scientific upside, readiness and fresh quota. A complete report alone is insufficient evidence for stopping. | Fleet orchestrator; no new scientific producer assigned by this source repair. |
-| A stronger H_t example or a structural account of branch changes | Geometry owner identifies a ready, unfunded continuation of existing seven-/eight-label stationary words between t=.3 and .5. First use feasible-branch bounds to reject unpromising points; certify a candidate only if a worthwhile possible gain survives. Exact t=.3 costs were 360 s curvature, 69 s leaves and 7 s geometry; another point is not a measured cost guarantee and scripts hardcode counts/targets. | Unassigned candidate; preserve r6, select a bounded effort before execution. |
-| Facet complexity of nearby ascent is understood | Any seven fixed radial cuts suffice; at most two characteristic-invariant affine hinges cannot have positive first variation. Three general invariant hinges are a concrete possible discriminator, but their implementation/readiness was not established by this repair. Arbitrary twelve-facet behavior remains open. | Unassigned candidate, not an automatic campaign. |
+| Stronger HKO descendant or structural active-branch account | Highest immediate upside: the exact twenty-facet `H_(3/10)` already exceeds HKO, but the maximum along `H_t` is unknown. The geometry owner's existing seven/eight-label stationary branches between `t=.3` and `.5` are ready for triage; floating diagnostics do not certify capacity. | First use feasible-branch bounds to discard unpromising parameters. If a worthwhile gain or branch mechanism survives, design complete exact coverage at that point. Stop this attempt if only a feasible upper-capacity witness, negligible gain, or unbounded enumeration remains. The fixed-`.3` scripts hardcode targets/counts; their 360 s curvature, 69 s leaves and 7 s geometry timings do not predict a new point. Start at the [durable H_t continuation packet](topics/variation-and-local-maxima/hko-cut-family/README.md), [paper theorem](topics/capacity-and-qp/convex-systolic-optimization/sections/hko-moderate.tex) and [fixed-body certificate](topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-t03/README.md). The continuation packet labels its raw branch probes separately from proved capacity; revalidate hardcoded certificate targets before any new parameter run. |
+| Unrestricted rank-four Pfaffian inequality | High-risk structural convex-geometric value, without an established EHZ consequence. Proved through seven generators and for any size with a degree-one/two row; nonproduct eight-generator equality exists. The all-direction projection inequality is exactly false, while its maximum-radius repair is equivalent to the original open problem. | Seek an all-size rank-preserving reduction, a proof of the maximum-radius bound, or an exact counterexample. Do not substitute successive eight/nine-index graph enumerations for a mechanism. Start at the [retained packet](topics/empirical-studies/discovery-design/desk/zonotope-research/rank-four-restart-20261029/README.md) and [mechanism blocker](topics/empirical-studies/discovery-design/desk/zonotope-research/rank-four-restart-20261029/all-size-mechanism/projection-radius.md). |
+| Minimum facet birth for nearby HKO ascent | A positive result with three characteristic-invariant hinges would narrow the gap between the accepted `F<=11` local theorem and seven-cut seventeen-facet ascent. The exact two-hinge obstruction applies only to first variation, characteristic invariance and retained old rows. Three-hinge implementation/readiness has not been established. | First derive the correct three-profile volume/occupation interface and a bounded exact search or structural dual. Stop if it requires a new unbounded orbit enumeration or only numerical near-zero gaps. Start at the [two-hinge proposition/proof](topics/capacity-and-qp/convex-systolic-optimization/sections/hko-two-hinge-appendix.tex) and [fixed-bank derivative/certificate](topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/README.md). No arbitrary twelve-facet local theorem follows from the current result. |
+| Fixed regular pentagon with arbitrary asymmetric planar partner | The global ratio/optimizer question is open despite sharp symmetric and several restricted asymmetric results. A new general cover principle could transfer more broadly, but local competitors alone have lower value. | Identify a genuinely general translation-cover/forest or finite-template completeness step before running more local optimization. Start at the [partner account](topics/products/pentagon-arbitrary-partner/README.md), [general-matrix cone reduction](topics/products/pentagon-arbitrary-partner/general-matrix-cone-reduction-20261005.md) and [algorithm account](topics/products/pentagon-arbitrary-partner/translation-cover-algorithms-20261019.md). |
 
-The unrestricted four-dimensional optimum, the maximum along H_t, the fixed
-pentagon/arbitrary-asymmetric-partner optimum, the true truncated-parallelogram
-optimizer, and the unrestricted rank-four zonoid inequality remain open. The
-rank-four maximum-radius formulation returned an equivalent open inequality,
-not an all-size mechanism; more graph cases alone do not remove that blocker.
-The ≥3-paraboloid extension likewise needs a new localization argument rather
-than repeated sampling. These openings differ in readiness and expected value.
+Maintain an independent alternative-generation thread when a new sprint is authorized. The three-or-more-paraboloid extension needs a new shadow-localization argument; more samples repeat earlier work. The six-simplex method is special to its ordering-polytope classification; higher-dimensional enumeration without a reusable mechanism is not yet a selected line. Compare these and new suggestions by expected upside and actual evidence, not ease of verification. [Value review](meta-topics/project-management/research-discovery-reconciliation-20261029.md) points to retained 00:03/00:24 assessments; those precede the final moderate-parameter result and two-hinge obstruction.
 
-The [reconciliation record](meta-topics/project-management/research-discovery-reconciliation-20261029.md)
-retains source/consumer checks and the stopping-evidence boundaries. The current
-repair changes discovery and planning only; the final r6 paper, certificate
-archive, selected thesis sources and thesis source manifest remain frozen.
+## Delivered result and evidence map
 
-## Completed research report — 29 October 01:20 UTC
+The separate research report proves HKO's full `GL(4)` orbit maximum, including maps mixing the factor planes; the exact `H_(3/10)` twenty-facet ratio `1.0519141388294875...`; nearby seventeen-facet ascent using any seven specified radial cuts; and a first-order obstruction for at most two characteristic-invariant affine hinges with **all old rows retained**. The seven-cut minimality is only within that fixed nonnegative-profile cone. This is compatible with the accepted at-most-eleven-facet local theorem and does not prove local maximality for arbitrary twelve-facet bodies or an optimum along `H_t`. The report separately proves a sharp global six-simplex bound, an all-dimensional two-paraboloid difference-volume theorem and a strict truncated-parallelogram all-partner bound; the four-simplex numerical bound was known from Haim–Kislev's 2019 thesis. The [paper map](topics/capacity-and-qp/convex-systolic-optimization/README.md) routes precise statements and certificates.
 
-The first report is delivered; broader research allocation is under the
-reassessment above. The canonical
-56-page paper at `topics/capacity-and-qp/convex-systolic-optimization/paper.pdf`
-has SHA-256 `a87d422c1ee43ca10454b5c7fa25eeb3f35f1b9ea424734aa501fe6c7e13f0b3`.
-Its assembled mathematical delta and reader review both pass this exact PDF
-with its source/evidence companion; root visually inspected all 56 pages with
-no defect found. These agent checks do not establish external refereeing or
-Jörn's thesis acceptance.
+Scoped independent mathematical, reader and replay reviews, root all-page inspection and the checked source archive support the exact report. They are not human or external refereeing, priority certification or thesis acceptance. The rank-four note is separate and its universal conjecture open. The selected [thesis manuscript](thesis/README.md) is unchanged by this research delivery; [thesis-work.md](meta-topics/project-management/thesis-work.md) and [project facts](docs/project-facts.md) own its human, source and administrative gaps.
 
-The fixed twenty-facet body $H_{3/10}$ is now a theorem with exact capacity,
-volume, and ratio $1.0519141388294875\ldots>(3+\sqrt5)/5$ after separate
-mathematical coverage/volume audit and fresh-copy exact replay. The printed
-Appendix B contains the complete quantitative near-zero proof for all ten
-unit cuts. Appendix C proves that one or two characteristic-invariant affine
-hinges, with the original facet inequalities retained, cannot give positive
-first systolic variation; this covers two cuts on the same or different
-facets. It does not establish local maximality among arbitrary twelve-facet
-bodies, a higher-order conclusion, or a result for non-invariant hinges.
-The seventeen-facet nearby ascent uses seven selected fixed radial cuts and
-remains separate from the fixed $t=3/10$ improvement. No maximum along the
-twenty-facet family or over all convex four-bodies is claimed.
+## Recovery boundaries
 
-The source-and-evidence ZIP is exported and independently checked: all 165
-internal manifest hashes and nested certificate manifests pass; fresh extracted
-replays pass, and the extracted source rebuilds the 56-page paper without final
-TeX warnings. Its PDF text matches the reviewed PDF byte for byte. Root verified
-the actual private PDF/ZIP HTTP response types and hashes. The
-[delivery record](topics/capacity-and-qp/convex-systolic-optimization-delivery.md)
-retains exact archive/PDF identities and the independent report. Those selected
-research and delivery assignments were released. This closes the first report
-delivery; the broader stopping judgment is now under reassessment.
-
-The report remains separate from the selected thesis manuscript; thesis
-adoption, fresh scientific execution, publication, and university submission
-are unassigned by this source-repair task. The 00:40 table below is a historical selection snapshot,
-superseded by this final state. The run ended before its 10:05 UTC cutoff.
-The latest account-wide primary weekly quota observation is 37% remaining at
-01:16 UTC, not task-attributed spend or billing. No reset was consumed.
-
-Updated 28 October 2026. The previous session is closed. This was the starting
-contract for the fresh session in a new worktree from local `main`; the original
-allocation and candidate status appear below; the final disposition is above. It is not an assignment to the
-closed root or a fixed list of mathematical targets.
-
-**Historical scratch recovery:** [ROOT-CONTINUATION.md](/tmp/msc-math/restart/ROOT-CONTINUATION.md) preserves temporary context-refresh notes. It assigns no post-run work; this plan and retained proof/delivery sources own the final disposition.
-
-## Outcome and audience
-
-Topic: **Probing Viterbo's conjecture**; adjacent mathematics belongs when it
-can contribute. Optimize expected mathematical research value to symplectic
-geometers, with linear, unbounded upside. Judge methods and proofs by their
-conceptual interest, reuse, connections and capacity to enable later research;
-judge results by mathematical significance. Correctness and readable,
-complete-enough arguments matter. Produce **one coherent LaTeX writeup built
-to PDF**, in paper/thesis style. The new coordinator chooses hierarchy,
-narrative and contextualization. This does not automatically select changes
-to the existing thesis manuscript or constitute human acceptance of it.
-
-## Jörn's clarified scheduling and allocation decisions
-
-- Kick off substantial, diverse brainstorming early **in parallel with** work
-  already known to be useful. Brainstorming is not a prerequisite phase that
-  blocks independent useful work. Do not impose a before/after sequence without
-  a real dependency.
-- Continue generating and developing alternative tracks throughout the run.
-  Ideas are heavy-tailed; new knowledge enables finite creative jumps.
-- Assess every idea for predicted mathematical value regardless of source,
-  including inherited targets, new suggestions, and partially finished drafts.
-  Existing machinery and easy verification do not establish value.
-- Use expected value, not a bounded pass/fail score or a requirement for a safe
-  finished theorem. The coordinator owns mathematical-taste proxies, novelty
-  review, selection, stopping, risk allocation and resource management.
-- Measure actual usage, results and coordination burden; adjust allocation as
-  evidence arrives rather than guessing the split once at the start.
-- Keep conditional proof, falsification and implication/evidence routes parallel
-  where useful. State possible experiment outcomes and their consequences
-  before running; stop dependent work if its premise is refuted or loses value.
-- Use open-ended mathematical and value reviews. Do not restrict reviewers to
-  a checklist that prevents noticing more important issues.
-- No further clarification is needed on these choices. Recover facts, check
-  sources and make ordinary research decisions independently.
-
-## Work structure for the next coordinator to develop
-
-Maintain this PLAN as the high-level track/decision/conjecture map; recursive
-notes are allowed. For each funded track make the exact question, predicted
-research value, present belief/evidence, useful outcomes, critical uncertainty,
-owner and next discriminator concrete. Preserve conceptual diversity and assign
-real continuing exploration responsibility. Avoid merely vague topic labels
-that let workers select whatever is easiest.
-
-Delegate whole lines with receiving/integration ownership when coordination
-becomes the bottleneck. The original feedback specifically warns against more
-than five minutes of message typing in a roughly thirty-minute iteration and
-insufficient time available for new mathematical insight. These are allocation
-signals, not a requirement to idle artificially. User permits up to 99 agents
-and recursive delegation: Astra is preferred for hard mathematics; Sol for
-engineering/verifiable targets, Luna for broad mechanical/natural-text triage;
-Terra is also available. Use judgment and actual resource observations.
-
-Early literature/methods work should examine recent AI-assisted mathematical
-research, actual prompts/workflows where accessible, and transfer limitations.
-Run it alongside domain work, not as a serial permission gate.
-
-## Resources and execution boundary
-
-The original envelope was twelve hours from about 2026-10-28 22:05 UTC, local
-workstation compute, and the then-remaining 90% weekly quota. No replacement
-budget was granted during cleanup: preserve **2026-10-29 10:05 UTC** as the
-conservative execution cutoff and check current remaining quota before large
-allocation. The old 90% snapshot is not a fresh balance. No reset redemption,
-external spending, cloud execution or human relay labor is selected. Work
-fully autonomously after any initial interaction; no ongoing Jörn-hours are
-available for clarification. Reserve time for mathematical checking, coherent
-writing, PDF build and visual inspection, integration and cleanup.
-
-Use the **new assigned worktree** as the integration target. The former
-instruction to integrate into 8983 applied to the stopped session and is
-superseded by Jörn's request for a new worktree off main. Preserve main's
-unrelated dirty viewer files and other sessions' work. No remote publication
-is selected.
-
-## Evidence and optional recovery from the stopped attempt
-
-Archive branch `archive/autonomous-research-stopped-20261028`, commit
-`a3441d4e`, retains candidate notes, exact optimizer code/results and a methods
-survey. Inspect its `docs/history/autonomous-research-stopped-20261028/README.md`
-with `git show` if useful. These are **optional candidates, not the new agenda**.
-No cherry-pick or adoption is required. The archive distinguishes a reviewed
-uniform odd-affine upper bound, an unreviewed claimed general containment
-proof, and an exact optimizer with incomplete exposition/equality work.
-Novelty and research value have not been established for these candidates.
-Some local-cut/contact ideas survive only in the old native thread returns.
-Do not reconstruct all of them before starting valuable independent work.
-
-Current sources override older frontier summaries: 7×7 and 5×9 tensor
-containment and a rank-one determinant edge-reduction theorem already exist
-in the 22 October sprint sources. Retrieve the actual topic accounts and
-proofs before calling a case open.
-
-## Disabled workflow and remaining infrastructure limits
-
-Jörn disabled the feedback CLI/workflow during cleanup. Do not invoke, poll,
-reinstall or re-enable it; no pre-edit feedback check is required. Shared
-source commit `b6b8e8b` in agent-fleet-tools removes the automatic guidance.
-Existing records remain intact.
-
-A dashboard check in the stopped session exposed pre-existing migrated/missing
-source references. No broad dashboard repair landed. Do not turn the research
-restart into a tooling migration. The friction Pages overview was not refreshed
-for this stopped attempt; its existing content is not current sprint state.
-
-## Entry and acceptance
-
-Start at README, AGENTS, this plan and the research guide. Build a source-backed
-frontier with parallel scouts and investigators. Keep selected results with
-their mathematical evidence owners; do not promote numerical experiments or
-agent agreement into theorems. Independently assess the final assembled proof
-and the actual writeup's relevance/readability. Build and inspect the resulting
-PDF; compilation alone does not validate the mathematics. Keep the research
-objective intact across turns until the authorized run ends or Jörn stops it.
-
-## Historical selection and discriminators — 29 October 00:40 UTC
-
-Root owns mathematical selection, final scientific taste, commits, cleanup and
-delivery. The canonical **48-page r3 paper** under
-`topics/capacity-and-qp/convex-systolic-optimization/` was committed locally
-in `3af33818` with methods, the separate rank-four note and a delivery-doc fix.
-Its PDF SHA256 is
-`689426594375053635c2f39676ca90288bf69bcaba98d8388ea09deb97d0b600`.
-The fresh assembled mathematical review passed r3, and root inspected all 48
-rendered pages. The prior reader review found attribution, scope and
-reproduction issues; root must confirm their final disposition. These checks
-do not give external refereeing or human thesis PASS. The research/delivery
-parent remains active because new candidate work and final artifact checks
-are open.
-
-| Selected report line | Evidence and exact limit | Owner / next discriminator |
-| --- | --- | --- |
-| **HKO: affine rigidity versus Hausdorff ascent** | r3 contains audited sharp `GL(4)` orbit rigidity, strict 20-facet ascent, weighted-profile response `max(w)/125`, 17-facet ascent from any seven unit cuts, and a certified all-ten-cut `t=10^-30` witness with gain `>5×10^-33`. The six-cut limit concerns only these fixed profiles. Fresh assembled r3 mathematics review passed. | A moderate `t=3/10` computation now reports finite checks passed, candidate `Q=(205/1019)τ`, 75 simple vertices/all 20 facets pending assertion, exact volume `V=−99664289 τ²/260891200+300748771/52178240`, and candidate `ρ≈1.0519141388`. **Do not promote this to a theorem:** separate mathematical coverage/volume audit and frozen fresh-copy replay are pending. |
-| **All six-dimensional simplices** | Fresh global audit passes the sharp bound `ρ₆≤(945+75√5)/1922` and one equality class modulo translation, positive dilation and symplectic maps. Exact polytope coverage uses 720 order and 840 fence vertices with cdd/PPL certificate code; a direct facet enumeration timed out and is not evidence. | The packet includes the portable four-script replay and labels computer-assisted completeness; assembled reviewers and root check integrated proof and commands. |
-| **Two-paraboloid difference volume and squared planar bodies** | Fresh audit passes the all-dimensional theorem for intersections of **two** confocal paraboloids, with strict bound and sharp round-cap supremum. Its planar case proves `area(σK−σK)≤5area(σK)` and replaces the older scalar/log proof. Checked Chaidez–Tanny transfer gives `c_EHZ(X)²≤(5/2)Vol₄(X)` for right-quaternionic-`I` invariant convex `X`; four-dimensional sharpness is not claimed. | The packet uses the six-page geometric source and exact normalization; reviewers check the final combined exposition. No assertion for three or more paraboloids. |
-| **Truncated parallelogram products** | Fresh audit passes strict Viterbo for **every** convex partner of any genuine corner-truncated parallelogram, plus a uniform partner gap and a Hausdorff-open factor neighborhood. The proposed BMP optimizer is false by an audited trapezoid and pentagonal-shadow family, while the inequality holds. The corrected optimizer classification remains open. | The packet contains the strict theorem, neighborhood and counterfamily; reviewers check scope and final interfaces. `product_extremizers` has handed off and is released. |
-| **Planar triangle product positions** | Fresh audit passes sharp `ρ≤2/3` for all Lagrangian positions of two triangles, while one rational non-Lagrangian affine image has `ρ=18/25`. No full-affine optimum is claimed. | The packet contains the compact exact verifier; reviewers check assembled argument and wording. |
-| **Four-dimensional simplex method** | HK's 2019 MSc thesis already proves the sharp `3/4` bound. The new short triangle-free Pfaffian-graph proof and complete equality family are potential method/classification contributions; do not label the numerical bound new. | Worker cites HK2019 prominently; root checks novelty wording and integrated equality proof. |
-
-**Separate and open research.** The rank-four zonoid line has a retained,
-component-audited seven-page note: sharp inequality through seven generators,
-a nonproduct eight-generator equality family, and an all-size degree-1/2
-criterion. Its unrestricted conjecture and capacity consequence remain open.
-The bounded all-size mechanism attempt stopped at a concrete blocker;
-`rank_four_zonoids` is released. The note stays separate from the capacity
-paper. The moderate HKO descendant is frozen for two independent audits; no
-further parameter optimization is selected. `multicut_variation` now owns one
-20-minute test of **two arbitrary characteristic-invariant hinges** for a
-possible 12-facet ascent, checkpoint 01:00 UTC, reusing existing orbits with
-no children or new enumeration. A negative sample is not a local-maximality
-proof. The polar-product transfer branch remains
-parked; targeted source audit did not include a full Lean build. AI-assisted
-workflow findings are retained in `topics/literature/open-thesis/discovery.md`.
-
-**Delivery and resource boundary.** r3 build and portable checks pass;
-assembled mathematics review and root all-48-page inspection passed. The
-moderate HKO candidate may require a changed paper and renewed delta/all-page
-review **only if both independent audits pass and root selects it**. Root still
-needs source ZIP/manifest and fresh replay, a verified delivery link, final
-status/commit reconciliation and disposition of reader findings. The older
-`/files/` URL returned Desk HTML despite HTTP 200; `docs/file-viewer.md` now
-warns about that historical deployment. No host route change was made. No push,
-university submission or thesis promotion is selected. The cutoff remains
-29 October 10:05 UTC. Latest measured account-wide primary weekly quota is
-43% remaining/57% used at 00:38:17; secondary unreturned and no reset used.
-This is not strict campaign attribution or billed cost. Root's operational
-roughly 15-point reserve for delivery checks remains.
+The [28 October restart account](meta-topics/project-management/research-restart-20261028.md), [delivery record](topics/capacity-and-qp/convex-systolic-optimization-delivery.md), and `git show c6be4c33:PLAN.md` preserve the original launch contract, dated selection snapshots, resource history and stopped alternatives. Those are evidence, not current assignments. Preserve unrelated main viewer edits and sibling worktrees. Feedback tooling remains disabled by Jörn's instruction; no reset, cloud spending, remote publication or human relay is selected here.

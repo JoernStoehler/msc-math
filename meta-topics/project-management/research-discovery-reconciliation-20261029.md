@@ -106,3 +106,14 @@ Main checkout adoption also remains open: `/workspaces/msc-math` was
 `38c0488e`, lacking `3af33818`, `4e40a92f` and this repair. Preserve its three
 dirty viewer files and untracked live-task graph when a local adoption route
 is selected. No main merge or thesis promotion is performed here.
+
+## 29 October main consolidation follow-through
+
+The source and main-adoption gap above is now repaired on main. The
+[consolidation record](../repository-organization/main-consolidation-20261029.md)
+records preservation, artifact identity and actual source/dashboard checks.
+The old validator error covered moved external symlinks as well as stale
+source labels; registry provenance and browser-served files are now distinct.
+The broader stopping judgment remains open and a separately authorized
+postmortem is active. Earlier unassigned-main and validator-failure statements
+above describe their07:48 observation, not the present state.

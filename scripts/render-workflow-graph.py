@@ -76,6 +76,10 @@ def projection(state, digest):
         for field in ("blocker", "plan_gap", "owner", "project", "authorization", "next_step"):
             if task.get(field):
                 result += f"\n{field}: {task[field]}"
+        for field, label in (("external_sources", "External source references"),
+                             ("evidence_refs", "Evidence references")):
+            if task.get(field):
+                result += "\n" + label + ": " + ", ".join(task[field])
         return result + "\nSources: " + ", ".join(task["sources"])
 
     aliases = {}

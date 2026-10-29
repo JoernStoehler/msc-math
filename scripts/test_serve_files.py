@@ -1,6 +1,7 @@
 """HTTP contracts for absolute-path file viewing and dashboard compatibility."""
 
 import hashlib
+import gzip
 import importlib.util
 import json
 import pathlib
@@ -161,6 +162,163 @@ vm.runInContext(fs.readFileSync(process.argv[2], 'utf8'), context);
         self.assertEqual(result['changed']['changed'], ['claim.md'])
         self.assertFalse(result['unavailable']['known'])
         self.assertFalse(result['unavailable']['reconciled'])
+
+
+class WorkbenchArtifactTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.scratch = tempfile.TemporaryDirectory(prefix='workbench-assets-')
+        cls.root = pathlib.Path(cls.scratch.name)
+        cls.builds = tuple(cls.root / name for name in ('resources', 'docs'))
+        for build in (*cls.builds, cls.root / 'other'):
+            (build / 'assets' / 'chunks').mkdir(parents=True)
+            (build / 'index.html').write_text('<!doctype html><title>Built page</title>' * 100)
+            (build / 'data.json').write_text('{"current":1}')
+            (build / 'assets/app-AbCd1234.js').write_text('export const value = 1;\n' * 2000)
+            (build / 'assets/chunks/framework.AbCd1234.js').write_text('export const framework = 1;\n' * 1000)
+            (build / 'assets/page.md.AbCd1234.lean.js').write_text('export const page = 1;\n' * 1000)
+            (build / 'assets/style-AbCd1234.css').write_text('body { color: black; }\n' * 1000)
+            (build / 'assets/font.AbCd1234.woff2').write_bytes(b'font fixture')
+            (build / 'assets/data-AbCd1234.json').write_text('{"dynamic":true}')
+            (build / 'assets/loader.js').write_text('export const loader = 1;')
+            (build / 'app-AbCd1234.js').write_text('export const outsideAssets = 1;')
+        class QuietHandler(viewer.FileViewer):
+            roots = (cls.root,)
+            optimized_artifact_roots = cls.builds
+            def log_message(self, *_args):
+                pass
+        cls.server = viewer.ThreadingHTTPServer(('127.0.0.1', 0), QuietHandler)
+        cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
+        cls.thread.start()
+        cls.base = f'http://127.0.0.1:{cls.server.server_port}'
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+        cls.server.server_close()
+        cls.thread.join()
+        cls.scratch.cleanup()
+        viewer.artifact_bytes.cache_clear()
+
+    def request(self, path, headers=None, method='GET', query=''):
+        request = Request(self.base + viewer.file_url(path) + query,
+                          headers={'Accept': '*/*', **(headers or {})}, method=method)
+        try:
+            with urlopen(request, timeout=10) as response:
+                return response.status, response.headers, response.read()
+        except HTTPError as response:
+            return response.code, response.headers, response.read()
+
+    def test_gzip_bytes_types_and_immutable_scope(self):
+        for build in self.builds:
+            for name in ('assets/app-AbCd1234.js', 'assets/chunks/framework.AbCd1234.js',
+                         'assets/page.md.AbCd1234.lean.js', 'assets/style-AbCd1234.css'):
+                path = build / name
+                status, headers, compressed = self.request(path, {'Accept-Encoding': 'gzip'})
+                self.assertEqual(status, 200)
+                self.assertEqual(headers['Content-Encoding'], 'gzip')
+                self.assertEqual(gzip.decompress(compressed), path.read_bytes())
+                self.assertLess(len(compressed), path.stat().st_size / 10)
+                self.assertEqual(int(headers['Content-Length']), len(compressed))
+                self.assertEqual(headers['Cache-Control'], 'private, max-age=31536000, immutable')
+                self.assertEqual(headers['Vary'], 'Accept, Accept-Encoding')
+            _, headers, body = self.request(build / 'assets/font.AbCd1234.woff2')
+            self.assertIn('immutable', headers['Cache-Control'])
+            self.assertNotIn('Content-Encoding', headers)
+            self.assertEqual(body, b'font fixture')
+
+    def test_html_data_and_unhashed_or_nonasset_files_do_not_become_immutable(self):
+        for name in ('index.html', 'data.json', 'assets/data-AbCd1234.json',
+                     'assets/loader.js', 'app-AbCd1234.js'):
+            path = self.builds[0] / name
+            status, headers, body = self.request(path, {'Accept-Encoding': 'gzip'})
+            self.assertEqual(status, 200)
+            self.assertEqual(headers['Cache-Control'], 'no-store')
+            if path.suffix == '.json':
+                self.assertNotIn('Content-Encoding', headers)
+                self.assertEqual(body, path.read_bytes())
+        status, headers, body = self.request(self.builds[0] / '', {'Accept-Encoding': 'gzip'}, query='/')
+        self.assertEqual(status, 200)
+        self.assertEqual(headers['Cache-Control'], 'no-store')
+        self.assertEqual(gzip.decompress(body), (self.builds[0] / 'index.html').read_bytes())
+
+    def test_conditional_requests_and_head_are_representation_aware(self):
+        path = self.builds[0] / 'assets/app-AbCd1234.js'
+        _, plain_headers, plain = self.request(path)
+        _, headers, body = self.request(path, {'Accept-Encoding': 'gzip'})
+        self.assertNotEqual(plain_headers['ETag'], headers['ETag'])
+        status, head, empty = self.request(path, {'Accept-Encoding': 'gzip'}, method='HEAD')
+        self.assertEqual(status, 200)
+        self.assertEqual(empty, b'')
+        self.assertEqual(head['ETag'], headers['ETag'])
+        self.assertEqual(int(head['Content-Length']), len(body))
+        status, cached, empty = self.request(path, {'Accept-Encoding': 'gzip', 'If-None-Match': headers['ETag']})
+        self.assertEqual(status, 304)
+        self.assertEqual(empty, b'')
+        self.assertIn('immutable', cached['Cache-Control'])
+        self.assertEqual(cached['Vary'], 'Accept, Accept-Encoding')
+        status, _, body = self.request(path, {'If-None-Match': headers['ETag']})
+        self.assertEqual(status, 200)
+        self.assertEqual(body, plain)
+        status, _, _ = self.request(path, {'If-Modified-Since': plain_headers['Last-Modified']})
+        self.assertEqual(status, 304)
+
+    def test_encoding_exclusions_and_identity_fallback(self):
+        path = self.builds[0] / 'assets/app-AbCd1234.js'
+        for encoding in ('gzip;q=0, *;q=1', 'br', 'gzip;q=0.1, identity;q=1'):
+            _, headers, body = self.request(path, {'Accept-Encoding': encoding})
+            self.assertNotIn('Content-Encoding', headers)
+            self.assertEqual(body, path.read_bytes())
+        status, _, _ = self.request(path, {'Accept-Encoding': 'gzip;q=0, identity;q=0'})
+        self.assertEqual(status, 406)
+        status, headers, body = self.request(path, {'Accept-Encoding': '*;q=0, gzip;q=1'})
+        self.assertEqual(status, 200)
+        self.assertEqual(gzip.decompress(body), path.read_bytes())
+
+    def test_rendered_source_and_other_directories_preserve_existing_policy(self):
+        path = self.builds[0] / 'assets/loader.js'
+        _, headers, body = self.request(path, {'Accept': 'text/html', 'Accept-Encoding': 'gzip'})
+        self.assertIn('text/html', headers['Content-Type'])
+        self.assertIn(b'<pre>', body)
+        self.assertEqual(headers['Cache-Control'], 'no-store')
+        self.assertEqual(headers['Vary'], 'Accept')
+        self.assertNotIn('Content-Encoding', headers)
+        outside = self.root / 'other/assets/app-AbCd1234.js'
+        _, headers, body = self.request(outside, {'Accept-Encoding': 'gzip'})
+        self.assertEqual(headers['Cache-Control'], 'no-store')
+        self.assertNotIn('Content-Encoding', headers)
+        self.assertEqual(body, outside.read_bytes())
+        link = self.builds[0] / 'assets/link-AbCd1234.js'
+        link.symlink_to(outside)
+        _, headers, body = self.request(link, {'Accept-Encoding': 'gzip'})
+        self.assertEqual(headers['Cache-Control'], 'no-store')
+        self.assertNotIn('Content-Encoding', headers)
+        self.assertEqual(body, outside.read_bytes())
+        self.assertEqual(self.request(self.root.parent / 'not-exposed.js')[0], 403)
+
+    def test_same_build_symlink_aliases_do_not_receive_immutable_caching(self):
+        target = self.builds[0] / 'assets/app-AbCd1234.js'
+        aliases = (self.builds[0] / 'assets/current.js',
+                   self.builds[0] / 'assets/chunks/app-AbCd1234.js')
+        for alias in aliases:
+            alias.symlink_to(target)
+            status, headers, body = self.request(alias, {'Accept-Encoding': 'gzip'})
+            self.assertEqual(status, 200)
+            self.assertEqual(headers['Cache-Control'], 'no-store')
+            self.assertEqual(gzip.decompress(body), target.read_bytes())
+        _, canonical_headers, _ = self.request(target)
+        self.assertIn('immutable', canonical_headers['Cache-Control'])
+
+    def test_republished_html_invalidates_bounded_representation_cache(self):
+        path = self.builds[1] / 'index.html'
+        _, before, old = self.request(path, {'Accept-Encoding': 'gzip'})
+        original = path.read_text()
+        path.write_text(original.replace('Built page', 'Other page'))
+        _, after, new = self.request(path, {'Accept-Encoding': 'gzip'})
+        self.assertNotEqual(before['ETag'], after['ETag'])
+        self.assertNotEqual(old, new)
+        self.assertEqual(gzip.decompress(new), path.read_bytes())
+        self.assertEqual(after['Cache-Control'], 'no-store')
 
 
 if __name__ == '__main__':

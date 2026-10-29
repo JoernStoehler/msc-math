@@ -52,6 +52,10 @@ and companion have scoped independent agent mathematics, reader, exact-replay
 and all-page layout checks; they have not entered the selected thesis or
 received human/external PASS.
 
+The [HKO cut-family handoff](hko-cut-family/README.md) retains the exact family,
+small exploratory probes, and a bounded seven/eight-label continuation
+discriminator for selecting a future sprint; it does not claim family optimality.
+
 The supporting mathematical route for the ten-facet input is
 [the feasible-section argument](../../formal/hko-feasible-section-upper-branches.tex).
 For each selected HK word, solve closure and normalization with an invertible

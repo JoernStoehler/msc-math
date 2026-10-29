@@ -50,6 +50,17 @@ the navigation view, so dashboards can use the same URL. Files larger than
 2 MiB offer raw access instead of rendering; raw files stream through Python's
 HTTP server. Byte-range support is not implemented.
 
+Workbench's two published builds, `~/.codex/artifacts/workbench-resource-2026-10-19`
+and `workbench-docs-2026-10-19`, have a narrowly scoped transfer policy. Raw
+HTML/JavaScript/CSS can use negotiated gzip, with `Vary: Accept, Accept-Encoding`
+and representation-specific ETags/HEAD/304 support. Only recognized Vite/VitePress
+content-hash filenames under their `assets/` directories receive browser-private
+one-year immutable caching. Symlink aliases remain `no-store`, even when their
+targets are hashed assets. HTML, JSON/data, unhashed files and rendered code
+views remain `no-store`; other directories retain the original behavior. No root
+is added. A bounded in-memory representation cache invalidates when a source
+file's stat identity changes; files over 4 MiB retain the original streaming path.
+
 Relative links retain their filesystem meaning. Absolute links within a
 document remain absolute web paths; the viewer does not rewrite document
 contents. The project dashboards use relative paths to their own checkout.

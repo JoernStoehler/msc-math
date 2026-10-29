@@ -7,9 +7,15 @@ all files readable by the server user. The listener defaults to loopback.
 """
 
 import argparse
+import email.utils
+from functools import lru_cache
+import gzip
+import hashlib
 import html
 import io
+import math
 import pathlib
+import re
 import shutil
 import subprocess
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -34,6 +40,41 @@ TEXT_SUFFIXES = {
     '.txt', '.csv', '.ini', '.conf', '.js', '.css', '.ts', '.dot',
 }
 TEXT_NAMES = {'Dockerfile', 'Makefile', '.gitignore', '.git', 'LICENSE'}
+WORKBENCH_ARTIFACTS = tuple(pathlib.Path.home() / '.codex/artifacts' / name for name in (
+    'workbench-resource-2026-10-19', 'workbench-docs-2026-10-19'))
+# Vite/VitePress publish eight-character content identities in these asset names.
+HASHED_ASSET = re.compile(r'^.+[.-][A-Za-z0-9_-]{8}(?:\.lean)?\.(?:js|css|woff2?|svg|png|jpe?g|webp|avif)$')
+
+
+def accepts_gzip(header):
+    """Return gzip/identity eligibility, honoring explicit q=0 exclusions."""
+    qualities = {}
+    for part in (header or '').split(','):
+        token, *params = part.strip().lower().split(';')
+        if not token:
+            continue
+        quality = 1.
+        for param in params:
+            key, _, value = param.strip().partition('=')
+            if key == 'q':
+                try:
+                    quality = float(value)
+                    if not math.isfinite(quality) or not 0 <= quality <= 1:
+                        quality = 0.
+                except ValueError:
+                    quality = 0.
+        qualities[token] = quality
+    gzip_quality = qualities.get('gzip', qualities.get('*', 0.))
+    identity_quality = qualities.get('identity', 0. if qualities.get('*') == 0 else 1.)
+    prefer_gzip = gzip_quality > 0 and ('identity' not in qualities or gzip_quality >= identity_quality)
+    return prefer_gzip, identity_quality > 0
+
+
+@lru_cache(maxsize=16)
+def artifact_bytes(path, modified_ns, changed_ns, size, compressed):
+    """Bounded representation cache; stat identity invalidates republished paths."""
+    body = pathlib.Path(path).read_bytes()
+    return gzip.compress(body, compresslevel=5, mtime=0) if compressed else body
 
 
 def file_url(path):
@@ -44,12 +85,76 @@ def file_url(path):
 class FileViewer(SimpleHTTPRequestHandler):
     roots = ()
     max_text_bytes = 2 * 1024 * 1024
+    optimized_artifact_roots = WORKBENCH_ARTIFACTS
 
     def end_headers(self):
-        self.send_header('Cache-Control', 'no-store')
+        self.send_header('Cache-Control', getattr(self, '_cache_control', 'no-store'))
         self.send_header('X-Content-Type-Options', 'nosniff')
-        self.send_header('Vary', 'Accept')
+        self.send_header('Vary', 'Accept, Accept-Encoding' if getattr(self, '_vary_encoding', False) else 'Accept')
         super().end_headers()
+
+    def artifact_response(self, path):
+        """Optimize only raw files within the two explicit Workbench builds.
+
+        Existing translate_path authorization runs first. Both requested and
+        resolved locations must remain in the same exact artifact directory.
+        HTML, JSON/data and rendered source views never acquire immutable caching.
+        """
+        lexical = pathlib.Path(unquote(urlsplit(self.path).path)[len('/files'):])
+        relative = None
+        for root in self.optimized_artifact_roots:
+            if path.is_relative_to(root.resolve()) and lexical.is_relative_to(root.absolute()):
+                candidate = path.relative_to(root.resolve())
+                if '..' not in lexical.parts:
+                    relative = candidate
+                    break
+        if relative is None:
+            return False, None
+        suffix = path.suffix.lower()
+        # The URL itself must identify the hashed file. A mutable symlink alias
+        # within the same build may resolve to one, but must remain no-store.
+        immutable = (relative.parts[0] == 'assets' and lexical == path
+                     and bool(HASHED_ASSET.fullmatch(lexical.name)))
+        compressible = suffix in {'.html', '.htm', '.js', '.css'}
+        if not compressible and not immutable:
+            return False, None
+        try:
+            stat = path.stat()
+            # Keep large/raw files on the original streaming path, without a
+            # potentially unbounded in-memory compression allocation.
+            if stat.st_size > 4 * 1024 * 1024:
+                return False, None
+            self._vary_encoding = compressible
+            compressed, identity_ok = accepts_gzip(self.headers.get('Accept-Encoding'))
+            compressed = compressed and compressible
+            if not compressed and not identity_ok:
+                self.send_error(406, 'No supported content encoding')
+                return True, None
+            body = artifact_bytes(str(path), stat.st_mtime_ns, stat.st_ctime_ns, stat.st_size, compressed)
+        except OSError:
+            self.send_error(404, 'File not found')
+            return True, None
+        self._cache_control = 'private, max-age=31536000, immutable' if immutable else 'no-store'
+        etag = '"' + hashlib.sha256(body).hexdigest() + '"'
+        tag_header = self.headers.get('If-None-Match')
+        not_modified = tag_header is not None and any(
+            tag.strip().removeprefix('W/') in (etag, '*') for tag in tag_header.split(','))
+        if tag_header is None and self.headers.get('If-Modified-Since'):
+            try:
+                since = email.utils.parsedate_to_datetime(self.headers['If-Modified-Since'])
+                not_modified = int(stat.st_mtime) <= since.timestamp()
+            except (ValueError, TypeError, OverflowError):
+                pass
+        self.send_response(304 if not_modified else 200)
+        self.send_header('ETag', etag)
+        self.send_header('Last-Modified', self.date_time_string(stat.st_mtime))
+        if compressed:
+            self.send_header('Content-Encoding', 'gzip')
+        if not not_modified:
+            self.send_header('Content-Type', self.guess_type(str(path)))
+            self.send_header('Content-Length', str(len(body)))
+        self.end_headers()
+        return True, None if not_modified else io.BytesIO(body)
 
     def translate_path(self, uri):
         route = unquote(urlsplit(uri).path)
@@ -105,6 +210,8 @@ class FileViewer(SimpleHTTPRequestHandler):
         return self.html_response(body.encode('utf-8', 'surrogateescape'))
 
     def send_head(self):
+        self._cache_control = 'no-store'
+        self._vary_encoding = False
         route = urlsplit(self.path).path
         if route == '/files/favicon.svg':
             self.send_response(200)
@@ -126,6 +233,12 @@ class FileViewer(SimpleHTTPRequestHandler):
                                        f'<body><h1>Workstation files</h1><ul>{links}</ul></body></html>').encode())
         try:
             path = pathlib.Path(self.translate_path(self.path))
+            if path.is_dir() and route.endswith('/') and (path / 'index.html').is_file():
+                # The original handler also selects index.html for directories.
+                # Only the scoped build's raw HTML path is optimized below.
+                handled, result = self.artifact_response(path / 'index.html')
+                if handled:
+                    return result
             is_file = path.is_file()
         except (PermissionError, OSError) as exc:
             self.send_error(403, str(exc))
@@ -134,6 +247,9 @@ class FileViewer(SimpleHTTPRequestHandler):
             return super().send_head()
         query = parse_qs(urlsplit(self.path).query, keep_blank_values=True)
         if 'raw' in query:
+            handled, result = self.artifact_response(path)
+            if handled:
+                return result
             return super().send_head()
         suffix = path.suffix.lower()
         markdown = suffix in {'.md', '.markdown'}
@@ -141,6 +257,9 @@ class FileViewer(SimpleHTTPRequestHandler):
             'text/html' in self.headers.get('Accept', '') or 'view' in query
         )
         if not markdown and not text:
+            handled, result = self.artifact_response(path)
+            if handled:
+                return result
             return super().send_head()
         try:
             if path.stat().st_size > self.max_text_bytes:

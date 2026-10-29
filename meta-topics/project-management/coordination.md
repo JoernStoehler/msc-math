@@ -46,7 +46,12 @@ monitoring; see [workload supervision](#workload-supervision).
 
 For each selected task record its outcome, status (`ready`, `running`, `blocked`,
 `done`, `parked`, or `dropped`), owner (or null), source paths, and dependencies
-by ID. A blocked task names the concrete reason. An owner names a current thread
+by ID. `sources` contains explicit browser-servable, repository-local files.
+Cross-repository source paths remain in `external_sources`, and question IDs,
+branch/commit descriptions or other non-file anchors in `evidence_refs`; these
+preserve provenance without making the local server expose external roots.
+The project-owned source adapter should link the current external owner.
+A blocked task names the concrete reason. An owner names a current thread
 or agreed person, not an old terminal pane. Record uncertainty as uncertainty.
 State does not authorize thesis completion, external publication, or spending.
 
@@ -98,6 +103,7 @@ without an update; this is an age signal, not a liveness monitor. Mark work done
 and release its owner when handing off. Keep recent consequential changes short;
 use Git or `docs/history/` for the older record.
 
+The [project graph binding](live-task-graph.md) records local paths and retention.
 The compact dependency graph is generated solely from `current.json`:
 
 ```bash

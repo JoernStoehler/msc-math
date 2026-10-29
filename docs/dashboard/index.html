@@ -101,6 +101,14 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
     (paths || []).forEach((path, index) => { if (index) p.append(' · '); p.append(link(path)); });
     return p;
   }
+  function sourceEvidence(record) {
+    const group = node('div', undefined, 'source-evidence');
+    group.append(sources(record.sources));
+    for (const [key, label] of [['external_sources', 'External source references'], ['evidence_refs', 'Evidence references']]) {
+      if (record[key]?.length) group.append(node('p', label + ': ' + record[key].join(' · '), 'muted'));
+    }
+    return group;
+  }
   function detail(label, ...children) {
     const element = node('details');
     element.append(node('summary', label), ...children);
@@ -155,7 +163,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
     if (task.next_step) evidence.push(node('p', 'Next step: ' + task.next_step));
     if (task.plan_gap) evidence.push(node('p', 'Route gap: ' + task.plan_gap, 'gap'));
     if (task.owner && ownerLabel !== task.owner) evidence.push(node('p', 'Owner: ' + task.owner, 'muted'));
-    evidence.push(node('p', 'Observed: ' + task.updated_at, 'muted'), sources(task.sources));
+    evidence.push(node('p', 'Observed: ' + task.updated_at, 'muted'), sourceEvidence(task));
     if (root || expanded) {
       const evidenceDetail = detail('Full outcome, blockers and evidence', ...evidence);
       evidenceDetail.dataset.detailKey = task.id + ':evidence';
@@ -206,7 +214,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible { outline:3px solid #
     heading.append(status, node('h3', decision.question));
     row.append(heading);
     if (!finished(decision.status)) row.append(node('p', decision.consequence, 'muted'));
-    row.append(detail('Recommendation and sources', node('p', decision.recommendation), ...(finished(decision.status) ? [node('p', decision.consequence, 'muted')] : []), sources(decision.sources)));
+    row.append(detail('Recommendation and sources', node('p', decision.recommendation), ...(finished(decision.status) ? [node('p', decision.consequence, 'muted')] : []), sourceEvidence(decision)));
     return row;
   }
   function render(state) {
