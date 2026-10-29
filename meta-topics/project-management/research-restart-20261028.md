@@ -1,5 +1,16 @@
 # Restart from a fresh worktree — 28 October 2026
 
+> **Historical handoff for the earlier stopped attempt.** This note records
+> the pre-campaign state and instructions for the 28 October restart; its
+> “root goal remains paused” and fresh-worktree instructions are not current
+> status. A later research campaign completed on 28–29 October and was
+> consolidated into main. Its accepted internal-delivery result is documented
+> in the [convex systolic optimization account](../../topics/capacity-and-qp/convex-systolic-optimization/README.md),
+> with current open work in [PLAN.md](../../PLAN.md) and [STATUS.md](../../STATUS.md).
+> The campaign worktree was removed after consolidation. The optional archive
+> branch below is the distinct earlier stopped attempt, not the completed
+> campaign's source.
+
 This session is closed. All research subagents are completed or interrupted;
 none was restarted after Jörn's stop. Root goal remains paused, not achieved.
 

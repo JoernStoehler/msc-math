@@ -4,10 +4,15 @@ Jörn Stöhler's MSc thesis combines mathematical proofs, computational symplect
 geometry and empirical investigations. The manuscript is unfinished and has not
 been submitted for final grading.
 
-- **Pick up the next research sprint:** [PLAN.md](PLAN.md) gives the delivered
-  result map and ranked open discriminators; [STATUS.md](STATUS.md) lists open
-  outcomes. The [HKO cut-family handoff](topics/variation-and-local-maxima/hko-cut-family/README.md)
-  retains exact conventions and labelled candidate inputs for the next bounded step.
+- **Find current research results and open work:** [PLAN.md](PLAN.md) gives the
+  delivered result map and ranked open discriminators; [STATUS.md](STATUS.md)
+  lists open outcomes and owners. The completed 28–29 October research campaign
+  is consolidated in this checkout. Its 56-page report and source/evidence
+  archive are linked from the [convex systolic optimization account](topics/capacity-and-qp/convex-systolic-optimization/README.md);
+  this is a research result, separate from the unfinished selected thesis.
+  The campaign worktree was retired after consolidation. Future research
+  allocation remains open and unassigned. The [HKO cut-family handoff](topics/variation-and-local-maxima/hko-cut-family/README.md)
+  retains exact conventions and labelled candidate inputs for a future bounded step.
   The [HKO postmortem](docs/history/hko-research-postmortem-20261029/report.html)
   explains the successful body’s causal path, costs and specific shortcuts.
 - **Understand the research:** the [research guide](docs/research-guide.md)
