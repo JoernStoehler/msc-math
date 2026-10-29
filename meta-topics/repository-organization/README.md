@@ -70,3 +70,4 @@ independent source/routing/retention approval and focused checks, with the
 assembled-repository and scientific acceptance boundaries explicit.
 
 - [Current f7e0/main comparison](main-reconciliation-2026-10-12.md): adoption gains, maintenance costs and remaining evidence gaps.
+- [29 October worktree cleanup receipt](worktree-cleanup-20261029.md): removed checkouts, preserved branch recovery routes and the three checkouts retained with local changes.

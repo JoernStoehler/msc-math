@@ -115,6 +115,8 @@ At Jörn’s 29 October follow-up, the research worktree
 `3fbacd31`, identical to main. `git worktree remove` and ordinary `git branch -d`
 removed it and `research/autonomous-restart-20261028`. All research and analysis
 commits remain in main history. `git worktree prune --dry-run` found no stale
-administrative records. Other sessions’ ten registered worktrees and their
-branches, including the stopped-attempt archive, were preserved. The current
-review link serves main files and is independent of the removed worktree.
+administrative records. At that time, the other sessions’ ten registered
+worktrees and their branches, including the stopped-attempt archive, were
+preserved. Their later disposition is recorded in the
+[29 October follow-up cleanup receipt](worktree-cleanup-20261029.md). The
+current review link serves main files and is independent of the removed worktree.
