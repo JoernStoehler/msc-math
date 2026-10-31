@@ -31,6 +31,7 @@ decision; uncertainty is local to the claim it affects.
 | [Writing still lacks a dependable route to whole-thesis PASS](#thesis) | More agent-approved revisions can consume another costly human review without fixing the reader's problem. | Use the existing contextual Chapter 8 candidate and matched human feedback to choose the next authoring operation. |
 | [Scientific scope and evidence can be confused](#scope) | New results can become accidental obligations; current computations can be mistaken for historical evidence. | Decide what the selected manuscript actually needs, especially data science and later product/HKO results. |
 | [Computational contracts and assurance have gaps](#shared-computation) | A convenient migration or green test suite can change the scientific object or cover the wrong evaluator. | Separate scalar, branch, geometry and flow obligations before selecting repairs. |
+| [Agents cannot easily find and compare the available C++ and Rust algorithms](#msc-q06) | They can choose an unsuitable route, miss a useful algorithm, or repeat the comparison from scratch. | Build a source-backed capability comparison at the algorithm-selection entry point; test whether agents actually find and use it. |
 | [The next research direction has not been chosen](#msc-r00) | Repeating an easy finite search may have less value than a structural route or a new idea. | Compare the surviving mechanisms against the final HKO result, including stopping. |
 | [Reproduction and final delivery remain incomplete](#delivery) | A buildable PDF is not a usable archive or an executable submission route. | Resolve actual input/history dependencies and individual administrative requirements. |
 | [Known problems do not reliably affect subsequent decisions](#management) | Better records can still leave Jörn doing the coordination and correction. | Examine whether the next selected task uses the relevant knowledge through integration. |
@@ -150,6 +151,22 @@ with an accurate remaining defect list. Review the choice of work and its covera
 as well as each repair. A scoped repair can be complete while the broader quality
 assignment remains unfinished; one easy green check cannot substitute for it.
 
+<a id="msc-q06"></a>
+### Algorithm discovery: C++ and Rust routes have different, hard-to-find properties
+
+| Aspect | Current account |
+| --- | --- |
+| **Problem — open** | Jörn reports that algorithms implemented in C++ and Rust have different properties which are not documented where agents can easily find and compare them. The problem is discovery and informed algorithm choice, not just an unresolved speed comparison. |
+| **Consequence** | An agent can overlook an applicable method, choose one with the wrong guarantees or outputs, misbudget a computation, or re-investigate distinctions already known elsewhere. These are the expected downstream costs; their frequency has not been measured. |
+| **Existing support and gap** | The [calculation map](docs/capacity-calculation-map.md) and local contracts contain useful distinctions. For example, general Rust production and the fixed-body Sage/C++ certificate differ in input class, coverage mechanism, reuse and timing boundaries. That example is not an inventory of all C++/Rust algorithms. The existence of these documents has not established easy discovery or a sufficient comparison. |
+| **Proposed solution** | Extend the existing algorithm-selection map with a side-by-side account of each relevant implementation: mathematical problem/input class, algorithm, arithmetic and guarantees, outputs, unsupported cases, performance with timing boundaries, dependencies, reuse limits, and source/command. Link it from the entry points agents actually use. Language is one attribute, not the organizing explanation for every difference. |
+| **Alternatives** | Keep authoritative details local and add a concise comparison/router; consolidate genuinely duplicated descriptions where maintaining both causes drift. Porting or unifying algorithms is a later engineering choice, not a prerequisite for making their differences discoverable. |
+| **Next action** | Inventory the relevant C++ and Rust routes and their callers; identify which distinctions are missing, stale or merely hard to find in the current map. Include the algorithms behind the original report rather than assuming the twenty-facet certificate is its whole subject. |
+| **Completion evidence** | From ordinary repository entry points, a fresh agent can find the relevant alternatives, choose for representative tasks, and explain the decisive properties with correct source references. A link check, new table, or benchmark alone does not establish that outcome. |
+
+The [performance comparison](#msc-q04), [ascent-output mismatch](#msc-q03) and
+[validation coverage](#msc-q01) are related problems, not substitutes for this one.
+
 <a id="msc-q01"></a>
 ### Production validation covers less than the legacy campaigns
 
@@ -187,6 +204,8 @@ frozen controls. [Call-site dispositions](topics/capacity-and-qp/development/doc
 
 <a id="msc-q04"></a>
 ### Performance reports do not yet support the reported C++/Rust comparison
+
+This is the performance subquestion of the broader [algorithm-discovery problem](#msc-q06).
 
 The available C++ twenty-facet program checks integer cycle coverage using
 pre-certified Sage exclusions and leaves. Its few-second replay excludes roughly
