@@ -31,9 +31,11 @@ maintenance low. The numbers are stable and can be out of order.
    applies to the PDF, not to later GitHub, Zenodo, or comparable repository
    publication. It supersedes the stale June 2026 dates and the earlier record
    that no replacement deadline was known.
-   This fact sheet does not record whether submission occurred, so do not treat
-   submission as an open task or infer that it was missed without a current
-   status from Jörn or the official MNTF process.
+   Later status: on 23 October Jörn reported that the thesis was unsubmitted
+   because it had received only failing preliminary grades; see
+   [the attributed check account](preliminary-checks-2026-10-23.md).
+   That establishes status then, not a replacement deadline or newer
+   institutional status. Do not infer a missed current deadline from the old one.
 
 1.1. On 2026-10-03, when asked for the current delivery target and deadline,
      Jörn answered “none”. No current deadline is selected for this planning

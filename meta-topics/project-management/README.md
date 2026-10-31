@@ -2,9 +2,10 @@
 
 This topic owns reusable project-management knowledge and lasting obligations:
 what completion means, which decisions remain pending and how human-facing
-coordination stays consistent with its sources. Current dispatches and changing
-resource observations remain in [coordination](coordination.md),
-whose `current.json` feeds the dashboard; an old plan here does not authorize work.
+coordination stays consistent with its sources. [PLAN.md](../../PLAN.md) is the
+readable current work owner, with [STATUS.md](../../STATUS.md) as its short entry
+view. [Coordination](coordination.md) retains the legacy registry/dashboard
+contract and recorded execution state; historical entries do not authorize work.
 
 [AGENTS.md](../../AGENTS.md) owns the spending and delegation boundaries.
 [Collaboration rationale](../agent-workflow/collaboration-rationale.md) gives the
@@ -26,7 +27,7 @@ status meanings, evidence and reconciliation contract for the Pages overview.
 Moving those records changes their encounter path; it does not resolve a friction
 item or establish new monitoring. Current status changes require dated evidence.
 
-The canonical [registry](current.json), [thesis obligations](thesis-work.md),
+The retained legacy [registry](current.json), [thesis obligations](thesis-work.md),
 [handoff](handoff.md) and [generated graph](graphs/tasks.svg) live here.
 [The frozen pre-migration snapshot](../../docs/history/coordination/current-state-before-pm-migration-2026-10-12.md)
 retains dated resource/change accumulation removed from live presentation; it

@@ -1,6 +1,11 @@
 # Substantive repository consolidation and migration — proposed execution plan
 
-**Status, 12 October 2026:** Jörn approved this execution programme at
+**Historical execution plan; window closed.** The
+[migration and wrap-up result](migration-results-2026-10-12.md) records delivery
+and remaining limits; [PLAN.md](../../../PLAN.md) owns current work. The worker
+and resource statements below describe the 12 October launch, not live activity.
+
+**Launch status, 12 October 2026:** Jörn approved this execution programme at
 08:59:24 UTC for at most 120 minutes wall time and an additional 30 weekly
 quota percentage points from the fresh account-wide 5.0%-used baseline at
 08:59:35.924 UTC. The Sol execution coordinator is running bounded parallel

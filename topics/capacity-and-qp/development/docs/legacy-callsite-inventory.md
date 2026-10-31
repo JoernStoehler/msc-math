@@ -7,12 +7,20 @@ surface, not a permanent manual dependency map.
 
 ## Search scope
 
-The direct inventory is the 74 Rust files returned by:
+The earlier inventory recorded 74 direct Rust files. That is a historical count,
+not a current coverage claim. The current-layout search must include `topics`:
 
 ```bash
 rg -l --glob '*.rs' \
   '\b(capacity_auto|capacity_pruned_hk2017|capacity_unpruned_hk2017|capacity_billiard|solve_pruned_hk2017_candidates|solve_unpruned_hk2017_candidates|solve_billiard_candidates|aggregate_orbits_with_dual_vertices_exact|aggregate_certified_orbits_with_dual_vertices_exact|solve_orbit_sigma_saddle_point)\s*\(' \
-  crates experiments
+  crates experiments topics
+```
+
+Also search indirect entry points in all three roots:
+
+```bash
+rg -n --glob '*.rs' '\b(compute_capacity_result|compute_sys_computation|compute_active_sys_state)\s*\(' \
+  crates experiments topics
 ```
 
 Indirect consumers of `exp_sys_landscape::compute_capacity_result`,

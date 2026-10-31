@@ -1,12 +1,15 @@
 # Probing Viterbo's conjecture
 
 Jörn Stöhler's MSc thesis combines mathematical proofs, computational symplectic
-geometry and empirical investigations. The manuscript is unfinished and has not
-been submitted for final grading.
+geometry and empirical investigations. The last attributed status (Jörn,
+23 October 2026) is unfinished and unsubmitted, with failing preliminary checks;
+newer institutional status has not been established here.
 
-- **Find current research results and open work:** [PLAN.md](PLAN.md) gives the
-  delivered result map and ranked open discriminators; [STATUS.md](STATUS.md)
-  lists open outcomes and owners. The completed 28–29 October research campaign
+- **Find current project work:** [PLAN.md](PLAN.md) is the readable work document,
+  covering purpose, thesis/admin outcomes, research alternatives and evidence;
+  [STATUS.md](STATUS.md) is its short entry view. Use the shared
+  [work-document skill](/workspaces/agent-fleet-tools/skills/work-document/SKILL.md)
+  to initialize, read, search or maintain it. The completed 28–29 October research campaign
   is consolidated in this checkout. Its 56-page report and source/evidence
   archive are linked from the [convex systolic optimization account](topics/capacity-and-qp/convex-systolic-optimization/README.md);
   this is a research result, separate from the unfinished selected thesis.
@@ -38,9 +41,10 @@ been submitted for final grading.
   covers source delivery, instruction discovery, task-specific setup, continuation
   and returned work. Product mechanics belong to the repository's
   [agent-platform reference](.agents/skills/agent-platform-reference/SKILL.md).
-- **Coordinate or continue:** [project management](meta-topics/project-management/README.md)
-  routes lasting decisions and current [coordination](docs/coordination/README.md).
-  Open this checkout's `docs/dashboard/index.html` through the
+- **Coordinate or continue:** start at [PLAN.md](PLAN.md).
+  [Project management](meta-topics/project-management/README.md) routes detailed
+  obligations and the retained [registry/dashboard contract](docs/coordination/README.md).
+  For that legacy view, open this checkout's `docs/dashboard/index.html` through the
   [workstation file viewer](docs/file-viewer.md); its URLs identify the checkout.
 - **Maintain the repository and workflow:** [repository organization](meta-topics/repository-organization/README.md),
   the [inventory](meta-topics/repository-organization/inventory/README.md), and

@@ -14,12 +14,18 @@ source/search tools when shell access is absent. State the inspected source and
 access limits; excerpts do not establish a checkout or exhaustive search. Avoid
 broad legacy/generated-tree tours.
 
+[PLAN.md](PLAN.md) is the readable project work document; [STATUS.md](STATUS.md)
+is its short entry view. Use the shared
+[work-document skill](/workspaces/agent-fleet-tools/skills/work-document/SKILL.md)
+to initialize, read, search or maintain the plan. Linked domain sources own exact
+claims; recorded legacy registry/dashboard state does not establish live work.
+
 | Work | Entry |
 | --- | --- |
 | Research, proofs, code or experiments | `docs/research-guide.md` → `topics/` READMEs; shared interfaces remain in `crates/`, `formal/`, `experiments/` |
 | Manuscript and selected scope | `thesis/README.md`; `docs/project-facts.md` owns attributed Jörn-confirmed scope |
 | Setup or cloud work | `meta-topics/development-environment/installation-workflow.md` and `cloud-workflow.md` in that directory |
-| Coordination or continuation | `meta-topics/project-management/coordination.md` → `current.json`, `handoff.md`, `thesis-work.md` |
+| Coordination or continuation | `PLAN.md` → linked evidence and `meta-topics/project-management/thesis-work.md`; legacy registry/dashboard contract: `meta-topics/project-management/coordination.md` |
 | Placement, retention or publishing evidence | `meta-topics/repository-organization/README.md` and `docs/artifacts.md` |
 | Interpretation or historical evidence | `docs/knowledge/README.md`; `docs/history/` is provenance, not current assignments |
 
@@ -91,7 +97,7 @@ Read the named owner when its trigger applies:
 | Trigger | Obligation and owner |
 | --- | --- |
 | Delegation, human-review design, spending proposal or research/experiment selection | Read `AGENTS.md.commentary.md`. Delegate when useful within selected work. When delegating, name owned output, scope, resources, stop/review point and receiving owner; agree integration, commit and cleanup ownership. The coordinator supervises messages/reviews, dependencies and available telemetry. Details: `meta-topics/project-management/coordination.md`. |
-| Material assignment, owner, dependency, decision or resource change | Update `meta-topics/project-management/current.json`, timestamp observations and preserve other sessions' work. Unknown quota/spending stays unknown; old balances/deadlines are not live state. |
+| Material assignment, owner, dependency, decision or resource change | Update `PLAN.md` and its short `STATUS.md` view. If the selected work explicitly maintains the legacy registry/dashboard route, also follow its `meta-topics/project-management/coordination.md` contract. Unknown quota/spending stays unknown; old balances/deadlines are not live state. |
 | Material thesis-source/planning change to selected claims, scope, uncertainty or route | Reconcile `docs/dashboard/thesis.html` under `meta-topics/project-management/coordination.md#thesis-synthesis`. Mark unresolved discrepancies visibly stale and hand them off; refresh `thesis-sources.json` only after source/PDF/PASS reconciliation. Avoid unrelated refreshes. |
 | Material collaboration-friction change | Follow `meta-topics/project-management/friction/README.md`: update the record and linked Pages overview; report stale/unsaved status in handoff. This selects no monitoring or resumed thesis work. |
 | Host paths, file/dashboard links, caches or client recovery | `meta-topics/development-environment/development-environments.md#workstation-locations`, `docs/file-viewer.md`, `meta-topics/development-environment/codex-reference.md`. Workstation paths are not prerequisites elsewhere. |

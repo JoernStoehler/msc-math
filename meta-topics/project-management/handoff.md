@@ -1,6 +1,11 @@
-# Current handoff
+# Retained handoff and current-work route
 
-Updated 29 October 2026, 10:45 UTC. [STATUS.md](../../STATUS.md) is the short open-outcome list; [PLAN.md](../../PLAN.md) is the living research choice; [current.json](current.json) owns assignments, dependencies and dated resource observations. The longer dated handoff at this path is recoverable with `git show c6be4c33:meta-topics/project-management/handoff.md`. Its old session directions are historical, not live assignments.
+Routing corrected 31 October 2026. [PLAN.md](../../PLAN.md) owns current problems,
+options, assignments and next actions; [STATUS.md](../../STATUS.md) is the short
+entry view. [current.json](current.json) and the account below retain dated
+29 October or earlier execution evidence, not live owners, deadlines or resource
+allowances. The longer handoff is recoverable with
+`git show c6be4c33:meta-topics/project-management/handoff.md`.
 
 ## Main consolidation now
 

@@ -82,5 +82,7 @@ bitte den Antrag auf Erstellung des Zeugnisses im Prüfungsamt ein.
 
 - TODO(source-refresh): use the written Bescheid / attached Merkblatt to verify
   the exact number of required printed copies for final handin.
-- TODO(source-refresh): verify whether the Mathematics master thesis requires
-  any colloquium step; current project assumption is no defense talk.
+- The [23 October official-source check](../../docs/history/official-requirements-check-20261023.md)
+  found a colloquium requirement in the listed regulation. Student-specific
+  applicability, completion or exemption remain unknown; the former assumption
+  of no defense talk is not supported. See [MSC-A01](../../PLAN.md#msc-a01).

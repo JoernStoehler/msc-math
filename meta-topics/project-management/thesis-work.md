@@ -2,7 +2,8 @@
 
 Reconciled against the selected source and the 4 October 2026 restart
 continuation candidate. This remains the detailed obligation owner for `thesis/main.tex`;
-[current.json](current.json) owns live assignments. The preserved checkpoint
+[PLAN.md](../../PLAN.md) owns current readable work and assignments; the
+[legacy registry](current.json) retains recorded execution state. The preserved checkpoint
 `fe3475b3` supplied most of the source repairs below, now assembled with the
 restart corrections. Exact source/PDF identity and bounded review outcomes are
 in [the continuation integration record](../../docs/history/thesis-continuation-2026-10-04/integration.md)
@@ -393,9 +394,12 @@ rewriting unflagged AI v1 prose are not required repairs.
   thirteen-figure producer/copy/PDF chain now passes on the installed host;
   three selected structural JSON exports were recomputed and empirical plots
   used verified retained inputs. This does not rerun historical capacity data
-  or verify R2 access. The current 45-feature P2 modeling table requires its
-  separate reconstruction; the historical plotting table lacks six columns.
+   or verify R2 access. The current 45-feature P2 modeling table is retained
+   compressed and has a [checked restoration route](../../topics/empirical-studies/sys-datascience/methods/standard-baseline-p2/README.md);
+   the historical plotting table lacks six columns. Restoring the input does
+   not rerun models or historical producers.
   A fresh independent environment has not reproduced every empirical producer,
   and original timing/machine metadata is incomplete.
-- Submission status/current institutional rules and Jörn/Kai review remain
-  externally unestablished; no administrative action is selected by this file.
+- Jörn reported unsubmitted status on 23 October; newer institutional status,
+  case-specific requirements and Jörn/Kai review remain unestablished here.
+  No administrative action is selected by this file.

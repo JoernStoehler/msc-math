@@ -101,6 +101,7 @@ Unterschrift:
 
 ## Thesis project notes
 
-- Jörn reports that this form is already filled out and has Kai's signature.
-- Jörn confirmed that Elizabeth approved it. Pending action: hand in the note
-  to the `Prüfungsamt`.
+- Historical report: Jörn said this form was filled out, had Kai's signature,
+  and was approved by Elizabeth. Hand-in to the `Prüfungsamt` was pending then;
+  present registration/receipt status is unestablished. Check individual records
+  before repeating the action; see [project facts, item 3](../../docs/project-facts.md).

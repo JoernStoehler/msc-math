@@ -66,6 +66,8 @@ CHECK_PATHS=(
 )
 ORIENTATION_PATHS=(
   'AGENTS.md'
+  'PLAN.md'
+  'STATUS.md'
   'meta-topics/repository-organization/**'
   'meta-topics/project-management/**'
   'meta-topics/agent-workflow/**'
@@ -201,7 +203,9 @@ if [[ -n "$UNCOMMITTED_CHECK_AFFECTING_PATHS" ]]; then
 elif [[ -n "$(git status --short)" ]]; then
   echo "Working tree is not clean, but no uncommitted check-affecting path is detected by this helper."
   echo "For stronger claims, inspect git status and read $STATUS_FILE."
-elif [[ -z "$CHECK_AFFECTING_PATHS" ]]; then
+fi
+
+if [[ -z "$CHECK_AFFECTING_PATHS" ]]; then
   echo "No code, data, build-contract, thesis, formal, or other script path changed since the referenced checks."
   if [[ -n "$ORIENTATION_AFFECTING_PATHS" ]]; then
     echo "Task, map, or helper guidance changed since then; read the listed orientation-affecting paths for current next-work routing."

@@ -13,7 +13,7 @@ Small repo helper commands.
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
 | `usage-awareness.py` | on-demand count-up proxy; after-tool candidate withdrawn; [command, scope and historical candidate](subtree-usage.md#ongoing-work-awareness) |
 | `subtree-usage.py` | manual local usage diagnostic; [accounting contract and repaired fork/counter handling](subtree-usage.md) |
-| `coordination-load.py` | manual bounded OpenObserve and local-fallback diagnostic; [command and coverage](../docs/coordination/README.md#workload-supervision) |
+| `coordination-load.py` | manual bounded OpenObserve and local-fallback diagnostic; [command and coverage](../meta-topics/project-management/coordination.md#workload-supervision) |
 | `test_project_dashboard.py` | HTTP checks for state reload, invalid inputs, source freshness and bounded read-only serving |
 | `serve-project-dashboard.py` | local browser view of shared coordination state, cited sources and scientific freshness |
 | `serve-files.py` | absolute-path browser viewer for checkouts, scratch files and artifacts; Markdown uses Pandoc |
@@ -63,6 +63,12 @@ scripts/repo-status-summary.sh scripts/repo-status/repo-status-smoke-and-core-20
 
 This is a read-only summary. It does not run tests, refresh datasets, or prove
 that tracked generated artifacts are fresh.
+
+Check its change classification and refresh guidance in isolated Git fixtures:
+
+```bash
+python3 scripts/test_repo_status_summary.py
+```
 
 ## `serve-files.py`
 

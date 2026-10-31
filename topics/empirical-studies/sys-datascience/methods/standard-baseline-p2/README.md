@@ -41,6 +41,38 @@ Feature-family ablations fit the same gradient boosting models on:
 
 ## Command
 
+### Restore retained input before considering recomputation
+
+Both current-schema input tables already exist in the
+[geometry-full archive](../../../retrospective-revalidation/geometry-full/README.md).
+On 31 October 2026 a read-only in-memory decompression check matched both gzip
+and raw hashes in `archive-receipt.json`, and 14,336 rows per table. This verifies
+input availability, not a new model fit. From the repository root, restore into
+a fresh run directory:
+
+```bash
+mkdir -p /tmp/msc-math/p2-input
+export TABLES_DIR="$(mktemp -d /tmp/msc-math/p2-input/tables.XXXXXX)"
+python3 - <<'PY'
+from pathlib import Path
+import gzip, hashlib, json, os
+source = Path('topics/empirical-studies/retrospective-revalidation/geometry-full')
+target = Path(os.environ['TABLES_DIR'])
+for name, receipt in json.loads((source / 'archive-receipt.json').read_text()).items():
+    packed = (source / (name + '.gz')).read_bytes()
+    raw = gzip.decompress(packed)
+    if (hashlib.sha256(packed).hexdigest() != receipt['gzip_sha256']
+            or hashlib.sha256(raw).hexdigest() != receipt['raw_sha256']
+            or len(raw) != receipt['raw_bytes'] or len(raw.splitlines()) != 14336):
+        raise SystemExit(f'Input identity mismatch: {name}')
+    with (target / name).open('xb') as output:
+        output.write(raw)
+print(target)
+PY
+```
+
+### Alternative: source-to-feature rebuild
+
 Resource warning (observed 2026-09-05): the full rebuild below used about
 11 host CPU cores for six minutes. Jörn objected to that unauthorized load.
 Do not treat it as a lightweight documentation check or rerun it as part of
@@ -50,11 +82,13 @@ The helper now defaults to one Rayon worker and one Cargo build job, while
 respecting explicitly supplied `RAYON_NUM_THREADS` and `CARGO_BUILD_JOBS`.
 These are concurrency defaults, not a hard CPU quota or permission to rerun.
 
-Build the current-schema input from the tracked canonical producer artifacts.
+Only when source-to-feature verification is selected, build the current-schema
+input from the tracked canonical producer artifacts instead of restoring it.
 The prepared output may be scratch because it is a deterministic derived table:
 
 ```bash
-TABLES_DIR="$(mktemp -d /tmp/sys-ds-p2-current-full.XXXXXX)"
+mkdir -p /tmp/msc-math/p2-input
+TABLES_DIR="$(mktemp -d /tmp/msc-math/p2-input/rebuild.XXXXXX)"
 topics/empirical-studies/polytope-invariant-table/build-random-only-slice.sh full \
   "$TABLES_DIR"
 ```
@@ -68,20 +102,22 @@ producer objects:
   `66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736`.
 
 The derived tables must have the hashes recorded under **Current Status**
-below. This contract avoids tracking a second copy of the 14,336-row prepared
-table solely for P2 while removing any dependency on a surviving `/tmp` path.
+below. P2 reuses the retrospective archive rather than owning a duplicate
+prepared table; neither route depends on a surviving old `/tmp` directory.
 
-Analysis command:
+Analysis command, only when a model rerun is selected (fresh output avoids
+replacing retained artifacts):
 
 ```bash
+OUT_DIR="$(mktemp -d /tmp/msc-math/p2-input/analysis.XXXXXX)"
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   uv run --script topics/empirical-studies/sys-datascience/methods/standard-baseline-p2/analyze.py \
-  --tables-dir "$TABLES_DIR"
+  --tables-dir "$TABLES_DIR" --out-dir "$OUT_DIR"
 ```
 
 The registered `topics/empirical-studies/polytope-invariant-table/` table has hash
 `607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59` and is
-missing six active invariant ridge columns. Use the rebuilt current-schema
+missing six active invariant ridge columns. Use the restored or rebuilt current-schema
 table above, or publish and register a refreshed prepared-table snapshot before
 rerunning P2 without `--tables-dir`.
 

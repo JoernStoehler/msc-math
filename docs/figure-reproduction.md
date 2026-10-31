@@ -221,7 +221,10 @@ and extracted layout text identical to its separately built candidate.
 PDF metadata can change bytes without changing figures. The dated comparison
 states its raster resolution rather than claiming cross-version byte identity.
 
-The models' missing bulk input and the selected figures' available plot inputs
-are distinct. The P2 machine-learning experiment requires the reconstructed
-current-schema table described in its [runbook](../topics/empirical-studies/sys-datascience/methods/standard-baseline-p2/README.md);
-substituting the historical plotting table drops six ridge descriptors.
+The models' current-schema input and the figures' historical plot inputs are
+distinct. P2's required 45-feature table is already retained compressed in the
+retrospective geometry archive; its [runbook](../topics/empirical-studies/sys-datascience/methods/standard-baseline-p2/README.md)
+now restores and verifies those bytes before offering a source-to-feature rebuild.
+Both raw hashes and 14,336-row counts were rechecked on 31 October 2026 without
+running a producer or fitting models. Substituting the historical plotting table
+drops six ridge descriptors.

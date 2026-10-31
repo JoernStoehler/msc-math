@@ -4,9 +4,16 @@
 The component repairs and scoped checks described here remain evidence; they
 are not human acceptance of the workflow. See [current handoff](handoff.md).
 
-This is the agent-facing home for project management. Jörn's browser view is
-[../dashboard/index.html](../../docs/dashboard/index.html); it renders the shared state
-rather than maintaining another assignment list.
+The readable project work owner is now [PLAN.md](../../PLAN.md), with
+[STATUS.md](../../STATUS.md) as its short entry view. This document retains the
+**legacy registry/dashboard contract** and its evidence; it does not select that
+runtime or require routine duplicate updates when maintaining the work document.
+The instructions below about registry ownership, regeneration and handoff checks
+apply when that route is explicitly selected. Existing assignments, historical
+decisions and execution obligations are preserved, not silently marked complete.
+Reported owners and resource observations need fresh evidence before reuse.
+Jörn's retained browser view is [../dashboard/index.html](../../docs/dashboard/index.html);
+it renders that registry rather than the current Markdown work document.
 
 | Surface | Owns | Update when |
 | --- | --- | --- |
