@@ -32,6 +32,7 @@ decision; uncertainty is local to the claim it affects.
 | [Scientific scope and evidence can be confused](#scope) | New results can become accidental obligations; current computations can be mistaken for historical evidence. | Decide what the selected manuscript actually needs, especially data science and later product/HKO results. |
 | [Computational contracts and assurance have gaps](#shared-computation) | A convenient migration or green test suite can change the scientific object or cover the wrong evaluator. | Separate scalar, branch, geometry and flow obligations before selecting repairs. |
 | [Agents cannot easily find and compare the available C++ and Rust algorithms](#msc-q06) | They can choose an unsuitable route, miss a useful algorithm, or repeat the comparison from scratch. | Build a source-backed capability comparison at the algorithm-selection entry point; test whether agents actually find and use it. |
+| [Documentation and code placement can work against ordinary search](#msc-m03) | Useful material can exist but be missed, and new work can duplicate it. | Compare placement in routinely searched module/package locations with the present routing; assess documentation and code separately. |
 | [The next research direction has not been chosen](#msc-r00) | Repeating an easy finite search may have less value than a structural route or a new idea. | Compare the surviving mechanisms against the final HKO result, including stopping. |
 | [Reproduction and final delivery remain incomplete](#delivery) | A buildable PDF is not a usable archive or an executable submission route. | Resolve actual input/history dependencies and individual administrative requirements. |
 | [Known problems do not reliably affect subsequent decisions](#management) | Better records can still leave Jörn doing the coordination and correction. | Examine whether the next selected task uses the relevant knowledge through integration. |
@@ -160,12 +161,68 @@ assignment remains unfinished; one easy green check cannot substitute for it.
 | **Consequence** | An agent can overlook an applicable method, choose one with the wrong guarantees or outputs, misbudget a computation, or re-investigate distinctions already known elsewhere. These are the expected downstream costs; their frequency has not been measured. |
 | **Existing support and gap** | The [calculation map](docs/capacity-calculation-map.md) and local contracts contain useful distinctions. For example, general Rust production and the fixed-body Sage/C++ certificate differ in input class, coverage mechanism, reuse and timing boundaries. That example is not an inventory of all C++/Rust algorithms. The existence of these documents has not established easy discovery or a sufficient comparison. |
 | **Proposed solution** | Extend the existing algorithm-selection map with a side-by-side account of each relevant implementation: mathematical problem/input class, algorithm, arithmetic and guarantees, outputs, unsupported cases, performance with timing boundaries, dependencies, reuse limits, and source/command. Link it from the entry points agents actually use. Language is one attribute, not the organizing explanation for every difference. |
-| **Alternatives** | Keep authoritative details local and add a concise comparison/router; consolidate genuinely duplicated descriptions where maintaining both causes drift. Porting or unifying algorithms is a later engineering choice, not a prerequisite for making their differences discoverable. |
+| **Related approach** | A concise comparison/router can improve discovery. [Algorithm consolidation](#msc-q07) addresses the additional cost of developing separate implementations: assess reusable kernels, shared interfaces and a common implementation language alongside documentation repair. These approaches can complement each other. |
 | **Next action** | Inventory the relevant C++ and Rust routes and their callers; identify which distinctions are missing, stale or merely hard to find in the current map. Include the algorithms behind the original report rather than assuming the twenty-facet certificate is its whole subject. |
 | **Completion evidence** | From ordinary repository entry points, a fresh agent can find the relevant alternatives, choose for representative tasks, and explain the decisive properties with correct source references. A link check, new table, or benchmark alone does not establish that outcome. |
 
 The [performance comparison](#msc-q04), [ascent-output mismatch](#msc-q03) and
 [validation coverage](#msc-q01) are related problems, not substitutes for this one.
+
+<a id="msc-q07"></a>
+### Consolidate algorithms to reduce further-development friction
+
+| Aspect | Current account |
+| --- | --- |
+| **Approach and intended benefit** | Consolidate related algorithms and reusable machinery so future improvements can share implementation, conventions, interfaces and tests. This could reduce repeated porting, parallel bug fixes, duplicated setup and the cost of understanding separate C++/Rust routes. It addresses development friction as well as discovery. These benefits are hypotheses to check against actual callers and planned extensions. |
+| **Missing decision rationale** | Jörn reports that agents did not record why C++ was used instead of Rust. The existing language split is therefore not evidence that its benefits outweigh its costs. Recover the rationale where possible; otherwise explicitly reassess the choice. Do not invent a historical reason from plausible performance or convenience arguments. |
+| **Options to compare** | Port useful C++ algorithms into the Rust library/experiment structure; consolidate suitable shared kernels/interfaces while retaining distinct algorithm variants; or retain C++ where a demonstrated advantage justifies a maintained boundary. A wrapper may simplify invocation without reducing duplicate implementation work. Deliberately independent controls can remain separate. |
+| **Analysis needed** | Inventory the C++ routes and related Rust machinery; identify shared mathematics, differing guarantees, arithmetic, output contracts and implementation techniques. Compare extension effort, integration/testing, deployment dependencies, runtime and migration cost. Language speed, algorithmic advantage and one-off implementation convenience are different possible explanations. |
+| **Next decision** | Use the bounded source investigation to propose a concrete consolidation boundary and a representative future change it would simplify. If a material uncertainty remains, choose a small equivalence/portability or matched-cost probe that can decide between the options. The output is a supported consolidation or retention proposal, not another unexplained language choice. |
+| **Success condition** | A selected change becomes easier to implement and verify through the shared route while preserving required guarantees, outputs and useful independent checks. Record why retained exceptions earn their cost. A single language, fewer files or scalar agreement alone does not establish success. |
+
+Frozen certificate packets retain their historical source/evidence identity;
+new shared implementations need correspondence checks rather than silently
+replacing the bytes supporting an accepted result.
+
+**Investigation result, 31 October:** the bounded source/commit search found no
+recorded C++-versus-Rust rationale. It identified two distinct C++ capabilities:
+complete HKO maximizing-chart enumeration and fixed twenty-facet cycle-coverage
+replay. The former was missing from the calculation map and is now exposed there.
+Neither uses an inspected C++-specific mathematical dependency. This makes a Rust
+port plausible, not automatically worthwhile. The
+[source assessment](meta-topics/repository-organization/architecture-migration.md#cpp-rust-consolidation)
+compares shared contracts, traversal kernels, ports and complete-family/KKT
+interfaces, and retains the existing local case for separate readable/optimized
+implementations. Next choose a representative extension and compare the concrete
+work each boundary would require; the language/architecture decision remains open.
+
+<a id="msc-m03"></a>
+### Put documentation where agents already look
+
+| Aspect | Current account |
+| --- | --- |
+| **Approach** | Put maintained contracts, algorithm comparisons and development explanations in locations agents already consult through normal filename/symbol search, package READMEs and module documentation. Use names and terms matching the questions callers actually ask. A new routing instruction is not a substitute for suitable placement. |
+| **Benefit over the status quo** | Reduce missed alternatives, repeated orientation and dependence on remembering project-specific link chains. Relevant guarantees and rationale should be encountered while selecting or editing an implementation, rather than discovered only after a wrong choice. |
+| **Evidence and uncertainty** | The crate README already points to the calculation map, yet the reported C++/Rust discovery friction remains. This does not prove that all current locations are wrong; it shows that a pointer's existence is insufficient evidence of discoverability. Actual default search behavior and the places it misses need checking. |
+| **Options and tradeoffs** | Co-locate implementation contracts with modules and expose the cross-route comparison from package-level documentation; retain deeper proof/evidence at its domain owner. Compare relocation with concise local documentation pointing to one maintained detailed account. Avoid multiple authoritative copies that drift. |
+| **Next action and check** | Give a fresh agent an ordinary algorithm-selection or extension task without prescribing paths. Observe its search terms, roots and files; compare those with where the needed facts live. Place the missing facts at the appropriate encounter points and repeat an equivalent task. Judge retrieval and correct use, not compliance with a newly taught navigation ritual. |
+
+<a id="msc-m04"></a>
+### Put code where agents already search for reusable implementations
+
+| Aspect | Current account |
+| --- | --- |
+| **Approach** | Place reusable algorithms and kernels in conventional package/module locations, with discoverable exports, tests and examples. Keep experiment-specific selection policies and frozen evidence in their owning packages. Choose locations by actual consumers and search habits, not language alone or an aesthetic folder scheme. |
+| **Benefit over the status quo** | Make existing implementation easier to find, import, test and extend; reduce accidental reimplementation and repeated edits across buried copies. Conventional build/test discovery can also reduce bespoke setup work. |
+| **Evidence and uncertainty** | Reusable Rust already has crate homes, while other machinery lives in topic development and certificate packages. A concrete search defect was the legacy call-site recipe omitting `topics`, where consumers had moved. That recipe is fixed; it does not establish that changing all code locations is necessary or that documentation alone resolves the broader issue. |
+| **Options and tradeoffs** | Move reusable machinery into an existing crate/module; retain a conventional standalone package when its dependencies or contract justify separation; expose a stable interface where moving code would create harmful coupling. Preserve independent controls and historical producer identities. Relocation can break imports, scripts and evidence paths, so identify actual consumers first. |
+| **Next action and check** | Trace where an agent seeking the relevant implementation searches, then map reusable versus experiment-specific pieces and their callers. Propose concrete source/destination pairs and interface changes. Verify that an ordinary extension finds and reuses the implementation and that affected build/test and reproduction routes still work. A directory move alone is not success. |
+
+These placement approaches complement [algorithm consolidation](#msc-q07):
+better locations can help without merging implementations, and shared code can
+still be hard to find if placed poorly. The
+[repository organization account](meta-topics/repository-organization/README.md)
+owns existing placement and retention contracts.
 
 <a id="msc-q01"></a>
 ### Production validation covers less than the legacy campaigns

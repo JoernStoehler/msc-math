@@ -47,6 +47,17 @@ comparison with end-to-end Rust capacity. This fixes `t=3/10` with hardcoded
 targets and counts; it is neither a general 20-facet API nor a family optimum.
 Replay only in a fresh copy when selected, since the commands overwrite outputs.
 
+For **complete HKO maximizing families used in variation**, the
+[ascent packet's Python/C++ catalogue](../topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/README.md)
+is a different capability: exact Python primitives feed a C++ integer scan of
+all `9!` ten-label cyclic orders, producing 190 complete charts (50 points and
+140 intervals), then exact Python response optimization. Ordinary Rust product
+capacity supplies sparse closure-family winners, not this complete chart family.
+The packet replays with Python's standard library and C++17. That dependency
+choice does not establish why C++ was preferred to Rust; the
+[consolidation assessment](../meta-topics/repository-organization/architecture-migration.md#cpp-rust-consolidation)
+records the missing rationale and concrete reuse alternatives.
+
 ## `sys` consumer and retained-artifact provenance
 
 Capacity provenance and volume provenance are independent. The shared current

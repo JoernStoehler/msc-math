@@ -1,5 +1,9 @@
 # Architecture migration opportunities
 
+**31 October follow-up:** the [C++/Rust consolidation assessment](#cpp-rust-consolidation)
+below adds current source findings and the missing language-choice rationale.
+The September proposals retain their date and require current-consumer checks.
+
 Source inspection 2026-09-07, including three parallel investigations. This is
 a proposed migration surface, not active assignments or evidence that tests
 pass. No builds, experiments or timing measurements were performed.
@@ -142,3 +146,55 @@ of all public code. Proof-specific Sage, witness selection, historical controls
 and optimizer policies can remain local. Changes to scientific observables or
 the intended value of a control need Jörn's input after recoverable caller and
 provenance facts have been inspected; none blocks these initial investigations.
+
+<a id="cpp-rust-consolidation"></a>
+## C++/Rust consolidation — source assessment, 31 October 2026
+
+Jörn identified consolidation as a way to reduce further-development friction,
+and the absence of a recorded reason for using C++ instead of Rust. Bounded
+inspection found two C++ sources in the repository source glob and no explicit
+language-choice rationale in their packet documentation, introducing commit
+messages (`3af33818`, `4e40a92f`) or the targeted postmortem search. This does not
+cover all transcripts, external environments, archives or excluded/untracked files.
+No producer, port or benchmark was run. Current work/options are in
+[PLAN, MSC-Q07](../../PLAN.md#msc-q07).
+
+| Implementation | What it contributes | Difference from the related Rust route |
+| --- | --- | --- |
+| [HKO ascent catalogue](../../topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/catalogue.cpp), with [packet contract](../../topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/README.md) | Integer scan of all `9!` cyclic ten-orders, winning triangle-pair graphs and maximal bicliques, yielding 190 complete maximizing charts (50 points, 140 intervals). | Rust product capacity returns sparse closure-family winners, not this complete family reconstruction. Scalar agreement cannot check a replacement's derivative-relevant coverage. |
+| [Twenty-facet coverage replay](../../topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-t03/coverage_replay.cpp), with [packet contract](../../topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-t03/README.md) | Integer simple-cycle DFS with fixed-body symmetries, pre-certified prefix exclusions and checked leaf membership. | Rust has related canonical traversal and curvature-pruning mechanisms, but its ordinary cyclic canonicalization is not the full body-specific symmetry quotient; this replay consumes certificates rather than computing capacity. |
+
+The ascent packet's standalone Python/C++17 deployment and the twenty-facet
+packet's Sage/C++ separation are **documented properties, not explanations of
+the language choice**. Both C++ programs use integer/combinatorial operations;
+no inspected C++-specific mathematical dependency establishes a need for C++.
+A small compiled standalone program may have been convenient, but that is a
+hypothesis, not recovered intent or evidence that Rust was unsuitable.
+
+### Consolidation choices worth comparing
+
+- **Shared word/graph/witness contracts and adapters:** reduce repeated convention
+  and payload translation without first unifying rational and quartic-field
+  arithmetic. Select a downstream task to identify the actual repeated work.
+- **Narrow shared traversal kernels:** reuse cycle/pruning improvements and
+  diagnostics. Specify body symmetries and certified-prefix semantics first;
+  compare complete emitted words/charts, not only final capacity values.
+- **Rust ports of the combinatorial executables:** may reduce language/toolchain
+  switching and reuse existing traversal support. Check standalone packaging and
+  whether the port removes maintained duplication rather than merely changing syntax.
+- **Research-facing complete-family/KKT support:** could remove repeated
+  theorem-local reconstruction and optimizer adapters. Define algebraic inputs,
+  singular-family output and derivative requirements before widening an API.
+
+The [production migration decision](../../topics/capacity-and-qp/development/docs/production-migration-plan.md#maintenance-cost-model)
+already argues for one readable research implementation and one optimized
+counterpart, with narrow sharing rather than a fully parameterized framework.
+That is a local architecture tradeoff to reassess, not a justification for C++
+or a prohibition on consolidation. Deliberately independent controls and frozen
+certificate bytes should retain their evidential role.
+
+**Next discriminator:** trace one proposed further-development task across both
+packets and Rust consumers. Identify duplicated changes and missing interfaces;
+compare the options on extension effort, contract preservation, testing,
+dependencies and matched computational cost where it matters. Retain the reasons
+for the selected boundary so the next agent does not have to redo this decision.
