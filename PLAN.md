@@ -20,6 +20,14 @@ the first management update. His acceptance of the replacement is unestablished.
 The work below is the problem/option map, not a claim that those jobs are running.
 No next research campaign or thesis pass has been assigned by this request.
 
+**Management audit, 31 October:** independent source audits covered scientific/
+computational choices, thesis/delivery and collaboration, alongside repository-
+organization comparisons. A fresh reviewer independently selected further source
+checks and recovered a structured-data alternative and mixed-directory archive
+contradiction; both are integrated below. This session owns main integration.
+The audit repairs known omissions; it does not establish exhaustive coverage or
+reliable later use of the account.
+
 ## Where knowing more would most change the work
 
 This is a proposed order of attention, not an agreed ranking of thesis versus
@@ -61,6 +69,12 @@ in context, and revise costs noticed by a fresh reader. It has a patch and paire
 six-page excerpts; both scratch manuscripts built to 105 pages. It is not adopted
 or human-accepted and does not establish a general writing method. Importantly,
 it avoids restoring asides that later human feedback rejected.
+
+The same packet reports an existing Chapter 14 overfull warning in both scratch
+builds. Its magnitude and correspondence to the selected source remain unchecked;
+inspect those before classifying it as a current failure (`thesis/check-build.sh`
+rejects overfull boxes above 1 pt). The older clean-layout finding concerns the
+101-page candidate, not those 105-page builds.
 
 **Next decision.** Compare that candidate with the current Chapter 8: its baseline
 hash still matches the selected source, checked on 31 October. Decide whether to
@@ -118,6 +132,16 @@ than only failures. Choose among a qualified historical account, explicit use of
 new corroboration, or a targeted new study that answers a specific remaining
 question. Identify the actual scope choice for Jörn; do not ask him to rediscover
 the evidence or launch more methods merely to increase coverage counts.
+
+**Results that should guide that choice:** frozen pre-target ridge/concentration
+and covariance selectors achieved bounded sub-threshold enrichment. They provide
+candidate-selection baselines, not validated routes across one. Harder low-ridge
+conditioning did not improve the generic panel, and controlled endpoint paths
+reverse the population association. Another ordinary model on the same 45 features
+or blind scale-up needs a changed representation, population or question. Compare
+against the retained [selector](topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md)
+and [endpoint-path](topics/empirical-studies/sys-datascience/methods/ridge-endpoint-path/README.md)
+evidence rather than restarting generic method coverage.
 
 <a id="msc-t03"></a>
 ### Which research belongs in the manuscript?
@@ -259,6 +283,15 @@ action-window plus one-word adapters for general ascent. Product migration needs
 an accepted subdifferential contract. Preserve intentionally heuristic models and
 frozen controls. [Call-site dispositions](topics/capacity-and-qp/development/docs/legacy-callsite-inventory.md).
 
+There is already mathematical support to assess: the agent-reviewed
+[active-pair result](topics/empirical-studies/discovery-design/night-20261005/geometry-discovery/active-restriction.md)
+preserves the complete active HK-weight convex hull using **all** active sparse
+closure pairs. A [finite quadratic envelope](topics/empirical-studies/discovery-design/night-20261005/geometry-discovery/finite-product-envelope.md)
+covers tied/dense optimizers in an open fixed-normal product chamber. First match
+these hypotheses and complete-tie outputs to the selected caller's derivative
+needs. These results are not human-accepted thesis promotion; normal changes,
+singular circuit births and nonproduct perturbations retain separate obligations.
+
 <a id="msc-q04"></a>
 ### Performance reports do not yet support the reported C++/Rust comparison
 
@@ -307,6 +340,38 @@ offers KKT assembly, geometry, traversal and instrumentation candidates. Check
 current callers and [completed migrations](meta-topics/repository-organization/inventory/migration-results-2026-10-12.md)
 before doing those extractions again. Retained legacy code can be a necessary
 independent control rather than debt to delete.
+
+<a id="msc-m05"></a>
+### Consolidate understanding, not just files
+
+Repeated orientation can persist after code and documentation move to better
+locations: an agent still has to reconstruct what a result means, how it is
+supported, which attempts failed and what remains useful. The existing
+[organization comparison](meta-topics/repository-organization/organization-design.md)
+offers distinct approaches:
+
+| Approach | Benefit over repeated reconstruction | Cost or condition for choosing it |
+| --- | --- | --- |
+| A substantive topic/result account linking statement, mechanism, assumptions, implementation and evidence | Reuses understanding across writing, research and code work; makes important negative results and abandoned alternatives discoverable. | Maintain it when claims/dependencies change. A list of files is insufficient, but duplicating every proof is unnecessary. |
+| Consolidate a topic when active expansion becomes unlikely and future reading is valuable | Produces a useful handoff before the original context disappears, even when the research is unfinished. | For rarely consumed material, retain a lightweight checkpoint instead of paying for a polished synthesis. Queue position is not scientific completion. |
+| Explicit producer → output → consumer and claim → support relationships | Makes affected consumers and evidence invalidation visible when a source changes; reduces missed updates after migrations or new results. | Reuse the existing inventory/owner records; add typed metadata only for a real query, rather than maintaining a second registry. |
+| Direct source search plus bounded retrieval scouts | Keep low-signal search material out of the main worker's context while preserving source pointers and decisive exceptions. | Direct reads are preferable for tiny/high-signal searches or when relevance requires expensive context transfer. Compare integration cost and wall time to usable output, not worker count. |
+
+**Next:** select a topic being reused now, such as algorithm consolidation, and
+identify the explanation or dependency that the current account forces a new
+agent to reconstruct. Improve that account and compare an actual successor task.
+The earlier account-to-writing pilot showed a bounded reader preference, not a
+measured overall cost reduction; another archival-consumption comparison found
+that an extra packet increased reading and latency. More documentation is not
+automatically less work.
+
+If ordinary naming, placement and full-text search still miss relevant material,
+the same comparison retains **section-aware, structured/dependency and semantic
+retrieval** as candidate tools. They can address vocabulary mismatch and repeated
+cross-file queries, but require maintained indexes/relationships and checks for
+false exclusion. They are proposals, not installed capabilities. The current
+inventory searches its records, not the full source corpus; zero inventory hits
+cannot establish that a result is absent.
 
 <a id="msc-r00"></a>
 <a id="next-research-choice"></a>
@@ -377,10 +442,25 @@ readiness is unknown. [Two-hinge proof](topics/capacity-and-qp/convex-systolic-o
 ### Fixed pentagon with an arbitrary asymmetric partner
 
 Sharp symmetric and restricted asymmetric results do not settle the global
-ratio/optimizer question. Look for a general translation-cover, forest or
-finite-template completeness argument before buying more local optimization.
-The general-matrix cone reduction leaves positivity open; it is not itself the
-global theorem. [Partner account](topics/products/pentagon-arbitrary-partner/README.md).
+ratio/optimizer question. Reuse the existing **18-variable translation-hull
+reduction**, at most 30 vertices and compact competitive domain; the ten-direction
+restricted problem is already solved exactly. Compare a verified implementation
+of the applicable Jung–Ahn exhaustive algorithm with a structural contact-stratum
+proof. Published real-RAM complexity is not a practical runtime promise.
+[Available algorithms](topics/products/pentagon-arbitrary-partner/translation-cover-algorithms-20261019.md).
+
+The parallel-slide inner optimizer already had a twelve-start rehearsal with no
+improvement; repetition needs a changed discriminator, not a convergence claim.
+The [block-Hessian lemma](topics/products/pentagon-arbitrary-partner/block-hessian-lemma-20261022.md)
+restricts nondegenerate regular minima to at least ten independent contacts;
+degenerate/curved strata remain a completeness obstacle.
+
+The separate general-matrix reduction is a seven-variable, 610-row cone-positivity
+problem. Compare exact constraint-product/PSD certificates with a feasible negative
+witness reconstructed as a genuine all-ten-template partner. Ambient inertia
+`(3+,4−)` defeats naive PSD, not cone positivity; determinant-zero points occur
+inside the cone, so boundary-only singular treatment is insufficient. Costs and
+success probability remain unpriced. [Disposition and options](topics/empirical-studies/discovery-design/night-20261005/comparison/final-research-disposition.md).
 
 ### Other live possibilities, not a closed shortlist
 
@@ -396,6 +476,23 @@ global theorem. [Partner account](topics/products/pentagon-arbitrary-partner/REA
 - **Empirical discovery:** recover the retained structural and selection leads
   and their negative results before proposing another population search.
   [Discovery account](topics/empirical-studies/discovery.md).
+  A concrete external alternative is a **symplectically self-polar benchmark**
+  using constructions with known capacity, explicit volume information and linked
+  author code. First choose the applicable construction, representation and useful
+  comparison with current populations. Self-polarity-preserving interpolation is
+  another option, but intermediate bodies can have curved boundaries. Correctly
+  normalized mean-width capacity bounds, possibly optimized over linear symplectic
+  maps, offer interpretable descriptors with unknown cost/sharpness. These are
+  retained literature-based proposals, not implemented or independently validated
+  here. [Construction, caveats and bound normalization](topics/literature/open-thesis/geometry-landscape.md).
+- **Optimizer methods:** the retained seven-policy comparison is a finite-budget
+  historical-heuristic ranking; continued endpoint improvements prevent interpreting
+  plateaus as local maxima. Reuse the traced runner to compare gradient sampling,
+  full-oracle bundle/trust-region, full MADS and nonsmooth BFGS under matched charged
+  compute if this research is selected. Decisive trials remain absent. Jörn's
+  recorded decision is that this comparison must not delay submission even an hour.
+  [Runner and alternatives](experiments/dev-gradient-ascent/optimizer-runs/README.md) ·
+  [comparison contract](experiments/dev-gradient-ascent/optimizer-comparison/README.md).
 
 <a id="delivery"></a>
 ## 4. Reproduce, submit and preserve the work
@@ -419,6 +516,15 @@ For no-Git replay, compare frozen historical source fixtures with a narrow histo
 bundle and explicit input paths. A new run can corroborate a claim but cannot
 manufacture an old execution receipt.
 
+The successful second-environment thesis build after the `lmodern` repair remains
+credited in the reproduction inventory. For required workloads, retain a locked
+replay recipe (including relevant transitive dependencies/browser revision)
+alongside a latest-compatible route. Start with one required workload and its
+accepted output comparison, using the existing
+[coverage proposal](docs/history/thesis-agent-review-20261022/opportunity-reproduction-map.md).
+Unconstrained Python dependencies in some producers leave long-horizon drift open;
+this does not erase the successful build or require rerunning every producer.
+
 <a id="msc-a03"></a>
 <a id="msc-a01"></a>
 ### Individual submission requirements and official completion
@@ -430,6 +536,12 @@ completion/exemption for Jörn remain unknown. **Next:** fill one case-specific
 checklist from retained records, then prepare a consolidated request for the
 missing individual evidence. Do not repeat registration or infer a new deadline.
 [Official-source check](docs/history/official-requirements-check-20261023.md).
+
+Reuse the existing [unsent inquiry draft](docs/history/thesis-agent-review-20261022/pruefungsamt-anfrage-ENTWURF.md)
+after correcting its overly broad AI-permission wording and authority assumptions
+against the later official-source check. Separate retained-record answers from
+questions genuinely requiring the examiner or Jörn; the historical draft is not
+ready to send verbatim.
 
 Submission receipt, grade recording and any applicable colloquium completion are
 different outcomes. Determine whether later certificate application belongs in
@@ -462,6 +574,24 @@ caches. Prepare metadata and bind the exact candidate before an authorized
 publication. Archive release and university hand-in are separate obligations.
 [Archive checklist](meta-topics/thesis-submission/archive-closure-checklist.md).
 
+**Concrete data choice:** `covariance-rho-frozen-packet` remains `release:false`
+in `artifacts/registry.json`. Choose the full packet, a sufficient subset, or an
+explicit authenticated-R2 dependency according to whether the consumer needs
+compact-result verification or row-level inspection/regeneration. The
+[archive inventory](docs/history/thesis-agent-review-20261022/opportunity-archive-inventory.md)
+retains this distinction; exclusion alone is not scientific invalidity.
+
+**Policy reconciliation, 31 October:** the rights audit now follows the accepted
+content-based retention policy and implemented licenses. Ordinary administration
+is not categorically excluded; Software Heritage is optional and normally omitted,
+not an assumed history-preservation dependency. LICENSE paths are repaired.
+Payload-specific rights decisions and extracted-archive checks remain open.
+In particular, `scripts/build-release.py` currently rejects every tracked path
+under `topics/literature/sources/`, including project-authored analysis and indexes.
+Choose relocation or content/path classification before release; do not delete
+useful notes to satisfy that blocker. The rights audit now explicitly preserves
+such notes and includes canonical `topics/` research material.
+
 <a id="management"></a>
 ## 5. Reduce collaboration failures and wasted work
 
@@ -481,6 +611,40 @@ If findings disappear during synthesis, compare aggregation of the existing
 reports; if editing fails despite correct criticism, improve the editing step.
 Another universal instruction or extra reviewer is not automatically the answer.
 [Existing approach comparison](meta-topics/agent-workflow/review-workflow-design/decision-map.md).
+
+The [retained knowledge-intervention account](docs/coordination/problem-knowledge-interventions.md)
+offers three distinct remedies: **consumer retrieval at the decision** when
+relevance is easy to identify; **task-specific context supplied by the assigning
+agent** to reduce missed discovery/reconstruction (with omission/stale-copy risks);
+and **change-triggered reconciliation** of affected consumers when premises change.
+On one real decision with a prior failure and later correction, distinguish failure
+to find knowledge, failure to apply retrieved knowledge, and failure to propagate
+updates. Choose the remedy for the observed stage; these are not validated general
+interventions.
+
+### Discover worthwhile work before scheduling it
+
+The repeated omissions here concern what enters the work account, not only how a
+known task executes. The [shared orchestration handoff](/workspaces/agent-fleet-tools/research/reports/orchestration-handoff-2026-10-31.md)
+retains planning, scheduling and prepared execution as a proposed role split;
+task-preparation and inadequate-verifier repair ownership remain unsettled. Its
+successor transfer was rejected, and no accepted successor is recorded there.
+Assess an unhinted context-to-work proposal against consequential known omissions
+and their value cases. Separately assess execution through return, continuation
+and integration. Executing research merely to demonstrate startability does not
+test whether the research was worth selecting.
+
+### Prepare useful reviews and validate their remedies
+
+The [shared review account](/workspaces/agent-fleet-tools/PLAN.md#reusable-review--29-october)
+records reviewers correctly detecting a defect but recommending unsafe alternatives;
+a separate candidate validator caught them. Review-brief preparation and independent
+checking of consequential remedies are concrete options alongside aggregation and
+editing repair. Retain the requirements, resolved target, findings, proposed fix
+and integration result on a consuming review. Judge preserved requirements and
+human correction burden, not approval counts. Source bloat was repaired and bounded
+checks exist; improved general usefulness and the current-version comparison remain
+open. This does not establish a need for another universal review gate.
 
 **Human cost:** recoverable facts, timing management and integration belong with
 agents. Ask Jörn for his actual judgment, taste or authority with the relevant
@@ -524,12 +688,18 @@ instead of asking Jörn to choose them again.
 The resource-workflow attempt received human FAIL; on-demand accounting and
 fork/counter repairs remain useful. The automatic hook was withdrawn for
 complexity, not left awaiting approval. Recurring-data and prompt-composition
-views were unfinished proposals; later shared-owner resolution is unknown here.
-**Next:** check the current shared owners, then identify one actual allocation or
-repeated-context question not adequately answered by existing tools. Compare
-on-demand reuse, retrospective preparation and incremental views with explicit
-freshness/invalidation costs. Do not revive withdrawn automation from old registry
-labels. [Accounting evidence](scripts/subtree-usage.md).
+views were unfinished proposals. Later shared delivery now provides selected-source
+response accounting/ledger, work/approach annotations, native/transport interval
+queries, failure capture/reload and incremental sanitized Codex/Claude message
+search. These are inspected delivery records/contracts, not a fresh runtime test.
+OpenCode support, semantic/value attribution, quota/money conversion and broader
+legacy/tree/item accounting remain incomplete; the old prompt-composition-view
+proposal's disposition is still unknown.
+**Next:** choose one actual allocation or repeated-context question and reuse the
+[shared evidence package](/workspaces/agent-fleet-tools/docs/agent-evidence/README.md)
+on demand. Develop an adapter or broader view only for a consequential unmet query,
+accounting for freshness and invalidation. Do not duplicate parsers or revive the
+withdrawn hook. [Local historical accounting](scripts/subtree-usage.md).
 
 ## Evidence, history and limits
 
@@ -537,7 +707,7 @@ The map draws on the seven topic accounts, thesis obligations/project facts,
 targeted code and reproduction contracts, October review records, friction
 records and the legacy registry. It is not an exhaustive proof/code audit or a
 complete transcript search. Current student records, the original C++ comparison,
-later cross-project workflow resolutions and human acceptance remain important
+uninspected cross-project workflow outcomes and human acceptance remain important
 unknowns. The Chapter 8 candidate is an external retained artifact, not main content.
 
 Session logs, expired budgets and prior review receipts are deliberately outside

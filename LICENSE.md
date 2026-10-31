@@ -14,9 +14,9 @@ The complete license texts are in `LICENSES/Apache-2.0.txt` and
 The licenses do not cover third-party material merely because it is stored or
 cited in this repository. In particular:
 
-- `papers/` contains cached sources and figures from external publications;
+- `topics/literature/sources/` contains cached sources and figures from external publications;
 - downloaded University of Augsburg forms and their conversions under
-  `submit/` retain their original status;
+  `meta-topics/thesis-submission/` retain their original status;
 - quotations, bibliography entries, dependency code, names, trademarks, and
   other identified third-party material retain their respective rights;
 - files that carry their own license or rights notice are governed by that
@@ -31,7 +31,7 @@ or administrative purpose does not by itself exclude it.
 
 The Zenodo continuation bundle excludes cached papers, downloaded submission
 forms, and other third-party material without clear redistribution rights. See
-`submit/archive-rights-and-exclusions.md` for the current archive-boundary
+`meta-topics/thesis-submission/archive-rights-and-exclusions.md` for the current archive-boundary
 audit.
 
 Copyright 2026 Jörn Stöhler.

@@ -1,6 +1,7 @@
 # Archive Rights And Exclusions
 
-Status: active archive-boundary audit, 2026-07-14. Jörn accepted the recommended
+Status: archive-boundary audit, reconciled with accepted policy on 2026-10-31.
+Jörn accepted the recommended
 Apache-2.0 plus CC BY 4.0 outcome on 2026-07-14 while noting that he is not a
 licensing expert. This records an informed project-outcome choice, not legal
 advice, and does not authorize publication.
@@ -98,7 +99,7 @@ frontier here.
 - final thesis PDF and thesis-owned source/assets;
 - root entry points and project facts needed to understand the closure state;
 - `AGENTS.md`, repo-local `.agents/` skills, and `.codex/` project agents;
-- `crates/`, `formal/`, and retained `experiments/` code, data, reports,
+- `crates/`, `formal/`, `topics/`, and retained `experiments/` code, data, reports,
   figures, provenance, and owner-local instructions;
 - reproducible environment definitions and repository scripts;
 - archive README, payload manifest, dependency/environment identity, Git commit
@@ -106,17 +107,22 @@ frontier here.
 
 ### Exclude from the Zenodo continuation bundle
 
-- `.git/` (the exact public commit and Software Heritage preserve history);
-- `topics/literature/sources/`, including downloaded/cached article sources and article figures;
+- `.git/` from the normal payload; record the exact public commit and explicitly
+  handle any required historical replay objects. Software Heritage is optional,
+  normally omitted, and not an assumed preservation dependency;
+- downloaded/cached third-party article sources and article figures under
+  `topics/literature/sources/`; retain or relocate project-authored analyses,
+  citation indexes and source maps from this mixed directory;
 - downloaded official forms and their conversions under `meta-topics/thesis-submission/`;
 - raw Codex/Claude session logs and ignored `experiments/ai-use/artifacts/`;
 - credentials, `.env`, user configuration, editor state, local worktrees,
-  caches, build directories, and submission administration;
+  caches and build directories;
 - any later-discovered third-party asset without clear redistribution rights.
 
-The archive may retain a small public-facing subset of `meta-topics/thesis-submission/` containing
-only archive instructions and manifests, but not private/admin documents or
-downloaded forms.
+Retain useful ordinary project and submission administration under the applicable
+license. Administrative purpose, usernames and local paths alone are not exclusion
+criteria. Exclude genuinely private correspondence and downloaded forms; classify
+content according to the accepted direction in [README](README.md#accepted-archive-direction).
 
 ### Needs focused review before inclusion
 
@@ -131,9 +137,13 @@ downloaded forms.
 ## Remaining work after the license choice
 
 1. Produce a path-level include/exclude manifest and automated checker.
+   The current release script blocks all of `topics/literature/sources/`, including
+   project-authored notes. Choose relocation or content/path classification before
+   packaging; the blocker is not an instruction to delete retained analysis.
 2. Classify all retained non-code assets by producer and rights status.
-3. Review the current Git history before asking Software Heritage to ingest it.
+3. Omit Software Heritage unless a separately audited clean origin has a concrete
+   preservation benefit; no history rewrite or ingestion is required by this audit.
 4. Check the implemented license files and scope notice, and prepare
    `CITATION.cff` once final citation metadata is stable.
-5. Build an unlicensed dry-run closure bundle and verify extraction, registered
+5. Build a dry-run closure bundle with the implemented license notices and verify extraction, registered
    artifact identity, privacy exclusions, and a cold agent start.
