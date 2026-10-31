@@ -15,10 +15,13 @@ checks** (Jörn, 23 October). No human verdict on the October whole manuscript w
 found in the [check account](docs/preliminary-checks-2026-10-23.md).
 The separate 28–29 October research report is delivered and integrated on main.
 
-**Latest update:** this plan and STATUS have been rewritten after Jörn rejected
-the first management update. His acceptance of the replacement is unestablished.
-The work below is the problem/option map, not a claim that those jobs are running.
-No next research campaign or thesis pass has been assigned by this request.
+**Latest decision, 31 October:** Jörn stopped the completeness audit and selected
+solution planning. His working judgment is that remaining missed problems may be
+independent and of comparable, rather than higher, priority; this is a reason to
+proceed, not a completeness guarantee. The existing account is the starting set.
+This session owns solution planning, beginning with a five-minute approach report.
+No research campaign, manuscript pass or implementation programme is running from
+that planning assignment.
 
 **Management audit, 31 October:** independent source audits covered scientific/
 computational choices, thesis/delivery and collaboration, alongside repository-
@@ -27,6 +30,72 @@ checks and recovered a structured-data alternative and mixed-directory archive
 contradiction; both are integrated below. This session owns main integration.
 The audit repairs known omissions; it does not establish exhaustive coverage or
 reliable later use of the account.
+
+<a id="solution-planning"></a>
+## Solution planning — selected 31 October
+
+**Owner:** this session. **Current output:** the five-minute planning-method
+checkpoint; four read-only planning workers returned first proposals for the batches
+below. Parent integration, comparative allocation and solution-plan checks remain
+active; worker recommendations are not execution selections. The completeness
+audit is stopped. Use existing problems and approaches, checking a premise when
+it changes a solution rather than reopening the inventory.
+
+**Method:** one coordinator pass across the existing account, bounded parallel
+option development, then joint allocation and dependency synthesis. Group by
+shared decisions/consumers rather than assign one worker per issue. Every existing
+item receives a planning disposition: develop, handled by a shared plan, already
+actionable with a short specification, or defer with reason and re-entry condition.
+Do not spend equal effort on each entry or silently discard unselected ones.
+
+**Planning priority:** consequential harm/delay avoided; benefit to thesis or
+research; number and importance of actual consumers helped; likelihood that more
+reasoning changes a choice; and cost to obtain that decision, including human
+attention. Compare concrete cases rather than invent numerical scores. Planning
+priority differs from execution priority: a large research option may merit a
+cheap discriminating plan, while a clear repair may need almost no more analysis.
+Keep thesis and independent research value visible; no universal exchange rate
+or thesis-first allocation is established.
+
+| Proposed parallel batch | Existing coverage | First useful planning output |
+| --- | --- | --- |
+| Thesis candidate and acceptance | W01/T01–T04, with A02 personal-verification interface | A route from existing candidate/feedback and scope choices to an assessable manuscript; concrete alternatives, readiness uncertainty and human decisions. |
+| Computational interfaces and reuse | Q01–Q07, M02–M05 | Compare consolidation/retention/placement options against representative scalar, ascent and complete-family consumers; specify needed guarantees and assurance, without assuming a Rust port. |
+| Reproduction and delivery | E01, A01–A04; thesis batch supplies claim/candidate identity | Workload-specific replay and archive plan plus a separable administrative route. Choose retained inputs, source/history handling and extraction checks; do not make archive completion a hand-in prerequisite. |
+| Research alternatives | R00–R04 and the other retained mathematical/empirical possibilities | Comparable short proposals with mathematical payoff, known obstacles, decisive next inquiry and cost uncertainty; deepen only options whose comparison could change allocation. |
+
+M01's knowledge/review remedies accompany the consuming plans above, with explicit
+checks of discovery, use and correction propagation. W02 cloud support and W03
+resource tooling receive a consumer/dependency assessment before standalone
+infrastructure planning; neither automatically blocks other batches. Independent
+collaboration needs remain visible rather than being declared solved by this method.
+
+**Unequal depth in practice:** compare the C++/Rust architecture boundary in depth
+because it affects several consumers and future changes. Specify the already-chosen
+retention of project-authored archive notes briefly, concentrating remaining
+analysis on relocation versus classifier behavior. For research, plan a decisive
+proof/feasibility inquiry rather than invent a schedule for discovering a theorem.
+
+**Integrated output and stopping:** each developed plan names its intended benefit,
+concrete alternatives (including retaining the status quo), recommendation and
+reversal condition, first bounded action, inputs/dependencies, cost basis or unknowns,
+and what success/failure/inconclusive evidence changes. Stop deepening when the next
+consequential choice is actionable; defer detail that only execution can settle.
+The coordinator checks conflicting assumptions, genuine dependencies, overlooked
+high-value items within the accepted set and total review/integration burden.
+A fresh recipient should be able to begin the named step without reconstructing
+the alternatives. This checks plan usability, not whether its proposed solution
+has already worked. Research and implementation execution remain separate selections.
+
+**First returns to integrate:** thesis proposes a Chapter 8 adoption comparison,
+scope decision sheet and candidate-linked personal-verification docket; computation
+proposes narrow consumer contracts/adapters before ports, with normal-changing
+ascent outside the fixed-normal envelope's immediate coverage; delivery proposes
+one required-workload portability pilot and separate archive/submission routes;
+research proposes deepening three-hinge and cone-certificate planning, with shorter
+cut-family and self-polar feasibility specifications. The research shortlist's
+comparative value and its deferrals still need coordinator assessment. These are
+planning inputs, not accepted architecture, scope or research priorities.
 
 ## Where knowing more would most change the work
 

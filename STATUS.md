@@ -1,18 +1,18 @@
 # Status — msc-math
 
-v1.44 · 31 October 2026
+v1.45 · 31 October 2026
 
 ## Goal
 Submit and pass Jörn's MSc thesis, “Probing Viterbo's conjecture”.
 The separate research programme seeks valuable results for symplectic geometers.
 
 ## Latest update
-The management account in [PLAN.md](PLAN.md) now includes source-audited concrete
-approaches and negative results; archive-policy contradictions are corrected.
-Jörn's acceptance of the replacement is unestablished. The underlying work remains open.
+Jörn stopped the completeness audit and selected solution planning from the current
+account. This session owns [the planning method](PLAN.md#solution-planning): shared
+triage, parallel option development and integrated decisions.
 
 ## Open work
-This request assigns no continuation below. Details and alternatives are in PLAN.
+Solution planning is active; underlying execution remains unassigned. Details are in PLAN.
 
 - **Thesis writing:** no whole-PDF human PASS is established. Next: compare the existing contextual Chapter 8 candidate with the selected source and choose its disposition. [Writing](PLAN.md#thesis).
 - **Thesis scope:** data-science adequacy and adoption of later research remain unresolved. Next: prepare the concrete claim/evidence and include/defer choices. [Scope](PLAN.md#scope).
