@@ -24,7 +24,7 @@ Unrelated project workflows also remain.
 These operationally unchanged preservation copies do not select the September semantic
 adaptations, bootstrap changes or acceptance programme below. See the
 [5 October design and evidence limits](../knowledge/collaboration-guidance-design-2026-10-05.md)
-and [project skill ownership and source provenance](../../.agents/skills/README.md)
+and the current skill-discovery note
 for the installed replacement work. [Validation](skill-replacement-validation-20261005.md)
 records structural checks and successful fresh Codex root/`thesis/` and Claude
 root discovery. Behavioral benefit remains untested; the older acceptance

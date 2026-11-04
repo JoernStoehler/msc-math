@@ -59,7 +59,7 @@ Provenance correction from that plan: HKO's added derivative disclaimer was part
 
 ## Tested outcome and reusable entry point
 
-The [human-prose-review skill](../../../.agents/skills/human-prose-review/SKILL.md) now owns the reusable exchange. It contains short invocation commands, with substantial serving and API mechanics in two scripts. PDF uses the official Hypothesis/PDF.js viewer pinned to commit `87d50c92347d3d3b8034a18cc10282af1189931b`; HTML embeds Hypothesis and Markdown is rendered first. No extension is required.
+The `$human-prose-review` now owns the reusable exchange. It contains short invocation commands, with substantial serving and API mechanics in two scripts. PDF uses the official Hypothesis/PDF.js viewer pinned to commit `87d50c92347d3d3b8034a18cc10282af1189931b`; HTML embeds Hypothesis and Markdown is rendered first. No extension is required.
 
 Jörn confirmed PDF opening/annotation on his device. Authenticated API retrieval recovered its test comment and all 12 earlier HTML annotations; the latter matched the pasted export across eight substantive fields. The packaged helpers were additionally checked for PDF/HTML/Markdown delivery, MathML output, viewer dependencies, restricted file serving and exact retrieval of the 12 comments. These checks preserve the tested mechanisms, but are not a new browser/device acceptance test of every generated link. The API token stays outside the repository and served page.
 

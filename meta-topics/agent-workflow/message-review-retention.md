@@ -4,7 +4,7 @@ This account retains the consequential findings extracted from the former
 `docs/coordination/message-reviews/` tree on 12 October 2026. Exact outgoing
 candidates, supplied context, revision copies and delivery verdicts are temporary
 workflow records. New packets belong under `/tmp/msc-math/message-reviews/`.
-The [project skill](../../.agents/skills/message-review/SKILL.md) owns the active
+`$message-review` owns the active
 review procedure; this account records evidence and limits rather than a second
 review protocol.
 
@@ -40,7 +40,7 @@ time costs remained unmeasured.
 
 | Finding from the removed delivery packets | Durable owner and boundary |
 | --- | --- |
-| App-server polling RPCs could exceed the requested wait window; a maintenance reference was initially missing. The subsequent review confirmed deadline clamping and the restored reference, with uncertainty wording corrected. | [App-server design and validation](../../.agents/skills/codex-app-server/references/design-notes.md) retains the defect, repair, validation and remaining cloud uncertainty. |
+| App-server polling RPCs could exceed the requested wait window; a maintenance reference was initially missing. The subsequent review confirmed deadline clamping and the restored reference, with uncertainty wording corrected. | `$codex-app-server` retains the defect, repair, validation and remaining cloud uncertainty. |
 | The 10 October inventory checkpoint reversed public API and production-anchor test counts. The sender corrected them to 15 and 4. Browser operation remained unverified. | The inventory verification account and software survey own the corrected counts and check limits. Message approval did not validate all scientific content. |
 | The 10 October graph received a fresh Astra planning review. Intrinsic SVG sizing and the reminder to freeze fixtures before geometry/data changes were checked; implementation correctness and overnight launch were outside approval. | The retained cleanup graph README and proposed graph own this planning disposition. Browser layout was unverified because no connection was available. |
 | The 12 October pattern catalogue and revised priorities received separate message approval. The reviews distinguished observed discovery/stale-account problems from proposed folder/explanation remedies. | The repository-organization design account owns the layout, retrieval, lifecycle and resource tradeoffs. They are reasoned alternatives, not an experimentally ranked architecture. |

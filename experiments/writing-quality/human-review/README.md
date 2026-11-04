@@ -1,6 +1,6 @@
 # Human prose review exchange
 
-Any agent working directly with Jörn can use the [human-prose-review skill](../../../.agents/skills/human-prose-review/SKILL.md): provide an annotation link, then fetch the feedback when he says done. A dedicated desk is not required. The inbox below supports coordinated batches when several producers are involved; an arrival does not justify interrupting him. No response means pending, not acceptance.
+Any agent working directly with Jörn can use the `$human-prose-review`: provide an annotation link, then fetch the feedback when he says done. A dedicated desk is not required. The inbox below supports coordinated batches when several producers are involved; an arrival does not justify interrupting him. No response means pending, not acceptance.
 
 ## Inbox contract
 

@@ -1,4 +1,15 @@
-# View workstation files in a browser
+# Historical file-viewer implementation — retired
+
+**Retired 1 November 2026:** Jörn selected standard client frontends for agent
+work and asked to remove the custom file-viewer surface. The workstation
+`msc-math-files.service` unit and its drop-in were removed; no Tailscale `/files`
+route was configured. The `review-files` project skill link was removed too.
+Use the built-in file/document view in the selected T3, Codex, Claude Code or
+ChatGPT client. Keep this source and its historical records; do not start the
+custom server or recreate a hosted route without a concrete selected need.
+
+The implementation source is [`scripts/serve-files.py`](../scripts/serve-files.py).
+It remains in the repository as historical code.
 
 **Current delivery check, 29 October 2026, 00:31 UTC:** the former `/files`
 route below is unavailable. `msc-math-files.service` is disabled and inactive;
@@ -7,21 +18,17 @@ checkout's PDF at the old address returned Desk's HTML shell, despite HTTP
 200. Do not use the historical prefix as a working delivery link or restart
 the inactive service merely because this document once described it as enabled.
 
-For current delivery, use the active client's file links, or the selected
-[review-files workflow](../../.agents/skills/review-files/SKILL.md) for an
-expiring browser view of explicitly named artifacts. Retained device copies
-use the [share-files workflow](../../.agents/skills/share-files/SKILL.md).
-Verify the actual response type and content before reporting a browser link
-as working. No persistent replacement URL has been verified by this check.
+At the time of that check, the active client's file links were preferred, and
+temporary review/share workflows were available. Those custom browser routes
+are retired; no persistent replacement URL is selected.
 The research report remains retained with its source packet in this checkout.
 The named-file `review-files` route was exercised in the same run: its browser
 endpoint returned `application/pdf` and bytes matching the retained report's
 SHA-256. That verifies this temporary delivery route, not restoration of the
 old persistent server or access from every personal device.
 
-The server documentation below describes the retained implementation and its
-**historical** deployment, not the current host routing. Its former links may
-remain in older records; no bulk link migration or host-route change is selected.
+The remaining sections record old behavior and implementation boundaries.
+They are historical, not instructions to launch or deploy the server.
 
 The project tool is [scripts/serve-files.py](../scripts/serve-files.py). It uses
 Python's standard HTTP server and installed Pandoc; it has no Python package
@@ -71,7 +78,11 @@ root, then apply the URL rule above. Its data and source links must resolve
 within that same checkout; do not link a sibling worktree's page as this task's
 current state.
 
-## Run locally
+## Historical local-server procedure
+
+Do not launch this custom viewer as part of ordinary agent work. The following
+commands are retained only to explain the former interface; code and Git history
+remain available if a concrete future need is selected.
 
 ```bash
 python3 scripts/serve-files.py
@@ -92,38 +103,11 @@ The default listener is loopback, port 8770. `--host` and `--port` select anothe
 binding. To move machines, run the script from the copied checkout, select
 appropriate roots and replace the workstation hostname in the URL convention.
 
-## Workstation service and HTTPS
+## Removed workstation service and HTTPS route
 
-**Historical 4 October evening repair:** the viewer then ran from main as an
-enabled persistent systemd user service. Live HTTPS file checks returned HTTP 200.
-The consolidation-time outage remains a historical observation.
-
-The workstation unit is `~/.config/systemd/user/msc-math-files.service`, with
-`WorkingDirectory=/workspaces/msc-math`,
-`ExecStart=/usr/bin/python3 /workspaces/msc-math/scripts/serve-files.py`,
-`Restart=on-failure` and `WantedBy=default.target`. It starts with the user
-manager after reboot. The existing Tailscale Serve `/files` route is unchanged.
-
-```bash
-systemctl --user enable --now msc-math-files
-systemctl --user restart msc-math-files
-```
-
-Tailscale removes the mount prefix before proxying; the backend URL's `/files`
-restores it. This adds one route without replacing the existing `/` and
-`/gateway` services. Host networking remains host configuration; the repository
-owns the viewer code. Inspect and stop only this service/route with:
-
-```bash
-systemctl --user status msc-math-files
-tailscale serve status
-systemctl --user stop msc-math-files
-tailscale serve --set-path=/files http://127.0.0.1:8770/files off
-```
-
-After code changes, restart with `systemctl --user restart msc-math-files`.
-The existing `review-files` skill remains available for expiring, explicitly
-registered file shares.
+The unit and host drop-in were removed on 1 November 2026. The Tailscale map
+had no `/files` route; no route command is needed. Earlier deployment and
+rollback details remain in Git history.
 
 ## Dashboard freshness and checks
 

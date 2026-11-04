@@ -300,6 +300,12 @@ work each boundary would require; the language/architecture decision remains ope
 | **Options and tradeoffs** | Co-locate implementation contracts with modules and expose the cross-route comparison from package-level documentation; retain deeper proof/evidence at its domain owner. Compare relocation with concise local documentation pointing to one maintained detailed account. Avoid multiple authoritative copies that drift. |
 | **Next action and check** | Give a fresh agent an ordinary algorithm-selection or extension task without prescribing paths. Observe its search terms, roots and files; compare those with where the needed facts live. Place the missing facts at the appropriate encounter points and repeat an equivalent task. Judge retrieval and correct use, not compliance with a newly taught navigation ritual. |
 
+**Client-interface update, 1 November 2026:** Jörn selected standard agent-client
+frontends (T3 Code, Codex TUI, Claude Code TUI, ChatGPT.com Chat). The custom
+file-viewer service and delivery links were retired; use clients' built-in file
+views. Renderer source and history remain preserved. This changes the delivery
+surface, not the underlying source/documentation owners.
+
 <a id="msc-m04"></a>
 ### Put code where agents already search for reusable implementations
 

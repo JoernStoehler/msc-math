@@ -1,1 +1,0 @@
-/workspaces/agent-fleet-tools/skills/codex-resources/scripts/codex-quota-status.py

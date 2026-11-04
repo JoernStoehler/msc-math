@@ -141,13 +141,13 @@ state every 15 seconds. The listener remains local unless explicitly configured.
 
 ## Messaging protocol
 
-The [external-agent-communication skill](../../.agents/skills/external-agent-communication/SKILL.md)
+The `$external-agent-communication`
 owns recipient/channel comparison and exchanges across independent agent contexts,
 including messages relayed by Jörn and the human-mediated ChatGPT Pro round trip.
 Standard native subagent-tree transport is outside its scope. Its catalog description
 supplies the trigger; the protocol is not duplicated in AGENTS.md or here.
 
-The [project-management skill](../../.agents/skills/orchestrate-project/SKILL.md)
+The `$orchestrate-project`
 covers development of problems, goals and consequential decisions when that is needed for reliable autonomous progress. Investigate independently where possible;
 use joint interaction where user knowledge or judgment is needed. Useful, efficient
 interaction is part of that development; a clear task does not require an additional
@@ -158,21 +158,18 @@ those checks do not establish behavioral benefit.
 ## Workload supervision
 
 The coordinator owns supervision, including its own pending messages, reviews,
-integration work and delegatable context. The read-only workstation checker uses
-existing OpenObserve export and local usage metadata:
+integration work and delegatable context. For the read-only workstation check
+using existing OpenObserve export and local usage metadata, invoke
+`$codex-resources`; the former project-local script link is removed.
 
-```bash
-. "$HOME/.config/openobserve/codex-env.sh"
-python3 scripts/coordination-load.py ROOT_THREAD_UUID --minutes 15 --brief
-```
-
-Replace `ROOT_THREAD_UUID` with the actual conversation UUID. It includes local
-descendants and UUID owners/related threads recorded in the registry; repeat
-`--thread UUID` for an additional independent project session. Cloud and Pro
-are outside coverage. It projects counters and event metadata, excluding
-prompts, reasoning, tool content and credentials. Native observations and local
-fallback remain separate; unknown counters and billed spend remain unknown.
-Exit 2 means incomplete observation, not an overload diagnosis.
+Ask it for the `coordination-load.py` diagnostic with the actual conversation
+UUID and a bounded window. It includes local descendants and UUID owners/related
+threads recorded in the registry; repeat `--thread UUID` for an additional
+independent project session. Cloud and Pro are outside coverage. It projects
+counters and event metadata, excluding prompts, reasoning, tool content and
+credentials. Native observations and local fallback remain separate; unknown
+counters and billed spend remain unknown. Exit 2 means incomplete observation,
+not an overload diagnosis.
 
 The compact report separates `root_native`, `workers_native` (locally discovered
 descendants of this root) and `other_scoped_threads_native` (other recorded or
@@ -192,8 +189,8 @@ Native export deduplication remains unverified; no live-tree duplicate was
 established. [The retained contract](../../scripts/subtree-usage.md#native-completion-contract-and-bounded-check)
 records source anchors, regression command and unknown-data boundaries.
 
-For a cumulative local-log report by root/workers/model, use
-`python3 scripts/subtree-usage.py ROOT_THREAD_UUID`; see its
+For a cumulative local-log report by root/workers/model, ask `$codex-resources`
+to run the `subtree-usage.py` diagnostic; see the retained
 [accounting contract](../../scripts/subtree-usage.md). Its dated shadow-price
 table is not subscription quota. Account-wide native quota snapshots, where
 available, do not establish which thread consumed which quota percentage.
@@ -203,7 +200,7 @@ fixing them. Both local readers now share response ownership/deduplication and
 strict required counters, and ordinary forks stay separate from workers.
 Thirty-five focused tests and a live owned-response sum check passed. The
 proposed watch is not active automation; task-start/handoff delivery was rejected.
-The on-demand `scripts/usage-awareness.py` command remains usable. Jörn rejected
+On-demand usage accounting remains available through `$codex-resources`. Jörn rejected
 the throttled after-tool candidate's complexity on 3 October; it is withdrawn,
 with no activation approval pending. [Proposal C](../../docs/codex-config-proposals.md#c-prepared-ongoing-work-count-up-reminder-activation-awaits-approval)
 retains the exact rejected additions and checks as historical provenance.

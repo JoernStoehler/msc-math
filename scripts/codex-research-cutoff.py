@@ -16,7 +16,14 @@ import websocket
 
 
 def scope(home, root):
-    spec = importlib.util.spec_from_file_location('subtree_usage', Path(__file__).with_name('subtree-usage.py'))
+    helper = Path(__file__).with_name('subtree-usage.py')
+    if not helper.is_file():
+        raise RuntimeError(
+            'The shared thread-tree helper is no longer linked into this checkout. '
+            'Use $codex-resources for a diagnostic; cutoff execution is disabled '
+            'until a portable thread-scope interface is selected.'
+        )
+    spec = importlib.util.spec_from_file_location('subtree_usage', helper)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     sessions = module.inventory(home)

@@ -16,7 +16,7 @@ broad legacy/generated-tree tours.
 
 [PLAN.md](PLAN.md) is the readable project work document; [STATUS.md](STATUS.md)
 is its short entry view. Use the shared
-[work-document skill](/workspaces/agent-fleet-tools/skills/work-document/SKILL.md)
+`$work-document`
 to initialize, read, search or maintain the plan. Linked domain sources own exact
 claims; recorded legacy registry/dashboard state does not establish live work.
 
@@ -29,12 +29,7 @@ claims; recorded legacy registry/dashboard state does not establish live work.
 | Placement, retention or publishing evidence | `meta-topics/repository-organization/README.md` and `docs/artifacts.md` |
 | Interpretation or historical evidence | `docs/knowledge/README.md`; `docs/history/` is provenance, not current assignments |
 
-Project skills live in `.agents/skills/`; installed plugins are separate owners.
-Select skills from discovered descriptions. If the catalog is unavailable, read
-skill frontmatter for selection, then the relevant SKILL.md body; recipients
-without file access need the selected guidance supplied through their supported
-source route. `.agents/skills/README.md` owns provenance, not the catalog.
-Source delivery does not establish automatic instruction loading.
+Project-specific skills, when present, live in `.agents/skills/`; shared skills are invoked by `$name` from the active catalog or plugin. Select skills from their discovered descriptions. If the catalog is unavailable, identify the missing guidance and continue independent work instead of assuming checkout-local symlinks. Source delivery does not establish automatic instruction loading.
 
 ## Quick commands
 
@@ -46,7 +41,6 @@ test suite.
 git rev-parse --show-toplevel    # this checkout
 git worktree list               # sibling checkouts
 rg --files topics crates thesis # source entry points
-rg -n '^description:' .agents/skills/*/SKILL.md # if skill catalog is absent
 scripts/repo-status-summary.sh  # applicability of dated checks
 cargo fmt --all -- --check
 cargo check --workspace --locked
@@ -70,7 +64,7 @@ separate environment; setup installs only the selected workload's tools.
   deliberately retained. Keep lasting results with their source/evidence owner.
   Inspect inputs and write effects before expensive/replacing producers
   (`--full`, many `cargo run` commands, certificate workflows).
-- Before prepared user-visible delivery, use `.agents/skills/message-review/SKILL.md`
+- Before prepared user-visible delivery, use `$message-review`
   for a separate subagent's approval of the exact complete text, including
   `[review: REVIEWER]`. Substantive changes need renewed review. Direct synchronous
   conversation and private native messages are exempt; the skill owns the boundary.
@@ -84,11 +78,14 @@ separate environment; setup installs only the selected workload's tools.
   uncertainty and resources, and get Jörn's explicit approval. Fund useful bounded
   preliminary exploration within scope. Do not invent thresholds or gates for
   small authorized tasks. Splitting work never enlarges scope or budget.
-- The async question tool is disabled pending verified delivery. Ask directly in
-  chat; end the turn with a self-contained required question to notify Jörn.
-  Silence, elapsed time, submission acknowledgments and automatic action approval
-  do not answer it. Preserve pending approval across ownership changes; optional
-  clarification does not create a gate and keeps its stated fallback.
+- The async question tool delivered a user reply on 2026-11-04; the previous
+  prohibition is superseded. Use the async tool for required decisions when it
+  fits the interaction. Include enough context and consequences for the choice
+  to be actionable. An accepted submission is not an answer; silence and elapsed
+  time are not answers either. Continue work that does not depend on the reply,
+  and do not end a turn with an unresolved decision but no explicit request.
+  Preserve pending approvals across ownership changes; optional clarification
+  does not create a gate and keeps its stated fallback.
 
 ## Conditional obligations
 
@@ -100,7 +97,7 @@ Read the named owner when its trigger applies:
 | Material assignment, owner, dependency, decision or resource change | Update `PLAN.md` and its short `STATUS.md` view. If the selected work explicitly maintains the legacy registry/dashboard route, also follow its `meta-topics/project-management/coordination.md` contract. Unknown quota/spending stays unknown; old balances/deadlines are not live state. |
 | Material thesis-source/planning change to selected claims, scope, uncertainty or route | Reconcile `docs/dashboard/thesis.html` under `meta-topics/project-management/coordination.md#thesis-synthesis`. Mark unresolved discrepancies visibly stale and hand them off; refresh `thesis-sources.json` only after source/PDF/PASS reconciliation. Avoid unrelated refreshes. |
 | Material collaboration-friction change | Follow `meta-topics/project-management/friction/README.md`: update the record and linked Pages overview; report stale/unsaved status in handoff. This selects no monitoring or resumed thesis work. |
-| Host paths, file/dashboard links, caches or client recovery | `meta-topics/development-environment/development-environments.md#workstation-locations`, `docs/file-viewer.md`, `meta-topics/development-environment/codex-reference.md`. Workstation paths are not prerequisites elsewhere. |
-| Product mechanics affecting harness design, instruction placement, skills or subagent receipt | Use `.agents/skills/agent-platform-reference/SKILL.md`; start at its `references/instruction-design.md` for instruction/routing questions and attributed bootstrap/retrieval advice. Shared harness-engineering owns intervention design and evaluation. |
-| Independent-context exchange and cloud/VM clients | Use `.agents/skills/external-agent-communication/SKILL.md` with project `cloud-workflow.md` and `docs/artifacts.md` for source delivery and retention. Where selected, `.agents/skills/codex-app-server/SKILL.md` owns the VM-local client/setup/auth route; it does not connect workstation threads or credentials. |
+| Host paths or client recovery | `meta-topics/development-environment/development-environments.md#workstation-locations`, `meta-topics/development-environment/codex-reference.md`. The custom viewer is retired; `docs/file-viewer.md` is historical, not a launch procedure. Workstation paths are not prerequisites elsewhere. |
+| Product mechanics affecting harness design, instruction placement, skills or subagent receipt | Use `$agent-platform-reference`; ask it for instruction/routing evidence and attributed bootstrap/retrieval advice. Shared harness-engineering owns intervention design and evaluation. |
+| Independent-context exchange and cloud/VM clients | Use `$external-agent-communication` with project `cloud-workflow.md` and `docs/artifacts.md` for source delivery and retention. Where selected, `$codex-app-server` owns the VM-local client/setup/auth route; it does not connect workstation threads or credentials. |
 | Literature collection or release/admin | `topics/literature/README.md` or `meta-topics/thesis-submission/README.md`. |

@@ -8,7 +8,7 @@ newer institutional status has not been established here.
 - **Find current project work:** [PLAN.md](PLAN.md) is the readable work document,
   covering purpose, thesis/admin outcomes, research alternatives and evidence;
   [STATUS.md](STATUS.md) is its short entry view. Use the shared
-  [work-document skill](/workspaces/agent-fleet-tools/skills/work-document/SKILL.md)
+  `$work-document`
   to initialize, read, search or maintain it. The completed 28–29 October research campaign
   is consolidated in this checkout. Its 56-page report and source/evidence
   archive are linked from the [convex systolic optimization account](topics/capacity-and-qp/convex-systolic-optimization/README.md);
@@ -40,7 +40,7 @@ newer institutional status has not been established here.
 - **Continue with a cloud agent:** [cloud work and handoff](meta-topics/development-environment/cloud-workflow.md)
   covers source delivery, instruction discovery, task-specific setup, continuation
   and returned work. Product mechanics belong to the repository's
-  [agent-platform reference](.agents/skills/agent-platform-reference/SKILL.md).
+  `$agent-platform-reference`.
 - **Coordinate or continue:** start at [PLAN.md](PLAN.md).
   [Project management](meta-topics/project-management/README.md) routes detailed
   obligations and the retained [registry/dashboard contract](docs/coordination/README.md).

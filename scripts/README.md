@@ -11,9 +11,8 @@ Small repo helper commands.
 | `bootstrap-cloud.sh` | install and verify the normal Codex Cloud development environment |
 | `maintain-cloud.sh` | refresh repository-dependent caches when a cloud environment resumes |
 | `repo-status-summary.sh` | read-only applicability summary for dated build/test evidence |
-| `usage-awareness.py` | on-demand count-up proxy; after-tool candidate withdrawn; [command, scope and historical candidate](subtree-usage.md#ongoing-work-awareness) |
-| `subtree-usage.py` | manual local usage diagnostic; [accounting contract and repaired fork/counter handling](subtree-usage.md) |
-| `coordination-load.py` | manual bounded OpenObserve and local-fallback diagnostic; [command and coverage](../meta-topics/project-management/coordination.md#workload-supervision) |
+| `$codex-resources` | Shared quota, local usage and workload diagnostics; invoke the skill by name. Historical command contracts are in [subtree-usage.md](subtree-usage.md). |
+| `codex-research-cutoff.py` | Legacy cutoff utility currently fails closed because its project-local shared helper was removed; do not use until a portable thread-scope interface is selected. |
 | `test_project_dashboard.py` | HTTP checks for state reload, invalid inputs, source freshness and bounded read-only serving |
 | `serve-project-dashboard.py` | local browser view of shared coordination state, cited sources and scientific freshness |
 | `serve-files.py` | absolute-path browser viewer for checkouts, scratch files and artifacts; Markdown uses Pandoc |
@@ -72,11 +71,10 @@ python3 scripts/test_repo_status_summary.py
 
 ## `serve-files.py`
 
-Run `python3 scripts/serve-files.py`. It serves multiple checkout and artifact
-directories at `/files` plus their absolute paths, renders Markdown and displays
-config/code files. [Viewer documentation](../docs/file-viewer.md) owns the URL
-rule, root selection, Tailscale route and service commands. Check with
-`python3 scripts/test_serve_files.py`.
+The custom browser viewer was retired on 1 November 2026. Its persistent host
+unit and custom delivery links were removed. Keep the renderer source and tests
+for history; use standard clients' built-in file/document views. The
+[viewer record](../docs/file-viewer.md) is historical, not a run procedure.
 
 ## `serve-project-dashboard.py`
 

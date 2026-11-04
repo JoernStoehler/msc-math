@@ -5,7 +5,7 @@ another machine. It connects existing source owners; it does not select a
 research programme, authorize expenditure or establish that every destination
 has been tested. [Environment requirements](development-environments.md)
 record the intended surfaces. Product-specific mechanics and their evidence
-belong to the [agent-platform reference](../../.agents/skills/agent-platform-reference/SKILL.md).
+belong to the `$agent-platform-reference`.
 The [surface runbook](cloud-surface-runbook.md) provides a bounded branch/tool/
 return check when effective account or harness behavior needs observation.
 
@@ -71,7 +71,7 @@ discovery links and `CLAUDE.md` imports the project instructions for Claude Code
 Those are source delivery mechanisms, not evidence of automatic loading in
 ChatGPT Chat/Work or Claude chat/Cowork. Their tools, installed Skills/plugins
 and available file access determine how to read the supplied resources. Follow
-the platform reference's [deployment notes](../../.agents/skills/agent-platform-reference/references/skill-deployment.md)
+`$agent-platform-reference`
 for those distinctions; copying source does not apply account settings.
 
 Use the task's scientific owner, not an exhaustive repository tour.
@@ -111,7 +111,7 @@ does not answer an unresolved dependency. Use the effective interaction route.
 The project's async-question tool is disabled pending verified delivery; use
 direct chat questions. Goal activation, continuation and attention controls
 are separate decisions: consult the platform reference's
-[goal guidance](../../.agents/skills/agent-platform-reference/references/goal-loops.md)
+`$agent-platform-reference`
 when relevant. The current cloud-enablement assignment uses ordinary chat
 without `/goal`; that does not disable the feature for every future task.
 
@@ -132,11 +132,11 @@ Return changed files or a patch, source/input identity, commands and results,
 remaining caveats and obligations, and measured cost where available. Provide
 a downloadable artifact or another demonstrated destination-supported route.
 A cloud `localhost` link or `/tmp/...` path alone is not a workstation deliverable.
-[External-agent communication](../../.agents/skills/external-agent-communication/SKILL.md)
+`$external-agent-communication`
 owns channel choice and actual return mechanics; the coordinator verifies receipt,
 reviews consequential findings and retains selected results with their source owner.
 
-Prepared messages still follow [message review](../../.agents/skills/message-review/SKILL.md).
+Prepared messages still follow `$message-review`.
 Establish the independent review route available to the recipient; if required
 review is unavailable, preserve the draft and its pending delivery instead of
 inventing an approval. A setup check does not accept a mathematical result or

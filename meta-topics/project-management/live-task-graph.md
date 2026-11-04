@@ -1,6 +1,6 @@
 # Live task graph binding
 
-The reusable [live-task-graph](/workspaces/agent-fleet-tools/skills/live-task-graph/SKILL.md)
+The reusable `$live-task-graph`
 workflow is centrally maintained. This page supplies msc-specific storage and
 execution paths; [coordination.md](coordination.md) owns selection, assignment,
 resource and authorization semantics.

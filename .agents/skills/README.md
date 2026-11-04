@@ -1,24 +1,19 @@
 # Project skill discovery
 
-## Current ownership — 28 October 2026
+## Current discovery
 
-Jörn approved consolidation into `/workspaces/agent-fleet-tools`. Six project
-packages now link to canonical shared sources: `problem-structuring`,
-`harness-engineering`, `incident-log`, `lesswrong-fetch`,
-`codex-cli-claude-cloud` and `external-agent-communication`. The matching
-`.claude/skills` links reach those same bodies. Edit the shared sources rather
-than restoring project copies. The shared plugin bundle is uninstalled in Codex
-and locally disabled in Claude; other plugins and thesis-only skills stay scoped.
+Invoke shared guidance by name when it is available in the active catalog or
+plugin. Common names for this project include `$work-document`,
+`$live-task-graph`, `$message-review`, `$external-agent-communication`,
+`$incident-log`, `$agent-platform-reference`, `$codex-resources`,
+`$codex-app-server`, `$codex-cli-claude-cloud`, `$lesswrong-fetch`,
+`$orchestrate-project`, `$human-prose-review`, and `$harness-engineering`.
+Project-specific guidance stays in this checkout. Do not add checkout-local
+symlinks to shared skill sources.
 
-Root `AGENTS.md` retains project scope/evidence/channel rules and selects
-`agent-platform-reference` for product mechanics. It preserves cloud/VM client
-routing separately from the workstation thread helper. The source consolidation
-authorizes no manuscript, research, publication or new experiment policy.
-
-The [shared ownership map](/workspaces/agent-fleet-tools/docs/skill-ownership.md)
-and [trial results](/workspaces/agent-fleet-tools/docs/consolidation-trial-results-2026-10-28.md)
-record sources and verification limits. The account below is dated provenance,
-not the current ownership or a pending authorization gate.
+`AGENTS.md` owns project scope and evidence rules. The dated records below
+preserve the earlier local rollout; their old source paths and discovery links
+are provenance, not current setup instructions or an authorization gate.
 
 ## Historical local rollout
 
@@ -36,11 +31,14 @@ Upstream comparison source is [Jörn's agent-skills](https://github.com/JoernSto
 
 Problem structuring deliberately retires compulsory structure maps, predictions and numbered claim batches while retaining decomposition, probes, readiness, independent investigation, goal/problem co-development and useful handoff contracts. Communication preserves incoming/outgoing message semantics, requested receipts through agent routes, Pro authority/prompt/commands, inbox preservation and return integration. [Analysis and incident limits](../../meta-topics/agent-workflow/collaboration-guidance-design-2026-10-05.md) own the case for these choices; per-skill design notes retain maintenance context.
 
-## Discovery and maintenance
+## Historical discovery and maintenance
 
-Canonical owners are these repository packages. `.claude/skills/<name>` links to each owner; root `CLAUDE.md` imports `AGENTS.md`. Project Codex configuration disables `agent-skills@agent-skills`; Claude settings disable known marketplace identities (`agent-skills@jstoehler` and `agent-skills@agent-skills`) and the observed ChatGPT sync identity (`agent-skills@synced`). This prevents competing old owners while retaining unrelated capabilities locally. Host settings, installations and the separate canary plugin are unchanged. Existing sessions retain their already-loaded context.
-
-Updates are reviewed here, not automatically synchronized. Historical inactive candidates are evidence, not discovery owners. Structural checks and observed discovery are recorded in [validation](../../meta-topics/agent-workflow/skill-replacement-validation-20261005.md); neither establishes behavioral benefit.
+Earlier local discovery used project packages and `.claude/skills/<name>` links;
+those shared-skill links have been removed. Invoke current shared guidance by
+`$name` instead. Root `CLAUDE.md` still imports `AGENTS.md`. The following
+plugin settings and rollout notes describe that dated local setup, not current
+shared-skill discovery. Structural checks and observed discovery are recorded
+in [historical validation](../../meta-topics/agent-workflow/skill-replacement-validation-20261005.md); neither establishes behavioral benefit.
 
 The communication package currently keeps runtime technical usage and work guidance in one sectioned `SKILL.md`. Only design memory is separate. This follows Jörn's staged design preference: establish useful behavior before cost-driven splitting; the current structural/discovery checks do not establish that behavioral baseline or near-optimality. The harness records this preference and asks reviews to assess actual usage and maintenance costs.
 
@@ -54,15 +52,15 @@ The 6 October inventory was ten packages: the original nine, with the cloud CLI 
 
 ## Exact-text message approval, 8 October 2026
 
-Jörn requested actionable communication guidance: prepared messages identify a separate subagent that approved their exact text using a prepared workflow. The eleventh package, [message-review](message-review/SKILL.md), supplies the context-first reviewer prompt and versioned-candidate approval procedure. Root AGENTS.md owns the mandatory trigger; the skill owns its boundaries and procedure, and the Claude link points to the same owner. Reviewer identity and approval are checked against native returns by the sender. The initial schema/hash verifier was retired after Jörn challenged its cost and review constraints; prior packets retain its evidence. This is an instruction gate, not platform interception or established behavioral reliability. No Codex config edit or global installation is part of this change.
+Jörn requested actionable communication guidance: prepared messages identify a separate subagent that approved their exact text using a prepared workflow. The eleventh package, `$message-review`, supplies the context-first reviewer prompt and versioned-candidate approval procedure. Root AGENTS.md owns the mandatory trigger; the skill owns its boundaries and procedure, and the former Claude link pointed to the same owner. Reviewer identity and approval are checked against native returns by the sender. The initial schema/hash verifier was retired after Jörn challenged its cost and review constraints; prior packets retain its evidence. This is an instruction gate, not platform interception or established behavioral reliability. No Codex config edit or global installation is part of this change.
 
 ## Shell app-server client, 8 October 2026
 
-Jörn requested [codex-app-server](codex-app-server/SKILL.md) for Claude-cloud and other shell agents lacking `codex_tui.*` tools. Its daemon-backed client supports persistent thread operations with explicit setup and per-grant device login. The Claude discovery link points to this owner; no plugin or host settings are installed. The existing one-shot `codex-cli-claude-cloud` workflow remains available. [Design/validation notes](codex-app-server/references/design-notes.md) distinguish workstation integration and offline tests from the untested fresh-cloud install/login/lifetime.
+Jörn requested `$codex-app-server` for Claude-cloud and other shell agents lacking `codex_tui.*` tools. Its daemon-backed client supports persistent thread operations with explicit setup and per-grant device login. The Claude discovery link points to this owner; no plugin or host settings are installed. The existing one-shot `codex-cli-claude-cloud` workflow remains available. `$codex-app-server` distinguish workstation integration and offline tests from the untested fresh-cloud install/login/lifetime.
 
 ## Agent-platform reference, 13 October 2026
 
-Jörn authorized [agent-platform-reference](agent-platform-reference/SKILL.md) as the repository-owned products reference. It retains the acquired corpus, provenance, curated corrections, disclosed-case demonstrations and negative evidence; `.claude/skills/agent-platform-reference` links to this owner. [The adoption record](agent-platform-reference/evidence/repository-adoption-20261013.json) identifies the received capsule and bounded tooling/retention changes. [REVIEW.md](agent-platform-reference/REVIEW.md) owns demonstrated usefulness and its limits. No deployment outside this repository is included.
+Jörn authorized `$agent-platform-reference` as the repository-owned products reference. It retains the acquired corpus, provenance, curated corrections, disclosed-case demonstrations and negative evidence; `$agent-platform-reference` is the current invocation name. `$agent-platform-reference` identifies the received capsule and bounded tooling/retention changes. `$agent-platform-reference` owns demonstrated usefulness and its limits. No deployment outside this repository is included.
 
 The 13 October instruction-design follow-up adds a multi-guide consultation
 route and attributed Jörn advice to the product reference. Technical mechanism

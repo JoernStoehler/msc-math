@@ -119,7 +119,7 @@ output without model weighting; they are not subscription quota or billed spend.
 The message includes its scope, cutoff, latest recorded usage, errors and the
 on-demand command. Ordinary forks are separate; no task assignment is guessed.
 
-`python3 scripts/usage-awareness.py --json` is usable now. Its `--hook` mode is
+The on-demand usage diagnostic is available through `$codex-resources`. Its `--hook` mode is
 not active. The candidate runs once at the first eligible tool result, then
 at most once per five minutes per agent, suppressing unchanged observations and
 repeated errors. Five minutes is provisional, motivated by Jörn's earlier view
@@ -156,7 +156,8 @@ The project declaration proposed for `.codex/config.toml` is:
 matcher = "*"
 [[hooks.PostToolUse.hooks]]
 type = "command"
-command = "python3 /home/joern/.codex/worktrees/60b9/msc-math/scripts/usage-awareness.py --hook --interval-seconds 300"
+# Historical candidate only: no local command path remains; no hook is active.
+# Use `$codex-resources` for an on-demand diagnostic.
 timeout = 5
 additionalContextLimit = 0
 ```

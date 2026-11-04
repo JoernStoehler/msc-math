@@ -5,10 +5,10 @@ dashboard process was observed serving it on port 8765 during 4 October
 consolidation. Start it with `python3 scripts/serve-project-dashboard.py` and
 open <http://127.0.0.1:8765/> locally.
 
-The [file viewer](../file-viewer.md) also supports these pages, but its transient
-service was absent at consolidation. The configured Tailscale `/files` route
-alone does not establish a working backend. Run `python3 scripts/serve-files.py`
-for a local file view at `http://127.0.0.1:8770/files` plus the absolute path.
+Use the selected agent client's built-in file/document viewer for these local
+HTML artifacts. The custom viewer service and `/files` route were retired on
+1 November; do not start `scripts/serve-files.py` for ordinary agent work. Its
+source and historical setup notes remain in [file-viewer history](../file-viewer.md).
 
 - [index.html](index.html) reads selected work and resources from
   `meta-topics/project-management/current.json`; it refreshes every 15 seconds.

@@ -11,6 +11,11 @@ boundary produce an explicit diagnostic. The [ongoing-work report](#ongoing-work
 is usable on demand; its automatic-hook candidate was withdrawn on 3 October
 after Jörn rejected its complexity. No activation approval is pending.
 
+The project-local script links were removed. Invoke `$codex-resources` for the
+current shared diagnostics; examples below preserve the former local command
+surface and accounting contract for provenance, and are not runnable from this
+checkout.
+
 ```sh
 python3 scripts/subtree-usage.py
 python3 scripts/subtree-usage.py ROOT_THREAD_ID

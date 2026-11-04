@@ -21,7 +21,7 @@ there and report that access mode. Do not call connector context a checkout or
 claim the commit was verified when it was not.
 
 Do not read the entire repository or products corpus. Consult
-`.agents/skills/agent-platform-reference/SKILL.md` and its focused product note
+`$agent-platform-reference` and its focused guidance
 only when they settle a specific question about source/tool/return access.
 Keep documentation statements distinct from the effective tools you can use.
 

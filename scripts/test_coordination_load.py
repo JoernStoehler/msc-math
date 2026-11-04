@@ -1,1 +1,0 @@
-/workspaces/agent-fleet-tools/skills/codex-resources/scripts/test_coordination_load.py

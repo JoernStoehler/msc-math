@@ -1,27 +1,27 @@
 # Codex project policy and retained trial evidence
 
 Reusable product mechanisms are maintained centrally in the
-[Codex 0.160 reference](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md).
+`$codex-reference`.
 That page retains the 3–4 October 2026 release pin, citations and evidence scope.
 This adapter owns msc configuration authority, selected trials, generated project
 inventory and their verification limits. Trial observations and inventory numbers
 below are dated 3 October evidence; they do not assert present runtime state. Source consolidation changes none of
 those selections. For current technical questions, start with the shared
-[Codex specialist](/workspaces/agent-fleet-tools/skills/codex-reference/SKILL.md)
-or the selected [agent-platform reference](/workspaces/agent-fleet-tools/skills/agent-platform-reference/SKILL.md);
+`$codex-reference`
+or the selected `$agent-platform-reference`;
 consult only the relevant material and recheck version-sensitive claims.
 
 ## Where to look for Codex behavior
 
-See the [centrally maintained mechanisms](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#where-to-look-for-codex-behavior).
+Ask `$codex-reference` about this topic.
 
 ## Cheap current quota check
 
-See the [centrally maintained mechanisms](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#cheap-current-quota-check).
+Ask `$codex-reference` about this topic.
 
 ## Daemon restart and subagent recovery
 
-See the [centrally maintained mechanisms](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#daemon-restart-and-subagent-recovery).
+Ask `$codex-reference` about this topic.
 
 ## Settings ownership and maintenance
 
@@ -72,7 +72,7 @@ not the project's orchestration policy.
 
 ## Config controls that change injected instructions
 
-See the [centrally maintained mechanisms](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#config-controls-that-change-injected-instructions).
+Ask `$codex-reference` about this topic.
 
 The courtesy-only ending in the original config walkthrough occurred despite
 existing continuation guidance; no conflicting active prompt sentence was
@@ -82,7 +82,7 @@ configuration-comment requirements above still govern any actual change.
 
 ## Refresh source before tracing a feature
 
-Use the shared [version-matched source route](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/source-and-evidence.md#fast-local-source)
+Use the shared `$codex-reference`
 for technical investigations. The legacy `scripts/update-codex-source.sh` remains
 a project inventory dependency: it updates the mutable cache consumed by the
 project generator below, refuses dirty/unexpected checkouts and never builds,
@@ -91,7 +91,7 @@ is separate from the shared specialist's immutable per-commit source cache.
 
 ## Orchestration: flags are not the whole runtime
 
-See the [centrally maintained mechanisms](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#orchestration-flags-are-not-the-whole-runtime).
+Ask `$codex-reference` about this topic.
 
 ## Regenerable feature inventory and version provenance
 
@@ -167,7 +167,7 @@ compaction continuity remain unverified.
 | `runtime_metrics` | No prompt injection found in the inspected consumer paths. Host telemetry configuration and exporter availability determine collection. |
 | `context_management` | Separate continuity/storage evaluation; not needed merely to obtain a clock reminder. |
 Technical injection, accounting and cache findings are maintained in the
-[shared mechanism reference](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#time-context-capacity-expenditure-and-caching).
+`$codex-reference`.
 
 Earlier chat wording that an ordinary-session count-up meter was wholly unresolved
 overstated the gap. Agent-visible prompt delivery and reliable translation into
@@ -178,7 +178,7 @@ required fields; Jörn instructed fixing these. Both local readers now share
 owned-response deduplication, legacy ownership boundaries and strict required
 fields, with ordinary forks separate from spawned workers. Thirty-five focused
 tests and a live owned-response sum check passed. The on-demand
-`scripts/usage-awareness.py` report remains usable. Jörn rejected the provisional
+The `$codex-resources` usage report remains available on demand. Jörn rejected the provisional
 after-tool candidate's complexity on 3 October; it is withdrawn, with no
 activation approval pending. [Proposal C](../../docs/codex-config-proposals.md#c-withdrawn-ongoing-work-count-up-reminder-historical-candidate)
 retains its exact declaration, trust append and checks as historical provenance.
@@ -197,16 +197,15 @@ despite a false flag. Do not enable these merely to make an inventory look full.
 
 ## Subagent message encryption: supported and unknown controls
 
-See the [centrally maintained mechanisms](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#subagent-message-encryption-supported-and-unknown-controls).
+Ask `$codex-reference` about this topic.
 
 ## Implementation map
 
-See the [centrally maintained mechanisms](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#implementation-map).
+Ask `$codex-reference` about this topic.
 
 ## Quick tour and bounded trial
 
-The [shared command tour](/workspaces/agent-fleet-tools/skills/codex-reference/references/writeups/codex-0.160-mechanisms.md#tui-and-cli-command-tour)
-owns reusable TUI/CLI navigation.
+Ask `$codex-reference` for reusable TUI/CLI navigation.
 
 Suggested first trial (not performed by this documentation change): assign two
 independent read-only questions to two explicitly requested agents, name their

@@ -3,8 +3,9 @@
 This topic owns how agents and Jörn carry a selected task to a useful result:
 communication, delegation, review and continuity. Active authority comes from
 [current user instructions and AGENTS.md](../../AGENTS.md); dated evidence here
-explains decisions without reopening historical assignments. Project-specific
-skills remain discoverable in [`.agents/skills/`](../../.agents/skills/).
+explains decisions without reopening historical assignments. Invoke shared skills
+by `$name` from the active catalog or plugin; project-specific skills, when
+present, remain in `.agents/skills/`.
 
 ## Decisions and operating knowledge
 
@@ -14,7 +15,7 @@ skills remain discoverable in [`.agents/skills/`](../../.agents/skills/).
 - [Codex collaboration context](codex-collaboration.md) records why project
   guidance is developed here before any global promotion. Host configuration
   stays with its host owner.
-- [Message review skill](../../.agents/skills/message-review/SKILL.md) owns the
+- `$message-review` owns the
   current exact-text workflow. New candidates, supplied context and native
   returns go to `/tmp/msc-math/message-reviews/`; durable findings belong with
   the result they affect. [Retention disposition](message-review-retention.md)
