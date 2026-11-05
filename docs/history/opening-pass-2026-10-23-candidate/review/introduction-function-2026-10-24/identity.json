@@ -1,0 +1,18 @@
+{
+  "final_source": "thesis/chapters/01-introduction.tex",
+  "final_source_sha256": "87a87e7bed3e9b60f70f56af51f742ea8cce24b16ad85246c2433140b126ba1f",
+  "final_pdf": "thesis/build/main.pdf",
+  "final_pdf_sha256": "2d8bbe60d8a426b67d8615377de7e3795492146bc221bf8fc8eb3ef58aa0a7ff",
+  "pdf_pages": 104,
+  "introduction_pages": [
+    5,
+    6,
+    7
+  ],
+  "reviewed_versions": {
+    "introduction-v3.tex": "48898378216935dab092537998269159c74327db7e1090ea43ba08f7190ba743",
+    "introduction-v4.tex": "41d06419d4aef1f8580acfa01940852e544d0a7cf89aad504180ef40456a4ebc",
+    "introduction-v5.tex": "068b77f9d1314ac9e7ad8daeae234311bf5ea7b432dded2302a779c09b73e6dc"
+  },
+  "final_delta_after_reader_v5": "Added explicit convex-body restriction to EHZ/cylindrical equality, retaining the original theorem scope; no other source edit."
+}

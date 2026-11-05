@@ -1,0 +1,119 @@
+1     Introduction
+Viterbo’s conjecture [Vit00] states that, among convex bodies of fixed volume, the ball has
+the largest symplectic capacity. For the Ekeland–Hofer–Zehnder capacity in dimension four it
+asserts that every convex body K ⊂ R4 satisfies
+
+                                                cEHZ (K)2
+                                    sys(K) :=              ≤ 1.
+                                                2 vol4 (K)
+
+The quantity sys(K) is the systolic ratio. It is unchanged by translations, positive dilations and
+linear symplectic maps, so it measures shape alone.
+    The inequality matters beyond its own statement. The Gromov width satisfies it by
+volume preservation, so a violation separates the EHZ capacity from the Gromov width and
+refutes the conjecture that all normalized capacities agree on convex domains. For a centrally
+symmetric convex body L and its polar L◦ , Artstein–Avidan, Karasev and Ostrover prove
+cEHZ (L × L◦ ) = 4 [AKO14], so on these products Viterbo’s inequality is the symmetric Mahler
+conjecture.
+    The inequality is false. Haim–Kislev and Ostrover found the counterexample
+                                                                       √
+                                                                  3+ 5
+                   KHKO = P5 × R(−π/2)P5 ,          sys(KHKO ) =           >1
+                                                                     5
+[HO26]. Here P5 is a centred regular pentagon in the q-plane of R2q ⊕ R2p with a vertex on the
+positive horizontal axis, R(θ) is planar rotation, and the second factor lies in the p-plane; a
+body of this form is a Lagrangian product. Two questions remain: is KHKO a local maximum of
+the systolic ratio, and which shapes make capacity large relative to volume?
+
+1.1    Contributions
+Our main result, Theorem 7.1, answers the first question for polytopes with ten facets: every
+such polytope sufficiently Hausdorff-close to KHKO has systolic ratio at most sys(KHKO ), with
+equality only for images of KHKO under translations, positive dilations and linear symplectic
+maps. Theorem 7.8 shows that this local maximum is not unique: a rational product of a
+hexagon and a quadrilateral with ratio one is a non-strict local maximum among ten-facet
+polytopes, with a two-parameter equality family modulo√the same symmetries. Within product
+families we prove the profile sys(P5 × R(θ)P5 ) = 10
+                                                  1
+                                                     (5 + 2 5) sec2 d(θ), where d(θ) is the distance
+from θ to the nearest multiple
+                        √         of π/5 (Theorem 9.1), and an explicit capacity formula with
+the sharp bound (3 + 5)/5 for independent linear deformations of both pentagon factors
+(Theorem 10.1); in neither family does any body exceed the HKO ratio.
+    Two further theorems concern products. If one factor is a regular pentagon and√the other
+any centrally symmetric planar convex body, the systolic ratio is at most (10 + 6 5)/25 <
+1 (Theorem 11.1), and rotating any product of two planar convex bodies slightly out of
+symplectic position increases its capacity at fixed volume (Theorem 12.1). The methods are
+an expanded derivation of Haim–Kislev’s finite capacity formula [Hai19] with a reduction to
+three facets per factor for Lagrangian products (Sections 2–4), a flow-graph algorithm built
+on the passage geometry of Chaidez and Hutchings [CH21] and proved correct under explicit
+regularity hypotheses (Section 5), and first-variation formulas in facet coordinates that supply
+the upper bounds in the main proof (Section 6). Computations on sampled          √ polytopes show
+that the total symplectic area of the two-dimensional faces, normalized by vol4 , is strongly
+inversely associated with the systolic ratio; no sample or search produced a ratio above one
+(Section 8).
+
+
+
+
+                                                 5
+1.2   Relation to the literature
+Abbondandolo, Edtmair and Kang prove that EHZ and cylindrical capacity coincide on convex
+bodies in R4 [AEK24, Corollary 1], so every capacity above is a cylindrical capacity. Abbondan-
+dolo and Benedetti prove that Zoll contact forms locally maximize the contact systolic ratio,
+which includes the volume–capacity inequality near the ball [AB23]; Theorem 7.1 is a local
+maximality result at a body with corners and ratio larger than the ball’s. Haim–Kislev studies
+hyperplane cuts of KHKO [Hai25]; a small cut adds a facet, whereas our theorem fixes the
+number of facets, so local maximality under a change of facet number remains open. Section 7.8
+compares these results in detail, and Section 2.3 gives the background on capacities.
+
+1.3   Outline
+Sections 2–4 reduce the capacity of a polytope to a finite quadratic program. Section 5 gives the
+flow-graph method and Section 6 the first variation. Section 7 proves the two local maximality
+theorems; the flow-graph and data chapters are not needed for it. Section 8 reports the
+empirical study, and Sections 9–12 treat the product families. Sections 13–16 cover visualization,
+numerics, code and data, and the use of AI; Section 17 concludes. The appendices contain the
+computations needed to check the results.
+
+
+2     Preliminaries
+A polytope has edges and vertices where the smooth definition of a characteristic no longer
+applies. We first extend that definition to convex bodies with nonsmooth boundaries. We then
+introduce a variational description of capacity in terms of closed curves that need not lie on the
+boundary. This will allow us to modify curves when deriving the finite capacity formula.
+    All convex bodies below are compact convex subsets of R4 with non-empty interior. Unless
+stated otherwise, the origin lies in the interior.
+
+2.1   Convex and symplectic notation
+We write R4 with coordinates (q1 , q2 , p1 , p2 ). The standard complex structure is
+                                                               !
+                                                 0 −I2
+                                         J0 =          ,
+                                                 I2 0
+and the standard symplectic form is
+                                                       2
+                            ω0 (u, v) = ⟨J0 u, v⟩ =          (uqi vpi − upi vqi ).
+                                                       X
+
+                                                       i=1
+
+We use the standard primitive
+                                              2
+                                           1X
+                                    λ0 =         (qi dpi − pi dqi ).
+                                           2 i=1
+
+Thus dλ0 = ω0 and λ0 |x (v) = 12 ⟨−J0 v, x⟩. For an absolutely continuous closed curve γ : [0, T ] →
+R4 , its action is
+                                               1 T
+                                     Z           Z
+                            A(γ) := λ0 =            ⟨−J0 γ̇(t), γ(t)⟩ dt.                         (1)
+                                       γ       2 0
+This action is invariant under orientation-preserving reparametrization. If γ bounds a smooth
+map u : D2 → R4 , then Stokes’ theorem gives
+                                                   Z
+                                         A(γ) =            u∗ ω0 .
+                                                      D2
+
+
+                                                   6
+

@@ -1,0 +1,20 @@
+APPROVE opening-v2, within the assigned prose/source-alignment/page-fit scope. No consequential correction is required before returning this candidate to PM.
+
+The opening substantively addresses Jörn’s feedback. Lines 3–24 now establish the thesis’s field, intended contributions, empirical rationale and AI research-process subject before introducing Viterbo/HKO. The empirical paragraph explains what sampling and search add beyond explicit families; the AI paragraph points to the mathematical work and difficulties discussed in the reflection. This is an introduction rather than a literature-first account.
+
+For an MSc reader, the progression is coherent: purpose and methods → capacity–volume question → counterexample and remaining questions → specific contributions → literature → reading route. “Symplectic capacity” is initially unexplained, but the subsequent ratio and preliminaries make this acceptable; a short intuitive gloss would be optional, not a reason to delay this revision.
+
+The summaries match the inspected manuscript:
+- The fixed-ten-facet scope and both equality descriptions agree with §7.
+- The rotation/affine pentagon bounds, symmetric-partner bound and existence of an improving initial product rotation agree with their stated theorems.
+- The product reduction and flow-graph summary preserve the relevant support bound and exact-arithmetic/regularity qualification.
+- The statistical association, weakening under selection and absence of sampled/search ratios above one agree with §8. Its opposite exact pentagon/triangle laws substantiate the opening’s warning against universalizing numerical associations.
+- The AI paragraph agrees with the reflection and disclosure without claiming sole human origination or independently established causal explanations. Their separation follows project-facts items 8 and 45.
+
+I inspected the actual rendered PDF pages 5 and 6. The introduction ends on page 6, followed by the opening of Preliminaries. Text, formulas and references are readable, with no clipping or overflow. The contribution paragraph crosses the page boundary normally; no layout correction is necessary.
+
+Runtime identity is verified from my own current turn_context, not inferred from the requested configuration: gpt-6-astra, effort high, session 01a16daa-70c3-7fa2-bd00-298c9f2ce022, path /root/opening_review. I had the supplied assignment/feedback and repository access, without inherited parent conversation.
+
+Reviewed introduction SHA-256: 1b2731fd373233116edd486bfd9e77972065da5686e3957e2f181415814b0069. PDF SHA-256: 492aa6522d6a201b0b01030b3839c3476efe37af82f2d18f549d9b294d9db9c8.
+
+Limits: this checks introduction alignment against the named manuscript sources, not proofs, external papers, novelty, reproducibility or whole-thesis acceptance. No files changed; no build, experiments or browsing performed.

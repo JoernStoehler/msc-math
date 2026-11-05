@@ -1,0 +1,21 @@
+{
+  "session": "01a16dd7-4c45-70e1-9c0b-b52f24277a5f",
+  "fork_turns": "none",
+  "observed_turn_contexts": [
+    {
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "cwd": "/workspaces/msc-math-worktrees/opening-pass-2026-10-23"
+    },
+    {
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "cwd": "/workspaces/msc-math-worktrees/opening-pass-2026-10-23"
+    },
+    {
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "cwd": "/workspaces/msc-math-worktrees/opening-pass-2026-10-23"
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+\section{Introduction}\label{sec:introduction}
+
+Volume does not capture all restrictions on how one body can be embedded
+in another by a symplectic map. Such a map preserves a nondegenerate
+skew-symmetric form on pairs of tangent vectors, and hence also volume.
+Symplectic capacities measure the additional embedding
+restrictions, giving a way to compare symplectic size with ordinary volume.
+This thesis investigates that comparison for four-dimensional convex
+bodies. We develop and use algorithms, numerical experiments and proofs
+to study which shapes have large capacity and which deformations can
+increase it. AI agents participated in this research, and the project also
+examines what it means to delegate mathematical work to them.
+
+We use the Ekeland--Hofer--Zehnder capacity $c_{\rm EHZ}$. For a smooth
+convex body it is the least action of a closed characteristic on the
+boundary; the preliminaries define these trajectories and their extension
+to polytopes. Capacity scales like area, so in four dimensions its square
+can be compared with volume through the \emph{systolic ratio}
+\[
+ \operatorname{sys}(K):=
+ \frac{c_{\rm EHZ}(K)^2}{2\operatorname{vol}_4(K)}.
+\]
+A ball has ratio one. Viterbo's conjecture~\cite{Viterbo2000} asserted that
+no convex body has a larger ratio. The bound holds for the Gromov width,
+which measures the largest symplectic ball that fits inside a body, simply
+by volume preservation. Its failure for another capacity therefore shows
+that these notions of symplectic size differ even on convex bodies.
+
+Haim--Kislev and Ostrover found precisely such a failure: a product of two
+regular pentagons, placed in the complementary $q$- and $p$-planes, has
+systolic ratio $(3+\sqrt5)/5>1$~\cite{HaimKislevOstrover2024}.
+We call this the HKO body, $K_{\rm HKO}$; its precise position is given in
+Section~\ref{sec:hko-local-maximum}. The counterexample does not identify
+the largest possible ratio or explain which shapes make it large. Can the
+HKO body be improved by a small deformation? What geometric properties
+help identify other bodies with large ratios? These are the main questions
+pursued here.
+
+The comparison has consequences for both embeddings and convex geometry.
+In four dimensions, EHZ capacity coincides with cylindrical capacity,
+which measures the smallest symplectic cylinder into which a body embeds
+\cite[Corollary~1]{AbbondandoloEdtmairKang2024}. A connection to convex
+geometry concerns how small the product of the areas of a centrally
+symmetric planar body $L$ and its polar dual $L^\circ$ can be.
+Artstein--Avidan, Karasev and Ostrover prove
+$c_{\rm EHZ}(L\times L^\circ)=4$~\cite{AKO2014}, so Viterbo's inequality
+on these products becomes the symmetric Mahler inequality
+$\operatorname{area}(L)\operatorname{area}(L^\circ)\geq8$.
+Section~\ref{subsec:preliminaries-capacity-context} explains these links.
+
+\subsection{Computational and empirical approach}
+
+The definition by closed trajectories does not usually give a capacity
+value directly. For polytopes, Haim--Kislev's formula~\cite{HK2017}
+turns the problem into a finite quadratic program. We give an expanded
+derivation of this formula and an implementation for evaluating capacities.
+For products of planar polygons, we prove that at most three facet
+directions per factor suffice, making the calculation smaller. A second algorithm
+uses the passage geometry of Chaidez and Hutchings~\cite{CH2021}; we prove
+its correctness under explicit regularity hypotheses in exact real
+arithmetic.
+
+These finite methods make it possible to investigate more than a few
+explicitly solvable examples. We sample polytopes, compare geometric
+measurements with computed systolic ratios, and test searches that use
+capacity evaluations to choose further shapes. Such experiments can reveal
+patterns worth explaining and test whether a proposed geometric guide is
+useful in a search. The finite formula also supports proofs: feasible
+choices in the capacity problem give upper bounds whose variation can
+control nearby bodies. Numerical exploration and local analysis thus
+address different parts of the capacity--volume question.
+
+\subsection{Results and their scope}
+
+The main local result proves that the HKO body cannot be improved by a
+sufficiently small deformation among polytopes with exactly ten facets
+(Theorem~\ref{thm:hko-ten-facet-local-maximum}). Equality occurs only under
+translations, positive dilations and linear symplectic maps, all of which
+preserve the ratio. This gives local optimality at a body with corners
+whose ratio exceeds the ball's. For comparison, Abbondandolo and Benedetti
+prove local systolic maximality for Zoll contact forms, including the
+volume--capacity inequality near the ball~\cite{AB2023}. Our theorem
+fixes the number of facets and gives no conclusion for perturbations that
+add facets, such as the hyperplane cuts studied by Haim--Kislev
+\cite{HaimKislev2025Zoll}. Section~\ref{subsec:hko-related-local-results}
+gives the detailed comparison.
+
+There are other local maxima in the same ten-facet space. A rational
+hexagon--quadrilateral product has ratio one and a non-strict local
+maximum, with a two-parameter family of equality cases after removing the
+same symmetries (Theorem~\ref{thm:non-hko-ten-facet-local-maximum}). This
+is not another counterexample to Viterbo's inequality; it shows that local
+maximality in this space is not confined to the HKO body.
+
+The product-family results control larger deformations within narrower
+classes. Independently stretching or shearing the two
+regular-pentagon factors cannot improve the HKO ratio, even for large
+deformations (Theorem~\ref{thm:pentagon-affine-capacity}); the rotation
+family has an explicit capacity formula
+(Theorem~\ref{thm:rotated-pentagon-product-formula}). If one factor is a
+regular pentagon and the other is any centrally symmetric planar convex
+body, we obtain a sharp upper bound strictly below one
+(Theorem~\ref{thm:pentagon-symmetric-partner}), so symmetry of the partner
+rules out a counterexample in this class.
+
+Even with the planar shapes fixed, the positions of their planes matter.
+For a product in the $(q_1,p_1)$- and $(q_2,p_2)$-planes, a small rigid
+rotation increases capacity at fixed volume
+(Theorem~\ref{thm:product-initial-rotation}). Here the symplectic form is
+nondegenerate on each factor plane. This differs from the $q$- and
+$p$-planes of HKO, on each of which the form vanishes, so the improving
+rotation does not contradict HKO's local maximality.
+
+The empirical study asks whether a geometric measurement can help select
+bodies with large ratios. We examine the total symplectic area of the
+two-dimensional faces, normalized by $\sqrt{\operatorname{vol}_4}$:
+it measures boundary geometry using the same form that defines capacity.
+In the sampled populations, smaller values are strongly associated in
+rank with larger systolic ratios. This gives a guide to selecting bodies,
+but its scope is limited. The association weakens among low-area or
+high-ratio bodies. Changing polygon factor shapes by area-preserving
+linear maps also weakens it, showing that factor shape contributes to the
+pattern. Exact rotation formulas for pentagon and triangle products give
+opposite orderings of area and ratio. Thus the experiments identify a
+geometric signal, while the family calculations rule out treating it as
+a universal prescription for increasing capacity.
+
+A separate search comparison tests procedures that use evaluated
+capacities to propose improvements. Methods that accounted for several
+competing candidates in the capacity calculation attained larger median
+best ratios than literal gradient ascent under common fixed budgets, but later
+probes still found directions of improvement missed at their endpoints.
+High terminal ratios and failed probes therefore did not certify local
+maxima. None of the random samples or search comparisons reported here
+produced a numerical ratio above one
+(Section~\ref{sec:black-box-datascience}).
+
+\subsection{AI in the research process}
+
+AI use extended to choosing methods and developing mathematical arguments,
+software and experiments. In the local maximality work, an agent developed
+the argument and exact-computation code from an incomplete suggestion about
+controlling nearby bodies by several upper bounds. This provides a
+concrete example of delegating mathematical work without prescribing its
+solution. Producing readable exposition and keeping agents directed toward
+a completed task proved harder. Section~\ref{sec:use-of-ai} reflects on
+this experience and on the human judgment needed to direct and assess the
+work. For the HKO result, the proof pairs finite exact checks with a
+written argument showing why they imply local maximality. The reflection's
+observations and hypotheses concern this project; the separate
+AI-use disclosure records provenance and the extent of AI use.
+
+\subsection*{Outline}
+
+Sections~\ref{sec:preliminaries}--\ref{sec:quadratic-program-algorithm-hk2019}
+develop the capacity formula, Section~\ref{sec:flow-graph-algorithm-ch2021}
+the flow-graph algorithm, and Section~\ref{sec:first-order-perturbations}
+the first variation. Section~\ref{sec:hko-local-maximum} proves the local
+maximality results without using the flow-graph or data chapters.
+Section~\ref{sec:black-box-datascience} presents the empirical study, and
+Sections~\ref{sec:rotated-regular-polygons}--\ref{sec:product-rotation}
+treat the product families. The remaining sections discuss visualization,
+numerics, code and data, AI use, and conclusions. The appendices give
+the empirical methods and the exact HKO computation.
