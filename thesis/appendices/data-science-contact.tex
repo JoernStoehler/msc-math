@@ -60,7 +60,7 @@ Every active $Q_w$ is positive and analytic there, as is $V$. Taylor
 expansion of $\log(8VQ_w^2)$ has a uniform quadratic remainder because
 there are finitely many branches. Taking their maximum gives
 \[
- \left|\log\frac{\operatorname{sys}(z_H+\delta)}{\rho_H}
+ \left|\log\frac{\operatorname{sys}(z_H+\delta)}{\operatorname{sys}_H}
                       +D(\delta)\right|\leq C\|\delta\|^2
  \quad(\|\delta\|<r)
 \]
@@ -115,7 +115,7 @@ $z_H$; its normalized displacement is $O(\|z-z_H\|)$.
 The positive gap excludes other candidates locally, so the raw expansion
 applied to the finite zero-candidate family proves
 \[
- \log\frac{\operatorname{sys}(z)}{\rho_H}
+ \log\frac{\operatorname{sys}(z)}{\operatorname{sys}_H}
              =-I(z)+O(\|z-z_H\|^2).
 \]
 The candidate count, strict projection signs and exact positive gap are
@@ -141,19 +141,17 @@ For the separately certified rational product labelled
 \texttt{random\_5x5\_s0\_92}, exact ordered-field checks give
 \[
  I>\frac45,\qquad \operatorname{sys}>\frac45,\qquad
- \frac{\rho_H}{1+I}<\frac35.
+ \frac{\operatorname{sys}_H}{1+I}<\frac35.
 \]
 Since $e^I\geq1+I$, both proposed global upper bounds are false.
-This does not refute $\operatorname{sys}\leq\rho_H$ and does not extend
+This does not refute $\operatorname{sys}\leq\operatorname{sys}_H$ and does not extend
 or invalidate the local Taylor expansion.
 
 
 \paragraph{Retained exact witnesses and checks.}
 \begingroup\raggedright
-The electronic witnesses are retained at
-\path{thesis/review/2026-10-17/contact-law-integration/}.
-Its \path{source-manifest.json} records original paths, commit and SHA-256
-identities. Under \path{witnesses/patterns/upper-tail/contact-stability/},
+The electronic witnesses are in the accompanying repository under
+\path{patterns/upper-tail/contact-stability/}:
 \path{fullword.json} and \path{predictions.json} give the complete base
 word census and twenty exact derivative rows;
 \path{verification.json} records the derivative, rank and symmetry checks;
@@ -161,15 +159,17 @@ word census and twenty exact derivative rows;
 and \path{global-counterexample.json} retains the exact bound falsifier.
 The canonical sample, predictions, exact targets and finite metrics are
 retained there as well. Historical transfer rows are in the adjacent
-\path{canonical-transfer/results.json}. The adjacent
-\path{mixed-area-order/REPORT.md} supplies the additional
+\path{patterns/upper-tail/canonical-transfer/results.json}. The adjacent
+\path{patterns/upper-tail/mixed-area-order/REPORT.md} supplies the additional
 two-angular-word completeness proof used by the finite panel oracle.
+The source manifest with original paths, commit and SHA-256 identities is in
+\path{docs/history/thesis-lineage-2026-10-17/thesis/review/2026-10-17/contact-law-integration/}.
 These are electronic finite
 witnesses conditional on the imported capacity formula, rather than a
 printed algebraic census or proof of global maximality.\par
 \endgroup
 
-The package README gives a standard-library check that verifies all retained
+The README of that integration package gives a standard-library check that verifies all retained
 file identities, recomputes the displayed errors and tail correlation,
 and evaluates the exact cusp against the derivative bank. It also gives
 scratch-only commands for the original exact checkers with their retained
