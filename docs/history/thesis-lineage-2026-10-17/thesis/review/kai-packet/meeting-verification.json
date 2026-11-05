@@ -1,0 +1,208 @@
+{
+  "checked_at": "2026-10-17T09:59:47.495070+00:00",
+  "candidate_pages": 105,
+  "candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "unchanged_build_identity": true,
+  "source_http_receipt": [
+    {
+      "name": "po.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/c7/ca/c7ca192b-ebc8-4200-9906-cfa736063088/m-420-2-3-002.pdf",
+      "status": 200,
+      "bytes": 142829,
+      "sha256": "d1d311395a7401901e79cb561f43dc9744284d5c4a3325ca5c1ac9d0f34d7e22"
+    },
+    {
+      "name": "registration.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/bc/7f/bc7fa7ba-6648-4f37-9530-206a4bfb7904/protokoll_mntf_2026.pdf",
+      "status": 200,
+      "bytes": 189710,
+      "sha256": "d5f0f0e13133f3b3d950aed7606e3c621e222777c367f57ad057543f57e97528"
+    },
+    {
+      "name": "declaration.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/1f/5d/1f5d67ea-6121-488d-8f0e-a1bdcef414a8/1erklarung_abgabe_abschlussarbeit_mntf_mit_freiwilliger_cd-1.pdf",
+      "status": 200,
+      "bytes": 206028,
+      "sha256": "63d9cd05642cea8b8e595b9c1ce688007e9dc8a31154fc9e0fd2603303f526cb"
+    },
+    {
+      "name": "legal.html",
+      "url": "https://www.uni-augsburg.de/de/services/rechtssammlung/mntf-master-mathematik/",
+      "status": 200,
+      "bytes": 112156,
+      "sha256": "c187a8c6437138b153b6f7d1562b888ae28119a8e2220cdcba11b0ba7f6bced8"
+    },
+    {
+      "name": "faq.html",
+      "url": "https://www.uni-augsburg.de/de/studium/organisation-beratung/pruefungen/infos-und-antrage/mathematisch-naturwissenschaftlich-technische-fakultat-pruefungen/haufig-gestellte-fragen-faqs/",
+      "status": 200,
+      "bytes": 216827,
+      "sha256": "6655020a8d944a9b66e249685b376c32483eb0eac7a22f8c89a2558332d9f4a4"
+    }
+  ],
+  "source_scope": "Direct official university sources; personal status is from Jörn pm replies, not direct Studis/Bescheid inspection.",
+  "checks": [
+    "worker relative-link checks passed",
+    "candidate page locators checked",
+    "both full current unsent drafts reflect existing English consent",
+    "agenda and gallery HTTP200",
+    "8 dashboard tests passed"
+  ],
+  "message_review": {
+    "reviewer": "/root/owner_review",
+    "approved": [
+      "agenda-v2",
+      "registration-v3",
+      "facts-distance-v1"
+    ]
+  },
+  "files": {
+    "thesis/review/kai-packet/MEETING-AGENDA.md": "bc400df4754a34c374d978da44b272422fcfb88b3f40369014f03634dc361ac9",
+    "thesis/review/REGISTRATION.md": "9a3c03681f43c019808b8bdb1c4c9de04a051d61b222d959b47dd3b6a95cf99d",
+    "thesis/review/kai-packet/README.md": "645e0ea83c94d3ca974e4064952e5ceb4ad72250488cf36b02d2be9c7d61dbe7",
+    "thesis/review/kai-packet/thesis-for-kai.pdf": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+    "thesis/review/JOERN-READING-GUIDE.md": "5844d85787d2f875d5ec97bc45862aa22fff0ca591a5db2c5549d01e3580d81b"
+  },
+  "file_binding_history": [
+    {
+      "checked_at": "2026-10-17T09:59:47.495070+00:00",
+      "files": {
+        "thesis/review/kai-packet/MEETING-AGENDA.md": "6f9bbbecb35975e7bfd4d29ef28fbb429b3c2d17149fbb27f123f1b60e141b00",
+        "thesis/review/REGISTRATION.md": "3b9b83b129e58157ccf11af878161b0156e44f82195bb49c68c5df082972a988"
+      },
+      "superseded_reason": "Agreed-title source edits after the original receipt; official HTTP receipt remains dated and unchanged."
+    },
+    {
+      "checked_at": "2026-10-17T10:31:06.211513+00:00",
+      "files": {
+        "thesis/review/kai-packet/MEETING-AGENDA.md": "c00f1ec237b350cf058050eefdf333d1fcaf8dc1a0730a04d7d184fbd3a3d6d4",
+        "thesis/review/REGISTRATION.md": "5caf67aa42c58082bab96751ace281cf19bfb6ddac69b278449b73f4c1a4211c",
+        "thesis/review/kai-packet/README.md": "70c7cc461f817c9d7677321ea573a22bf7a41c41811de52918423b22c6ddce5f",
+        "thesis/review/kai-packet/thesis-for-kai.pdf": "a5d47a8eb6442a1e07f9f04e10e37b687da45961183abc826c7b44be46258273"
+      },
+      "superseded_reason": "PO-access clarification and provisional-preparation wording; candidate and historical official HTTP receipt unchanged."
+    },
+    {
+      "checked_at": "2026-10-17T12:23:02.352942+00:00",
+      "files": {
+        "thesis/review/kai-packet/MEETING-AGENDA.md": "e564987a334c28d7b91355f3a0ed05ddc5802298bde2d5252631a3ad60cb95ec",
+        "thesis/review/REGISTRATION.md": "9a3c03681f43c019808b8bdb1c4c9de04a051d61b222d959b47dd3b6a95cf99d",
+        "thesis/review/kai-packet/README.md": "70c7cc461f817c9d7677321ea573a22bf7a41c41811de52918423b22c6ddce5f",
+        "thesis/review/kai-packet/thesis-for-kai.pdf": "a5d47a8eb6442a1e07f9f04e10e37b687da45961183abc826c7b44be46258273"
+      },
+      "candidate_sha256": "a5d47a8eb6442a1e07f9f04e10e37b687da45961183abc826c7b44be46258273",
+      "superseded_reason": "Local-search prose integration, no administrative-rule changes."
+    },
+    {
+      "checked_at": "2026-10-17T12:27:06.202057+00:00",
+      "files": {
+        "thesis/review/kai-packet/MEETING-AGENDA.md": "fad1e822a225def65c78f86245b028b04d3779ca574ccf84eee45851ac81d22e",
+        "thesis/review/REGISTRATION.md": "9a3c03681f43c019808b8bdb1c4c9de04a051d61b222d959b47dd3b6a95cf99d",
+        "thesis/review/kai-packet/README.md": "50bc2f85de578dca6becff93b8064e7efe2cbcf961c0551651fc0790167499ad",
+        "thesis/review/kai-packet/thesis-for-kai.pdf": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+        "thesis/review/JOERN-READING-GUIDE.md": "c26a2fd67af69d8925774fe6281f1e33673c9bd75f2ec5cae65b3454ff6941cf"
+      },
+      "superseded_reason": "Added printable one-page derivative and links; existing candidate and dated official-source checks unchanged."
+    },
+    {
+      "checked_at": "2026-10-17T20:41:46.737883+00:00",
+      "files": {
+        "thesis/review/kai-packet/MEETING-AGENDA.md": "bc400df4754a34c374d978da44b272422fcfb88b3f40369014f03634dc361ac9",
+        "thesis/review/REGISTRATION.md": "9a3c03681f43c019808b8bdb1c4c9de04a051d61b222d959b47dd3b6a95cf99d",
+        "thesis/review/kai-packet/README.md": "674e19fc4dc73886615e2dc811f7d137ab0a4b16605fb49d9be6607704663545",
+        "thesis/review/kai-packet/thesis-for-kai.pdf": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+        "thesis/review/JOERN-READING-GUIDE.md": "c26a2fd67af69d8925774fe6281f1e33673c9bd75f2ec5cae65b3454ff6941cf"
+      },
+      "superseded_reason": "Reading-guide link and packet README now explicitly preserve frozen105-page review identity while the separately built working revision has106pages. No attachment or official-source changes."
+    },
+    {
+      "checked_at": "2026-10-17T21:41:17.660800+00:00",
+      "files": {
+        "thesis/review/kai-packet/README.md": "706e2affb596da1b0a51167e2777acf522e2438b1cf921105515b77ee8a6f1d8"
+      },
+      "superseded_reason": "Commita513dc45 updated working106→109 discovery link and added unsent Monday booking draft. This rebind checks the README only; frozen105-page attachment, official-source dates and historical working-revision observation remain unchanged."
+    }
+  ],
+  "file_rebind": {
+    "checked_at": "2026-10-17T13:29:48.950016+00:00",
+    "candidate_pages": 105,
+    "candidate_build_identical": true,
+    "reason": "Added printable derivative and discovery links; no change to the existing105-page candidate or institutional-source findings.",
+    "checklist_receipt": "thesis/review/kai-packet/checklist-verification.json",
+    "source_audit": {
+      "reviewer": "/root/delivery_review",
+      "candidate": "owner-batch-final-v2",
+      "verdict": "APPROVE",
+      "scope": "Complete current meeting-checklist delivery and discovery-link synchronization; previous official-source receipts and unchanged candidate retain original scopes."
+    }
+  },
+  "file_rebind_history": [
+    {
+      "checked_at": "2026-10-17T10:31:06.211513+00:00",
+      "candidate_pages": 105,
+      "candidate_build_identical": true,
+      "local_links_checked": 24,
+      "missing_links": [],
+      "http": [
+        {
+          "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/kai-packet/MEETING-AGENDA.md",
+          "status": 200
+        },
+        {
+          "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/visual-options/index.html",
+          "status": 200
+        },
+        {
+          "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/ridge-functionals/REPORT.md",
+          "status": 200
+        }
+      ],
+      "source_audit": {
+        "reviewer": "/root/maintenance_review",
+        "verdict": "APPROVE current-source MEETING-AGENDA.md and REGISTRATION.md",
+        "scope": "Bounded current source/content audit and receipt rebind only; historical document markers/approvals unchanged. No human PASS, new legal-source check, or whole-proof acceptance."
+      },
+      "reason": "Refresh two stale source hashes after agreed-title update; unchanged exact 105-page candidate."
+    },
+    {
+      "checked_at": "2026-10-17T12:23:02.352942+00:00",
+      "candidate_pages": 105,
+      "candidate_build_identical": true,
+      "local_links_checked": 14,
+      "missing_links": [],
+      "source_audit": {
+        "reviewer": "/root/access_review",
+        "verdict": "APPROVE access-docs-v2",
+        "scope": "Exact administrative clarification, source receipt and provisional PO preparation; no personal Studis inspection or new registration conclusion."
+      },
+      "reason": "Consume af7cca6f, retire confusing lookup question and align meeting preparation with public-source provisional PO guidance."
+    },
+    {
+      "checked_at": "2026-10-17T12:27:06.202057+00:00",
+      "candidate_pages": 105,
+      "candidate_build_identical": true,
+      "integration_receipt": "thesis/review/2026-10-17/local-search-integration/verification.json",
+      "reason": "Existing source-grounded local-search edit integrated; exact candidate and guide synchronized. Historical legal-source checks retain original dates.",
+      "local_links_checked": 65,
+      "missing_links": [],
+      "source_audit": {
+        "reviewer": "/root/delivery_review",
+        "candidate": "owner-delivery-v1",
+        "scope": "Current editorial synchronization and prepared delivery; historical official-source dates retained."
+      }
+    }
+  ],
+  "working_revision": {
+    "observed_at": "2026-10-17T20:41:46.737883+00:00",
+    "pages": 106,
+    "receipt": "thesis/review/2026-10-17/upper-tail-witness-integration/verification.json",
+    "current_build_equals_frozen_candidate": false,
+    "historical_identity_scope": "unchanged_build_identity records the earlier checked_at observation; it is not a current working-build identity."
+  },
+  "latest_readme_rebind": {
+    "checked_at": "2026-10-17T21:41:17.660800+00:00",
+    "sha256": "645e0ea83c94d3ca974e4064952e5ceb4ad72250488cf36b02d2be9c7d61dbe7",
+    "scope": "Current packet discovery links and frozen candidate distinction checked; no fresh legal-source fetch or human acceptance asserted.",
+    "source_commit": "a513dc45"
+  }
+}

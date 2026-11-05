@@ -1,0 +1,39 @@
+{
+  "scarecrow": {
+    "records": 1308,
+    "sha256": "b873df464cee5974e23b0c8c1efec62cc935418124a51c70653cff31619d9f40",
+    "bytes": 10416034,
+    "rater_responses": 13056,
+    "error_marks": 41862
+  },
+  "snac": {
+    "records": 2466,
+    "sha256": "b210dd06fbac0fcc32282376deba27eadb2df746474cd3d6ec31dcf0432a28bc",
+    "bytes": 6822083,
+    "summaries": 150,
+    "error_marks": 5645,
+    "votes": 8785
+  },
+  "storyfeedback": {
+    "records": 1920,
+    "sha256": "0be3dd7d9930e59b4d17635368c1ac0f27a1fadaa472d3c4eeb45de8d3291e0a",
+    "bytes": 4590374,
+    "generated_feedback_records": 83456
+  },
+  "aries_papers": {
+    "records": 84,
+    "sha256": "03536d18b8ddf312e573d67a2cd0d086dcdc6844f71f95cdf271fcfd59644308",
+    "bytes": 9548277
+  },
+  "aries_test": {
+    "records": 196,
+    "sha256": "272e675bfc127ac9c8fd52715159a3aad4f3a8167dc11a3a80f673a9936675d3",
+    "bytes": 2006857,
+    "documents": 42
+  },
+  "aries_generated": {
+    "records": 196,
+    "sha256": "1dacdd7568d1fad7381fcec5e5b65a0ce45bdc2bf7829b526ab7ea0328bd5ec0",
+    "bytes": 345675
+  }
+}

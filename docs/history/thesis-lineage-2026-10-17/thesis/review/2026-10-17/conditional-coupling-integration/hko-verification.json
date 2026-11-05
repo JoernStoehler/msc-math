@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-17T15:28:06.376963+00:00",
+  "status": "PASS",
+  "field": "Q(sqrt5),rational-square sign comparison",
+  "LPs": 2,
+  "primal_dual_objective_equalities": 2,
+  "independent_circulant_feasible": true,
+  "LP_over_Qtrue": 1.170820393249937,
+  "capacity_lower_over_true": 0.8541019662496847,
+  "certificate_sha256": "4c33bcc233901583c9da856dc6585e8892ba017d0439b685da4abd0a0b02d7d3",
+  "checker_sha256": "8f62137eba246efb9063df685589bd6bfac9056f7bab668db54879088ae846ee",
+  "helper_sha256": "b5a7a8daac8ca7f4899134760a3686329dabfa0f329d14c0fcf6eb2d8053079c",
+  "scope": "LP matrices/words independently reconstructed; exact primal/dual, cyclic-average and explicit coupling; Qtrue imported from established regular-family formula via determinant rescaling."
+}

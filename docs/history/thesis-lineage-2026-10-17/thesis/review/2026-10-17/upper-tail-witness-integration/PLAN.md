@@ -1,0 +1,9 @@
+# End state and bounded method choice
+
+A self-contained Chapter 8 bridge explains exactly how a geometric selector could prove a ratio ceiling, without requiring an exact predictor. This is an exposition advance using existing mathematics; no new scientific result is claimed. The selected source must build and its changed/adjacent pages must be visually checked. The old Kai packet remains frozen while pending questions refer to it.
+
+Necessary steps: recover existing failures to avoid repeating stopped methods; distinguish statistical prediction from one-sided certification to choose relevant interpretation; check the normalization against selected Chapter 4; integrate a short passage without pending optional additions; build/inspect and bind the new working PDF; reconcile owner/dashboard state so the old review PDF cannot be confused with the working revision.
+
+Options: a method chronology (records failures but obscures mechanism); generic tail-validation advice (correct but repeats the current limitations); a feasible-witness inequality linked to closure (chosen: gives an actionable mathematical criterion); full conditional-LP theory (requires new prerequisites and pending content choices). A rubric based on word count rewards omission; bulk fit rewards tail failures; reference recovery rewards controls without universal coverage. Choose mathematical usefulness, self-contained support, bounded insertion cost, and preservation of human choices.
+
+Scope: local existing-source review, one short selected-chapter insertion, local build/layout checks and coordination. No new cohorts, optimization runs, scientific claim, external action or literature search. Root integrates, commits and cleans up; /root/intake_audit owns read-only failure synthesis/normalization assessment. /root/handoff_review owns exact-text review.

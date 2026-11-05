@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-17T21:01:07.644173+00:00",
+  "status": "PASS",
+  "source_bindings": {
+    "patterns/upper-tail/contact-stability/REPORT.md": "50d6cf7922673e99522e235c8a4e41c619740b0ee0fa286a92c9ec902802005d",
+    "patterns/upper-tail/contact-stability/CANONICAL.md": "6fb479cabba0f7d59dd2a5491b53008a9723a2a9c6a164b6b8c7643f4d87cdc7",
+    "patterns/upper-tail/contact-stability/OBSTRUCTION.md": "a9d1efeb1413b28aae51fa02c4797077fb5b972b3a1791f2795139c636b02df0",
+    "patterns/upper-tail/contact-stability/fullword.json": "873c59aeedff49e8ac56fa2a27af1d4ab2e69173daee957f5bfad7a4153457da",
+    "patterns/upper-tail/contact-stability/verification.json": "fa67fa42ac264b4cf2050f32c86f5f624baf93b91d3b0669965a546743d5132c",
+    "patterns/upper-tail/contact-stability/canonical-verification.json": "5895c4febdbaa9b8c969add289a18954454f678fbe37e9bf27f721ea19e4d215",
+    "patterns/upper-tail/contact-stability/canonical-metrics.json": "50c896400f0facf910425d8a53cd30b8ed276c91d92298a30a892afc272b193b",
+    "patterns/upper-tail/contact-stability/global-verification.json": "b3a4ea12c70abae2ceb768a99f202131055a59fb4ee06ee12889ad9cbdfabace",
+    "patterns/upper-tail/contact-stability/predictions.json": "31a2ae1377e6e87cf86c2ab63a06237b755568999bc526e58139f8582bddfcb3",
+    "patterns/upper-tail/canonical-transfer/results.json": "45d7f349e1ac49dbe768944865dde232e8709d2bb3201c34a9f544bbdac7315d"
+  },
+  "canonical_distinct": 45,
+  "above_one": 23,
+  "seed_directions": 5,
+  "above_one_median_error_percent": 0.0065619423280205424,
+  "above_one_worst_error_percent": 0.12859517283986266,
+  "historical_count": 1024,
+  "upper_decile_count": 103,
+  "upper_decile_spearman": -0.007633000922549752,
+  "exact_cusp_bank_check": "PASS: max and negative min both2sqrt5/5",
+  "scope": "Independent exact cusp evaluation and recomputation of displayed finite metrics and source binding only; imported mathematical certificates retain their original scope, no capacities or theorem census recomputed."
+}

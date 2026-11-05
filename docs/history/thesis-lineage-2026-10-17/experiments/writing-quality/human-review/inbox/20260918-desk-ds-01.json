@@ -1,0 +1,31 @@
+{
+  "id": "20260918-desk-ds-01",
+  "producer": {
+    "name": "prose-review-desk",
+    "thread": "01a0b3d2-5ce0-7c63-ae27-05e876b98ae3",
+    "pane": "w26:p2"
+  },
+  "artifact": {
+    "path": "experiments/writing-quality/human-review/packets/20260918-desk-ds-01.html",
+    "sha256": "d71c5122ee2e0afb58fda6a04ff1d68b6bc8b5b3ac829e346b617974e3a6509c"
+  },
+  "context": [
+    {
+      "path": "experiments/writing-quality/human-review/packets/20260918-desk-ds-01.md",
+      "sha256": "fa709245c361da5ef21aff7574a1934c4bf6aa07815f5c6316d9bccd17b592ef"
+    }
+  ],
+  "question": "Is the writing and organization acceptable as thesis prose in this standalone account?",
+  "consequence": "Determine absolute acceptability of supplied-direction repair; no experiment validation or manuscript edits.",
+  "provenance": {
+    "source": {
+      "path": "experiments/writing-quality/runs/20260918-repair/reconstruct.md",
+      "sha256": "e8df74ca06c6893824942a20bcf2ed381a687977dc5b798e3dff3975503b5426"
+    },
+    "operation": "Exact full DS replacement extracted; pandoc HTML/MathML rendering with neutral review framing and embedded Hypothesis. No AI verdict shown.",
+    "exposure": "Follow-up to historical review; user knows experimental context. Not a blind independent sample."
+  },
+  "estimated_effort": "Roughly 5\u201310 minutes reading and feedback, plus first-use Hypothesis setup; actual effort unknown.",
+  "status": "offered",
+  "response_path": "experiments/writing-quality/human-review/responses/20260918-desk-ds-01.md"
+}

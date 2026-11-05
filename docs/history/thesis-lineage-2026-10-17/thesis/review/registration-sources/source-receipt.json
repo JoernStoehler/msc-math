@@ -1,0 +1,86 @@
+{
+  "retrieved_utc": "2026-10-17T09:02:57.824810+00:00",
+  "temporary_capture": "/tmp/msc-math/thesisadmin/registration",
+  "sources": [
+    {
+      "file": "faq.html",
+      "url": "https://www.uni-augsburg.de/de/studium/organisation-beratung/pruefungen/infos-und-antrage/mathematisch-naturwissenschaftlich-technische-fakultat-pruefungen/haufig-gestellte-fragen-faqs/",
+      "http_status": 200,
+      "bytes": 216827,
+      "sha256": "6655020a8d944a9b66e249685b376c32483eb0eac7a22f8c89a2558332d9f4a4"
+    },
+    {
+      "file": "institute-exams.html",
+      "url": "https://www.uni-augsburg.de/de/fakultaet/mntf/math/studium/pruef/",
+      "http_status": 200,
+      "bytes": 147045,
+      "sha256": "7075cafc0d1f92fd3a896e4049ed52e3d7fcd56d4e2bcaeeddf51f6a965053c6"
+    },
+    {
+      "file": "forms.html",
+      "url": "https://www.uni-augsburg.de/de/studium/organisation-beratung/pruefungen/infos-und-antrage/mathematisch-naturwissenschaftlich-technische-fakultat-pruefungen/",
+      "http_status": 200,
+      "bytes": 164650,
+      "sha256": "289cb469922256d101f660752b1d4e31ec335a7f8b6be1082aa2c2b816b78828"
+    },
+    {
+      "file": "law.html",
+      "url": "https://www.uni-augsburg.de/de/services/rechtssammlung/mntf-master-mathematik/",
+      "http_status": 200,
+      "bytes": 112156,
+      "sha256": "c187a8c6437138b153b6f7d1562b888ae28119a8e2220cdcba11b0ba7f6bced8"
+    },
+    {
+      "file": "institute-degree.html",
+      "url": "https://www.uni-augsburg.de/de/fakultaet/mntf/math/studium/studiengaenge/mathe-master/",
+      "http_status": 200,
+      "bytes": 175227,
+      "sha256": "e47c2e282e2249d186bb72a4240b6c764a1d6ec64856a5a70a05104a517e9dec"
+    },
+    {
+      "file": "committees.html",
+      "url": "https://www.uni-augsburg.de/de/fakultaet/mntf/math/studium/pruefausschuss/",
+      "http_status": 200,
+      "bytes": 235194,
+      "sha256": "949af6d7d8b1e3b825e478c324c96077654f7caa44f6eb7e241d287a4a569103"
+    },
+    {
+      "file": "office-contacts.html",
+      "url": "https://www.uni-augsburg.de/de/studium/organisation-beratung/pruefungen/service/ansprechpartnerinnen/",
+      "http_status": 200,
+      "bytes": 1261461,
+      "sha256": "d380a45d04eb9556dac995c73b7a38d44c8b125014d5c024330d5148c79c68c4"
+    },
+    {
+      "file": "abschlussarbeiten.html",
+      "url": "https://www.uni-augsburg.de/de/fakultaet/mntf/math/studium/abschlussarbeiten/",
+      "http_status": 200,
+      "bytes": 159747,
+      "sha256": "9d41ea24e5b3edb9c56b25f64ee5bbbc6c035cd7cdd60d225f6b2b02335747b1"
+    },
+    {
+      "file": "hinweise.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/f0/b9/f0b923c7-1698-4136-af89-4810469d26e8/hinweis_bachelor-_masterarbeit-_mntf.pdf",
+      "http_status": 200,
+      "bytes": 98000,
+      "sha256": "c2e1194c9e1802ff332419fc75029cba23b6f34c501750e28a1b96edb6eb00e9",
+      "matches_existing_retained_pdf": true
+    },
+    {
+      "file": "anmeldung.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/bc/7f/bc7fa7ba-6648-4f37-9530-206a4bfb7904/protokoll_mntf_2026.pdf",
+      "http_status": 200,
+      "bytes": 189710,
+      "sha256": "d5f0f0e13133f3b3d950aed7606e3c621e222777c367f57ad057543f57e97528",
+      "matches_existing_retained_pdf": true
+    },
+    {
+      "file": "po-mathematik-2015.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/c7/ca/c7ca192b-ebc8-4200-9906-cfa736063088/m-420-2-3-002.pdf",
+      "http_status": 200,
+      "bytes": 142829,
+      "sha256": "d1d311395a7401901e79cb561f43dc9744284d5c4a3325ca5c1ac9d0f34d7e22",
+      "matches_existing_retained_pdf": true
+    }
+  ]
+}

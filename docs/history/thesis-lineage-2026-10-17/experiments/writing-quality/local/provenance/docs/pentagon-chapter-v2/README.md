@@ -1,0 +1,120 @@
+# Rotated-pentagon replacement chapter
+
+Completed September 16, 2026. The standalone PDF has four pages, including
+the empirical plot and bibliography. This directory is a complete replacement
+candidate; the main thesis and the first replacement remain unchanged.
+
+- `standalone.pdf`: compiled chapter.
+- `chapter.tex`: integration-ready section, with no document wrapper.
+- `standalone.tex`: standalone wrapper, using 11pt text and 26mm margins.
+- `assets/rotation-profile.png`: local copy of the existing empirical plot.
+- `references.bib`: the two mathematical sources cited.
+- `review.md`: completed review evidence and its limits.
+- `page-1.png` through `page-4.png`: inspected rendered pages.
+
+Build from this directory:
+
+```sh
+latexmk -pdf -interaction=nonstopmode -halt-on-error standalone.tex
+```
+
+## Mathematical and writing provenance
+
+The explicit word and empirical plot are from
+`thesis/09-rotated-regular-polygons-pentagon-profile-theorem.tex` and
+`thesis/working/rotated-regular-polygons/lagrangian-products-5x5.png`.
+The proof by comparing endpoint values was supplied during the AI-assisted
+review recorded in
+`.git/codex/review-calibration/pro-review-2026-09-15/thesis_review/03_mathematical_audit.md`,
+section 2. Its mathematical inputs are the Haim–Kislev finite capacity formula
+and Haim–Kislev–Ostrover's independently known capacity. It does not depend on
+the old exhaustive classification. Preserve this proof contribution in the
+thesis's AI-use disclosure when integrating; the source comment also records it.
+
+The new exposition was written from an outline: geometric question and theorem;
+symmetries and concrete endpoint capacities; common feasible set and an explicit
+attaining choice; interpolation and volume normalization. The accepted HKO
+opening supplied positive writing evidence, especially its explanation of why
+the constructed objects prove the desired result. Its actual wrapper is
+`.git/codex/hko-writing/chapter-preview.tex`, with inputs `proof-opening.tex`,
+`../hko-writing-input/mathematical-input.tex`, `chart-completion.tex`, and
+`sections-readable.tex` under the same stored HKO directories.
+
+Jörn accepted the underlying pentagon argument during this rewrite, while
+continuing to reject its previous exposition. That is not approval of this
+replacement chapter. No further user reading was requested to produce it.
+
+## Exact integration instructions
+
+Integration is deliberately not performed here. When integrating, replace the
+whole existing `thesis/09-rotated-regular-polygons.tex` with `chapter.tex`, copy
+the local plot to `thesis/figures/rotation-profile.png`, and change the one
+`\providecommand{\pentagonassetpath}{...}` line in the copied chapter to
+`\providecommand{\pentagonassetpath}{figures/}`. Keep the existing
+`\input{09-rotated-regular-polygons}` in `thesis/main.tex`. The thesis already
+provides the theorem environment and the two bibliography keys. Do not copy
+the standalone wrapper or its bibliography into the manuscript body.
+
+Replacing that complete section removes its four old inputs:
+
+```tex
+\input{09-rotated-regular-polygons-empirical-curves}
+\input{09-rotated-regular-polygons-pentagon-profile-theorem}
+\input{09-rotated-regular-polygons-exact-certificate}
+\input{09-rotated-regular-polygons-sage-source}
+```
+
+Do not append the old computational proof/source appendix to the new proof.
+The old files and computational packet may remain archived as discovery
+history. If integrating into `.git/codex/thesis-candidate/`, replace its entire
+`09-pentagon.tex` instead; in particular remove that wrapper's
+`\input{.git/codex/thesis-candidate/09-certificate.tex}`. Resolve the asset path
+relative to that candidate's build directory.
+
+The following overview changes must accompany later integration:
+
+1. In `thesis/01-introduction.tex`, replace the paragraph starting “The maximum
+   in this family is exactly the HKO value” with:
+   “The maximum in this family is exactly the HKO value. Rotation leaves the
+   feasible weights in the capacity formula unchanged. The dependence of each
+   fixed quadratic value on the angle then lets us bound it by the known HKO
+   values at the endpoints of a symmetry interval; an explicit feasible choice
+   attains the bound throughout.”
+   Replace the later sentence starting “The rotated-pentagon profile returns”
+   with “The rotated-pentagon profile follows from the same capacity formula
+   through an analytic comparison across rotation angles.”
+2. In `thesis/04-haim-kislev-quadratic-program.tex`, the paragraph ending with
+   references to both SageMath certificates must retain only the HKO reference.
+   In “Use in later certificates”, replace the sentence starting “The
+   rotated-pentagon certificate uses” and its following comparison clause with
+   “The rotated-pentagon proof compares fixed feasible choices at different
+   angles using the quadratic formula directly.” Replace the later sentence
+   claiming that both arguments use separate SageMath packets with
+   “The HKO argument uses its separate SageMath verification packet.”
+   Apply the corresponding changes if using candidate `04-quadratic-program.tex`.
+3. In `thesis/12-published-code-data.tex`, retain the packet's path and recorded
+   computation as historical material, but replace its proof-dependency
+   explanation with “This packet records the earlier exhaustive computation
+   used to study the profile. The proof in Section~\ref{sec:rotated-regular-polygons}
+   instead compares endpoint values analytically and does not depend on this
+   classification.”
+4. In `thesis/14-conclusion.tex`, replace the sentences beginning “This
+   conclusion comes from an exhaustive comparison” and “It is stronger than”
+   through the end of their scope claim with an account of the analytic
+   endpoint comparison, preserving that the result concerns this one-parameter
+   family. Suggested text: “The proof compares every fixed feasible quadratic
+   value with its two endpoint values, whose maxima are known from the HKO
+   example. This establishes the formula throughout the interval and its
+   symmetry translates. The result concerns this family of regular pentagon
+   products.”
+5. Preserve the proof provenance above in the AI-use disclosure. Search the
+   selected assembly for remaining claims that the pentagon theorem depends
+   on SageMath, exhaustive branch classification, or continuity at exceptional
+   parameters, and update them consistently. Do not alter the HKO certificate's
+   status. Rebuild the complete thesis and inspect references and layout.
+
+The main section label, theorem label, and plot label are preserved. Internal
+labels belonging only to the removed classification are intentionally absent;
+any external references to those old details must be removed or redirected to
+historical material at integration time. No data-science ridge relation belongs
+to this replacement.

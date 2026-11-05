@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-17T12:27:06.202057+00:00",
+  "source": "thesis/chapters/08-data-science.tex",
+  "source_sha256": "8efd95a76ce2b26dbc5dac177c43424593540fb7462ab02e30a41a2f6274d152",
+  "prior_candidate_sha256": "a5d47a8eb6442a1e07f9f04e10e37b687da45961183abc826c7b44be46258273",
+  "candidate_pdf_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "pages": 105,
+  "source_span_only_changed": true,
+  "table_byte_identical": true,
+  "aux_label_count": 174,
+  "all_aux_label_entries_equal": true,
+  "text_changed_only_on_physical_pages": [
+    64,
+    65
+  ],
+  "unchanged_current_selection_page": 59,
+  "build_command": "bash thesis/check-build.sh",
+  "build_exit_code": 0,
+  "undefined_references_or_citations": false,
+  "overfull_hboxes_over_1pt": 0,
+  "visual_inspection": {
+    "pages": [
+      63,
+      64,
+      65,
+      66
+    ],
+    "finding": "Text, table, neighboring subsection and next chapter/figure legible, with no clipping or overlaps."
+  },
+  "candidate_build_packet_identical": true,
+  "numeric_evidence_reused": "experiments/writing-quality/runs/20261017-local-search-edit/independent-numeric-check.json",
+  "independent_editorial_reader": "/root/prose_decision",
+  "human_acceptance": null,
+  "new_research_or_optimizer_run": false
+}

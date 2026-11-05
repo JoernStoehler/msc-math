@@ -1,0 +1,142 @@
+{
+  "recorded_at": "2026-10-16T16:51:31.870774+00:00",
+  "base_commit": "d181237293172f26786d075dca5858810f9fc9ff",
+  "branch": "claude/next-2026-10-16",
+  "pdf": {
+    "path": "thesis/build/main.pdf",
+    "sha256": "76fb3ac4e48d10c0175b1f41f5977ae57fd0ee95a272467b422b2ad8d24dd236",
+    "pages": 105,
+    "bytes": 1782726
+  },
+  "build_inputs_sha256": {
+    "thesis/ai-use-disclosure.tex": "0b5d6aefa450fadfcabec1232eb55bdbe674a60d034a9dacd65653610bcbfd31",
+    "thesis/appendices/data-science.tex": "ad50856566e31b908afc8ad19c1367c33ff6779625cf9b8d3cf6f6de8f4fdba4",
+    "thesis/appendices/hko-certificate.tex": "9697160cbf6fa5e6c2f5e643c047a5bdc0262cd2072901929d09694b28c386fd",
+    "thesis/appendices/hko_core.py": "4b82246259a04e5d4c3cc89134bf4a94de6c1899c2abca3fae8efc63119ac403",
+    "thesis/build.sh": "b4a2b2e1c2010ac851f345a4350147970f11ed90459010c4382dfd6010e61e28",
+    "thesis/chapters/00-abstract.tex": "2cfd538c9f521ca790ff6229e07ac2d939c05b57ec3c0d0f3f2ca358a16a6ae4",
+    "thesis/chapters/01-introduction.tex": "aaa4a884bc9daf7a64fc3c801f3c032f16a4ead34c3459b65a83b472326bd174",
+    "thesis/chapters/02-duality.tex": "a6e9a2e9a9d512a60d62a405aca19fa1f2858c0a13d74f08f092e80581d81f15",
+    "thesis/chapters/02-preliminaries-convex-hamiltonian-language.tex": "57e102e544ca8525dafea8d4d0e0986cac653e9000b9765c7b3ca22253b44823",
+    "thesis/chapters/02-preliminaries-convex-symplectic-notation.tex": "79e3e0915f8c80638797b4fc3768f1b44f3487a01ba589b5c87b7933b717fcd1",
+    "thesis/chapters/02-preliminaries-ehz-capacity.tex": "893551249cfe82d5bb58064b2af92efec484e960baea02b1eaded9ebbdc38374",
+    "thesis/chapters/02-preliminaries-lagrangian-products.tex": "8e895de3540cc5bc908ca8d69adc81d67c695cfaa94fb7e1b6c70254719e90c5",
+    "thesis/chapters/02-preliminaries-polytope-input-language.tex": "10660d042d029b2a14a8a7edb9aa04c2eb1e74071c1799298876e3521ccddb49",
+    "thesis/chapters/02-preliminaries.tex": "21ae62de0bcbb0359c07c690c10e32a2fbef2bbeab7360ef93dc3183e59d2c63",
+    "thesis/chapters/03-generalized-reeb-orbits-polytopes.tex": "10ef8913cd556a5a684d29a72616b4630601739dc92029c20dabc0788cb1ed00",
+    "thesis/chapters/04-quadratic-program.tex": "98919a7cce75ee7868eb27931730872ac99684bf3dacb88825e3ee464f947be7",
+    "thesis/chapters/05-flow-graph-ch2021-background-comparison.tex": "d9f2931d32aa2011eb119be13efc30d0608f591317ea29e78e47a4eef4e0cbaf",
+    "thesis/chapters/05-flow-graph.tex": "509dcc77594b8a495e569abf871fe8c44644ffcbb1dc727cbaed4e8e357cc27a",
+    "thesis/chapters/06-variation.tex": "b69f9d13d30586b1e96c6efd560c69cd7306f50d37c1d32f285ea8212edf04a8",
+    "thesis/chapters/07-hko.tex": "47015acb346f52365f32044ddc6e8601aff8680970868cc604c63b0acd1ddecd",
+    "thesis/chapters/08-data-science.tex": "4c7e4436641d8b01c7819cc1cdbae8f21a73cc71fac7fc36c8efbc148aecaa00",
+    "thesis/chapters/09-rotated-regular-polygons.tex": "42f9e1f927faefd8a8c4b3a70787d992c7fa7d63c45a540322dc027a3916de36",
+    "thesis/chapters/10-affine-pentagons.tex": "b29918db7ffa205d1fd6cf6838a241f06ae9bde0b2bd44bd7ec468d520fdd486",
+    "thesis/chapters/10-symmetric-partner.tex": "8cc6f05d4c7d7c2496676e795cd19e972c65fb00076e868460dfbd03cbf7fbeb",
+    "thesis/chapters/11-product-position.tex": "01b91794a8fb1764a39b193fd4f93533b7e7025425dd54f196c0c5867a4a3f06",
+    "thesis/chapters/12-visualization.tex": "e33f58d1bd6ea1e97b6fc3f3711bf5291a467fae47874bd0d9639ce6eb5ff170",
+    "thesis/chapters/13-numerics.tex": "ef920dd2d2a8bf2b7186f89998ddf1f375967a1aeb60cc7a12084d0646ff7b5d",
+    "thesis/chapters/14-code-data.tex": "9486629a029473a155a09b667e41df0e31a9203094f746bb322fc1fb733d6a3f",
+    "thesis/chapters/15-ai-reflection.tex": "6c3d357577137d9b364420e157fb600096251aa1c8735ba833a231c00bc795c4",
+    "thesis/chapters/16-conclusion.tex": "eb673aee108c065fba235d2f67dff918724d485eb0297aaf14d5a2f712389bbb",
+    "thesis/chapters/hko-lemma-bounds.tex": "fbb10152c9ac7b74f8f32b86362432457b95ebd0dac6da111e38ffd3d9c6c10c",
+    "thesis/chapters/hko-lemma-conclusion.tex": "eb1f60832f4b94bf24d3b992a48c22d999f87f9d84058300e47b587dc1be79d6",
+    "thesis/chapters/hko-lemma-geometry.tex": "ff101a2e12ca0c38a3484f7b170ec35f7ddd71e3af7f9db1903db482e7c2a10b",
+    "thesis/chapters/hko-sections.tex": "af1ff5abca41d43203dc7a28ed6fb089089a7fdb2a16690ee4da64467723a52a",
+    "thesis/check-build.sh": "7a8d93b03e9af138d85c994530677eb401c887da685c15cf116ec5da3e6109b8",
+    "thesis/figures/association-generic.pdf": "85898c620583f52a1d28b056dfc60faffb81e73a9a8a86ba7d517c3d586154f4",
+    "thesis/figures/association-products.pdf": "fbbe2c12b98d5c93764a6dbf949a6f30402190c01c31dab552063bd00f85b572",
+    "thesis/figures/conditional-ridge-correlation.pdf": "912e9bef768cff74c26a09d453e6ab4c56a56af2fca4152919aa5f72e6b4bdff",
+    "thesis/figures/derivative-and-kkt-scale.pdf": "5e34bb8153986657a76525d78d8f9f142da4b8f06702bed143661773698c67da",
+    "thesis/figures/flow-graph/flow-graph-f6-tube-sequence.pdf": "6cc41de40e349accf46342d873422041656b19c0f091266c0747430d3a2851d4",
+    "thesis/figures/foundations/characteristic-normalization.pdf": "7dbfab3a3851060baa55b55d54bfaa6d57861a8ef3defe02ad4e5ecdab668cee",
+    "thesis/figures/foundations/facet-polarity.pdf": "676ca38e254b1ca5e4841fa285bd097baeccd3462d5789f1639642c73e1bc9a6",
+    "thesis/figures/hko-recovery-by-source-distance.pdf": "86b8204c9ddd2b6a4817c694675bffcdf726860d77420846e6d09f07e2132477",
+    "thesis/figures/rotation-profile.png": "dd9e6b8eb06545f4b2e5d5cc552f2bede021ea4a9ddcecb673fe25cd34152e99",
+    "thesis/figures/symmetry-extension.pdf": "65e8d54ab27eafbc6793ead32ad536ffe65e4af79952649fb8445b3ad87e09f6",
+    "thesis/figures/upper-bound-mechanisms.pdf": "faca0c4193580223e5c0d468583d550002c49f20b4ba2d3b5137514edf86fb66",
+    "thesis/figures/visualization/viz-hko-pentagon-min-orbit.png": "6f6ec2b8173e454c45827ec0e340b470cbf3150355517284e3156889b2e5473f",
+    "thesis/figures/visualization/viz-hypercube-ridges.png": "b3d9b189c0796274b074bac92e4c55d012fa208240d90327241471fceb429c03",
+    "thesis/main.tex": "ed6a28c75f0d66b104741c6c4a0967a04bfd9f323aa5c44026b05a06dc92b4de",
+    "thesis/preamble.tex": "3dd932fb29bd8a7c44f5f7a8fef28453caca276755925e43129e097ff97fc566",
+    "thesis/references/additional.bib": "0b4580a61738c143f4a44b7ef27818f14344c6f7a7fc90f6b7f85ce122f109cc",
+    "thesis/references/ai.bib": "229ebfb782a8afca9198cf3f81c31b561b4bf5b041315f76aceb7a79b96e5342",
+    "thesis/references/data-science.bib": "a4aec4018ff328c4f8348c982785709a491d346b60ad43db5670bcc212219c77",
+    "thesis/references/main.bib": "1053dfb64ed70c0d6b55219d7fb932a39286d289ca28fee44f5df2d76ac26946"
+  },
+  "build_input_tree_sha256": "bb2adcf4a9b9a2129318e45184e1e97fd5764541df1670e7fa580a9801b0bfb1",
+  "checks": {
+    "requested_build": {
+      "command": "sh thesis/build.sh",
+      "exit_code": 0
+    },
+    "forced_checked_build": {
+      "command": "bash thesis/check-build.sh",
+      "exit_code": 0,
+      "overfull_boxes": 0,
+      "undefined_reference_warnings": 0,
+      "underfull_boxes": 3,
+      "log_sha256": "58e3d29532756d65f2c3517d626dec76b4ed5bf7987020d968fc9cb16711f08b"
+    },
+    "visual": {
+      "root_inspected_pages": [
+        81,
+        82,
+        83,
+        84
+      ],
+      "resolution_dpi": 95,
+      "scope": "Changed availability chapter and following transition; not a complete new PDF review."
+    },
+    "evidence_path_inventory": {
+      "markdown_links": 39,
+      "manuscript_labels": 15,
+      "additional_packet_paths": 22,
+      "jsonl_counts": {
+        "product_audit": 88,
+        "provenance": 14336,
+        "first_order_panel": 12,
+        "selected_candidates": 1675,
+        "evaluated_candidates": 1675
+      }
+    },
+    "independent_review": "reviews.md",
+    "coordination": {
+      "state_check": {
+        "command": "python3 scripts/serve-project-dashboard.py --check",
+        "exit_code": 0,
+        "scientific_source_baseline": "historical and visibly stale; not refreshed"
+      },
+      "http_tests": {
+        "command": "python3 -m unittest scripts/test_project_dashboard.py",
+        "tests_run": 8,
+        "exit_code": 0
+      },
+      "graph_check": {
+        "command": "python3 scripts/render-workflow-graph.py --check",
+        "exit_code": 0
+      },
+      "whitespace": {
+        "command": "git diff --check",
+        "exit_code": 0
+      }
+    }
+  },
+  "tool_versions": {
+    "latexmk": "Latexmk, John Collins, 31 Jan. 2024. Version 4.83",
+    "pdflatex": "pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian)",
+    "biber": "biber version: 2.19"
+  },
+  "limits": [
+    "Source/evidence inventory and mechanical path/proof-route repairs only; no new mathematical claim, verifier/empirical producer run, tool installation, authenticated data retrieval or external action.",
+    "Human proof/prose acceptance, DS scope sufficiency, original June execution facts, final reproduction selection and whole-candidate PASS remain unresolved.",
+    "Historical source-only, figure and cross-environment receipts are unchanged; those checks were not repeated for this follow-up."
+  ],
+  "temporary_receipts": "/tmp/msc-math/thesis-followup/20261016",
+  "document_sha256": {
+    "thesis/review/data-science-scope-comparison.md": "b969adb0d1c054294e2482da9d824f0d12e6ae9e446e058f329e48eed38d42f9",
+    "docs/thesis-evidence-map.md": "20185f80b492d2eeb6aea6a42c56c3aff8cf43ca5c2e60d395a0f5753c59f652",
+    "docs/reproduction-metadata.md": "874251f45e919dcd5821d02cf7c9b98dd621e27245ea295b9723cf87f6ec5a44",
+    "thesis/DISTANCE-TO-SUBMISSION.md": "28552fcb51ab1dbbb8fe3bbeeab7ffde4f4948d07b76512a704a762ab877f832"
+  }
+}

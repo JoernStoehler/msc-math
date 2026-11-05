@@ -1,0 +1,32 @@
+[
+  {
+    "original": "/workspaces/msc-math/.worktrees/easy-routes-followup/experiments/sys-datascience/methods/ridge-endpoint-path/INTERPRETATION.md",
+    "snapshot": "ridge-path-interpretation.md",
+    "sha256": "fa6fb446851571f3aa03d169639f0ff3fc3a5a283b92ef96d0463fb73acb1a74"
+  },
+  {
+    "original": "/workspaces/msc-math/.worktrees/easy-routes-followup/docs/pentagon-chapter-v2/chapter.tex",
+    "snapshot": "pentagon-chapter.tex",
+    "sha256": "051a7fd64f1823b379a8ea5dd2ad456bda009ae8af3799f97a7998d6d3a897ba"
+  },
+  {
+    "original": "/workspaces/msc-math/.worktrees/easy-routes-followup/experiments/sys-datascience/methods/alternative-source-transfer/README.md",
+    "snapshot": "transfer-readme.md",
+    "sha256": "ff32e19ec97a9d71d714a5ac3a2e2d406727cd7906386c758fc0b13dfac51834"
+  },
+  {
+    "original": "/workspaces/msc-math/.worktrees/easy-routes-followup/experiments/sys-datascience/methods/alternative-source-transfer/artifacts/transfer-v1/analysis.json",
+    "snapshot": "transfer-analysis.json",
+    "sha256": "872b932cf38811184104a6bf46afe34f079c291fa5b6e9bc90e05a80df1d407a"
+  },
+  {
+    "original": "/workspaces/msc-math/.worktrees/easy-routes-followup/experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/README.md",
+    "snapshot": "selector-readme.md",
+    "sha256": "ce31364cd2209ce771780d649b3301b9de266bf0aa2cd1baea79d9adc0d1a9e2"
+  },
+  {
+    "original": "/workspaces/msc-math/.worktrees/easy-routes-followup/experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/analyze_cascade_validation.py",
+    "snapshot": "concentration-analysis.py",
+    "sha256": "957f9c55cf4400731982d606280eae3958b55c9508022af22cee7b21e499ac49"
+  }
+]

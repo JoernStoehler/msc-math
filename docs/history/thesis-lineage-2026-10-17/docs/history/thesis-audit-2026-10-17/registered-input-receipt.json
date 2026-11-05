@@ -1,0 +1,539 @@
+{
+  "started_at": "2026-10-17T08:04:39.464127+00:00",
+  "completed_at": "2026-10-17T08:05:40.268809+00:00",
+  "elapsed_seconds": 60.8046882510007,
+  "empty_cache_before_run": true,
+  "cache_root": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+  "links_installed": false,
+  "scope": "Every release=true registered R2 snapshot; read-only remote operations and exact manifest, filename, size and SHA-256 checks. No producer executions.",
+  "all_passed": true,
+  "artifacts": [
+    {
+      "artifact": "alternative-source-transfer-v1",
+      "snapshot": "8c1802d647e612cf6f58513db517a90972f68fb5ca5c9ce4c1bc02ea88d2a1d1",
+      "files": 1,
+      "bytes": 80051327,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "alternative-source-transfer-v1",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 26.463639089000935,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "alternative-source-transfer-v1",
+        "snapshot": "8c1802d647e612cf6f58513db517a90972f68fb5ca5c9ce4c1bc02ea88d2a1d1",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/alternative-source-transfer-v1/8c1802d647e612cf6f58513db517a90972f68fb5ca5c9ce4c1bc02ea88d2a1d1",
+        "files": 1,
+        "bytes": 80051327,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "combinatorial-cell-widths",
+      "snapshot": "a524396d6ad0522d7a33f16f0038b9f63bcf895e045019b3363ea1683ce11bd4",
+      "files": 1,
+      "bytes": 11012601,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "combinatorial-cell-widths",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.8745143880005344,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "combinatorial-cell-widths",
+        "snapshot": "a524396d6ad0522d7a33f16f0038b9f63bcf895e045019b3363ea1683ce11bd4",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/combinatorial-cell-widths/a524396d6ad0522d7a33f16f0038b9f63bcf895e045019b3363ea1683ce11bd4",
+        "files": 1,
+        "bytes": 11012601,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "facet-scale-production-cache",
+      "snapshot": "c28d83e1e51e9d53133ce24ee4eac39eb3acd541b252caca71bdc4ebab2813cb",
+      "files": 1,
+      "bytes": 12010922,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "facet-scale-production-cache",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.011792219000199,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "facet-scale-production-cache",
+        "snapshot": "c28d83e1e51e9d53133ce24ee4eac39eb3acd541b252caca71bdc4ebab2813cb",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/facet-scale-production-cache/c28d83e1e51e9d53133ce24ee4eac39eb3acd541b252caca71bdc4ebab2813cb",
+        "files": 1,
+        "bytes": 12010922,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "optimizer-candidate-history-f10-128",
+      "snapshot": "9da8fc4af42ac234a2584b159ddec0fed06c3f05940fa1bc0fae6221207158bc",
+      "files": 3,
+      "bytes": 77189318,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "optimizer-candidate-history-f10-128",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 14.999425244999657,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "optimizer-candidate-history-f10-128",
+        "snapshot": "9da8fc4af42ac234a2584b159ddec0fed06c3f05940fa1bc0fae6221207158bc",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/optimizer-candidate-history-f10-128/9da8fc4af42ac234a2584b159ddec0fed06c3f05940fa1bc0fae6221207158bc",
+        "files": 3,
+        "bytes": 77189318,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "optimizer-heldout-f10-64-finalists",
+      "snapshot": "0620d37457aa0f756ff3aa663416dc083e5b6b9aef0f29027cc2e9a65a353990",
+      "files": 3,
+      "bytes": 107830221,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "optimizer-heldout-f10-64-finalists",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 22.2785779249989,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "optimizer-heldout-f10-64-finalists",
+        "snapshot": "0620d37457aa0f756ff3aa663416dc083e5b6b9aef0f29027cc2e9a65a353990",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/optimizer-heldout-f10-64-finalists/0620d37457aa0f756ff3aa663416dc083e5b6b9aef0f29027cc2e9a65a353990",
+        "files": 3,
+        "bytes": 107830221,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "pentagon-kkt-branch-landscape",
+      "snapshot": "d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae",
+      "files": 1,
+      "bytes": 22341369,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "pentagon-kkt-branch-landscape",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.806417393001539,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "pentagon-kkt-branch-landscape",
+        "snapshot": "d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/pentagon-kkt-branch-landscape/d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae",
+        "files": 1,
+        "bytes": 22341369,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "polytope-datasets",
+      "snapshot": "f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96",
+      "files": 3,
+      "bytes": 252398018,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "polytope-datasets",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 35.24139787899912,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "polytope-datasets",
+        "snapshot": "f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96",
+        "files": 3,
+        "bytes": 252398018,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "polytope-invariant-table",
+      "snapshot": "c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a",
+      "files": 1,
+      "bytes": 24250539,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "polytope-invariant-table",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.793257417000859,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "polytope-invariant-table",
+        "snapshot": "c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/polytope-invariant-table/c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a",
+        "files": 1,
+        "bytes": 24250539,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "product-bounce-class-degeneration",
+      "snapshot": "174a90d4445c719c286f138a7e421407e3a34616bc5fd0f4448c51e1a0d0f048",
+      "files": 2,
+      "bytes": 40423996,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "product-bounce-class-degeneration",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.777573751000091,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "product-bounce-class-degeneration",
+        "snapshot": "174a90d4445c719c286f138a7e421407e3a34616bc5fd0f4448c51e1a0d0f048",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/product-bounce-class-degeneration/174a90d4445c719c286f138a7e421407e3a34616bc5fd0f4448c51e1a0d0f048",
+        "files": 2,
+        "bytes": 40423996,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "product-bounce-distribution",
+      "snapshot": "a336e8301eae3986a04cb717f29e447a576776d240997851478a795d48c215c4",
+      "files": 1,
+      "bytes": 12075189,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "product-bounce-distribution",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.9028153540002677,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "product-bounce-distribution",
+        "snapshot": "a336e8301eae3986a04cb717f29e447a576776d240997851478a795d48c215c4",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/product-bounce-distribution/a336e8301eae3986a04cb717f29e447a576776d240997851478a795d48c215c4",
+        "files": 1,
+        "bytes": 12075189,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "qp-error-bounds-broad",
+      "snapshot": "7bbca91151b65cc3bb5ed58abfb27d80fb6581e1a0933c7ecfc22062e8c603e9",
+      "files": 2,
+      "bytes": 72319165,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "qp-error-bounds-broad",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.089643051998792,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "qp-error-bounds-broad",
+        "snapshot": "7bbca91151b65cc3bb5ed58abfb27d80fb6581e1a0933c7ecfc22062e8c603e9",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/qp-error-bounds-broad/7bbca91151b65cc3bb5ed58abfb27d80fb6581e1a0933c7ecfc22062e8c603e9",
+        "files": 2,
+        "bytes": 72319165,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    },
+    {
+      "artifact": "qp-error-bounds-soundness-v2",
+      "snapshot": "b83f8b086f62fe4dad4d9aef7922a4294a6bfffa89d8942edd46de2405a72201",
+      "files": 2,
+      "bytes": 37079703,
+      "command": [
+        "python3",
+        "scripts/artifacts.py",
+        "materialize",
+        "qp-error-bounds-soundness-v2",
+        "--cache-root",
+        "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache",
+        "--no-link"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 12.15080054399914,
+      "offline_verify_exit_code": 0,
+      "offline_verify": {
+        "artifact": "qp-error-bounds-soundness-v2",
+        "snapshot": "b83f8b086f62fe4dad4d9aef7922a4294a6bfffa89d8942edd46de2405a72201",
+        "directory": "/tmp/msc-math/thesis3/20261017/reproduction/empty-cache/qp-error-bounds-soundness-v2/b83f8b086f62fe4dad4d9aef7922a4294a6bfffa89d8942edd46de2405a72201",
+        "files": 2,
+        "bytes": 37079703,
+        "status": "verified-local-cache",
+        "remote_checked": false
+      }
+    }
+  ],
+  "files": 21,
+  "bytes": 748982368,
+  "registered_file_manifests": [
+    {
+      "artifact": "alternative-source-transfer-v1",
+      "files": [
+        {
+          "path": "source.jsonl",
+          "sha256": "161f6361fd9c99b1b86a863c3cdb7db438fd76329392992f6212e37c83e69963",
+          "size": 80051327
+        }
+      ],
+      "published_utc": "2026-08-18T12:18:54.463731Z",
+      "schema_version": 1,
+      "snapshot": "8c1802d647e612cf6f58513db517a90972f68fb5ca5c9ce4c1bc02ea88d2a1d1",
+      "source": {
+        "directory_name": "alternative-source-transfer-v1",
+        "git_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55"
+      }
+    },
+    {
+      "artifact": "combinatorial-cell-widths",
+      "files": [
+        {
+          "path": "combinatorial-boundaries-profiling.jsonl",
+          "sha256": "71b48e95ebc76bb4bcee139b3e56e9ebdfd791e09b3e1fa19c4cf9de1c40e8c8",
+          "size": 11012601
+        }
+      ],
+      "published_utc": "2026-08-18T12:19:17.824167Z",
+      "schema_version": 1,
+      "snapshot": "a524396d6ad0522d7a33f16f0038b9f63bcf895e045019b3363ea1683ce11bd4",
+      "source": {
+        "directory_name": "combinatorial-cell-widths",
+        "git_commit": "6049cf77cf3b9e4c7588a5b8db9140d8f6944a55"
+      }
+    },
+    {
+      "artifact": "facet-scale-production-cache",
+      "files": [
+        {
+          "path": "sysext-cache.jsonl",
+          "sha256": "8ee0983e66c7883622369de0e82d8e7b1b1c91fbcb5182ad0ee75e1fd8071bd7",
+          "size": 12010922
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "c28d83e1e51e9d53133ce24ee4eac39eb3acd541b252caca71bdc4ebab2813cb"
+    },
+    {
+      "artifact": "optimizer-candidate-history-f10-128",
+      "files": [
+        {
+          "path": "evaluations.jsonl",
+          "sha256": "e5e905a518f2efe92213cd4b086e4ce4506da1aad9ddb3355b6bb34c77729b25",
+          "size": 27437855
+        },
+        {
+          "path": "proposals.jsonl",
+          "sha256": "241261aaad2800f807579ac59c84b7742b439b5741e1d8896b4619152c19a616",
+          "size": 23031186
+        },
+        {
+          "path": "rounds.jsonl",
+          "sha256": "6674e85b9c4ca8b5f2ca219f5e6f08d79a51618077b53f4cb03ef40c1a2ce926",
+          "size": 26720277
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "9da8fc4af42ac234a2584b159ddec0fed06c3f05940fa1bc0fae6221207158bc"
+    },
+    {
+      "artifact": "optimizer-heldout-f10-64-finalists",
+      "files": [
+        {
+          "path": "evaluations.jsonl",
+          "sha256": "5f1c65cd12889a3f5fc1625b460affc072ae0b07d2eb7c5b557c7041e71f9b7c",
+          "size": 51263888
+        },
+        {
+          "path": "proposals.jsonl",
+          "sha256": "464fdf32127365036023fdc0935c4f538baea1efbcf22933479b25044aeb73e3",
+          "size": 25425953
+        },
+        {
+          "path": "rounds.jsonl",
+          "sha256": "0f0afeff293dd3bc1330611c1ab82c34349d3b9641443682eeddfe84aa9153de",
+          "size": 31140380
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "0620d37457aa0f756ff3aa663416dc083e5b6b9aef0f29027cc2e9a65a353990"
+    },
+    {
+      "artifact": "pentagon-kkt-branch-landscape",
+      "files": [
+        {
+          "path": "kkt-branch-landscape.jsonl",
+          "sha256": "5aa59f96a010c447f21740934cae3ef5f7195810071bdfb40fe3981adf5d4bd8",
+          "size": 22341369
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "d2e8d96ca3a99979d01545f7f1effd8123bbd27a2781ab452594ff3717a42dae"
+    },
+    {
+      "artifact": "polytope-datasets",
+      "files": [
+        {
+          "path": "random-product.jsonl",
+          "sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+          "size": 73814237
+        },
+        {
+          "path": "random.jsonl",
+          "sha256": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f",
+          "size": 53045675
+        },
+        {
+          "path": "shared-cache.jsonl",
+          "sha256": "abf6ce2189c785d156df10266ee896e8748f6d2fc5b0afcbf05290597fcde326",
+          "size": 125538106
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96"
+    },
+    {
+      "artifact": "polytope-invariant-table",
+      "files": [
+        {
+          "path": "polytope-table.jsonl",
+          "sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+          "size": 24250539
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "c3042846723dbb89db17f2f39d88004d937e1e790949ff6880188fa89fc1900a"
+    },
+    {
+      "artifact": "product-bounce-class-degeneration",
+      "files": [
+        {
+          "path": "degeneration-pairs.jsonl",
+          "sha256": "65591335a4c961bb9890ace67cb585d7738483e2dad71fccd626d3cab58cb575",
+          "size": 28227252
+        },
+        {
+          "path": "degeneration-rows.jsonl",
+          "sha256": "e5022ad34c91b05830251d6f3f23b059c1d026518e382db323bb5125a4a2b7cd",
+          "size": 12196744
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "174a90d4445c719c286f138a7e421407e3a34616bc5fd0f4448c51e1a0d0f048"
+    },
+    {
+      "artifact": "product-bounce-distribution",
+      "files": [
+        {
+          "path": "class-minima.jsonl",
+          "sha256": "187089804bd17fdac76bdaf51a8d8202e67fb2b14779fe9a418cc8da47c7b4c4",
+          "size": 12075189
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "a336e8301eae3986a04cb717f29e447a576776d240997851478a795d48c215c4"
+    },
+    {
+      "artifact": "qp-error-bounds-broad",
+      "files": [
+        {
+          "path": "formula_evaluations.jsonl",
+          "sha256": "8e81e93806e5f3ef03731f373737d73c3679e828da4c94665d64c9cdee9a8d12",
+          "size": 41421178
+        },
+        {
+          "path": "raw_rows.jsonl",
+          "sha256": "43b08afd8e6969c92b296644725170bab07a8b80472a72802d53ff5161babbd1",
+          "size": 30897987
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "7bbca91151b65cc3bb5ed58abfb27d80fb6581e1a0933c7ecfc22062e8c603e9"
+    },
+    {
+      "artifact": "qp-error-bounds-soundness-v2",
+      "files": [
+        {
+          "path": "formula_evaluations.jsonl",
+          "sha256": "24019c53ddbd9abe001022c20d0b9ad2154751c79a8398d428f8ed567abc3d28",
+          "size": 10599041
+        },
+        {
+          "path": "raw_rows.jsonl",
+          "sha256": "0013ca61d5aac4209facfaa0a69d28ba868a2654ea398b57032ff73aeece831a",
+          "size": 26480662
+        }
+      ],
+      "schema_version": 1,
+      "snapshot": "b83f8b086f62fe4dad4d9aef7922a4294a6bfffa89d8942edd46de2405a72201"
+    }
+  ]
+}

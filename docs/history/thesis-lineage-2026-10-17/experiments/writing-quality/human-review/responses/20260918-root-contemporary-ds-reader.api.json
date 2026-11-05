@@ -1,0 +1,1624 @@
+{
+  "fetched_at": "2026-09-18T11:35:29.328927+00:00",
+  "query": {
+    "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+    "user": "acct:JoernStoehler@hypothes.is"
+  },
+  "pages": [
+    {
+      "total": 12,
+      "rows": [
+        {
+          "id": "7iCqsrNMEfG-LMtsXxTSFw",
+          "created": "2026-09-18T10:37:21.890668+00:00",
+          "updated": "2026-09-18T10:37:21.890668+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "to sloopy / weird. i think this is another subsection, which now no longer uses \"dataset => find pattern\" but \"found pattern => create a filtered dataset to see if the pattern is retained even as we start optimizing with it\" ?",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 170,
+                  "startOffset": 0,
+                  "endContainer": "/main[1]/p[8]",
+                  "startContainer": "/main[1]/p[8]"
+                },
+                {
+                  "end": 6092,
+                  "type": "TextPositionSelector",
+                  "start": 5922
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "Candidate-selection experiments address that more limited use.\nPredictive models and feature ablations found that ridge-area features\ncarried much of the held-out signal.",
+                  "prefix": "of improvement\nfrom that point.\n",
+                  "suffix": " A more direct search test gener"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/7iCqsrNMEfG-LMtsXxTSFw",
+            "incontext": "https://hyp.is/7iCqsrNMEfG-LMtsXxTSFw/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/7iCqsrNMEfG-LMtsXxTSFw"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "8eOo-LNLEfG3ac8HmxpATg",
+          "created": "2026-09-18T10:30:18.715503+00:00",
+          "updated": "2026-09-18T10:30:18.715503+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "small point here is that i don't quite epxect the imaginary reader (or even Kai irl) to be familiar with these / to interpet them well. Also style issue is the number of digits here, since they convey no information (?)\n",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 188,
+                  "startOffset": 74,
+                  "endContainer": "/main[1]/p[4]",
+                  "startContainer": "/main[1]/p[4]"
+                },
+                {
+                  "end": 2810,
+                  "type": "TextPositionSelector",
+                  "start": 2696
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "The\nSpearman rank correlation was\n−0.938437-0.938437,\nwhereas the Pearson correlation was only\n−0.205039-0.205039.",
+                  "prefix": "red targets in this population. ",
+                  "suffix": "\nThe finding is therefore much b"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/8eOo-LNLEfG3ac8HmxpATg",
+            "incontext": "https://hyp.is/8eOo-LNLEfG3ac8HmxpATg/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/8eOo-LNLEfG3ac8HmxpATg"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "EPyd9LNLEfG5d-uwzVk5LQ",
+          "created": "2026-09-18T10:24:01.378536+00:00",
+          "updated": "2026-09-18T10:24:01.378536+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "Imo not a good title. \"Empirical pattern in ridge area vs systolic capacity\" would communicate more clearly what we have obtained as a result (?)",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 45,
+                  "startOffset": 0,
+                  "endContainer": "/main[1]/h1[1]",
+                  "startContainer": "/main[1]/h1[1]"
+                },
+                {
+                  "end": 462,
+                  "type": "TextPositionSelector",
+                  "start": 417
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "Ridge geometry as\na guide to candidate search",
+                  "prefix": "omparison can follow afterward.\n",
+                  "suffix": "\nRandom sampling can do more tha"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/EPyd9LNLEfG5d-uwzVk5LQ",
+            "incontext": "https://hyp.is/EPyd9LNLEfG5d-uwzVk5LQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/EPyd9LNLEfG5d-uwzVk5LQ"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "actions": [],
+          "mentions": [],
+          "moderation_status": null,
+          "id": "I9NHyrNLEfGVRe_pLhef-A",
+          "created": "2026-09-18T10:24:32.999171+00:00",
+          "updated": "2026-09-18T10:25:33.915649+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "Says very little / is too vague and thus too inefficient at communication. I guess this makes sense if the previous section was immediately about finding hte maximum sys among random samples? hmm. yeah in that case it's a good sentence suddenly bc it makes clear what direction we move in now.",
+          "tags": [],
+          "group": "__world__",
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 79,
+                  "startOffset": 0,
+                  "endContainer": "/main[1]/p[1]",
+                  "startContainer": "/main[1]/p[1]"
+                },
+                {
+                  "end": 542,
+                  "type": "TextPositionSelector",
+                  "start": 463
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "Random sampling can do more than return the largest systolic ratio\nencountered.",
+                  "prefix": " as\na guide to candidate search\n",
+                  "suffix": " By measuring geometry alongside"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/I9NHyrNLEfGVRe_pLhef-A",
+            "incontext": "https://hyp.is/I9NHyrNLEfGVRe_pLhef-A/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/I9NHyrNLEfGVRe_pLhef-A"
+          },
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "_zopfLNMEfGsbOsvxmDZlA",
+          "created": "2026-09-18T10:37:50.585083+00:00",
+          "updated": "2026-09-18T10:37:50.585083+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "i don't think this is rounding off the chapter at all and is just irrelevant to mathematicians",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 196,
+                  "startOffset": 0,
+                  "endContainer": "/main[1]/p[9]",
+                  "startContainer": "/main[1]/p[9]"
+                },
+                {
+                  "end": 7756,
+                  "type": "TextPositionSelector",
+                  "start": 7560
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "Geometry-guided selection and local refinement consequently answer\ndifferent questions. The former allocates expensive evaluations among\nproposed bodies; the latter tries to improve a chosen body.",
+                  "prefix": "niversally best selection rule.\n",
+                  "suffix": " The\ncompanion optimizer study d"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/_zopfLNMEfGsbOsvxmDZlA",
+            "incontext": "https://hyp.is/_zopfLNMEfGsbOsvxmDZlA/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/_zopfLNMEfGsbOsvxmDZlA"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "acOoRrNMEfGhO3cRsuRsrQ",
+          "created": "2026-09-18T10:33:39.830991+00:00",
+          "updated": "2026-09-18T10:33:39.830991+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "here we definitely would need to split by subsection:\n- pure empirics on random polytopes, on random product polytopes (also: figures!!)\n- now a theoretical exploration that uses more \"deep\" math (instead of forgetting where our invariants come from at all) for the product case -- with the pentagon products in particular -- perhaps worth even first doing the pentagon case [bc it references our neat proof for the exact systolic ratio formula in dependence on theta] and only afterwards generalize [bc iiuc the generalization is limited?] ah no wait it's fine to do both, i.e. general + specialized formulas close to antoher. forget i critiqued the narration here. i think styling could be better / make it clearer that there's now a shift in method/approach bc we try to explain the pattern we saw / take it as inspiration",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 45,
+                  "startOffset": 0,
+                  "endContainer": "/main[1]/p[5]",
+                  "startContainer": "/main[1]/p[5]"
+                },
+                {
+                  "end": 3350,
+                  "type": "TextPositionSelector",
+                  "start": 3305
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "Products make that information more concrete.",
+                  "prefix": " rows in\nwhich it was observed.\n",
+                  "suffix": " Put\nPP\nin the\nqq-plane\nand\nQQ\ni"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/acOoRrNMEfGhO3cRsuRsrQ",
+            "incontext": "https://hyp.is/acOoRrNMEfGhO3cRsuRsrQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/acOoRrNMEfGhO3cRsuRsrQ"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "fOd6UrNLEfGTEa9XaeJsug",
+          "created": "2026-09-18T10:27:02.451315+00:00",
+          "updated": "2026-09-18T10:27:02.451315+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "This is definitely not relevant to the mathematician right now? I think a paragraph on statistical significance / numerical errors / the kind of \"model error\" that comes from sample count rather than e.g. method or inteprretation errors, would be better, and should be later / after presenting the clear case for \"what if the thing we found is taken at face value, what if our interpretation is true\"",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 73,
+                  "startOffset": 0,
+                  "endContainer": "/main[1]/p[2]",
+                  "startContainer": "/main[1]/p[2]"
+                },
+                {
+                  "end": 1150,
+                  "type": "TextPositionSelector",
+                  "start": 1077
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "The initial population comprised 4,096 generic four-dimensional\npolytopes",
+                  "prefix": "ng that observation for search.\n",
+                  "suffix": ", with 512 at each facet count f"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/fOd6UrNLEfGTEa9XaeJsug",
+            "incontext": "https://hyp.is/fOd6UrNLEfGTEa9XaeJsug/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/fOd6UrNLEfGTEa9XaeJsug"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "iYKd1rNMEfGhPDdKiX0ILQ",
+          "created": "2026-09-18T10:34:33.086403+00:00",
+          "updated": "2026-09-18T10:34:33.086403+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "again problematic way to write. just say systolic ratio.",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 1197,
+                  "startOffset": 1188,
+                  "endContainer": "/main[1]/p[6]",
+                  "startContainer": "/main[1]/p[6]"
+                },
+                {
+                  "end": 5145,
+                  "type": "TextPositionSelector",
+                  "start": 5136
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "the ratio",
+                  "prefix": "2140.947214;\nat\nd=π/10d=\\pi/10,\n",
+                  "suffix": " is\n(3+5)/5≈1.047214(3+\\sqrt5)/5"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/iYKd1rNMEfGhPDdKiX0ILQ",
+            "incontext": "https://hyp.is/iYKd1rNMEfGhPDdKiX0ILQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/iYKd1rNMEfGhPDdKiX0ILQ"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "k6Zx_LNMEfGHgTNd4sdmJQ",
+          "created": "2026-09-18T10:34:50.110005+00:00",
+          "updated": "2026-09-18T10:34:50.110005+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "this does not belong in this section at all",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 1383,
+                  "startOffset": 1246,
+                  "endContainer": "/main[1]/p[6]",
+                  "startContainer": "/main[1]/p[6]"
+                },
+                {
+                  "end": 5331,
+                  "type": "TextPositionSelector",
+                  "start": 5194
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "This is an analytic example outside the finite random table, so its\nvalue above one does not conflict with that table’s recorded maximum.",
+                  "prefix": "214(3+\\sqrt5)/5\\approx1.047214.\n",
+                  "suffix": "\nThe identity supplies a later g"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/k6Zx_LNMEfGHgTNd4sdmJQ",
+            "incontext": "https://hyp.is/k6Zx_LNMEfGHgTNd4sdmJQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/k6Zx_LNMEfGHgTNd4sdmJQ"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "orWdcrNLEfGUv79EMLUpdQ",
+          "created": "2026-09-18T10:28:05.863635+00:00",
+          "updated": "2026-09-18T10:28:05.863635+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "imo too obvious, this kind of scaling consideration is trivial to make from teh formula for a msc student.",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 561,
+                  "startOffset": 464,
+                  "endContainer": "/main[1]/p[3]",
+                  "startContainer": "/main[1]/p[3]"
+                },
+                {
+                  "end": 2621,
+                  "type": "TextPositionSelector",
+                  "start": 2524
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "since both the face integrals and the square root\nof four-dimensional volume scale quadratically.",
+                  "prefix": "alization\nremoves common scale, ",
+                  "suffix": "\nSmaller\nRR\nstrongly accompanied"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/orWdcrNLEfGUv79EMLUpdQ",
+            "incontext": "https://hyp.is/orWdcrNLEfGUv79EMLUpdQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/orWdcrNLEfGUv79EMLUpdQ"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "actions": [],
+          "mentions": [],
+          "moderation_status": null,
+          "id": "s8JoyrNLEfGw2Z_VFfQUcw",
+          "created": "2026-09-18T10:28:34.484378+00:00",
+          "updated": "2026-09-18T10:28:49.726679+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "ambiguous / hard to track. I think you should just say \"systolic ratio\" ? or systole [??]? instead of using ambiguous pronouns / synonyms / neologisms / references.",
+          "tags": [],
+          "group": "__world__",
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 53,
+                  "startOffset": 46,
+                  "endContainer": "/main[1]/p[4]",
+                  "startContainer": "/main[1]/p[4]"
+                },
+                {
+                  "end": 2675,
+                  "type": "TextPositionSelector",
+                  "start": 2668
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "targets",
+                  "prefix": "ongly accompanied larger stored ",
+                  "suffix": " in this population. The\nSpearma"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/s8JoyrNLEfGw2Z_VFfQUcw",
+            "incontext": "https://hyp.is/s8JoyrNLEfGw2Z_VFfQUcw/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/s8JoyrNLEfGw2Z_VFfQUcw"
+          },
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        },
+        {
+          "id": "vq5IXLNMEfG2pw-j1ww_2w",
+          "created": "2026-09-18T10:36:02.301337+00:00",
+          "updated": "2026-09-18T10:36:02.301337+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "text": "nice result, unsure whether we can move this forward so that scanning the paragraphs' first sentences just reevals all the results, with arguments / details / refinements of a coarse description of the result into sth more rigorous / less misunderstandable after?",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+              "selector": [
+                {
+                  "type": "RangeSelector",
+                  "endOffset": 317,
+                  "startOffset": 255,
+                  "endContainer": "/main[1]/p[7]",
+                  "startContainer": "/main[1]/p[7]"
+                },
+                {
+                  "end": 5772,
+                  "type": "TextPositionSelector",
+                  "start": 5710
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "Small ridge sum is therefore not a universal ascent\nobjective.",
+                  "prefix": "/43/4\nand\n1/21/2,\nrespectively. ",
+                  "suffix": " A population association can st"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "Ridge geometry — review sample"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/vq5IXLNMEfG2pw-j1ww_2w",
+            "incontext": "https://hyp.is/vq5IXLNMEfG2pw-j1ww_2w/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+            "json": "https://hypothes.is/api/annotations/vq5IXLNMEfG2pw-j1ww_2w"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "id": "7iCqsrNMEfG-LMtsXxTSFw",
+      "created": "2026-09-18T10:37:21.890668+00:00",
+      "updated": "2026-09-18T10:37:21.890668+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "to sloopy / weird. i think this is another subsection, which now no longer uses \"dataset => find pattern\" but \"found pattern => create a filtered dataset to see if the pattern is retained even as we start optimizing with it\" ?",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 170,
+              "startOffset": 0,
+              "endContainer": "/main[1]/p[8]",
+              "startContainer": "/main[1]/p[8]"
+            },
+            {
+              "end": 6092,
+              "type": "TextPositionSelector",
+              "start": 5922
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "Candidate-selection experiments address that more limited use.\nPredictive models and feature ablations found that ridge-area features\ncarried much of the held-out signal.",
+              "prefix": "of improvement\nfrom that point.\n",
+              "suffix": " A more direct search test gener"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/7iCqsrNMEfG-LMtsXxTSFw",
+        "incontext": "https://hyp.is/7iCqsrNMEfG-LMtsXxTSFw/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/7iCqsrNMEfG-LMtsXxTSFw"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "8eOo-LNLEfG3ac8HmxpATg",
+      "created": "2026-09-18T10:30:18.715503+00:00",
+      "updated": "2026-09-18T10:30:18.715503+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "small point here is that i don't quite epxect the imaginary reader (or even Kai irl) to be familiar with these / to interpet them well. Also style issue is the number of digits here, since they convey no information (?)\n",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 188,
+              "startOffset": 74,
+              "endContainer": "/main[1]/p[4]",
+              "startContainer": "/main[1]/p[4]"
+            },
+            {
+              "end": 2810,
+              "type": "TextPositionSelector",
+              "start": 2696
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "The\nSpearman rank correlation was\n−0.938437-0.938437,\nwhereas the Pearson correlation was only\n−0.205039-0.205039.",
+              "prefix": "red targets in this population. ",
+              "suffix": "\nThe finding is therefore much b"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/8eOo-LNLEfG3ac8HmxpATg",
+        "incontext": "https://hyp.is/8eOo-LNLEfG3ac8HmxpATg/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/8eOo-LNLEfG3ac8HmxpATg"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "EPyd9LNLEfG5d-uwzVk5LQ",
+      "created": "2026-09-18T10:24:01.378536+00:00",
+      "updated": "2026-09-18T10:24:01.378536+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "Imo not a good title. \"Empirical pattern in ridge area vs systolic capacity\" would communicate more clearly what we have obtained as a result (?)",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 45,
+              "startOffset": 0,
+              "endContainer": "/main[1]/h1[1]",
+              "startContainer": "/main[1]/h1[1]"
+            },
+            {
+              "end": 462,
+              "type": "TextPositionSelector",
+              "start": 417
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "Ridge geometry as\na guide to candidate search",
+              "prefix": "omparison can follow afterward.\n",
+              "suffix": "\nRandom sampling can do more tha"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/EPyd9LNLEfG5d-uwzVk5LQ",
+        "incontext": "https://hyp.is/EPyd9LNLEfG5d-uwzVk5LQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/EPyd9LNLEfG5d-uwzVk5LQ"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "actions": [],
+      "mentions": [],
+      "moderation_status": null,
+      "id": "I9NHyrNLEfGVRe_pLhef-A",
+      "created": "2026-09-18T10:24:32.999171+00:00",
+      "updated": "2026-09-18T10:25:33.915649+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "Says very little / is too vague and thus too inefficient at communication. I guess this makes sense if the previous section was immediately about finding hte maximum sys among random samples? hmm. yeah in that case it's a good sentence suddenly bc it makes clear what direction we move in now.",
+      "tags": [],
+      "group": "__world__",
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 79,
+              "startOffset": 0,
+              "endContainer": "/main[1]/p[1]",
+              "startContainer": "/main[1]/p[1]"
+            },
+            {
+              "end": 542,
+              "type": "TextPositionSelector",
+              "start": 463
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "Random sampling can do more than return the largest systolic ratio\nencountered.",
+              "prefix": " as\na guide to candidate search\n",
+              "suffix": " By measuring geometry alongside"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/I9NHyrNLEfGVRe_pLhef-A",
+        "incontext": "https://hyp.is/I9NHyrNLEfGVRe_pLhef-A/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/I9NHyrNLEfGVRe_pLhef-A"
+      },
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "_zopfLNMEfGsbOsvxmDZlA",
+      "created": "2026-09-18T10:37:50.585083+00:00",
+      "updated": "2026-09-18T10:37:50.585083+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "i don't think this is rounding off the chapter at all and is just irrelevant to mathematicians",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 196,
+              "startOffset": 0,
+              "endContainer": "/main[1]/p[9]",
+              "startContainer": "/main[1]/p[9]"
+            },
+            {
+              "end": 7756,
+              "type": "TextPositionSelector",
+              "start": 7560
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "Geometry-guided selection and local refinement consequently answer\ndifferent questions. The former allocates expensive evaluations among\nproposed bodies; the latter tries to improve a chosen body.",
+              "prefix": "niversally best selection rule.\n",
+              "suffix": " The\ncompanion optimizer study d"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/_zopfLNMEfGsbOsvxmDZlA",
+        "incontext": "https://hyp.is/_zopfLNMEfGsbOsvxmDZlA/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/_zopfLNMEfGsbOsvxmDZlA"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "acOoRrNMEfGhO3cRsuRsrQ",
+      "created": "2026-09-18T10:33:39.830991+00:00",
+      "updated": "2026-09-18T10:33:39.830991+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "here we definitely would need to split by subsection:\n- pure empirics on random polytopes, on random product polytopes (also: figures!!)\n- now a theoretical exploration that uses more \"deep\" math (instead of forgetting where our invariants come from at all) for the product case -- with the pentagon products in particular -- perhaps worth even first doing the pentagon case [bc it references our neat proof for the exact systolic ratio formula in dependence on theta] and only afterwards generalize [bc iiuc the generalization is limited?] ah no wait it's fine to do both, i.e. general + specialized formulas close to antoher. forget i critiqued the narration here. i think styling could be better / make it clearer that there's now a shift in method/approach bc we try to explain the pattern we saw / take it as inspiration",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 45,
+              "startOffset": 0,
+              "endContainer": "/main[1]/p[5]",
+              "startContainer": "/main[1]/p[5]"
+            },
+            {
+              "end": 3350,
+              "type": "TextPositionSelector",
+              "start": 3305
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "Products make that information more concrete.",
+              "prefix": " rows in\nwhich it was observed.\n",
+              "suffix": " Put\nPP\nin the\nqq-plane\nand\nQQ\ni"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/acOoRrNMEfGhO3cRsuRsrQ",
+        "incontext": "https://hyp.is/acOoRrNMEfGhO3cRsuRsrQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/acOoRrNMEfGhO3cRsuRsrQ"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "fOd6UrNLEfGTEa9XaeJsug",
+      "created": "2026-09-18T10:27:02.451315+00:00",
+      "updated": "2026-09-18T10:27:02.451315+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "This is definitely not relevant to the mathematician right now? I think a paragraph on statistical significance / numerical errors / the kind of \"model error\" that comes from sample count rather than e.g. method or inteprretation errors, would be better, and should be later / after presenting the clear case for \"what if the thing we found is taken at face value, what if our interpretation is true\"",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 73,
+              "startOffset": 0,
+              "endContainer": "/main[1]/p[2]",
+              "startContainer": "/main[1]/p[2]"
+            },
+            {
+              "end": 1150,
+              "type": "TextPositionSelector",
+              "start": 1077
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "The initial population comprised 4,096 generic four-dimensional\npolytopes",
+              "prefix": "ng that observation for search.\n",
+              "suffix": ", with 512 at each facet count f"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/fOd6UrNLEfGTEa9XaeJsug",
+        "incontext": "https://hyp.is/fOd6UrNLEfGTEa9XaeJsug/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/fOd6UrNLEfGTEa9XaeJsug"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "iYKd1rNMEfGhPDdKiX0ILQ",
+      "created": "2026-09-18T10:34:33.086403+00:00",
+      "updated": "2026-09-18T10:34:33.086403+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "again problematic way to write. just say systolic ratio.",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 1197,
+              "startOffset": 1188,
+              "endContainer": "/main[1]/p[6]",
+              "startContainer": "/main[1]/p[6]"
+            },
+            {
+              "end": 5145,
+              "type": "TextPositionSelector",
+              "start": 5136
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "the ratio",
+              "prefix": "2140.947214;\nat\nd=π/10d=\\pi/10,\n",
+              "suffix": " is\n(3+5)/5≈1.047214(3+\\sqrt5)/5"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/iYKd1rNMEfGhPDdKiX0ILQ",
+        "incontext": "https://hyp.is/iYKd1rNMEfGhPDdKiX0ILQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/iYKd1rNMEfGhPDdKiX0ILQ"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "k6Zx_LNMEfGHgTNd4sdmJQ",
+      "created": "2026-09-18T10:34:50.110005+00:00",
+      "updated": "2026-09-18T10:34:50.110005+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "this does not belong in this section at all",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 1383,
+              "startOffset": 1246,
+              "endContainer": "/main[1]/p[6]",
+              "startContainer": "/main[1]/p[6]"
+            },
+            {
+              "end": 5331,
+              "type": "TextPositionSelector",
+              "start": 5194
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "This is an analytic example outside the finite random table, so its\nvalue above one does not conflict with that table’s recorded maximum.",
+              "prefix": "214(3+\\sqrt5)/5\\approx1.047214.\n",
+              "suffix": "\nThe identity supplies a later g"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/k6Zx_LNMEfGHgTNd4sdmJQ",
+        "incontext": "https://hyp.is/k6Zx_LNMEfGHgTNd4sdmJQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/k6Zx_LNMEfGHgTNd4sdmJQ"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "orWdcrNLEfGUv79EMLUpdQ",
+      "created": "2026-09-18T10:28:05.863635+00:00",
+      "updated": "2026-09-18T10:28:05.863635+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "imo too obvious, this kind of scaling consideration is trivial to make from teh formula for a msc student.",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 561,
+              "startOffset": 464,
+              "endContainer": "/main[1]/p[3]",
+              "startContainer": "/main[1]/p[3]"
+            },
+            {
+              "end": 2621,
+              "type": "TextPositionSelector",
+              "start": 2524
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "since both the face integrals and the square root\nof four-dimensional volume scale quadratically.",
+              "prefix": "alization\nremoves common scale, ",
+              "suffix": "\nSmaller\nRR\nstrongly accompanied"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/orWdcrNLEfGUv79EMLUpdQ",
+        "incontext": "https://hyp.is/orWdcrNLEfGUv79EMLUpdQ/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/orWdcrNLEfGUv79EMLUpdQ"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "actions": [],
+      "mentions": [],
+      "moderation_status": null,
+      "id": "s8JoyrNLEfGw2Z_VFfQUcw",
+      "created": "2026-09-18T10:28:34.484378+00:00",
+      "updated": "2026-09-18T10:28:49.726679+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "ambiguous / hard to track. I think you should just say \"systolic ratio\" ? or systole [??]? instead of using ambiguous pronouns / synonyms / neologisms / references.",
+      "tags": [],
+      "group": "__world__",
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 53,
+              "startOffset": 46,
+              "endContainer": "/main[1]/p[4]",
+              "startContainer": "/main[1]/p[4]"
+            },
+            {
+              "end": 2675,
+              "type": "TextPositionSelector",
+              "start": 2668
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "targets",
+              "prefix": "ongly accompanied larger stored ",
+              "suffix": " in this population. The\nSpearma"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/s8JoyrNLEfGw2Z_VFfQUcw",
+        "incontext": "https://hyp.is/s8JoyrNLEfGw2Z_VFfQUcw/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/s8JoyrNLEfGw2Z_VFfQUcw"
+      },
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    },
+    {
+      "id": "vq5IXLNMEfG2pw-j1ww_2w",
+      "created": "2026-09-18T10:36:02.301337+00:00",
+      "updated": "2026-09-18T10:36:02.301337+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+      "text": "nice result, unsure whether we can move this forward so that scanning the paragraphs' first sentences just reevals all the results, with arguments / details / refinements of a coarse description of the result into sth more rigorous / less misunderstandable after?",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+          "selector": [
+            {
+              "type": "RangeSelector",
+              "endOffset": 317,
+              "startOffset": 255,
+              "endContainer": "/main[1]/p[7]",
+              "startContainer": "/main[1]/p[7]"
+            },
+            {
+              "end": 5772,
+              "type": "TextPositionSelector",
+              "start": 5710
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "Small ridge sum is therefore not a universal ascent\nobjective.",
+              "prefix": "/43/4\nand\n1/21/2,\nrespectively. ",
+              "suffix": " A population association can st"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "Ridge geometry — review sample"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/vq5IXLNMEfG2pw-j1ww_2w",
+        "incontext": "https://hyp.is/vq5IXLNMEfG2pw-j1ww_2w/100.70.188.20:57119/BDrV1V4Z4p6fwevccubhiG3N/0",
+        "json": "https://hypothes.is/api/annotations/vq5IXLNMEfG2pw-j1ww_2w"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    }
+  ]
+}

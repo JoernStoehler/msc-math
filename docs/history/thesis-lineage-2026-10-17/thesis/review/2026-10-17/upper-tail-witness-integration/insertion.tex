@@ -1,0 +1,37 @@
+\subsection{From a geometric score to a ratio bound}
+\label{subsec:ds-geometric-witness}
+
+A geometric rule need not predict capacity accurately to bound the systolic
+ratio. It is enough to select one sufficiently strong feasible candidate in
+the Haim--Kislev formula. For a polytope $K$ with
+$0\in\operatorname{int}(K)$, let $V=\operatorname{vol}_4(K)$ and let
+$q=Q_\sigma(\beta)>0$ for weights satisfying the normalization and closure
+constraints of Section~\ref{sec:quadratic-program-algorithm-hk2019}.
+Theorem~\ref{thm:quadratic-program-algorithm-hk2019-hk-formula} gives
+\[
+ q\leq Q_{\max},\qquad
+ c_{\mathrm{EHZ}}(K)\leq\frac1{2q},\qquad
+ \operatorname{sys}(K)\leq\frac1{8Vq^2}.
+\]
+Thus a target ceiling $S>0$ follows whenever the selected candidate satisfies
+$q\geq(8SV)^{-1/2}$. To establish HKO maximality in a specified class,
+one would need such a choice for every body in that class with
+$S=(3+\sqrt5)/5$. This is a sufficient criterion, not an established
+bound for arbitrary bodies.
+
+For polygon products, Theorem~\ref{thm:quadratic-program-product-six-facet}
+reduces the search to at most three facets from each factor. A geometric selector
+must still choose facets, closure weights and an order giving a strong
+enough candidate. The ridge sum aggregates absolute pairings of all primal
+edges; the capacity formula instead uses signed pairings of dual facet
+vectors, with weights constrained by closure. This identifies structure
+that a sharper explanation could use, without explaining the observed
+statistical association by itself.
+
+A proposed rule should therefore be assessed against its intended conclusion.
+For prediction, ordering and errors within the high-ratio population matter.
+For a ratio bound, the candidate must meet the displayed threshold throughout
+the stated class. A candidate below that threshold leaves the bound undecided
+for that body; it does not disprove it. Recovery of HKO or success on finitely
+many sampled bodies cannot establish the required uniform inequality.
+

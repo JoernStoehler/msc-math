@@ -1,0 +1,42 @@
+{
+  "id": "20260918-root-contemporary-ds-reader",
+  "producer": {
+    "name": "root",
+    "thread": "01a0b153-5091-7333-935c-f08856210097",
+    "pane": "w26:p1"
+  },
+  "artifact": {
+    "path": "/workspaces/msc-math/.worktrees/easy-writing-routes/experiments/writing-quality/runs/20260918-easy-routes/route-reader/final.md",
+    "sha256": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36"
+  },
+  "context": [],
+  "question": "Is this complete proposed DS subsection acceptable exposition for its scope? Mark whatever obstacles you notice. After your independent reading, compare against the frozen agent issue inventory, especially omissions and disagreements. No claim of perfection.",
+  "consequence": "Tests actual acceptability and whether simple agent review identifies the problems J\u00f6rn notices; determines whether to reuse or change authoring/review operations.",
+  "provenance": {
+    "commit": "801ebda2",
+    "workflow": "ordinary draft followed by two first-obstacle reader repairs",
+    "selection": "Chosen as a plausible strong review candidate because explicit criteria/source issues were repaired, not established best prose. Selection itself is fallible.",
+    "feedback_exposure": "Authors had historical DS purpose feedback plus improved checked scientific account, no human review of this new draft.",
+    "withhold_until_after_human_read": {
+      "path": "/workspaces/msc-math/.worktrees/easy-writing-routes/experiments/writing-quality/runs/20260918-easy-routes/evaluation/source-review.md",
+      "sha256": "8fdd79f4515cf17bac155978e21d21a07089d1b5c9e770df67b860faaeeb0dbc"
+    },
+    "review_key": "Candidate D is this exact route-reader final. Review is primarily scientific/comprehension audit, not exhaustive style assessment.",
+    "scope": "Ridge interpretation and candidate search subsection, not full DS programme. Assumes basic capacity/Lagrangian-product context; pentagon capacity proof and optimizer account are companion sections."
+  },
+  "estimated_effort": "About 8\u201312 minutes for ~1000 words plus mathematics and marking; optional subsequent comparison. Desk/J\u00f6rn may adjust scope and format.",
+  "status": "answered",
+  "response_path": "experiments/writing-quality/human-review/responses/20260918-root-contemporary-ds-reader.md",
+  "presentation": {
+    "artifact": {
+      "path": "experiments/writing-quality/human-review/packets/20260918-root-contemporary-ds-reader.html",
+      "sha256": "6f42e6c28b673495dcccf26342818a7cce9d30e3baee3a41adbe7e8db84caf37"
+    },
+    "exact_source_copy": {
+      "path": "experiments/writing-quality/human-review/packets/20260918-root-contemporary-ds-reader.md",
+      "sha256": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36"
+    },
+    "transformation": "Exact source retained; pandoc MathML render with scope/question framing. AI review not included.",
+    "estimated_effort": "About 8\u201312 minutes plus setup; not yet measured."
+  }
+}

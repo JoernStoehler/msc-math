@@ -1,0 +1,145 @@
+% OPTIONAL MATHEMATICAL SUPPLEMENT. Not selected by thesis/main.tex.
+\subsection{Definitions behind the local contact prediction}
+\label{app:ds-local-contact-definitions}
+
+The score uses the labelled dual-normal presentation
+\[
+ P(A)=\{x\in\mathbb R^2:a_i\cdot x\leq1\},\qquad
+ P(B)=\{y\in\mathbb R^2:b_i\cdot y\leq1\},\quad 0\leq i\leq4,
+\]
+with $z=(A,B)$ and $V(z)=\operatorname{area}(P(A))
+\operatorname{area}(P(B))$. All nearby factors must have five genuine
+facets and contain zero in their interiors. The algebraic HKO reference is
+$z_H=(A^*,B^*)$, where $s=\sqrt5$, $J(x,y)=(-y,x)$,
+\begin{align*}
+ a_0^*&=(1,0),&a_1^*&=((s-1)/4,1),&a_2^*&=(-(s+1)/4,(s-1)/2),\\
+ a_3^*&=(-(s+1)/4,(1-s)/2),&a_4^*&=((s-1)/4,-1),&b_i^*&=Ja_i^*.
+\end{align*}
+For each three-index support $E=(i,j,k)$ whose closure weights are positive,
+put
+\[
+ (\alpha_i,\alpha_j,\alpha_k)
+ =\frac{(\det(a_j,a_k),\det(a_k,a_i),\det(a_i,a_j))}
+ {\det(a_j,a_k)+\det(a_k,a_i)+\det(a_i,a_j)},
+\]
+with all other weights zero. Define $\gamma$ similarly for $B$.
+These are the vertices of the factor closure polytopes of
+Section~\ref{subsec:quadratic-program-product-six-facet}. Each factor
+has precisely five such supports near $z_H$.
+
+For each closure pair and each cyclic order $w$ of its six supported
+facets, fix one starting facet, let $\epsilon_{ij}(w)$ be $+1$ when
+$A_i$ precedes $B_j$ and $-1$ otherwise, and set
+\[
+ Q_w(z)=\frac14\sum_{i,j}\epsilon_{ij}(w)\alpha_i\gamma_j
+                           (a_i\cdot b_j).
+\]
+Closure makes this expression independent of the cyclic starting point.
+The six-facet reduction gives
+\[
+ Q_{\max}(z)=\max_w Q_w(z),\qquad
+ \operatorname{sys}(z)=\frac1{8V(z)Q_{\max}(z)^2}.
+\]
+At $z_H$, the maximum is $Q_0=1/10$. Of the $25\cdot120=3,000$
+cyclic words, fifty attain $Q_0$; call this set $\mathcal A_H$.
+The finite score is defined without a choice of basis by
+\[
+ g_w=\left.\left(2\frac{\mathrm dQ_w}{Q_0}
+                      +\frac{\mathrm dV}{V(z_H)}\right)\right|_{z_H},
+ \qquad D(\delta)=\max_{w\in\mathcal A_H}g_w[\delta].
+\]
+There are twenty distinct forms $g_w$. Evaluating them at a new geometry
+requires no new capacity optimization. Their algebraic coefficients are
+fixed by these formulas and the reference, rather than fitted to ratios.
+
+\paragraph{Why this is a local law.}
+Nonzero determinants and strict signs keep the same closure supports in a
+neighborhood of $z_H$. The largest inactive objective at the reference is
+$(-5+3\sqrt5)/20<Q_0$, leaving a strict gap
+$(7-3\sqrt5)/20$. Continuity excludes all inactive branches nearby.
+Every active $Q_w$ is positive and analytic there, as is $V$. Taylor
+expansion of $\log(8VQ_w^2)$ has a uniform quadratic remainder because
+there are finitely many branches. Taking their maximum gives
+\[
+ \left|\log\frac{\operatorname{sys}(z_H+\delta)}{\rho_H}
+                      +D(\delta)\right|\leq C\|\delta\|^2
+ \quad(\|\delta\|<r)
+\]
+for some $C,r>0$. No numerical values of $r,C$ are supplied.
+The twenty forms sum to zero, have rank eleven and annihilate the nine
+independent infinitesimal symmetries (four translations, four product
+linear symplectic parameters and common dilation). Consequently
+$D\geq0$ and vanishes exactly on this symmetry tangent. It is a generally
+asymmetric polyhedral gauge on the quotient, not a Euclidean distance.
+The stated radial direction gives $D(t\delta)=2\sqrt5|t|/5$.
+The finite census, rank and directional claims require the accompanying
+exact computational witnesses; the analytic argument alone does not
+establish those identities.
+
+\paragraph{A finite normalization defines $I$.}
+For any convex pentagon product, choose interior origins in both factors,
+then cyclically order the dual rows.
+Enumerate both factor roles, both common cyclic orientations and the five
+starting indices independently in each factor (at most 100 candidates).
+For each candidate, let $p_i$ be the intersection of rows $a_i,a_{i+1}$,
+with indices modulo five, and let $p_i^*$ denote the reference vertices.
+Use the unique affine map $x\mapsto Lx+t$ sending
+$(p_0,p_2,p_4)$ to $(p_0^*,p_2^*,p_4^*)$; transform the second factor
+by $L^{-T}$. Center the latter at its area centroid and scale it
+positively until its first dual normal has $y$-coordinate one.
+Retain only candidates for which that pre-scaling coordinate is positive.
+The reference triangle strictly contains zero, and a bounded pentagon
+has a normal with positive $y$-projection, so candidates exist and the
+normalized dual rows are defined. Write $C_h(z)$ for each normalized
+twenty-coordinate tuple and set
+\[
+ I(P(A),P(B))=\min_{h\text{ valid}}D(C_h(z)-z_H).
+\]
+
+For fixed corresponding labels, transform the factors by
+$P'=\lambda GP+u$, $Q'=\lambda G^{-T}Q+v$,
+where $\lambda>0$ and $G$ is invertible.
+The new triangle map has $L'=\lambda^{-1}LG^{-1}$.
+It gives the same normalized first factor. The transformed second factor
+is a translate of $\lambda^2L^{-T}Q$, so centering and the final scale
+remove the difference. The valid candidate sets correspond, also when
+$\det G<0$ reverses both orientations. Thus $I$ is unchanged by these
+transformations, facet relabelling and factor interchange. In particular,
+translation invariance shows independence of the chosen interior origins. Its domain
+retains the product splitting; invariance under general four-dimensional
+symplectic maps destroying that splitting is not asserted.
+
+At exact HKO, fifty candidates are valid: ten normalize exactly to $z_H$,
+while the others have $D\geq2\sqrt5-4>0$. All final projection signs are
+strict. Each zero candidate is an analytic, ratio-preserving map fixing
+$z_H$; its normalized displacement is $O(\|z-z_H\|)$.
+The positive gap excludes other candidates locally, so the raw expansion
+applied to the finite zero-candidate family proves
+\[
+ \log\frac{\operatorname{sys}(z)}{\rho_H}
+             =-I(z)+O(\|z-z_H\|^2).
+\]
+The candidate count, strict projection signs and exact positive gap are
+additional witness obligations for this canonical statement.
+
+\paragraph{Evidence limits.}
+The fresh canonical test comprises five directions, three mechanisms and
+three scales, giving forty-five distinct untransformed products. Nine
+transformed copies are coordinate controls and are not extra prediction
+tests. All forty-five are retained, including twenty-two ratios at most
+one. The reported above-one errors concern the other twenty-three;
+subsets were selected only for evaluation after all predictions.
+Their capacities, areas and ratios use exact arithmetic conditional on
+the imported capacity formula and complete product reduction.
+The separate 1,024-body transfer test uses historical numerical target
+scalars; its rank correlation is not a certified-capacity theorem.
+
+For the separately certified rational product labelled
+\texttt{random\_5x5\_s0\_92}, exact ordered-field checks give
+\[
+ I>\frac45,\qquad \operatorname{sys}>\frac45,\qquad
+ \frac{\rho_H}{1+I}<\frac35.
+\]
+Since $e^I\geq1+I$, both proposed global upper bounds are false.
+This does not refute $\operatorname{sys}\leq\rho_H$ and does not extend
+or invalidate the local Taylor expansion.

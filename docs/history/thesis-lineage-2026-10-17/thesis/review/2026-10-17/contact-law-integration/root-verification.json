@@ -1,0 +1,22 @@
+{
+  "checked_utc": "2026-10-17T21:01:07.654585+00:00",
+  "status": "PASS",
+  "manifest_sha256": "019a15e5daf6a07febf8f48e6681fdde0bc781af29596bcbe567cb78f656c48e",
+  "original_source_commit": "308ed31f22b502b73ab1bce988856ff13af175b0",
+  "files": 41,
+  "bytes": 8121223,
+  "receipt_bindings": 28,
+  "canonical_truth_prediction_rows": 54,
+  "exact_obstruction_scalar_separation": "PASS",
+  "metrics_receipt": "root-metrics.json",
+  "scope": "Transported file identities, local receipt bindings, exact scalar separations, exact-cusp bank evaluation and displayed finite metrics; no full capacity, canonical-gauge or derivative replay.",
+  "root_visual_inspection": {
+    "pages": [
+      63,
+      64,
+      104
+    ],
+    "observation": "Definitions, local law, cusp/caption and reference toA.12; preserved feasible-witness start; imported2shadow premise and retainedsource paths legible withoutclipping."
+  },
+  "original_metrics_receipt": "/tmp/msc-math/owner-next/20261017T2054Z/contact-package-root-metrics.json"
+}

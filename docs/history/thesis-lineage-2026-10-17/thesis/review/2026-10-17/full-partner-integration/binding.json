@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-17T14:47:28.362093+00:00",
+  "patterns_commit": "c28ffb274365531a80b0465ec63a184709d1e7bb",
+  "scientific_files": {
+    "REPORT.md": "c6993f2090f6e6dbd978a7947d667997d972f1ba896d27b327e519c9153b7da8",
+    "PLAN.md": "cf54eaad32a8b17bfd57963f7e90702074ac19cf093f38a38d8f119126dc30d2",
+    "analyze.py": "00f7c7e1af34acea3c4d3540766a7b76bd3a5f2155b3c1511efa6375c4a5a3bf",
+    "results.json": "acd14209f77889c6065fdc0d35728c27ad04c28ab8e7c4921162c881b1441b87",
+    "comparison.json": "cfdcb2280fe3e7f7cc683ae3806876f26aaaaaa91a2ebdcb83f87c9ae97aa9f2",
+    "manifest.json": "3eb5605e13267372fc6152ddec114471a71555d1cfc876678781aa2172e70f35"
+  },
+  "all_scientific_manifest_files_verified": 8,
+  "candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "selected_manuscript_diff_empty": true,
+  "no_fresh_pdf_build": true
+}

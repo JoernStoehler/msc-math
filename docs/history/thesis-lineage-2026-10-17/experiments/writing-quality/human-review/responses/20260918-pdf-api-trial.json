@@ -1,0 +1,11 @@
+{
+  "purpose": "PDF interface/API trial; not prose feedback",
+  "source_pdf": "experiments/writing-quality/local/inputs/c002.pdf",
+  "source_sha256": "01d63be3d72999230e98c0b5fb6f89dcba33d532188d83894f4ad01a9f62c58c",
+  "api_snapshot": "20260918-pdf-api-trial.api.json",
+  "annotation_id": "YlQ6lrNUEfGP42cuNGInCw",
+  "comment": "test",
+  "selected_text": "them. The experiments below examine both approaches within the AI-assisted exploration.",
+  "anchor_check": "whitespace-normalized exact quote matches c002.txt",
+  "human_confirmation": "opening the pdf + annotating works fyi, so this is at least doable the current way"
+}

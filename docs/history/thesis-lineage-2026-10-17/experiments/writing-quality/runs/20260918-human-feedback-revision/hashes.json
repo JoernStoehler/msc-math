@@ -1,0 +1,17 @@
+{
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/README.md": "4c537e91795b3c3db00a68b5e1fef9c3ead697a322c53bfd39aa11bbf9bd28b0",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/figures/README.md": "081d67b63717707de12a4139edce885e17774b8f3fa52cebe238d687c94e455e",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/figures/association-overview.png": "744f1133a1aec859676fd7843072776a003d2424dde0c3d4fd61c91b45c94bf9",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/figures/association-overview.svg": "631a2d0a814e85ad3a5ef0f73cea3c21c6e5a433e4024fc3c7f775eaf467ad7a",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/figures/association-receipt.json": "d85a8d4a69d7e23018347858277ee43d47b3598cdce81e64cd32e3670e70d785",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/figures/association-stratified.png": "dd2ccdf4752ba8815044682428c5fbd0b84ddd25d890fd12e503a118380aa24b",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/figures/association-stratified.svg": "7c0f880a45a07b8972dc52d37de4265a077e7b1893c8e4df8d74cb2d8e85fa95",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/figures/plot_association.py": "652d8c0755f1b6a2903a331156ac79df42c1f5097ea893a823c5f7200e7b3e5d",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/preview.css": "f4b4c18d5a1bdf9644663081b8bf00397b8e41fca6b040ad991b7395cfd65584",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/preview.html": "56e7c82d434cc7f00ff58308fd79d147ab38baa8e3f5468726040e52a6d52d9b",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/review-input.md": "d9ba08e6352608f0d6b04c2ab4f3ec20cec0189093b0eef2d6d63dd3e05671cd",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/reviews.md": "9d3ca0500f46b0e526a4b03b9025b5e8aa8f7d8845d04655c41024ca9667e74d",
+  "experiments/writing-quality/runs/20260918-human-feedback-revision/revised.md": "7b597b3a4292031e502ef4285bed0b98c9dafc16e6cbd243c33ce7ebde5f324b",
+  "/workspaces/msc-math/.worktrees/easy-writing-routes/experiments/writing-quality/runs/20260918-easy-routes/route-reader/final.md": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36",
+  "/workspaces/msc-math/.worktrees/prose-review-desk/experiments/writing-quality/human-review/responses/20260918-root-contemporary-ds-reader.md": "d32cf8857fd1161813991be566b9b56aa31b9fa85bf647d172c8c9891a057eaf"
+}

@@ -1,0 +1,9 @@
+# Bounded local completion crux
+
+End state: a structural exact guarantee for all-seed completed conditional responses near HKO, or an exact obstruction identifying the missing hypothesis. This would explain or delimit twelve prior upper-tail successes; another success count or tiny bound improvement would not.
+
+Necessary steps: inspect the exact HKO LP-optimal face and deterministic response rule (the claim quantifies over optimizer choice); identify support/tie margins (reference-point recovery alone cannot imply stability); prove a uniform implication or exact failure; independently check the retained certificate and state the scope. Root retains integration/review/commit ownership on separate branches.
+
+Alternatives: (1) another fresh panel measures transfer but supplies no structural guarantee; (2) classify the exact HKO optimal-face seed coverage, then test the local implication; (3) attempt global exactness, which ignores already known support traps. Route 2 is the bounded prior. The science agent must compare/criticize before selecting its exact crux. Rubric: proof implication, meaningful upper-tail mechanism and tractability. Pitfalls: reference agreement can reward isolated symmetry, generic numerical slack can conceal HKO ties, and a narrow solver basis cannot justify every optimizer.
+
+Scope: /root/local_completion_science owns new scientific packet in sibling patterns/upper-tail/local-completion/; new work starts here. First reporting checkpoint within five minutes; maximum25min wall and120CPU seconds. No broad corpus, fresh cohort, tuning, network/install/cloud, manuscript insertion or external action. At most two targeted diagnostic perturbations if essential; no prospective accuracy claim. Root independently verifies, reviews, commits and cleans up; worker does not commit. Human selection/proof judgments stay pending.

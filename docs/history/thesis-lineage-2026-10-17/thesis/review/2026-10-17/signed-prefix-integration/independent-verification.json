@@ -1,0 +1,227 @@
+{
+  "coordinate_trap": {
+    "both_variants_final_B_equals_seed_B": [
+      true,
+      true
+    ],
+    "challenger_plus_shadow_Q": "715414928266732390772704086720173106801118225108120519895309986719970069214942022355312738714255/8875761691761654720051866432928396187624480485858421897507989854826176968762680687988528556015616",
+    "challenger_minus_shadow_Q": "205210687941048654740877377263019566106015152575960608604826747760209809330088474882139640356761/2958587230587218240017288810976132062541493495286140632502663284942058989587560229329509518671872",
+    "challenger_plus_over_selected_Q": "29660316188648246630006317521035705593389194911363264794887890820355618872786428061837779337868487338330934690729405336540506775523986875663009613180896885162616/28402782219821747739757084167311395585622276316390554566872050569249848384495093972131390281436999240586702174036538090647688212810318022673665562376981539049321",
+    "interpretation": "With separately verified exact LP optima, both outputs are coordinatewise stationary; the explicit plus-shadow competitor beats both. Repeating the same strict-improvement sweeps from these points cannot repair this miss. No other initialization or global optimum claim."
+  },
+  "residual_obstruction": {
+    "name": "random_5x5_s1_64",
+    "exact_new_bound_over_feasible_challenger": "29660316188648246630006317521035705593389194911363264794887890820355618872786428061837779337868487338330934690729405336540506775523986875663009613180896885162616/28402782219821747739757084167311395585622276316390554566872050569249848384495093972131390281436999240586702174036538090647688212810318022673665562376981539049321",
+    "guaranteed_capacity_gap_fraction": 0.044275027674890666,
+    "scope": "Existing feasible competitor retained outside predictor; no new support search, exact true capacity not required."
+  },
+  "status": "PASS",
+  "scope": "Root independent rational all-intersection convex-hull areas and direct4D closure/objective at seed, shadow start, A update, B update, and selected witness; all exact rational. Does not establish true-capacity optimality or held-out generalization.",
+  "rational_bodies": 20,
+  "direct_4d_evaluations": 161,
+  "exact_mixed_area_stage_identities": 120,
+  "strict_gains": 11,
+  "principal_gains": 5,
+  "principal_count": 9,
+  "all20_ratio_bounds_below_one": true,
+  "rows": [
+    {
+      "name": "random_5x5_s0_8",
+      "principal_top3": false,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.6514643845700047,
+      "capacity_gap_vs_historical": 4.440892098500626e-16,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x5_s0_92",
+      "principal_top3": true,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.013889843233440446,
+      "ratio_bound": 0.8385328153862055,
+      "capacity_gap_vs_historical": -2.220446049250313e-16,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x5_s1_64",
+      "principal_top3": false,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.04983533405628593,
+      "ratio_bound": 0.8334427019168533,
+      "capacity_gap_vs_historical": 0.04427502767489089,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x5_s1_221",
+      "principal_top3": true,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.9398088408568936,
+      "capacity_gap_vs_historical": 0.08052960862953262,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x5_s2_104",
+      "principal_top3": true,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.986905730105718,
+      "capacity_gap_vs_historical": 0.08148183877637494,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x5_s3_114",
+      "principal_top3": false,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.13399505716832427,
+      "ratio_bound": 0.4506147099274649,
+      "capacity_gap_vs_historical": 0.0,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x6_s0_25",
+      "principal_top3": true,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.8652206745912584,
+      "capacity_gap_vs_historical": 0.01135346023364403,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x6_s0_102",
+      "principal_top3": false,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.3656572849321909,
+      "capacity_gap_vs_historical": 2.220446049250313e-16,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x6_s1_100",
+      "principal_top3": true,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.0698359664524073,
+      "ratio_bound": 0.8401689029250128,
+      "capacity_gap_vs_historical": 0.013740657669997214,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x6_s2_150",
+      "principal_top3": false,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.7946614734448311,
+      "capacity_gap_vs_historical": 4.440892098500626e-16,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x6_s2_220",
+      "principal_top3": false,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.14097900035318423,
+      "ratio_bound": 0.5261502485323181,
+      "capacity_gap_vs_historical": -2.220446049250313e-16,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x6_s3_29",
+      "principal_top3": false,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.617166028173972,
+      "capacity_gap_vs_historical": -2.220446049250313e-16,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_5x6_s3_168",
+      "principal_top3": true,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.010200542211976638,
+      "ratio_bound": 0.8895021076824259,
+      "capacity_gap_vs_historical": 0.015482198036204542,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_6x6_s0_194",
+      "principal_top3": false,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.10642480880699323,
+      "ratio_bound": 0.7279246361219062,
+      "capacity_gap_vs_historical": 0.0006460134876131729,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_6x6_s0_219",
+      "principal_top3": true,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.05789197582533745,
+      "ratio_bound": 0.8309527767863085,
+      "capacity_gap_vs_historical": 0.0,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_6x6_s1_114",
+      "principal_top3": true,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.8536118881702472,
+      "capacity_gap_vs_historical": 2.220446049250313e-16,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_6x6_s1_194",
+      "principal_top3": false,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.1464164780371382,
+      "ratio_bound": 0.8485376970579736,
+      "capacity_gap_vs_historical": 0.18215588396620985,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_6x6_s2_3",
+      "principal_top3": false,
+      "exact_strict_gain": false,
+      "capacity_gain_fraction": 0.0,
+      "ratio_bound": 0.6097873901945505,
+      "capacity_gap_vs_historical": -2.220446049250313e-16,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_6x6_s2_187",
+      "principal_top3": true,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.037212108076256745,
+      "ratio_bound": 0.849015462862749,
+      "capacity_gap_vs_historical": 0.002345294704156675,
+      "exact_bound_below_one": true
+    },
+    {
+      "name": "random_6x6_s3_124",
+      "principal_top3": false,
+      "exact_strict_gain": true,
+      "capacity_gain_fraction": 0.012667839728396357,
+      "ratio_bound": 0.8927931930482242,
+      "capacity_gap_vs_historical": 0.06035972763277564,
+      "exact_bound_below_one": true
+    }
+  ],
+  "regular_controls": [
+    {
+      "angle": 0,
+      "ratio": 0.9472135954999583,
+      "scope": "Known regular formula; baseline inherited, not a new explanation."
+    },
+    {
+      "angle": 0.15707963267948966,
+      "ratio": 0.9709750461750999,
+      "scope": "Known regular formula; baseline inherited, not a new explanation."
+    },
+    {
+      "angle": 0.3141592653589793,
+      "ratio": 1.0472135954999586,
+      "scope": "Known regular formula; baseline inherited, not a new explanation."
+    }
+  ],
+  "results_sha256": "9743d5088f04f8444ffb32b617ed145bdbe1726f93e52a34442888e8aa217e2f"
+}

@@ -1,0 +1,146 @@
+{
+  "fetched_at": "2026-09-18T11:35:45.909117+00:00",
+  "query": {
+    "uri": "http://100.70.188.20:49969/ALKvURHTrrZGOMrqqyUpiSZ1/sample.pdf",
+    "user": "acct:JoernStoehler@hypothes.is"
+  },
+  "pages": [
+    {
+      "total": 1,
+      "rows": [
+        {
+          "id": "YlQ6lrNUEfGP42cuNGInCw",
+          "created": "2026-09-18T11:30:43.321762+00:00",
+          "updated": "2026-09-18T11:30:43.321762+00:00",
+          "user": "acct:JoernStoehler@hypothes.is",
+          "uri": "http://100.70.188.20:49969/ALKvURHTrrZGOMrqqyUpiSZ1/sample.pdf",
+          "text": "test",
+          "tags": [],
+          "group": "__world__",
+          "moderation_status": null,
+          "permissions": {
+            "read": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "admin": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "update": [
+              "acct:JoernStoehler@hypothes.is"
+            ],
+            "delete": [
+              "acct:JoernStoehler@hypothes.is"
+            ]
+          },
+          "target": [
+            {
+              "source": "http://100.70.188.20:49969/ALKvURHTrrZGOMrqqyUpiSZ1/sample.pdf",
+              "selector": [
+                {
+                  "end": 393,
+                  "type": "TextPositionSelector",
+                  "start": 306
+                },
+                {
+                  "type": "TextQuoteSelector",
+                  "exact": "them. The experiments below examine both approaches within the AI-assisted exploration.",
+                  "prefix": "pporting hyperplanes or rotating ",
+                  "suffix": "For a convex body K ⊂ R4, write s"
+                },
+                {
+                  "type": "PageSelector",
+                  "index": 0,
+                  "label": "1"
+                }
+              ]
+            }
+          ],
+          "document": {
+            "title": [
+              "sample.pdf"
+            ]
+          },
+          "links": {
+            "html": "https://hypothes.is/a/YlQ6lrNUEfGP42cuNGInCw",
+            "incontext": "https://hyp.is/YlQ6lrNUEfGP42cuNGInCw/100.70.188.20:49969/ALKvURHTrrZGOMrqqyUpiSZ1/sample.pdf",
+            "json": "https://hypothes.is/api/annotations/YlQ6lrNUEfGP42cuNGInCw"
+          },
+          "actions": [],
+          "mentions": [],
+          "user_info": {
+            "display_name": null
+          },
+          "flagged": false,
+          "hidden": false
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "id": "YlQ6lrNUEfGP42cuNGInCw",
+      "created": "2026-09-18T11:30:43.321762+00:00",
+      "updated": "2026-09-18T11:30:43.321762+00:00",
+      "user": "acct:JoernStoehler@hypothes.is",
+      "uri": "http://100.70.188.20:49969/ALKvURHTrrZGOMrqqyUpiSZ1/sample.pdf",
+      "text": "test",
+      "tags": [],
+      "group": "__world__",
+      "moderation_status": null,
+      "permissions": {
+        "read": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "admin": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "update": [
+          "acct:JoernStoehler@hypothes.is"
+        ],
+        "delete": [
+          "acct:JoernStoehler@hypothes.is"
+        ]
+      },
+      "target": [
+        {
+          "source": "http://100.70.188.20:49969/ALKvURHTrrZGOMrqqyUpiSZ1/sample.pdf",
+          "selector": [
+            {
+              "end": 393,
+              "type": "TextPositionSelector",
+              "start": 306
+            },
+            {
+              "type": "TextQuoteSelector",
+              "exact": "them. The experiments below examine both approaches within the AI-assisted exploration.",
+              "prefix": "pporting hyperplanes or rotating ",
+              "suffix": "For a convex body K ⊂ R4, write s"
+            },
+            {
+              "type": "PageSelector",
+              "index": 0,
+              "label": "1"
+            }
+          ]
+        }
+      ],
+      "document": {
+        "title": [
+          "sample.pdf"
+        ]
+      },
+      "links": {
+        "html": "https://hypothes.is/a/YlQ6lrNUEfGP42cuNGInCw",
+        "incontext": "https://hyp.is/YlQ6lrNUEfGP42cuNGInCw/100.70.188.20:49969/ALKvURHTrrZGOMrqqyUpiSZ1/sample.pdf",
+        "json": "https://hypothes.is/api/annotations/YlQ6lrNUEfGP42cuNGInCw"
+      },
+      "actions": [],
+      "mentions": [],
+      "user_info": {
+        "display_name": null
+      },
+      "flagged": false,
+      "hidden": false
+    }
+  ]
+}

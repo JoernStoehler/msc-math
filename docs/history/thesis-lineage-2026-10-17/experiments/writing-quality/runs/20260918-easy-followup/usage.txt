@@ -1,0 +1,14 @@
+Root:    01a0b3fa-fe9e-7753-8ebd-97bea0a3b40c (8 locally discovered threads)
+Started: 2026-09-18T10:06:05+00:00
+Now:     2026-09-18T10:15:42+00:00   elapsed: 0:09:36.521429
+Latest usage: 2026-09-18T10:15:09+00:00
+Shadow: Standard API-equivalent rates, fixed 2026-09-16; not subscription quota/billing.
+Scope                   Uncached input    Cached input       Output  Cache write    Shadow USD
+TOTAL                          200,894       6,380,160       33,031            0         10.04
+last 30m                       200,894       6,380,160       33,031            0         10.04
+last 5m                         88,095       2,686,336       14,185            0          4.28
+root                            44,692       2,752,768        7,285            0          3.56
+workers                        156,202       3,627,392       25,746            0          6.48
+gpt-6-astra                    200,894       6,380,160       33,031            0         10.04
+Scope: local metadata-linked descendants only; separate roots/host-only logs excluded.
+Windows use usage-event timestamps; in-flight calls appear after telemetry is written.

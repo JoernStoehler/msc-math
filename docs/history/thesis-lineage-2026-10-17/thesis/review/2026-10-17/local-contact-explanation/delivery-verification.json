@@ -1,0 +1,77 @@
+{
+  "checked_at": "2026-10-17T19:01:12.734453+00:00",
+  "status": "PASS",
+  "packet_hashes": {
+    "plot-contact-cusp.py": "02f500a69362a24b0fa57c48d75adc6fbaae54ff461b7ee5f668a3d6e22d2aa1",
+    "preview.css": "d5d032b6775c1549eacd9c4c1aed0cbc263895dbfa4d962086f54880b7c08da4",
+    "README.md": "15a63b56fa3b76f9f3a1704e24c74e0c133793b128bdf4327795e05d6d24f31b",
+    "draft-verification.json": "1314f0f8a7343c7dd9712b9fdc7ec85a74345dfb7b51648fbc4f27fb50965ee4",
+    "contact-cusp.svg": "702deb3e8d0be0d2288ad23784676cfbbb9f44612fc30b2ba59101277908d03b",
+    "review.md": "d6cd6de67e3b25a94357394e03e8c05dbaddcddc92b54f1eb44270bc5ef2987b",
+    "OPTIONAL-PREVIEW.pdf": "2ab4e7d66f4217598d2e185529fe9a5353d03faba554ab2a4ebe16991e52bc8a",
+    "verification.json": "cea5afdaed5f7de628b019e91af3e0a60e60c528acca0dc71a65b318a913cfc2",
+    "definitions-and-proof.tex": "1da8413c752d243e07419da9f748582f061e47d09a564701103b99ab74ab0cd4",
+    "PASSAGE.md": "0ae812fb696c8e36bb914a431ae0e3439b0dec660cc20e1753231c108297fd8d",
+    "passage.tex": "cb8dc2cba0a877c5b552c062a8faaae0c06a7fe7408378847b816a784293994f",
+    "PLAN.md": "ad623517396c8fc73bcde59f8988d1627b250f67959bd6fb726418b34c3fda7f",
+    "check.py": "6054e513d09ab2ccc5feabb971f476a71a4d676182f51b58bf5ca7ba0f716ef6",
+    "preview-verification.json": "0147d871805f6ae5e3cbc21631f2b804d9dfaeb638dd5c519c1978e81da5586e",
+    "contact-cusp.png": "dea59dc505dc9c398928683a2037eda5e1f104b842de2fefce14bf8d08c07485",
+    "SOURCE-AND-PLACEMENT.md": "af354f64d75fb556f09b89b513fbc3a4bae867da594d107b1b1b5b9dddfd0f67",
+    "index.html": "cbb07cb1347683deeb1cd31597ea22d5156fc9f46fa331bd9e55654929641b4c",
+    "source-snapshot.json": "4efb6f5248113eebc0169e903a4fef6bd2cff6f07a00c6177089fe5b792fddf0"
+  },
+  "local_links_checked": 15,
+  "open_question_ids": [
+    "6fe1eb11-82be-4ab0-b1fe-1be9e366845e",
+    "f57e68b5-8f53-4c4e-b0ca-aac1d5f92bae",
+    "bbe3596b-63a3-493b-b21b-3318e99cbe62",
+    "793fabfc-3906-4d96-8dd4-0e12e083803b",
+    "09b70a7d-2acd-4cff-bee9-2974c5d8d46e"
+  ],
+  "historical_questions": 50,
+  "retained_consumed_answers": 18,
+  "pending_for_owner_tasks": [
+    "f4d732a5-6c6f-44fe-aa90-1e0d91bbf199",
+    "9ef3cbae-756f-470e-abd5-b0227d884a72",
+    "2a4dc9d4-4b8e-4b2e-a140-d97be32f21c6"
+  ],
+  "pm": {
+    "completed_task": "56480fb1",
+    "result": "289ad2c0-8f1d-4e4d-a9c8-d66fb6730a45",
+    "question": "6fe1eb11",
+    "successor_task": "2a4dc9d4-4b8e-4b2e-a140-d97be32f21c6"
+  },
+  "reviews": {
+    "scientific": {
+      "reviewer": "/root/contact_science_review",
+      "verdict": "APPROVE candidate-math-v2"
+    },
+    "delivery": {
+      "reviewer": "/root/delivery_review",
+      "approved": [
+        "progress-v1",
+        "progress-v2",
+        "question-v1",
+        "packet-text-v1",
+        "metadata-v3",
+        "result-v1",
+        "task-v1",
+        "final-v1"
+      ],
+      "condition": "Actual local commit must complete before final delivery."
+    }
+  },
+  "checks": [
+    "exact cusp/displayed finite metric source audit PASS",
+    "isolated108-page LaTeX build PASS",
+    "cover and six main/supplement pages visually checked",
+    "all108pages explicitly optional",
+    "three artifact HTTP200 identities PASS",
+    "8focused dashboard tests PASS",
+    "coordination sourcecheck and generated graph freshness PASS",
+    "selected105-page PDF/build identity preserved",
+    "patterns branch clean1c3aaf47"
+  ],
+  "scope": "Concrete editorial decision packet only; no new scientific result, selected manuscript insertion, human acceptance, public deployment, sending, push or merge."
+}

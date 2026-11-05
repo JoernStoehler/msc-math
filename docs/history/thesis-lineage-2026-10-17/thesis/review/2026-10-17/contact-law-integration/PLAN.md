@@ -1,0 +1,7 @@
+# Selected local-contact integration
+
+End state: the selected Chapter 8 explains the exact piecewise-linear local loss at HKO and the same predictor's failed broad transfer, with a readable cusp, an exact-definition supplement, portable original electronic witnesses and fresh PDF/layout checks. Preserve the new feasible-HK-witness subsection. No new theorem acceptance, global bound, empirical experiment or human PASS.
+
+Options: empirical-only prose is shortest but obscures the mechanism; local law plus technical supplement explains the corner and keeps the finite data in scope; a full printed census burdens the imminent submission. Choose the middle route authorized by the owner. A shortest-text rubric would reward unexplained labels, a theorem-count rubric appendix growth, and accuracy alone the deliberately local panel. Require mechanism, support, successful and failed tests, and small main-text burden.
+
+Steps cannot be skipped: retain portable original source/certificate identities before citing them; select main text and definitions together to resolve the actual claim; preserve the separate witness route; build and inspect changed pages to catch reference/layout breakage. Mathematical source comparison and imported exact receipts are bounded evidence, not human acceptance. Root owns final independent review, coordination, commit and cleanup; this worker owns only the selected integration and its evidence.

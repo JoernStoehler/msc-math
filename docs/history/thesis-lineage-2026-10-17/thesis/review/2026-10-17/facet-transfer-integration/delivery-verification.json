@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-17T20:18:42.645928+00:00",
+  "status": "PASS",
+  "report_local_links": 10,
+  "http": [
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/facet-transfer-integration/README.md",
+      "status": 200,
+      "bytes": 8121
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/facet-transfer/REPORT.md",
+      "status": 200,
+      "bytes": 18107
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/docs/dashboard/thesis.html",
+      "status": 200,
+      "bytes": 75093
+    }
+  ],
+  "unchanged_candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "owner_note_lines": 146,
+  "scientific_review": "APPROVE facet-science-v1 /root/intake",
+  "scope": "Report link/delivery checks, exact selected candidate identity and owner-note length; scientific checks have separate receipts."
+}

@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "local_links": 19,
+  "pandoc_rendered": 3,
+  "http": [
+    {
+      "file": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/near-hko-transfer-integration/README.md",
+      "status": 200
+    },
+    {
+      "file": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/near-hko-transfer-integration/CHAPTER8-INSIGHT.md",
+      "status": 200
+    },
+    {
+      "file": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/near-hko-transfer/REPORT.md",
+      "status": 200
+    },
+    {
+      "file": "/workspaces/msc-math-worktrees/thesis-2026-10-16/docs/dashboard/thesis.html",
+      "status": 200
+    }
+  ],
+  "owner_notes_lines": 93,
+  "candidate_unchanged": true
+}

@@ -1,0 +1,41 @@
+\subsection{Competing branches in local search}
+\label{subsec:black-box-datascience-finite-budget-optimization}
+
+Increasing one currently minimizing branch can expose another as the new
+minimum, as the lower-envelope model in
+Section~\ref{subsec:first-order-search-model} explains. The
+finite-gap model therefore retains nearby branches, and history-based
+variants also retain previously active ones. A numerically chosen branch
+window is not guaranteed to contain every relevant branch.
+
+Retaining branches from earlier points gave the largest median
+best-so-far numerical ratios in the comparison. Seven fixed
+implementations shared the same 64 generic ten-facet starting bodies, a cap
+of 128 full evaluations and a nominal one-second accumulated
+evaluator-plus-optimizer budget:
+\begin{center}
+\begin{tabular}{lrr}
+\hline
+Implementation & Median best ratio & Across-start $10$--$90\%$ range\\
+\hline
+Four-anchor history & .985 & .957--.999\\
+History with transition prediction & .982 & .956--.994\\
+Finite-gap model & .977 & .948--.995\\
+Literal gradient & .881 & .790--.924\\
+Safeguarded gradient & .855 & .780--.916\\
+CMA-ES & .818 & .718--.869\\
+Coordinate poll & .601 & .358--.787\\
+\hline
+\end{tabular}
+\end{center}
+The finite-gap method models branches near the current minimum. The two
+history methods also retain earlier branches; one predicts additional
+branches from transitions. CMA-ES~\cite{dsHansen2016} and coordinate polling
+supply population and direct-search comparisons. These are rankings of
+the fixed implementations under this allocation, not of optimally tuned
+algorithm families. The comparison uses a heuristic floating-point objective,
+rather than the certified capacity implementation of Section~\ref{sec:numerics}.
+Its geometry and volume are floating-point computations. Appendix~\ref{app:ds-local-optimization} specifies the
+available implementations, traces and budget interpretation. The ranges in the table
+show variation across starting bodies; all 448 best-so-far ratios are below one.
+

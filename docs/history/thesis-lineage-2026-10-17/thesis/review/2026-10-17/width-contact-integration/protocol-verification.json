@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "width_sha256": "dcffead16ab5ad0fcdf6ae55d78375bea5b6ee7274877a33846cf4c3c2a7d57f",
+  "name_hash_controls": [
+    "random_5x5_s0_8",
+    "random_5x6_s0_102",
+    "random_6x6_s0_194"
+  ],
+  "second_stage_width_extremes": [
+    "random_5x6_s2_220",
+    "random_6x6_s1_194"
+  ],
+  "existing_survivors": 26,
+  "scope": "Choice membership independently checked; ten original retrospective challenges and two explicitly post-result stress controls, not prospective held-out evidence."
+}

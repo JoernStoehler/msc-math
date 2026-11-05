@@ -1,0 +1,11 @@
+--- a/thesis/chapters/08-data-science.tex
++++ b/thesis/chapters/08-data-science.tex
+@@ -169,7 +169,7 @@
+ selected pool, even when the total ridge area is small.
+ 
+ The strong ordering in the broad samples is not retained within the
+-low-$R$ panels themselves. Across 1,000 evaluated products in the lowest
++low-$R$ panels themselves. Across 1,000 evaluated products in that sample's lowest
+ one percent by $R$, correlations within the ten side-count groups range
+ from $-0.315$ to $+0.301$; pooling ranks computed within each group gives
+ $+0.032$. The most extreme tenth has a larger mean ratio than the rest

@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "retrieved_date": "2026-09-18",
+  "repositories": {
+    "scarecrow": {
+      "repository": "yao-dou/scarecrow",
+      "commit": "f3f4fffc23596af6840b973ddb7fca8e03d992ab"
+    },
+    "snac": {
+      "repository": "tagoyal/snac",
+      "commit": "4eba8e793b0700f607a1185da0f0bc25a43d236f"
+    },
+    "storyfeedback": {
+      "repository": "google-deepmind/igen",
+      "commit": "c4a89ac6d8803df461be3a306868604b340dfb96"
+    },
+    "aries": {
+      "repository": "allenai/aries",
+      "commit": "5691bae71a101225ed345d0ffc42e47609f03bbb"
+    }
+  },
+  "files": [
+    {
+      "file": "scarecrow.csv",
+      "url": "https://raw.githubusercontent.com/yao-dou/scarecrow/f3f4fffc23596af6840b973ddb7fca8e03d992ab/data/grouped_data.csv",
+      "sha256": "bc0867107dbefddfe43a6d8dd0ceea797ce225bb90b01c73416bf5e4e7ed054c",
+      "bytes": 5045468
+    },
+    {
+      "file": "storyfeedback.zip",
+      "url": "https://raw.githubusercontent.com/google-deepmind/igen/c4a89ac6d8803df461be3a306868604b340dfb96/data.zip",
+      "sha256": "2f4bba59a6bd85a26607f33a855a7d1aaedff1db6901e09b73712c4e9e2fbcfd",
+      "bytes": 26340910
+    },
+    {
+      "file": "snac.download",
+      "url": "https://drive.google.com/uc?export=download&id=1ff-pV2sX9XNDMdaPxY7v22T2i0235tcE",
+      "sha256": "c4d238bfd365a107fa4f986d33feb44f0f37c7fc85207a21096313a44f786ef4",
+      "bytes": 1852465
+    },
+    {
+      "file": "aries-review_comments.jsonl",
+      "url": "https://ai2-s2-research-public.s3.amazonaws.com/aries/review_comments.jsonl",
+      "sha256": "0f32ce3b66b12385dd2f9d1bb791a8800e80060b1a58c0deddd87bcded3b2b58",
+      "bytes": 1395177
+    },
+    {
+      "file": "aries-edit_labels_test.jsonl",
+      "url": "https://ai2-s2-research-public.s3.amazonaws.com/aries/edit_labels_test.jsonl",
+      "sha256": "e5c827f2572ecbc26e00583ca2ff557b083b8b71a577f4d308aaf00a24c62306",
+      "bytes": 130783
+    },
+    {
+      "file": "aries-alignment_human_eval.jsonl",
+      "url": "https://ai2-s2-research-public.s3.amazonaws.com/aries/alignment_human_eval.jsonl",
+      "sha256": "b292a3d69657f5c88dcbf699a4e9d6b8c652fd3d12003cc85362a0698c82ffd0",
+      "bytes": 52624
+    },
+    {
+      "file": "aries-generated_edits.jsonl",
+      "url": "https://ai2-s2-research-public.s3.amazonaws.com/aries/generated_edits.jsonl",
+      "sha256": "5dd92fcc4ed67e60441c503bd3c0e09f70db8f6e42c72abe546d69e2b3b1d6fa",
+      "bytes": 330670
+    },
+    {
+      "file": "aries-paper_edits.jsonl",
+      "url": "https://ai2-s2-research-public.s3.amazonaws.com/aries/paper_edits.jsonl",
+      "sha256": "2ac050dc84ec984db5e9ed166f5411d54e213bfc16a4f596766041f1910e5d3c",
+      "bytes": 12881188
+    },
+    {
+      "file": "aries-LICENSE",
+      "url": "https://ai2-s2-research-public.s3.amazonaws.com/aries/LICENSE",
+      "sha256": "11a6d83734845ad09d809667aa219857a5b985b28c258a2eebf5677668a6bd3b",
+      "bytes": 19977
+    },
+    {
+      "file": "aries-s2orc.tar.gz",
+      "url": "https://ai2-s2-research-public.s3.amazonaws.com/aries/s2orc.tar.gz",
+      "sha256": "c0b5c50afde1a819788bc679b3751167c65ea3b5bc283c30f2b069d21c7b201c",
+      "bytes": 93627656
+    },
+    {
+      "file": "scarecrow-README.md",
+      "url": "https://raw.githubusercontent.com/yao-dou/scarecrow/f3f4fffc23596af6840b973ddb7fca8e03d992ab/README.md",
+      "sha256": "a1d4dc43df08c4d3fc2c86714c74b4403ae16c1f78618eb4113b6047a0744697",
+      "bytes": 11
+    },
+    {
+      "file": "snac-README.md",
+      "url": "https://raw.githubusercontent.com/tagoyal/snac/4eba8e793b0700f607a1185da0f0bc25a43d236f/README.md",
+      "sha256": "dc2a87161433d8c700f7aa50c6c098c72c48d4c636cd9f7655d4a0869f28bfbd",
+      "bytes": 3224
+    },
+    {
+      "file": "storyfeedback-README.md",
+      "url": "https://raw.githubusercontent.com/google-deepmind/igen/c4a89ac6d8803df461be3a306868604b340dfb96/README.md",
+      "sha256": "78fd193569e7103f8ca034222eed99762519bfa0450df281f86efb151c34be03",
+      "bytes": 4502
+    },
+    {
+      "file": "aries-README.md",
+      "url": "https://raw.githubusercontent.com/allenai/aries/5691bae71a101225ed345d0ffc42e47609f03bbb/README.md",
+      "sha256": "a5b05f950f682674cda44c14943904e319ac00a8e499fde21e8a697e2e5ccbbc",
+      "bytes": 6971
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-10-17T19:51:39.646586+00:00",
+  "relative_links_checked": 11,
+  "http": [
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/basin-continuation-integration/README.md",
+      "status": 200
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/basin-continuation/REPORT.md",
+      "status": 200
+    }
+  ],
+  "files": {
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/basin-continuation-integration/README.md": "3a7a65ad37041d5e154ec3bfe05ecef21401ddfed809b305c62ede00371e0df3",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/basin-continuation-integration/owner-check.py": "fae6bb8da1a9482785f1f28fdb2ab4385eecbc88136d520c76c1854887ffa4be",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/basin-continuation-integration/verification.json": "243f8b5d12a845c1f09286e483ff92466c7a7912dd4614ad3e9e1fb1489fc03f",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/basin-continuation-integration/scientific-review.md": "ea4e601ac38fd7dae3eeb5961eee7a6ac4600a9fab8676881ff545a3e1f70bd2",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/basin-continuation/REPORT.md": "a1030a55b2ef16847593713852fd61fea40028815c976af0d75593ed154697c9",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/basin-continuation/review.md": "a0d420ed088296c9ea9440d2cce455f942cb893edcd4a172d1969ec514a161bf",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/basin-continuation/verification.json": "9f62ab35ac2d86acb6cfb02108384e6f27c9b0e583d01bc432c566ca74944890",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/basin-continuation/PLAN.md": "93bb159eace053d5129c2bea6459257f2c53bf711a126aaa409c50b7ecc1599e",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/basin-continuation/check.py": "90575c904f91c016343aee1ab1349ee2f6cc2da65d9e9382686318f5b85398d0"
+  },
+  "candidate_build_byte_identity": true,
+  "owner_notes_lines": 135,
+  "scientific_review": "APPROVE basin-report-v3 by /root/continuation_review",
+  "scope": "New reports, source bindings, live HTTP rendering and existing candidate identity; no fresh PDF or human acceptance."
+}

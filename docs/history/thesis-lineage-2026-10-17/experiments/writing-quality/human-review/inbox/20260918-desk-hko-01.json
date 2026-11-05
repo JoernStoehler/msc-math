@@ -1,0 +1,32 @@
+{
+  "id": "20260918-desk-hko-01",
+  "producer": {
+    "name": "prose-review-desk",
+    "thread": "01a0b3d2-5ce0-7c63-ae27-05e876b98ae3",
+    "pane": "w26:p2"
+  },
+  "artifact": {
+    "path": "experiments/writing-quality/human-review/packets/20260918-desk-hko-01.md",
+    "sha256": "ed79020751d33df77e863c320ffc4f0353f2b11054ee83b17f2cd3d56511d76b"
+  },
+  "context": [
+    {
+      "path": "experiments/writing-quality/runs/20260918-repair/hko-baseline.txt",
+      "sha256": "4d8098caf6eced087eedac0f957892a1f10727d95625b56b9c4940fc393dcc7e"
+    }
+  ],
+  "question": "Do these two paragraphs read acceptably in the stated context?",
+  "consequence": "Retain as a human-acceptable local repair if accepted; otherwise leave unaccepted. No chapter PASS or manuscript edit follows.",
+  "provenance": {
+    "source": {
+      "path": "experiments/writing-quality/runs/20260918-repair/narrow.md",
+      "sha256": "48656bbd2e1e50f877a4bf44eaa2abec36685cf8902095cf3141e92332db0963"
+    },
+    "operation": "Exact two HKO replacement slots from supplied-objection narrow repair; desk added context and question only.",
+    "selection": "Selected for short reader effort, not by an independent comparison. Desk has read AI assessments; these are withheld from the reading packet.",
+    "history": "Source chapter previously reviewed by Jörn. This is a follow-up local review, not a fresh blind judgment."
+  },
+  "estimated_effort": "About one minute",
+  "status": "offered",
+  "response_path": "experiments/writing-quality/human-review/responses/20260918-desk-hko-01.md"
+}

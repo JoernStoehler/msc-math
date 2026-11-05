@@ -1,0 +1,211 @@
+9    The Rotated-Pentagon Profile
+The Haim–Kislev–Ostrover counterexample is a Lagrangian product of two regular pentagons.
+We determine how its capacity changes when one pentagon rotates relative to the other. The
+volume stays constant, so this also determines which relative positions maximize the systolic
+ratio.
+    Let P5 ⊂ R2 be a regular pentagon centred at the origin with circumradius one. Write R(θ)
+for counterclockwise rotation through angle θ, and put
+
+                                 Kθ = P5 ×L R(θ)P5 ⊂ R2q ⊕ R2p .
+
+The Lagrangian product here is the Cartesian product in the two coordinate planes, with
+symplectic form ω0 ((q, p), (q ′ , p′ )) = q · p′ − p · q ′ . Simultaneous rotation of both planes is
+symplectic, so the choice of initial orientation for P5 does not affect the capacity. We use
+
+                                                    cEHZ (K)2
+                                       sys(K) =                .
+                                                    2 vol4 (K)
+
+   The sampled ratios in Figure 1 rise from the aligned position to a maximum at θ = π/10,
+then fall symmetrically. They suggested a profile proportional to sec2 θ on [0, π/10]. We
+prove this formula by comparing the quadratic programs at different angles. Their feasible
+weights remain the same under rotation, and each fixed choice has a particularly simple angular
+dependence. The known capacity at the Haim–Kislev–Ostrover position will then bound every
+such choice throughout the interval.
+
+
+
+
+Figure 1: Systolic ratios for the rotating pentagon product. The blue markers are numerical
+evaluations of the finite quadratic programs; the black curve is the formula proved in this
+chapter. The horizontal line marks sys = 1.
+
+    To state the profile for all angles, define
+                                                          kπ
+                                       d(θ) = min θ −        .
+                                                  k∈Z      5
+
+This is the distance to the nearest multiple of π/5, and takes values in [0, π/10].
+
+                                                    1
+Theorem 9.1 (Rotated-pentagon profile). For every real θ,
+                                                                   2
+                            cEHZ (Kθ ) = 1 + cos(π/5) sec d(θ),                         (1)
+                                             √
+                                         5+2 5
+                              sys(Kθ ) =         sec2 d(θ).                             (2)
+                                           10
+                                   √
+The maximum systolic ratio is (3 + 5)/5 > 1, attained exactly at θ = π/10 + kπ/5, k ∈ Z.
+
+9.1    Symmetries and the Haim–Kislev–Ostrover position
+We first reduce the angles to [−π/10, π/10] and identify the capacity at its endpoints. The
+pentagon’s rotational symmetry gives Kθ+2π/5 = Kθ . If S is reflection in a symmetry axis of P5 ,
+the simultaneous reflection (q, p) 7→ (Sq, Sp) is symplectic and sends Kθ to K−θ . Thus capacity
+is even as a function of θ.
+    Exchanging the two factors gives a further symmetry. The symplectic map (q, p) 7→ (p, −q)
+sends Kθ to R(θ)P5 ×L (−P5 ). Rotate both factors through −θ and use −P5 = R(π/5)P5 to
+obtain Kπ/5−θ . Together with evenness, this proves that capacity has period π/5. Every angle
+can therefore be reduced to [−π/10, π/10] without changing capacity; evenness will give the
+final expression in terms of d(θ).
+    Haim–Kislev and Ostrover computed the capacity of the product with relative angle −π/2.
+Their convention for the symplectic form is i dpi ∧ dqi = −ω0 . The map (q, p) 7→ (q, −p)
+                                                 P
+
+changes this convention to ours and sends their body to Kπ/2 . Since π/2 = π/10 + 2π/5, their
+result [HO26, Proposition 1.4], together with the reflection symmetry, gives
+                                                                                              
+                   cEHZ (K−π/10 ) = cEHZ (Kπ/10 ) = 2 cos(π/10) 1 + cos(π/5) .                            (3)
+
+9.2    Feasible weights under rotation
+The quadratic capacity formula lets us compare different angles using the same facet order and
+weights. We spell out its variables for this family. Set
+                                          π 2πi       π 2πi
+                                                                              
+            h = cos(π/5),        ni = cos   +   , sin   +                                ,   0 ≤ i < 5.
+                                          2   5       2   5
+Choose the orientation P5 = {q : ni · q ≤ h, 0 ≤ i < 5}. The ten facets of Kθ then have
+normalized normals
+
+                ai (θ) = h−1 (ni , 0),        ai+5 (θ) = h−1 (0, R(θ)ni ),            0 ≤ i < 5,
+
+so that their inequalities are ai (θ) · x ≤ 1.
+    A facet word σ = (σ1 , . . . , σm ) is an ordered list of distinct indices from {0, . . . , 9}. Its
+feasible weights satisfy
+                                             m
+                                             X                   m
+                                                                 X
+                          βk ≥ 0,                  βk = 1,             βk aσk (θ) = 0.                    (4)
+                                             k=1                 k=1
+
+The last equation is closure. For these weights, define
+                                               X                                  
+                            Qσ,β (θ) =                 βj βk ω0 aσj (θ), aσk (θ) .                        (5)
+                                         1≤j<k≤m
+
+This uses the traversal order of the quadratic-program chapter. The Haim–Kislev formula [Hai19]
+states that
+                                       1
+                    cEHZ (Kθ ) =             ,    Qmax (θ) = max Qσ,β (θ) > 0,              (6)
+                                   2Qmax (θ)                 σ,β
+
+
+                                                        2
+where the maximum is over all words and their feasible weights. There are finitely many words,
+and each feasible set is a closed subset of a simplex, so the maximum exists. Zero weights allow
+facets to be omitted.
+    For this product, closure separates into equations in the two planes:
+                           X                                 X
+                                  βk nσk = 0,       R(θ)            βk nσk −5 = 0.
+                          σk <5                             σk ≥5
+
+Removing the invertible rotation from the second equation shows that feasibility is independent
+of θ. Thus a word and weights chosen at one angle remain feasible at every other angle.
+    We first exhibit a choice that gives the proposed capacity as an upper bound. Take
+                                                              1
+                    σ = (3, 8, 1, 0, 5, 6),     β=                 (2h, 2h, 1, 1, 1, 1).
+                                                          4(1 + h)
+
+These weights are positive and sum to one. The normal n3 points opposite the bisector of n0
+and n1 , and hence
+                                    n0 + n1 = −2hn3 .
+This identity gives closure in both factors. To evaluate Q, group the consecutive entries (1, 0)
+and (5, 6) of the word. Normals from the same factor have zero symplectic pairing, so bilinearity
+lets us replace each group by its weighted sum. Writing
+                                            n3
+                                    u=            ,         v = R(θ)u,
+                                         2(1 + h)
+
+the four weighted sums, in their order, are
+
+                               (u, 0),    (0, v),     (−u, 0),       (0, −v).
+
+Their ordered symplectic pairings sum to 2u · v. Therefore
+                                                        cos θ
+                                         Qσ,β (θ) =             .                              (7)
+                                                      2(1 + h)2
+
+For |θ| ≤ π/10 this is positive, and the capacity formula yields
+
+                                     cEHZ (Kθ ) ≤ (1 + h)2 sec θ.                              (8)
+
+To prove equality, we must show that no other feasible choice gives a larger quadratic value.
+
+9.3   Bounding all choices by their endpoint values
+Fix any facet word σ and feasible weights β. Same-factor pairings in (5) vanish, and each mixed
+pairing is, up to sign, h−2 ni · R(θ)nj . There are consequently constants Aσ,β and Bσ,β such that
+
+                                  Qσ,β (θ) = Aσ,β cos θ + Bσ,β sin θ.
+
+This angular dependence determines the value inside our interval from the two endpoint values.
+The sine addition formulas give
+
+                                          sin(π/10 − θ)
+                             Qσ,β (θ) =                 Qσ,β (−π/10)
+                                             sin(π/5)
+                                            sin(π/10 + θ)
+                                          +               Qσ,β (π/10).                         (9)
+                                               sin(π/5)
+
+For −π/10 ≤ θ ≤ π/10, both coefficients are nonnegative and their sum is cos θ/ cos(π/10).
+
+                                                      3
+   The fixed choice remains feasible at both endpoints, so its quadratic value there is at most
+the corresponding maximum. By (3) and (6),
+                                                                  1
+                      Qσ,β (±π/10) ≤ Qmax (±π/10) =                          .
+                                                          4 cos(π/10)(1 + h)
+
+We may substitute these upper bounds into (9) because its coefficients are nonnegative. This
+gives
+                                           cos θ           cos θ
+                        Qσ,β (θ) ≤      2
+                                                       =           ,
+                                   4 cos (π/10)(1 + h)   2(1 + h)2
+using 2 cos2 (π/10) = 1 + h. The bound holds for every feasible choice, and the choice in (7)
+attains it. We have proved
+                            cos θ
+             Qmax (θ) =             ,    cEHZ (Kθ ) = (1 + h)2 sec θ,        |θ| ≤ π/10.
+                          2(1 + h)2
+
+Evenness and π/5-periodicity give (1) for all real angles.
+   Finally, the five triangles joining the centre of P5 to its edges give
+                                                                                 2
+                              5                                      5
+                                                                             
+                   area(P5 ) = sin(2π/5),         vol4 (Kθ ) =         sin(2π/5) .
+                              2                                      2
+Substitution into the definition of the systolic ratio yields
+                                                           √
+                                (1 + cos(π/5))4       25+2 5
+                   sys(Kθ ) =           2 sec d(θ) =       sec2 d(θ).
+                                5
+                             2 sin(2π/5)                 10
+                                  2
+
+Since sec2 t is strictly increasing √
+                                    on [0, π/10], the maximum occurs precisely when d(θ) = π/10.
+At those angles its value is (3 + 5)/5. This completes the proof of Theorem 9.1.
+
+
+References
+[Hai19]   Pazit Haim-Kislev. “On the symplectic size of convex polytopes”. In: Geometric and
+          Functional Analysis 29.2 (2019), pp. 440–463. doi: 10.1007/s00039-019-00486-4.
+[HO26] Pazit Haim-Kislev and Yaron Ostrover. “A counterexample to Viterbo’s conjecture”.
+       In: Annals of Mathematics 203.2 (2026), pp. 603–622. doi: 10.4007/annals.2026.
+       203.2.5.
+
+
+
+
+                                                  4

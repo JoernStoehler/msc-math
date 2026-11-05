@@ -1,0 +1,34 @@
+{
+  "prepared_utc_date": "2026-10-17",
+  "source": "einsichtnahme.pdf",
+  "source_sha256": "07a47dc9e350240d4c745f72a02fbdc37ae806508234eec9d1f5b79799581780",
+  "output": "einsichtnahme-ja.pdf",
+  "output_sha256": "2f9fb4e4c00aeed7919443a6a90a16dcb1d1ed608691d8e9964e5d7820aee471",
+  "decision": "Ja",
+  "decision_authority": "Jörn Stöhler, dashboard answer relayed in task on 17 October 2026",
+  "method": "Static vector X over Ja box; official source has no AcroForm fields or Widget annotations.",
+  "cross_segments_pt": [
+    [
+      77.0,
+      449.5,
+      87.0,
+      459.0
+    ],
+    [
+      77.0,
+      459.0,
+      87.0,
+      449.5
+    ]
+  ],
+  "other_fields": "All left blank, including identity, matriculation number, degree, subject, place/date and signature.",
+  "validation": {
+    "pages": 1,
+    "acroform_fields": 0,
+    "widget_annotations": 0,
+    "original_text_preserved": true,
+    "source_hash_preserved": true
+  },
+  "signed": false,
+  "submitted": false
+}

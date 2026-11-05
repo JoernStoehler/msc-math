@@ -1,0 +1,59 @@
+--- a/thesis/chapters/08-data-science.tex
++++ b/thesis/chapters/08-data-science.tex
+@@ -516,19 +516,14 @@
+ \subsection{Competing branches in local search}
+ \label{subsec:black-box-datascience-finite-budget-optimization}
+ 
+-The branch model in Section~\ref{subsec:first-order-search-model}
+-supplies a more local source of proposed improvements. Its lower-envelope
+-structure explains why increasing one currently minimizing branch can
+-expose another as the new minimum. The
+-finite-gap model therefore retains nearby branches, and history-based
+-variants also retain previously active ones. A numerically chosen branch
+-window is not guaranteed to contain every relevant branch.
+-
+-Retaining branches from earlier points gave the largest median
+-best-so-far numerical ratios in the comparison. Seven fixed
++The two branch-history implementations had the two largest median
++best-so-far numerical systolic ratios in this comparison. Seven fixed
+ implementations shared the same 64 generic ten-facet starting bodies, a cap
+ of 128 full evaluations and a nominal one-second accumulated
+-evaluator-plus-optimizer budget:
++evaluator-plus-optimizer budget. The comparison uses a heuristic
++floating-point objective, rather than the certified capacity implementation
++of Section~\ref{sec:numerics}. Its geometry and volume are floating-point
++computations.
+ \begin{center}
+ \begin{tabular}{lrr}
+ \hline
+@@ -544,16 +539,20 @@
+ \hline
+ \end{tabular}
+ \end{center}
+-The finite-gap method models branches near the current minimum. The two
+-history methods also retain earlier branches; one predicts additional
+-branches from transitions. CMA-ES~\cite{dsHansen2016} and coordinate polling
+-supply population and direct-search comparisons. These are rankings of
+-the fixed implementations under this allocation, not of optimally tuned
+-algorithm families. The comparison uses a heuristic floating-point objective,
+-rather than the certified capacity implementation of Section~\ref{sec:numerics}.
+-Its geometry and volume are floating-point computations. Appendix~\ref{app:ds-local-optimization} specifies the
+-available implementations, traces and budget interpretation. The ranges in the table
+-show variation across starting bodies; all 448 best-so-far ratios are below one.
++The lower-envelope structure of the branch model in
++Section~\ref{subsec:first-order-search-model} explains why increasing one
++currently minimizing branch can expose another as the new minimum. The
++finite-gap method therefore models branches near the current minimum.
++The history methods also retain branches from earlier points; one predicts
++additional branches from transitions. A numerically chosen branch window
++is not guaranteed to contain every relevant branch.
++
++CMA-ES~\cite{dsHansen2016} and coordinate polling supply population and
++direct-search comparisons. These are rankings of the fixed implementations
++under this allocation, not of optimally tuned algorithm families. The ranges
++in the table show variation across starting bodies; all 448 best-so-far
++ratios are below one. Appendix~\ref{app:ds-local-optimization} specifies the
++available implementations, traces and budget interpretation.
+ 
+ \subsection{A failed probe does not establish a local maximum}
+ 

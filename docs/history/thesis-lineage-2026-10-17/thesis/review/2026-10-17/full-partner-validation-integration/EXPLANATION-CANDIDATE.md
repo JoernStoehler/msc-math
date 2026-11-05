@@ -1,0 +1,15 @@
+# Candidate paragraph for Chapter 8
+
+**Optional draft; the selected manuscript is unchanged.**
+
+Short capacity witnesses can be selected from the relative shapes of the two polygon factors. For a polygon $P$ and its rotated partner $JQ$, let $R(P,JQ)$ be the least scale of a translated copy of $P$ containing $JQ$. Linear-programming duality turns the contact facets of this containment problem into a closing combination of at most three facet normals. Its capacity bound is $c_{\mathrm{EHZ}}(P\times_L Q)\leq2\operatorname{area}(Q)/R(P,JQ)$. One response from the other factor can improve this witness; we take the best of both rotation signs and factor orders. Fivefold symmetry makes this procedure exact for the known regular-pentagon rotation family. In its original retrospective comparison on 27 predeclared upper-tail products outside the 20 design controls, this fixed containment rule improved six strongest previous bounds by at least 1%, but one bound was 7.90% worse than an available width witness. Taking its minimum with the earlier bounds left 26 of those 27 bounds within 1% of historical numerical capacities, with a largest discrepancy of 1.52%. This figure describes that particular containment-plus-incumbent comparison, rather than the best bound now retained.
+
+A later joint-closure linear programme, followed by row/column response rounding, uses a different support-selection mechanism. On 26 of the same upper-tail products and the same nine bulk controls, its bounds agree numerically with all 35 inherited capacity labels; matching exact lower and upper certificates establish capacities on 26 bodies, including 17 tails. In particular, it certifies the capacity of the body responsible for the earlier 1.52% discrepancy and cuts that feasible upper bound by 1.496%. The old containment rule's width-obstruction body was excluded from this later panel because it had helped design the joint method. These retrospective results establish neither a universal approximation guarantee nor global maximality.
+
+---
+
+The draft retains the positive contact interpretation and distinguishes its historical metric from the later optimization result. [The comparison integration](COMPARISON-INTEGRATION.md) gives exact membership, methods, row identities, arithmetic and source bindings. The containment-plus-incumbent minimum is a post-score descriptive diagnostic on the same exposed bodies, not a separately frozen predictor or fresh holdout. Numerical agreement alone does not establish capacity equality; the later exact claims rely on the retained matching lower and upper certificates. The first-response containment identity and regular-family argument retain the verification scope of the preceding construction packet.
+
+The human inclusion decision remains pending under question `f57e68b5`; manuscript insertion task `9ef3cbae` remains blocked on that actual verdict. Default: research notes only. Any requested insertion requires placement, source/PDF checks and page reconciliation.
+
+[review: /root/question_triage]

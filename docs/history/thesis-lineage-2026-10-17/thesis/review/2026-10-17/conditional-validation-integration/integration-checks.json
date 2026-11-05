@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-17T16:46:17.340627+00:00",
+  "pattern_manifest_valid": true,
+  "owner_checker_identity_matches_pattern_manifest": true,
+  "local_links_checked": 13,
+  "http": [
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-validation/REPORT.md",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-validation-integration/README.md",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/docs/dashboard/thesis.html",
+      "status": 200,
+      "content_type": "text/html"
+    }
+  ],
+  "dashboard_source_contract": "PASS",
+  "dashboard_graph": "PASS",
+  "dashboard_tests": "8 passed",
+  "candidate_build_unchanged": true,
+  "scope": "New evidence/coordination retention and local HTTP checks; scientific baseline digests remain visibly unreconciled; no source/PDF claim promotion."
+}

@@ -1,0 +1,125 @@
+\section{Availability of Code and Data}\label{sec:published-code-data}
+
+At the time of writing, the public development repository for this thesis is
+\begin{center}
+  \url{https://github.com/JoernStoehler/msc-math}.
+\end{center}
+The public source reference is commit
+\href{https://github.com/JoernStoehler/msc-math/tree/1bec30637070effe7ab8b0a022ae62e83f6bbcab}{\texttt{1bec30637070}}. The HKO certificate and
+pentagon-rotation packet described below are present there. The accompanying
+working repository also contains this manuscript and the additional source
+packets described below; the public commit does not contain all of them.
+The repository URL follows ongoing development.
+
+\begin{sloppypar}
+The HKO local-maximality proof and the rotation computation have
+proof-facing packets in the public tree. The HKO packet is at
+\path{experiments/hko-local-maximum/theorem/} in that public commit and at
+\path{topics/variation-and-local-maxima/hko-local-maximum/theorem/} in the
+accompanying repository. It contains the finite witness, the
+exact SageMath verifier, its recorded verification summary, and the Rust
+programs used to select the witness.  Rust supplies finite choices; it is not
+trusted for theorem correctness.  SageMath reconstructs the algebraic objects
+and checks the exact predicates stated in
+Section~\ref{subsec:hko-local-maximum-computation-with-sagemath}.  Those
+predicates imply the theorem only together with the mathematical
+upper-function and slice argument given there.
+The annotated program printed in the appendix is maintained separately as
+\path{thesis/appendices/hko_core.py}. It reconstructs the same selected
+words, feasible sections, and exact derivative covectors; the appendix maps
+its shorter presentation to the public verifier
+\path{experiments/hko-local-maximum/theorem/verify.sage.py}
+(\path{topics/variation-and-local-maxima/hko-local-maximum/theorem/verify.sage.py}
+in the accompanying repository).
+
+The second ten-facet local maximum is maintained in
+\path{topics/variation-and-local-maxima/hko-local-maximum/non-hko/}. Its rational witness and
+Python/SymPy verifier check the complete product calculation, the 24 feasible
+upper sections, the rank and positivity predicates, and the exceptional
+quadratic direction. An independent checker in the same packet recomputes the
+geometry and derivatives by a different triangulation and direct section
+solve. These exact checks do not replace the analytic neighborhood argument
+or constitute a proof-assistant formalization.
+
+\end{sloppypar}
+
+The rotated-pentagon packet is stored under
+\begin{center}
+  \small\path{topics/products/regular-products/}\\[-0.2em]
+  \path{pentagon-rotation-formula-proof/}.
+\end{center}
+It contains the exact SageMath classifier and the recorded full-run transcript
+for all \(3340\) finite words left after the mathematical reduction.  This is a computational proof route; the analytic rotation and
+independent-linear-deformation proofs presented here do not use it. In the
+computational route, the enumeration theorem, the
+translation from checked signs to action comparisons, and the continuity
+argument remain mathematical inputs.  The repository exposes the finite
+computation and its output for inspection, with SageMath's exact arithmetic
+and root isolation inside the software trust boundary. The maintained
+affine-pentagon argument and its source-convention check are in
+\path{topics/products/pentagon-affine-products/}.
+
+The centrally symmetric partner result in
+Section~\ref{sec:pentagon-symmetric-partner} has its maintained analytic proof in
+\begin{center}
+  \small\path{topics/products/pentagon-arbitrary-partner/}\\[-0.2em]
+  \path{symmetric-partner-lemma.md}.
+\end{center}
+The proof uses the stated normal-triangle criterion and geometric containment,
+rather than the packet's floating-point fitting experiments.
+
+The numerical audits in Section~\ref{sec:numerics} have distinct evidence owners.
+The tracked report and producers for the \(249\) KKT systems and the complete
+\(88\)- and \(1271\)-word comparisons are in
+\path{topics/capacity-and-qp/development/tools/general_algorithm_ablation/}.
+Its \path{RESULTS.md} records the counts and outcomes; its \path{run.sh}
+produces verification and numerical-audit transcripts. The available evidence
+consists of the summary report and the executable producer; per-system results
+can be generated with that producer.
+
+\begin{sloppypar}
+The \(88\)-product audit is retained row by row in
+\path{topics/capacity-and-qp/development/tools/product_closure_route/sample5.jsonl},
+with its interpretation in that directory's \path{RESULTS.md}.
+The external \texttt{polytope-datasets} artifact supplies
+\path{random-product.jsonl} and \path{shared-cache.jsonl} for the separate
+\(10\,240\)-product observation. These are registered files,
+materialized under \path{topics/empirical-studies/polytope-datasets/}; they are not part
+of a plain checkout. The product report identifies the
+geometry-to-cache join and its scope. These numerical packets concern finite
+tests, with the production-to-development comparison recorded separately in
+\path{topics/capacity-and-qp/evidence/numerics-correspondence-check/}.
+\end{sloppypar}
+
+Other non-proof evidence is tracked as ordinary repository files. The
+first-order experiment supplies its
+\(12\)-run finite-step panel.  The bounded generated-candidate experiment
+retains \(1675\) rows selected before the systolic ratio was computed, the
+corresponding \(1675\) evaluated rows, its frozen configuration, and compact
+reports.  These records support only the finite experiments described in the
+corresponding chapters.  They neither prove a population statement nor supply
+evidence for local maximality.
+
+The artifact registry identifies external datasets and their intended local
+paths; a plain checkout does not materialize those files. For example, the
+\(14336\)-row random/product provenance table is tracked. The source
+random/product datasets are supplied by the \texttt{polytope-datasets}
+artifact, and the method-facing invariant table by the separate
+\texttt{polytope-invariant-table} artifact. The source geometries match all
+\(14336\) table rows. Geometry-derived features can be recomputed for all
+bodies; the interval evaluator supplies capacity intervals for 14,335 of the
+14,336 geometries, with one body outside the input-size policy. These intervals
+do not certify the stored numerical ratios, whose volumes are floating-point
+values. Input matching, feature comparison and capacity evaluation records are in
+\path{topics/empirical-studies/retrospective-revalidation/}.
+Consequently, cloning the repository alone does not provide every input needed
+to repeat all empirical analyses, regenerate every figure, or reproduce every
+reported run.  Packet-local instructions describe available producers and
+checks, but compatible software, dependencies, compute resources, and
+untracked inputs may still be required; timing and other
+environment-dependent fields need not reproduce byte for byte.
+
+The public commit identified above fixes the available public source version.
+Reproduction of results supported by additional packets requires the accompanying
+working repository and the external inputs identified in its artifact registry.
+There is no frozen thesis release or thesis DOI.

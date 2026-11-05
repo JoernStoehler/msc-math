@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-17T15:28:06.257961+00:00",
+  "scope": "Independent rational matrix/objective reconstruction, exact primal/dual certificates, source geometry/hash joins and direct4D feasible words; no support-pair enumeration",
+  "rational_LPs": 6,
+  "direct_4D_upper_witnesses": 3,
+  "source_geometries": 3,
+  "rows": [
+    {
+      "name": "random_5x5_s1_64",
+      "lower": 6.2032265060958105,
+      "upper": 6.2032265060958105,
+      "interval_factor": 1.0,
+      "exact_capacity": true
+    },
+    {
+      "name": "random_5x6_s1_198",
+      "lower": 4.4365955819815195,
+      "upper": 4.484227519554728,
+      "interval_factor": 1.0107361459238378,
+      "exact_capacity": false
+    },
+    {
+      "name": "random_6x6_s3_124",
+      "lower": 4.474980102946307,
+      "upper": 4.606321493224962,
+      "interval_factor": 1.0293501618458996,
+      "exact_capacity": false
+    }
+  ],
+  "result_sha256": "3270bf2b47c4cb164a5b92ffdbd3025df437f16006c054783fc31dfe4216e53e",
+  "checker_sha256": "b5a7a8daac8ca7f4899134760a3686329dabfa0f329d14c0fcf6eb2d8053079c",
+  "status": "PASS"
+}

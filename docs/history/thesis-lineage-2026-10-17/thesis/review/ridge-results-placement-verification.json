@@ -1,0 +1,14 @@
+{
+  "scope": "New candidate paragraph checked against retained exact verification, no scientific rerun",
+  "source_verification": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/ridge-functionals/unsigned-list/independent-verification.json",
+  "ratios": [
+    "6000/10571",
+    "30375/60236"
+  ],
+  "common_volume": "330",
+  "ridge_count": 27,
+  "linked_artifacts": 3,
+  "status": "PASS",
+  "paragraph_source_sha256": "75a20262dcc115a756320b030d52ccb416d989c3ad93f539941d5862d794447b",
+  "source_verification_sha256": "4de96fe2ca72727dbcc27b5a2999e12bad60867a6c8acd927259b4afbb28ebd1"
+}

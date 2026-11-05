@@ -1,0 +1,15 @@
+{
+  "scientific_reviewer": "/root/prose_evidence",
+  "scientific_verdict": "Approve after one factual wording correction: Kai finds only minor problems Jörn can fix in about two serial hours.",
+  "correction": "Applied to OWNER-PLAN.md before delivery-v1 message approval.",
+  "approved_scope": "Current difficult-slice selection, numerical/source scope, local-label limits, alternatives/rubric comparison; no new tests by reviewer.",
+  "inventory_reviewer": "/root/prose_inventory",
+  "inventory_scope": "Existing work and targeted four-worktree coverage; no runtime-session census.",
+  "message_reviewer": "/root/message_reviewer",
+  "native_verdicts": [
+    "APPROVE delivery-v1",
+    "APPROVE delivery-v2"
+  ],
+  "native_delivery_v2_return": "APPROVE delivery-v2. The finished notes, handoff and registry preserve the pending human judgment, the open parent goal and separate branch ownership. The recorded checks support the completion claims, subject to the sender completing and verifying the local commit before delivery.",
+  "limits": "Source/meaning and exact-text review do not establish Jörn acceptance or workflow transfer."
+}

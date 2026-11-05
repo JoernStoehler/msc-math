@@ -1,0 +1,12 @@
+{
+  "created_utc": "2026-09-18T09:50:50.690003+00:00",
+  "source_commit": "0e0ccb9c",
+  "inputs": {
+    "inputs/README.md": "e4c8fd41262f8d87f1f8237e1411297845f1abdd0fae7221af6d0c2079328ed3",
+    "inputs/current-panels.md": "225cf042f794e40f83840e51849df8d0a19ec9cdee10664684ab1906ab1cbc88",
+    "inputs/historical-baseline.txt": "15768d8b50f9b97940a190bc8bad4f0553c79cd8e54fcb3f09762d4fbea544bd",
+    "inputs/ridge-mathematics.md": "b908929295ca9b7e0e5b43eebac68e9171d9b80b002978aac79ddda2937040b2",
+    "inputs/search-account.md": "5a8b0ec861a91135005c1812105160d0b826dba14361b06edb37ac08701a6805"
+  },
+  "historical_baseline": "from prior repair probe; older content, not matched-content experimental control"
+}

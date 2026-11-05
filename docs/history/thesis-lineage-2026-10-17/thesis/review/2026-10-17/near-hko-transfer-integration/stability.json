@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "name": "near_hko_s4_e100",
+  "geometry_chamber": [
+    {
+      "minimum_pair_determinant": "121790283/200000000",
+      "minimum_affine_triple_determinant": "274674717/200000000"
+    },
+    {
+      "minimum_pair_determinant": "2432161/4000000",
+      "minimum_affine_triple_determinant": "170096765039/125000000000"
+    }
+  ],
+  "residual_mixture": {
+    "true_B_fraction": "288743526589183882173667635863415637485770895105/468709669366553352197129050722759042012776652914",
+    "losing_B_fraction": "179966142777369470023461414859343404527005757809/468709669366553352197129050722759042012776652914",
+    "losing_B_support": [
+      1,
+      3,
+      4
+    ],
+    "identity": "Q_true-Q_round=(1-lambda)(Q_true-Q_bad)",
+    "Q_bad": "2093243945561946980276245529311/20737052149767484998000000000000",
+    "true_A_already_extracted": true,
+    "unique_B_response_to_extracted_A_is_true_B": true
+  },
+  "LP_nondegeneracy": [
+    {
+      "shadow_sign": 1,
+      "positive_entries": 17,
+      "constraint_rank": 17,
+      "active_column_rank": 17,
+      "minimum_positive_weight": "119915331544355155494357860154783966840115294474700718750/5787673030986693536703391459347019819873866588875061109793",
+      "minimum_inactive_slack": "386896350088073357813526648774136248571794122960615294085965148903/4702484337676688498571505560719453603647516603460987151706812500000000",
+      "minimum_absolute_angular_cross": "417051/200000000",
+      "unique_nondegenerate_LP_optimum": true
+    },
+    {
+      "shadow_sign": -1,
+      "positive_entries": 17,
+      "constraint_rank": 17,
+      "active_column_rank": 17,
+      "minimum_positive_weight": "119915331544355155494357860154783966840115294474700718750/5787673030986693536703391459347019819873866588875061109793",
+      "minimum_inactive_slack": "258135265842827990661079708066662152411415254804341683821507430803851/75239749402827015977144088971511257658360265655375794427309000000000000",
+      "minimum_absolute_angular_cross": "417051/200000000",
+      "unique_nondegenerate_LP_optimum": true
+    }
+  ],
+  "strict_objective_deficit": "117791070802437542493007967235959567358536247265333210028639362208107639/1356383423084137013891864172688280811376961585649106548780275790000000000000",
+  "ratio_above_one_margin": "556518232379605819303522839198381844998544556930308542689222747478195683866510183200019050031308978391936265477049407323/19269353370625500864891774264361308411310331992295740220557322121718407443154006447941490093878308079473452825909200592677",
+  "unique_optimal_closure_pair": true,
+  "winning_supports": [
+    [
+      0,
+      2,
+      3
+    ],
+    [
+      1,
+      2,
+      4
+    ]
+  ],
+  "absence": [
+    {
+      "shadow_sign": 1,
+      "winning_A_absent": true,
+      "winning_B_absent": true
+    },
+    {
+      "shadow_sign": -1,
+      "winning_A_absent": true,
+      "winning_B_absent": true
+    }
+  ],
+  "consequence": "Both cyclic angular orders stay fixed and both LP optima continue uniquely on their strictly complementary nondegenerate bases. Feasible closure vertices and best-response values vary continuously locally; strict true-versus-rounded objective deficit and sys>1 persist on a nonempty open neighborhood. No explicit neighborhood radius, arbitrary proximity to HKO, or 1% error lower bound is claimed.",
+  "results_sha256": "17db888aa1cfb7a6d90e53b896e16c5dda5d090fd694d7b3240e674e060d46e1",
+  "root_stability_sha256": "b04bc1c8531fe69221e6c7a878b058ff59b2e32c984a846c0a6563fb333815e9"
+}

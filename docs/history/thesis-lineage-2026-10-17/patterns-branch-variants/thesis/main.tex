@@ -1,0 +1,101 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[margin=26mm]{geometry}
+
+% Suppress trivial overfull warnings (<1pt); significant ones caught by check-build.sh
+\hfuzz=1pt
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{longtable,array,microtype}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{needspace}
+\usepackage{placeins}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{showstringspaces=false,keepspaces=true}
+\usepackage[hidelinks]{hyperref}
+\usepackage[style=alphabetic,backend=biber]{biblatex}
+\addbibresource{references/main.bib}
+\addbibresource{references/additional.bib}
+\addbibresource{references/data-science.bib}
+\addbibresource{references/ai.bib}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{algorithm*}{Algorithm}
+
+\input{preamble}
+
+\title{Probing Viterbo's Conjecture}
+\author{J\"orn St\"ohler\\[0.6em]
+\normalsize Masterarbeit im Studiengang Mathematik (M.Sc.)\\
+\normalsize Universit\"at Augsburg\\
+\normalsize Mathematisch-Naturwissenschaftlich-Technische Fakult\"at\\
+\normalsize Institut f\"ur Mathematik}
+\date{2026}
+\hypersetup{
+  pdftitle={Probing Viterbo's Conjecture},
+  pdfauthor={J\"orn St\"ohler}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{chapters/00-abstract.tex}
+\end{abstract}
+
+\input{ai-use-disclosure}
+
+\begingroup
+\small
+\linespread{0.96}\selectfont
+\tableofcontents
+\endgroup
+\clearpage
+
+\input{chapters/01-introduction.tex}
+\input{chapters/02-preliminaries.tex}
+\input{chapters/03-generalized-reeb-orbits-polytopes}
+\input{chapters/04-quadratic-program}
+\input{chapters/05-flow-graph}
+\input{chapters/06-variation.tex}
+\input{chapters/07-hko.tex}
+\input{chapters/08-data-science.tex}
+\input{chapters/09-rotated-regular-polygons}
+\input{chapters/10-affine-pentagons.tex}
+\input{chapters/10-symmetric-partner.tex}
+\input{chapters/11-product-position.tex}
+\input{chapters/12-visualization}
+\input{chapters/13-numerics}
+\input{chapters/14-code-data}
+\input{chapters/15-ai-reflection.tex}
+\input{chapters/16-conclusion.tex}
+
+\appendix
+\input{appendices/data-science.tex}
+
+\clearpage
+\section{HKO computation: an annotated exact program}
+\input{appendices/hko-certificate.tex}
+
+\FloatBarrier
+\begingroup
+\emergencystretch=3em
+\printbibliography[heading=bibintoc]
+\endgroup
+
+\end{document}

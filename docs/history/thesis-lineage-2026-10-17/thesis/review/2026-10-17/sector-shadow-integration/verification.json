@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-17T14:19:37.168326+00:00",
+  "status": "PASS scoped exact research integration; no human acceptance",
+  "scientific_files": {
+    "patterns/upper-tail/mixed-area-order/REPORT.md": "22e06d92e9d0aaefc6dc1a51284641bfbb32a5cfb83eb3d53619f0460100d39d",
+    "patterns/upper-tail/mixed-area-order/check.py": "d117f31711a868720fa3857399419eef7db1d6d274a7d4540038286622df2533",
+    "patterns/upper-tail/mixed-area-order/result.json": "435343b3397024e4ad76f0d6bc27a6007620d2b39d3d2618049009d34f71958d",
+    "patterns/upper-tail/mixed-area-order/check_trap.py": "6c8cf56733daefbf3596fe6bb31c07b8293ee54e99a2f843442acb94d232610b",
+    "patterns/upper-tail/mixed-area-order/coordinate-trap-order.json": "5631fac7d9ed66c516bf3979a13efada0640d7d56fc3f552aab6d976a0e980a0",
+    "patterns/upper-tail/mixed-area-order/review.md": "31038ccb540fed96c94bbb93593682d97c95607dea98356f69ed161eae41a3cf",
+    "topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/sector-obstruction/REPORT.md": "6966e734b94105cdb93b49ff79038b819f6f45d1dcc4d106ece80225c98e11cf",
+    "topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/sector-obstruction/check.py": "b35c6e4b56aabda4a7ca937b6307383150699c30d88b7f726c1f71191780cec7",
+    "topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/sector-obstruction/result.json": "fd804326c155c416163159c770eebc7994fb36657ca9b0fcc299846ae58fe753",
+    "topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/sector-obstruction/independent_check.py": "8c6e726626a676a9effd07db1eb296bdfe22369640755820776f7a695b3c9dda",
+    "topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/sector-obstruction/independent-result.json": "7d98b135399e5aced90e92e5cc51dee3911cd16708fc8a61af54e20119935a2e",
+    "topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/sector-obstruction/discovery.json": "dde700d1d1c5108ef3198c94553fed5b0fc43e57b4f02b3327fc7a285dcbdca4"
+  },
+  "candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "candidate_build_identical": true,
+  "candidate_pages": 105,
+  "thesis_branch": "claude/next-2026-10-16",
+  "patterns_branch": "codex/patterns-2026-10-17",
+  "source_pdf_pass_manifest_refreshed": false,
+  "new_pm_answers": 0,
+  "open_question_ids": [
+    "793fabfc",
+    "9fb6ee9a",
+    "2b8ccc47",
+    "c73778bb",
+    "09b70a7d"
+  ],
+  "http_checks": [
+    {
+      "file": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/sector-shadow-integration/README.md",
+      "http_status": 200,
+      "bytes": 8217
+    },
+    {
+      "file": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/mixed-area-order/REPORT.md",
+      "http_status": 200,
+      "bytes": 32942
+    },
+    {
+      "file": "/workspaces/msc-math-worktrees/patterns-2026-10-17/topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/sector-obstruction/REPORT.md",
+      "http_status": 200,
+      "bytes": 35173
+    }
+  ],
+  "integration_local_links_checked": 5,
+  "owner_notes_lines": 141,
+  "coordination_check": "PASS state/dependencies/served links; historical scientific baseline remains unreconciled",
+  "graph_check": "PASS DOT/SVG projection source hash",
+  "verified_at": "2026-10-17T14:20:57.597862+00:00"
+}

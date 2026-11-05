@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-17T14:56:29.549447+00:00",
+  "files": {
+    "thesis/review/kai-packet/MEETING-AGENDA.md": "bc400df4754a34c374d978da44b272422fcfb88b3f40369014f03634dc361ac9",
+    "thesis/review/REGISTRATION.md": "9a3c03681f43c019808b8bdb1c4c9de04a051d61b222d959b47dd3b6a95cf99d",
+    "thesis/review/kai-packet/README.md": "674e19fc4dc73886615e2dc811f7d137ab0a4b16605fb49d9be6607704663545",
+    "thesis/review/kai-packet/thesis-for-kai.pdf": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+    "thesis/review/JOERN-READING-GUIDE.md": "c26a2fd67af69d8925774fe6281f1e33673c9bd75f2ec5cae65b3454ff6941cf",
+    "thesis/review/kai-packet/MEETING-CHECKLIST.md": "97062289761ac9123bac0ea5b29acb4762b53f8a5551dd9f9271a7e7d9ff7722",
+    "thesis/review/kai-packet/MEETING-CHECKLIST.pdf": "60d86f7d7e8edb7c3e597596fa6dff675be860b69d5416a0751174fb5f855912",
+    "thesis/review/kai-packet/build-meeting-checklist.py": "1445c1edb0f5e34e578f2bbf6139c06a30671df84bd30e8041e3508ac3cf6438"
+  },
+  "candidate_pages": 105,
+  "candidate_build_identical": true,
+  "http": [
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/kai-packet/MEETING-CHECKLIST.pdf",
+      "status": 200
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/kai-packet/MEETING-AGENDA.md",
+      "status": 200
+    }
+  ]
+}

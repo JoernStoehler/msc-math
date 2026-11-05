@@ -1,0 +1,59 @@
+{
+  "verified_at": "2026-10-17T11:24:00.756366+00:00",
+  "worker": "/root/prose_followup",
+  "task": "f4d732a5",
+  "question": "9fb6ee9a",
+  "human_verdict": "absent; current question open",
+  "checks": {
+    "verbatim_excerpt_is_current_source_substring": true,
+    "chapter_hash_matches_original_receipt": true,
+    "excerpt_hash_matches_original_receipt": true,
+    "html_hash_matches_original_receipt": true,
+    "pdf_hash_matches_original_receipt": true,
+    "initial_selected_and_comparison_counts": true,
+    "initial_means_round_as_written": true,
+    "concentration_split_sizes": true,
+    "concentration_mean_and_sign_count": true,
+    "tail_rounding_and_counts": true,
+    "separate_sample_seeds": true,
+    "minimal_patch_has_one_unique_target": true,
+    "patch_is_exact_generated_single_phrase_change": true,
+    "patch_preserves_all_math_numbers_labels_refs": true,
+    "current_question_still_open": true,
+    "no_manuscript_diff": true,
+    "retained_relative_links_resolve": true
+  },
+  "source_sha256": {
+    "thesis/chapters/08-data-science.tex": "218b8721a3c6ccd8ab1245e0aa9a8902a7a7911bd8d62c42801cdd745160bf1b",
+    "experiments/writing-quality/runs/20261017-owner-calibration/source-excerpt.tex": "fd807af45dcf73aa85243b7c296d1669c5ac202427af0adbc44639cd14d24a1c",
+    "experiments/writing-quality/runs/20261017-owner-calibration/current-selection.html": "53d90bf97c8f22440d87389ddee4d8cabb9304a2cc0333762e0226df03d5e521",
+    "thesis/review/kai-packet/thesis-for-kai.pdf": "a5d47a8eb6442a1e07f9f04e10e37b687da45961183abc826c7b44be46258273",
+    "thesis/appendices/data-science.tex": "9fdc435138329f95c63fb24add46db3b23d83af7e4db3befb43dd24e4d6d957a",
+    "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selection-summary.tsv": "f52d7e2f3407700b3873e6d30997c5c567774176e0580641b86d45062b7d2551",
+    "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/resolved-run-config.json": "83c1386c78624cac58f7001c5fe1a13810af4e070bbe642d5fc471425f180f59",
+    "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/incremental-validation.tsv": "8497d94ef2d4b3106c30dd2b7238123ec317a8c67388f174eff41cd3a0b8f6ee",
+    "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/validation-verdict.json": "ee63877852882d53d839dc081daa903397290158b9d3393ea90cc7be3b32f5b5",
+    "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/resolved-run-config.json": "1cfc8fa3979cb8640acda9c98cbfe06f9ce33e8e71ec7fd9099369ad1c9cc3d3",
+    "topics/empirical-studies/sys-datascience/methods/tail-dependence-feasibility/artifacts/current/frozen-100k-bucket-trends.tsv": "a92d1d81ca8eb59f2fc2e47bb52d831a209c772585788a417202408371e9e8bd",
+    "topics/empirical-studies/sys-datascience/methods/tail-dependence-feasibility/artifacts/current/summary.json": "c5ec1de3a024b5cf2d0aa4215b35400f787050474ec570542321558bbae7049e"
+  },
+  "output_sha256": {
+    "report.md": "8e487385f7d22b71488292a4f4d008baca3000f6ca5ccfb3d30d9a5246666828",
+    "sample-identity-only.patch": "ab91df219da9a3948393245452ff57f402f58f6850083d09d97cb2aa55c6a599"
+  },
+  "resolved_report_source_links": [
+    "experiments/writing-quality/runs/20261017-owner-calibration/source-excerpt.tex",
+    "experiments/writing-quality/runs/20261017-owner-calibration/current-selection.html",
+    "experiments/writing-quality/runs/20261017-owner-calibration/verification.json",
+    "docs/history/ds-result-trial/human-feedback.md",
+    "experiments/writing-quality/human-review/responses/20260918-root-contemporary-ds-reader.md",
+    "docs/history/thesis-restart-2026-10-04/ds-comment-disposition.md",
+    "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selection-summary.tsv",
+    "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/incremental-validation.tsv",
+    "topics/empirical-studies/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/validation-verdict.json",
+    "topics/empirical-studies/sys-datascience/methods/tail-dependence-feasibility/artifacts/current/frozen-100k-bucket-trends.tsv",
+    "topics/empirical-studies/sys-datascience/methods/tail-dependence-feasibility/artifacts/current/summary.json",
+    "meta-topics/repository-organization/inventory/pilots/2026-10-11/writing/placement-note.md"
+  ],
+  "limits": "Checks replay retained compact summaries and source identity only; no producer rerun, new rendering, human acceptance or current-PDF approval. Report awaits root independent review before user-facing retention."
+}

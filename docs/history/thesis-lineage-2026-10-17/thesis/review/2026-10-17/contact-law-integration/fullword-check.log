@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "all_cyclic_words": 3000,
+  "all_closure_pairs": 25,
+  "active_words": 50,
+  "distinct_active_gradients": 20,
+  "matches_frozen_bank": true,
+  "Q0": {
+    "rational": "1/10",
+    "sqrt5": "0"
+  },
+  "largest_inactive_Q": {
+    "rational": "-1/4",
+    "sqrt5": "3/20"
+  },
+  "strict_inactive_gap": {
+    "rational": "7/20",
+    "sqrt5": "-3/20"
+  },
+  "prediction_sha256": "31a2ae1377e6e87cf86c2ab63a06237b755568999bc526e58139f8582bddfcb3",
+  "source_sha256": "99c25ce911b5bc2bad0cfddaf9ddb9d16f6c73184f42c46faea655e91b27080e"
+}

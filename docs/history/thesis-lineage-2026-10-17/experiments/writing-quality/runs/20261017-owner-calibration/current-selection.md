@@ -1,0 +1,43 @@
+# Coarse selection succeeds; stronger selection need not
+
+**Current thesis excerpt · about two minutes.** Context from the preceding subsection: a ridge is a two-dimensional face, $A_\omega(F)$ is its absolute symplectic area, and $R(K)=\sum_F A_\omega(F)/\sqrt{\operatorname{vol}_4(K)}$. All ratios reported here are numerical. The excerpt below is unchanged prose from the current candidate.
+
+---
+
+Selecting products with small $R$ raises the mean numerical systolic
+ratio, but further restriction within that selection need not raise it
+again. In a fresh pool of 100,000 Lagrangian products, selecting the ten
+lowest-$R$ bodies per side-count group gave mean ratio $0.626$, compared
+with $0.316$ for the same number of comparison bodies. Selection used only geometry, before capacity was evaluated.
+Each factor-side-count group contributed equally. The comparison bodies
+came from the same pool, excluded the selected bodies, and were chosen
+without evaluating their capacities.
+
+The distribution of area among the ridges supplies a second comparison.
+When the total symplectic ridge area is positive, define
+\[
+ C(K)=\frac{\max_F A_\omega(F)}{\sum_F A_\omega(F)}.
+\]
+This is the share of the total carried by the largest ridge; like $R$,
+it is invariant under translation, common dilation and linear symplectic
+maps. Among products in the
+lowest one percent by $R$ in a separate fresh sample, the half with lower
+$C$ had a mean advantage of $0.034$ over the other half, positive in eight
+of ten groups. Thus largest-ridge dominance distinguishes mean ratios within this
+selected pool, even when the total ridge area is small.
+
+The strong ordering in the broad samples is not retained within the
+low-$R$ panels themselves. Across 1,000 evaluated products in the lowest
+one percent by $R$, correlations within the ten side-count groups range
+from $-0.315$ to $+0.301$; pooling ranks computed within each group gives
+$+0.032$. The most extreme tenth has a larger mean ratio than the rest
+in only two groups. Small $R$ distinguishes this population from the
+comparison bodies, but does not reliably order the ratios within it.
+
+---
+
+[Full PDF, physical page 59](../../../../thesis/review/kai-packet/thesis-for-kai.pdf#page=59) · [Evidence and prose success criteria](../../OWNER-PLAN.md).
+
+This short check concerns how these results are explained. It does not accept the chapter's scope or the rest of the thesis.
+
+[review: /root/message_reviewer]

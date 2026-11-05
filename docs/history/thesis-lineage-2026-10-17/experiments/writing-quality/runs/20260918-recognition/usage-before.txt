@@ -1,0 +1,21 @@
+Root:    01a0b363-f46e-7460-9cda-d4775c326d7e (7 locally discovered threads)
+Started: 2026-09-18T07:21:07+00:00
+Now:     2026-09-18T07:28:08+00:00   elapsed: 0:07:01.310187
+Latest usage: 2026-09-18T07:27:35+00:00
+Shadow: Standard API-equivalent rates, fixed 2026-09-16; not subscription quota/billing.
+Scope                   Uncached input    Cached input       Output  Cache write    Shadow USD
+TOTAL                           32,204         711,040        6,877            0          1.38
+last 30m                        32,204         711,040        6,877            0          1.38
+last 5m                         22,637         482,560        4,070            0          0.91
+root                            32,204         711,040        6,877            0          1.38
+workers                              0               0            0            0          0.00
+gpt-6-astra                     32,204         711,040        6,877            0          1.38
+Scope: local metadata-linked descendants only; separate roots/host-only logs excluded.
+Windows use usage-event timestamps; in-flight calls appear after telemetry is written.
+ACCOUNTING WARNINGS — totals may be incomplete:
+  01a0b36a-7c9f-70c0-a400-6121a70f2189: no usage records (new/unused thread or missing telemetry)
+  01a0b36a-8ff3-79d1-8dd1-7bc61184d541: no usage records (new/unused thread or missing telemetry)
+  01a0b36a-a3a6-7220-b502-6f81af9ae543: no usage records (new/unused thread or missing telemetry)
+  01a0b36a-bd21-7c12-871b-f01dd4859ba0: no usage records (new/unused thread or missing telemetry)
+  01a0b36a-e391-7a32-b130-c7600e04bd57: no usage records (new/unused thread or missing telemetry)
+  01a0b36a-f65c-75d0-aff0-d3749248fbdd: no usage records (new/unused thread or missing telemetry)

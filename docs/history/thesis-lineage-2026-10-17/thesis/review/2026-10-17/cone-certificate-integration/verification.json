@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-17T13:32:58.330359+00:00",
+  "scientific_branch": "codex/patterns-2026-10-17",
+  "source_cone_sha256": "9f02548e305ed586b83b2709719818281847ce2d2e5b66981b35973acc07e9b6",
+  "root_exact_replays_match_retained": true,
+  "source_regenerated": false,
+  "sector_lp_scope": "Numerical no-PSD infeasibility only; no exact separator and no PSD solve.",
+  "files": {
+    "REPORT.md": "cf671ba2beaf95a53ac4869f36d61028a65691ec08de91424daddc4e240d3fbc",
+    "check.py": "bd4bc77636c4291c1a2a775d4391142e7a13d9da9ac76ad5d31a0e8230a9d7c2",
+    "result.json": "6651a54a33fea2a27e606e31556065878b0e9c021459b99ff59c9da807821549",
+    "independent_check.py": "9299a16b8018d35f3447d557b58d5f46506d637556c7183dd52a04816628daa7",
+    "independent-receipt.json": "b2d0caab74ceaa49178cb27587ffdd7ef3f4ae62b5de0e0abe0f8d032498c375",
+    "independent_sector.py": "5f1345a94ce5e0af5e8d56e545e21a566379fdc9611074889a35a2889f7c6433",
+    "sector-receipt.json": "593256ba1610ceffc785519c1d556e193aed13682a194e3e8ff4d6d5728b98ce",
+    "sector-probe/REPORT.md": "974f29c6927aee199cb9ed14eb7db3b2302d00f3d2546d8891b71999fd70081c",
+    "sector-probe/probe.py": "62c4849cbff935b6548d14aa13fd571e3f3db0f08961cce1fbbe8ef5dfeda72d",
+    "sector-probe/result.json": "ae2968e5b67cbc2665d2f5a2cf54130e2f52befbd3e23b5856afd2ac732a1a5a",
+    "reviews.json": "ed01d26523f3b4fb39be77f64d0cbe95da54c5438ca7c633a54146fe07a824d5"
+  },
+  "review": {
+    "reviewer": "/root/delivery_review",
+    "candidate": "owner-batch-final-v2",
+    "verdict": "APPROVE"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "sample_sha256": "09a361c3b24d76a052833372a4204b31cee7c8308c3ff31ef67d7e18a9770338",
+  "plan_sha256": "b2a567e9d1dd755842e1d225f2d0b0fe22c1998375cacc1f7a775935a06a1138",
+  "bodies": 36,
+  "tail": 27,
+  "bulk": 9,
+  "exclusion_of_all20_design_controls": true,
+  "selector_source_hashes_match": true,
+  "independent_membership_reconstruction": true,
+  "code_dependencies": 6
+}

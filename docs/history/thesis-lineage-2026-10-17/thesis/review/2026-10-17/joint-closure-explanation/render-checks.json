@@ -1,0 +1,40 @@
+{
+  "resolved_links": [
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/SELECTION-DRAFT.md",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/SELECTION-DRAFT.md",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/EXACT-CERTIFICATE-DRAFT.md",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/SELECTION-DRAFT.md",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/EXACT-CERTIFICATE-DRAFT.md",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/PLACEMENT.md",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/mixed-area-order/REPORT.md",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/REPORT.md",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-rounding/REPORT.md",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-validation/REPORT.md",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-validation-integration/README.md",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/check.py",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/verification.json",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/joint-closure-explanation/review.md"
+  ],
+  "http": {
+    "README.md": {
+      "status": 200,
+      "rendered_mathml": false,
+      "bytes": 12634
+    },
+    "SELECTION-DRAFT.md": {
+      "status": 200,
+      "rendered_mathml": true,
+      "bytes": 7885
+    },
+    "EXACT-CERTIFICATE-DRAFT.md": {
+      "status": 200,
+      "rendered_mathml": true,
+      "bytes": 9490
+    },
+    "PLACEMENT.md": {
+      "status": 200,
+      "rendered_mathml": true,
+      "bytes": 21051
+    }
+  }
+}

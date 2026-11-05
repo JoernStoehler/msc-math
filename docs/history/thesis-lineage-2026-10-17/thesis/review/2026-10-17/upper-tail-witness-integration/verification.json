@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-17T20:40:06.226040+00:00",
+  "working_pdf": "thesis/build/main.pdf",
+  "working_pages": 106,
+  "working_sha256": "5df30c3f16774f44dd0b9031544bc33618548e5802a9f8fab0a339d5457458c8",
+  "frozen_kai_pdf": "thesis/review/kai-packet/thesis-for-kai.pdf",
+  "frozen_kai_pages": 105,
+  "frozen_kai_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "source_change": "Only insertion.tex added before Using evaluated ratios to guide search; removing it restores before.tex byte-for-byte.",
+  "old_labels": 174,
+  "new_labels": 175,
+  "missing_old_labels": 0,
+  "changed_label_entries": 37,
+  "selected_build_checks": "bash thesis/check-build.sh PASS; no undefined references or overfull hboxes above1pt",
+  "visual_pages": [
+    62,
+    63,
+    64,
+    65
+  ],
+  "visual_observation": "All four inspected at1200px: text, displayed inequality, theorem references, table and next-chapter transition legible; no clipping/overlap.",
+  "pending_questions": "All five retain their frozen original artifacts; no optional insertion decision inferred.",
+  "scientific_result": false,
+  "http_checks": {
+    "thesis/build/main.pdf": {
+      "status": 200,
+      "content_type": "application/pdf"
+    },
+    "docs/dashboard/thesis.html": {
+      "status": 200,
+      "content_type": "text/html"
+    },
+    "thesis/review/2026-10-17/upper-tail-witness-integration/README.md": {
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    }
+  },
+  "current_kai_file_bindings_verified": 8
+}

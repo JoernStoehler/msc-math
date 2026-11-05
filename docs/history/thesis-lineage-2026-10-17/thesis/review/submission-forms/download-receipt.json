@@ -1,0 +1,54 @@
+{
+  "retrieved_utc": "2026-10-17",
+  "sources": [
+    {
+      "file": "po-mathematik-2015.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/c7/ca/c7ca192b-ebc8-4200-9906-cfa736063088/m-420-2-3-002.pdf",
+      "http_status": 200,
+      "sha256": "d1d311395a7401901e79cb561f43dc9744284d5c4a3325ca5c1ac9d0f34d7e22",
+      "bytes": 142829
+    },
+    {
+      "file": "hinweise.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/f0/b9/f0b923c7-1698-4136-af89-4810469d26e8/hinweis_bachelor-_masterarbeit-_mntf.pdf",
+      "http_status": 200,
+      "sha256": "c2e1194c9e1802ff332419fc75029cba23b6f34c501750e28a1b96edb6eb00e9",
+      "bytes": 98000
+    },
+    {
+      "file": "anmeldung.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/bc/7f/bc7fa7ba-6648-4f37-9530-206a4bfb7904/protokoll_mntf_2026.pdf",
+      "http_status": 200,
+      "sha256": "d5f0f0e13133f3b3d950aed7606e3c621e222777c367f57ad057543f57e97528",
+      "bytes": 189710
+    },
+    {
+      "file": "abgabeerklaerung.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/1f/5d/1f5d67ea-6121-488d-8f0e-a1bdcef414a8/1erklarung_abgabe_abschlussarbeit_mntf_mit_freiwilliger_cd-1.pdf",
+      "http_status": 200,
+      "sha256": "63d9cd05642cea8b8e595b9c1ce688007e9dc8a31154fc9e0fd2603303f526cb",
+      "bytes": 206028
+    },
+    {
+      "file": "einsichtnahme.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/43/24/4324dafc-253b-4741-9d62-10398bbc4599/erklarung_zur_einsichtnahme_dritter-prufungsamt.pdf",
+      "http_status": 200,
+      "sha256": "07a47dc9e350240d4c745f72a02fbdc37ae806508234eec9d1f5b79799581780",
+      "bytes": 9086
+    },
+    {
+      "file": "zeugnisantrag.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/ed/ca/edca647b-214b-4e6a-8c95-c45fe60f3b8f/zeugnisantrag_mntf.pdf",
+      "http_status": 200,
+      "sha256": "9cfc0d8e12f2234455739c19806f15edee76afcb3ab3d907a9fc73977e8996a5",
+      "bytes": 259629
+    },
+    {
+      "file": "apruefo-2006.pdf",
+      "url": "https://assets.uni-augsburg.de/media/filer_public/72/1f/721ff653-24a2-4352-9477-01353583420b/l-13-1-014.pdf",
+      "http_status": 200,
+      "sha256": "277bb9eb12f5f4b4a4d5da55b8d611c93d4532bbaac5e8f16875fc5241e19cae",
+      "bytes": 185902
+    }
+  ]
+}

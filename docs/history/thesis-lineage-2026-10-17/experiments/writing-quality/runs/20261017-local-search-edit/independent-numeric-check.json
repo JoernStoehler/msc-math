@@ -1,0 +1,58 @@
+{
+  "raw_run_count": 448,
+  "shared_start_count": 64,
+  "statistics": {
+    "cma-s1e-1-l8": {
+      "n": 64,
+      "median": 0.818309005123729,
+      "q10": 0.7183588530232488,
+      "q90": 0.8692485859595341
+    },
+    "directional-above-8e-2": {
+      "n": 64,
+      "median": 0.9816474120842142,
+      "q10": 0.95593355750488,
+      "q90": 0.9939622252621987
+    },
+    "gap-w1e-1-adaptive-d1e-1": {
+      "n": 64,
+      "median": 0.977159379982879,
+      "q10": 0.9481774118925127,
+      "q90": 0.9945971922465867
+    },
+    "history-baseline": {
+      "n": 64,
+      "median": 0.9847831937469698,
+      "q10": 0.957033208813119,
+      "q90": 0.998514574968514
+    },
+    "literal-eta1e-2": {
+      "n": 64,
+      "median": 0.8813436178107156,
+      "q10": 0.7895419230241609,
+      "q90": 0.9238977187399283
+    },
+    "pattern-r3e-2": {
+      "n": 64,
+      "median": 0.6010298417194244,
+      "q10": 0.35831926957219373,
+      "q90": 0.7865778203437802
+    },
+    "safeguarded-adaptive-d1e-1": {
+      "n": 64,
+      "median": 0.8550829328774124,
+      "q10": 0.7804273116239733,
+      "q90": 0.9160225129780374
+    }
+  },
+  "maximum_best_sys": 0.9998262444739155,
+  "same_nominal_rule": true,
+  "actual_runtime_overruns": 310,
+  "source_sha256": {
+    "experiments/dev-gradient-ascent/optimizer-runs/artifacts/heldout-f10-64-finalists-19a8b4dfd/runs.jsonl": "2f0a7820dac3eae0a0b7335924c3512e0a0d463202a667e7635c7232daed0dd7",
+    "experiments/dev-gradient-ascent/optimizer-comparison/artifacts/heldout-f10-64-finalists-19a8b4dfd-analysis/final-summary.csv": "6bb238029f7e98388cbd9ca06c5b0f3bad598cdf94332e9c92c5af0cfd766b7b",
+    "thesis/chapters/08-data-science.tex": "218b8721a3c6ccd8ab1245e0aa9a8902a7a7911bd8d62c42801cdd745160bf1b",
+    "thesis/appendices/data-science.tex": "9fdc435138329f95c63fb24add46db3b23d83af7e4db3befb43dd24e4d6d957a"
+  },
+  "scope": "Recomputed descriptive statistics from retained heuristic-objective run rows; no rerun of geometry/capacity or validation of producer correctness."
+}

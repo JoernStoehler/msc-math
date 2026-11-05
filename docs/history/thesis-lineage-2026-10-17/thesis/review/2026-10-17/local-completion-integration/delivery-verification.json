@@ -1,0 +1,50 @@
+{
+  "checked_at_utc": "2026-10-17T19:20:05.965233+00:00",
+  "scientific_review": "/root/intake_review APPROVE complete-v3",
+  "root_exact_receipt": "verification.json",
+  "graph_freshness": "PASS",
+  "dashboard_structure": "PASS after four new integration file-serving entries registered",
+  "dashboard_tests": 8,
+  "HTTP": [
+    {
+      "file": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/local-completion/REPORT.md",
+      "status": 200,
+      "bytes": 41910
+    },
+    {
+      "file": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/local-completion-integration/README.md",
+      "status": 200,
+      "bytes": 10949
+    },
+    {
+      "file": "/workspaces/msc-math-worktrees/thesis-2026-10-16/docs/dashboard/thesis.html",
+      "status": 200,
+      "bytes": 72473
+    }
+  ],
+  "local_links": [
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/local-completion/PLAN.md",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/near-hko-transfer/REPORT.md",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/lp-seeded-response/REPORT.md",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/local-completion/fixture.json",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/local-completion/verification.json",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/hko-exact.json",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/local-completion/check.py",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/local-completion/fixture.json",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/local-completion/verification.json",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/local-completion/scope-sources.md"
+  ],
+  "scientific_source_digest_reconciliation": false,
+  "unchanged_source_digest_scope": "Historical baseline remains visibly unreconciled; no refresh or human PASS inferred.",
+  "new_geometries": 0,
+  "new_LP_optimizations": 0,
+  "manuscript_changes": false,
+  "files": {
+    "patterns/upper-tail/local-completion/scope-sources.md": "4927ea9aa2bbcf5f53893e1ec419f124481de6e69a6d5e0f31f918778713c355",
+    "patterns/upper-tail/local-completion/REPORT.md": "cec3492375038fa3f26d07bdfa9d35c785410352318e3d06fd575e18fdbe1c7d",
+    "patterns/upper-tail/local-completion/fixture.json": "3de39bf8de2bc28f2f401c38d6b6bdd6e1484b56165f9c2022652f0ab8a8a035",
+    "patterns/upper-tail/local-completion/verification.json": "14b8ffda7104e2df10d023ebe09d75d0bf090b0bbb85700dc519a9a6404bde4f",
+    "patterns/upper-tail/local-completion/PLAN.md": "3593913c139fc6d893390771f3be1464faedae32c45412eed99750a8602a5e59",
+    "patterns/upper-tail/local-completion/check.py": "6e482d0b9a3c18dfee2936fe8fb8543d7c2b735f1a53c6485e4b771edcc828a3"
+  }
+}

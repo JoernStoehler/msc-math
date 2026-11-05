@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "predictions_sha256": "4d787bfe27fada28d0dce6a247c68d0551f46f3ce5eac3fcfebe66f363a9b853",
+  "rows": 1024,
+  "metric_checks": 20,
+  "invariance_controls": 60,
+  "max_scaled_invariance_error": 4.6629367034256575e-15,
+  "example_replays": [
+    {
+      "name": "random_5x5_s0_92",
+      "invariant_error": 0.0
+    },
+    {
+      "name": "random_5x5_s2_0",
+      "invariant_error": 0.0
+    },
+    {
+      "name": "random_5x5_s2_104",
+      "invariant_error": 0.0
+    },
+    {
+      "name": "random_5x5_s2_148",
+      "invariant_error": 0.0
+    }
+  ],
+  "limits": "Reconstructs formulas, arithmetic, ranks, recall, identity and numerical coordinate controls. Historical source capacities are not certified here; no global capacity inequality is established."
+}

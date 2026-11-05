@@ -1,0 +1,39 @@
+{
+  "at": "2026-10-17T15:28:52.524581+00:00",
+  "files": {
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-coupling-integration/README.md": "fd8eb0bf5441b44c580ffe08def36af9b8144712c8a33c38cd328ea22c4c7127",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-coupling-integration/owner-verify.py": "b5a7a8daac8ca7f4899134760a3686329dabfa0f329d14c0fcf6eb2d8053079c",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-coupling-integration/owner-hko-verify.py": "8f62137eba246efb9063df685589bd6bfac9056f7bab668db54879088ae846ee",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-coupling-integration/verification.json": "361610d26871f266b83e4bf31cd6e8d2cfff8525cab1d69761dca8aaf374c44d",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-coupling-integration/hko-verification.json": "f549e3091aff2173954d6e2bd037d173f14c458236f2109c71f66f4f97c125ff",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/PLAN.md": "ab7d28de56d04e1f936b70560bda4099ca2f11e055bd77bc281b38dd0f46761b",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/REPORT.md": "8013f125ed18dde4c1ca050bbd518b7b0c3a499391fd81a8bb69c66ee4fcd32e",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/results.json": "3270bf2b47c4cb164a5b92ffdbd3025df437f16006c054783fc31dfe4216e53e",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/hko-exact.json": "4c33bcc233901583c9da856dc6585e8892ba017d0439b685da4abd0a0b02d7d3",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/verify.py": "60acb4bdd331510f0ba1bbe4ef03996659e48fff918b5b2ba911443511ab5d58",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/quadratic.py": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/analyze.py": "753db15b6bdafbaff4877324dd35e559177911dc074a4bcda98c103913609d74",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/algebraic.py": "17c261310ed4ec4c19b7f7ce89347c64d13bccdaf8020968f7092d58207c961e",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/review.md": "3bab4b4329554df4c8967c9847a5f03bd99cb06027c29781bf0e9c42ab2be1b1"
+  },
+  "candidate_build_identity": true,
+  "candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "meeting_bindings_checked": 8,
+  "scientific_review": "Separate native /root/coupling_science_review APPROVE v3, scientific PASS; source packet owns review return.",
+  "scope": "Bounded conditional-coupling pilot and independent retained receipts; manuscript and meeting packet unchanged.",
+  "scientific_commit": "3d85aa83aaf86abad42594f0108c0ced1050db9b",
+  "http": [
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-coupling-integration/README.md",
+      "status": 200
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/REPORT.md",
+      "status": 200
+    },
+    {
+      "url": "https://joern-pc.tailc5e761.ts.net/files/workspaces/msc-math-worktrees/thesis-2026-10-16/docs/dashboard/thesis.html",
+      "status": 200
+    }
+  ]
+}

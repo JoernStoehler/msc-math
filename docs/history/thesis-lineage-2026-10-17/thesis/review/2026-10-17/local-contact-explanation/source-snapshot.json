@@ -1,0 +1,91 @@
+{
+  "captured_utc": "2026-10-17T18:51:54.056292+00:00",
+  "patterns_head": "1c3aaf47282d0574bd2277cf2394bfaac841dcb1",
+  "thesis_head_at_read": "8438501ca17563830c67703e1f45ddd2e113062a",
+  "files": [
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/UPPER-TAIL.md",
+      "sha256": "5420889756d4e38e3bb71af5ea2c6525958f3d3a70a4b550b1aefb3e26c5ff60"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/REPORT.md",
+      "sha256": "50d6cf7922673e99522e235c8a4e41c619740b0ee0fa286a92c9ec902802005d"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/CANONICAL.md",
+      "sha256": "6fb479cabba0f7d59dd2a5491b53008a9723a2a9c6a164b6b8c7643f4d87cdc7"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/OBSTRUCTION.md",
+      "sha256": "a9d1efeb1413b28aae51fa02c4797077fb5b972b3a1791f2795139c636b02df0"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/predictions.json",
+      "sha256": "31a2ae1377e6e87cf86c2ab63a06237b755568999bc526e58139f8582bddfcb3"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/fullword.json",
+      "sha256": "873c59aeedff49e8ac56fa2a27af1d4ab2e69173daee957f5bfad7a4153457da"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/verification.json",
+      "sha256": "fa67fa42ac264b4cf2050f32c86f5f624baf93b91d3b0669965a546743d5132c"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/symmetry.json",
+      "sha256": "f6328327e8f666b2a8c3f967568125fe20c1153d9f8ae3fef940c50ad97ec32f"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/canonical.py",
+      "sha256": "01f6a72a8ec3a7aefb4e9024ea799df8d09aa669f04ef02dc33c315cd702abf9"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/canonical-verification.json",
+      "sha256": "5895c4febdbaa9b8c969add289a18954454f678fbe37e9bf27f721ea19e4d215"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/canonical-metrics.json",
+      "sha256": "50c896400f0facf910425d8a53cd30b8ed276c91d92298a30a892afc272b193b"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/canonical-predictions.json",
+      "sha256": "0a7e9275915f180e98c9560258d58eccf2d5dc1b30236e35892d4311b29d8fbe"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/canonical-truth.json",
+      "sha256": "a947c98fd7f7951e1bd61098af3d053079f0138744bd805cacd5f4f8e2967ce8"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/global-counterexample.json",
+      "sha256": "6bdbb0702026c3902de78bd45a6ef9bf07e8fc5e8498b55a1fe7c41c6ebf5558"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/contact-stability/global-verification.json",
+      "sha256": "b3a4ea12c70abae2ceb768a99f202131055a59fb4ee06ee12889ad9cbdfabace"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/canonical-transfer/REPORT.md",
+      "sha256": "66ea80838a9cf2d5330e43e31b2796a1f54055f0a9534f5df18ab95700f715c5"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/canonical-transfer/results.json",
+      "sha256": "45d7f349e1ac49dbe768944865dde232e8709d2bb3201c34a9f544bbdac7315d"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/canonical-transfer/verification.json",
+      "sha256": "5c6950f2d862d5eb4f19b483697e223ae33bee6774edfb2c5771b0838d774b61"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/chapters/08-data-science.tex",
+      "sha256": "8efd95a76ce2b26dbc5dac177c43424593540fb7462ab02e30a41a2f6274d152"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/chapters/04-quadratic-program.tex",
+      "sha256": "98919a7cce75ee7868eb27931730872ac99684bf3dacb88825e3ee464f947be7"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/chapters/07-hko.tex",
+      "sha256": "b8228ba1951310241633d88df7120b004d1f569e3e483eaa1df85eb7ce95a1ec"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "status": "PASS",
+  "scope": "Independent all-intersection rational convex hull, LP anchor formula and maximal-contact check; direct 4D HK chosen-word verification and chosen-pair order optimum. Numerical regular controls use independent analytic area when present. No original-body capacity optimality claim.",
+  "rows": [
+    {
+      "name": "random_5x5_s0_8",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.0000000000000004,
+      "exact_gain_over_width": "7027838565850012710167840313057295310297164123835694011601767404532675110784439650967107899175936/104771078189138715721954075279059136703269843614691729237647771151602058149660625454075906402554953"
+    },
+    {
+      "name": "random_5x5_s1_64",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.099046370702183,
+      "exact_gain_over_width": "0"
+    },
+    {
+      "name": "random_5x5_s1_221",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.0805296086295326,
+      "exact_gain_over_width": "1249448766852002781408580246517016791030400563681296807548401288134549817641497084303412476/3746993351929021680131787732984140904284311152011117363666161069649318486957184218648641229863"
+    },
+    {
+      "name": "random_5x5_s3_114",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.154727820294172,
+      "exact_gain_over_width": "0"
+    },
+    {
+      "name": "random_5x6_s0_102",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.0000000000000002,
+      "exact_gain_over_width": "0"
+    },
+    {
+      "name": "random_5x6_s2_150",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.0000000000000004,
+      "exact_gain_over_width": "6519465962349460601321271451176724261462552311277244600617502636654787060358906774366998666913/56731090590042392972015625925370564104642410924944351079477868004040727210626088711116317324011"
+    },
+    {
+      "name": "random_5x6_s3_29",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 0.9999999999999998,
+      "exact_gain_over_width": "50192211595670202707728580616957347863348394973355843423491120748057152259237166395778622757840/267265576614640144574364249073001218263777510667544608705239119834211907529361226259026011062253"
+    },
+    {
+      "name": "random_6x6_s0_194",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.119822957653577,
+      "exact_gain_over_width": "0"
+    },
+    {
+      "name": "random_6x6_s2_3",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 0.9999999999999998,
+      "exact_gain_over_width": "97080836899046498480275852983917792219980615057041346540779192781469362033319401011334979228149/619465438272470741460766028995539142145182741413385282672030968204772269492652020853273274058709"
+    },
+    {
+      "name": "random_6x6_s3_124",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.0739645382776584,
+      "exact_gain_over_width": "0"
+    }
+  ],
+  "regular_controls": [
+    {
+      "angle": 0,
+      "independent_ratio": 0.9472135954999583
+    },
+    {
+      "angle": 0.15707963267948966,
+      "independent_ratio": 0.9709750461750999
+    },
+    {
+      "angle": 0.3141592653589793,
+      "independent_ratio": 1.0472135954999586
+    }
+  ],
+  "falsifier": {
+    "name": "random_5x5_s1_64",
+    "exact_selector_over_feasible_challenger": "29142266590404876687679955362390494983110620415290918493867063011587347034163586364108072427075492367888440940218015797613101370796042716542076839340429651846488/26515957258278224958535407617353306090114441343657525829096277236198891670165851656792019489424032617045967007420844675101180367469217474977351864906314169897633",
+    "guaranteed_capacity_gap": 0.09904637070218247,
+    "word_orders_checked": 120,
+    "scope": "True capacity is at most the independently verified challenger bound; no true-capacity optimum computed."
+  },
+  "bound_above_HKO": [],
+  "results_sha256": "68a80dc661543d7bb14e06c5f5f7c26bc1a9c61d494dfc996d2620dfc3cd5606"
+}

@@ -1,0 +1,35 @@
+{
+  "source": "thesis/chapters/08-data-science.tex",
+  "source_sha256": "218b8721a3c6ccd8ab1245e0aa9a8902a7a7911bd8d62c42801cdd745160bf1b",
+  "pdf": "thesis/review/kai-packet/thesis-for-kai.pdf",
+  "pdf_sha256": "a5d47a8eb6442a1e07f9f04e10e37b687da45961183abc826c7b44be46258273",
+  "physical_page": 59,
+  "excerpt_words": 266,
+  "excerpt_sha256": "fd807af45dcf73aa85243b7c296d1669c5ac202427af0adbc44639cd14d24a1c",
+  "pdf_prose_match": "PASS: both complete prose parts around the displayed equation match fixed PDF after whitespace, line hyphenation and math-marker normalization",
+  "transformation": "Subsection heading and labels omitted; body unchanged; TeX rendered by Pandoc",
+  "limits": "No new human verdict; source/prose matching does not check the displayed equation or visual layout.",
+  "verified_at": "2026-10-17T10:21:15.716974+00:00",
+  "html_sha256": "53d90bf97c8f22440d87389ddee4d8cabb9304a2cc0333762e0226df03d5e521",
+  "local_document_links": "20 relative report/excerpt links resolve",
+  "https": "HTTP200; served bytes equal retained HTML",
+  "visual_check": "Actual Chrome screenshot of complete desktop page: prose, all comparison values, displayed C fraction and footer intact/readable; not a mobile-device check.",
+  "scientific_check": "Independent prose_evidence review matches rounded comparisons and sample scope to Appendix A.5; no fresh numerical producer.",
+  "final_checks": {
+    "unchanged_selected_thesis_tree": "PASS: git diff --exit-code -- thesis",
+    "unchanged_patterns_worktree": "PASS: clean porcelain",
+    "owner_notes_lines": 84,
+    "report_excerpt_links": 20,
+    "coordination_state": "PASS",
+    "workflow_graph_projection": "PASS",
+    "dashboard_tests": "8/8 PASS after registering the three new explicitly served source paths"
+  },
+  "later_candidate_check": {
+    "checked_at": "2026-10-17T12:27:06.202057+00:00",
+    "candidate_pdf_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+    "source_sha256": "8efd95a76ce2b26dbc5dac177c43424593540fb7462ab02e30a41a2f6274d152",
+    "page": 59,
+    "extracted_page_text_identical_to_prior_candidate": true,
+    "reason": "Only local-search subsection changed; human-question excerpt and original judgment scope preserved."
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "source_branch": "codex/patterns-2026-10-17",
+  "source_commit": "308ed31f22b502b73ab1bce988856ff13af175b0",
+  "retention": "Deliberately retained bounded small source/evidence package under docs/artifacts.md; original bytes preserved, no merge/cherry-pick",
+  "files": [
+    {
+      "original_path": "patterns/upper-tail/contact-stability/REPORT.md",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/REPORT.md",
+      "bytes": 12344,
+      "sha256": "50d6cf7922673e99522e235c8a4e41c619740b0ee0fa286a92c9ec902802005d"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/CANONICAL.md",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/CANONICAL.md",
+      "bytes": 9869,
+      "sha256": "6fb479cabba0f7d59dd2a5491b53008a9723a2a9c6a164b6b8c7643f4d87cdc7"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/OBSTRUCTION.md",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/OBSTRUCTION.md",
+      "bytes": 4454,
+      "sha256": "a9d1efeb1413b28aae51fa02c4797077fb5b972b3a1791f2795139c636b02df0"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/PLAN.md",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/PLAN.md",
+      "bytes": 2778,
+      "sha256": "86c44233443372882fd107f5ff8985ef92c770350d041936457979969338159e"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/CANONICAL-PLAN.md",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/CANONICAL-PLAN.md",
+      "bytes": 2707,
+      "sha256": "1f3edb16c1d7d52aaa5146a9da86e41aad6c070a50a50d49765c1e80b42387a7"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/predictions.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/predictions.json",
+      "bytes": 108686,
+      "sha256": "31a2ae1377e6e87cf86c2ab63a06237b755568999bc526e58139f8582bddfcb3"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/fullword.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/fullword.json",
+      "bytes": 35537,
+      "sha256": "873c59aeedff49e8ac56fa2a27af1d4ab2e69173daee957f5bfad7a4153457da"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/fullword.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/fullword.py",
+      "bytes": 3289,
+      "sha256": "99c25ce911b5bc2bad0cfddaf9ddb9d16f6c73184f42c46faea655e91b27080e"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/verification.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/verification.json",
+      "bytes": 1350,
+      "sha256": "fa67fa42ac264b4cf2050f32c86f5f624baf93b91d3b0669965a546743d5132c"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/verify.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/verify.py",
+      "bytes": 6852,
+      "sha256": "9676ea4b01e3a4a92be94ddbe40da152b23aa60df8a50f851c846a3bbe8434dc"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/symmetry.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/symmetry.json",
+      "bytes": 8572,
+      "sha256": "f6328327e8f666b2a8c3f967568125fe20c1153d9f8ae3fef940c50ad97ec32f"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/symmetry.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/symmetry.py",
+      "bytes": 2548,
+      "sha256": "f407e77f3e58d3113e8bfd75676ec765acf1951b894e128d63e8a0822d376f0b"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/canonical.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/canonical.py",
+      "bytes": 3310,
+      "sha256": "01f6a72a8ec3a7aefb4e9024ea799df8d09aa669f04ef02dc33c315cd702abf9"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/canonical-verification.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/canonical-verification.json",
+      "bytes": 15573,
+      "sha256": "5895c4febdbaa9b8c969add289a18954454f678fbe37e9bf27f721ea19e4d215"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/verify-canonical.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/verify-canonical.py",
+      "bytes": 5138,
+      "sha256": "6f4d449fd2a82bea9126126c909b57de595fce33735f933eef59458e87878a0d"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/canonical-metrics.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/canonical-metrics.json",
+      "bytes": 41465,
+      "sha256": "50c896400f0facf910425d8a53cd30b8ed276c91d92298a30a892afc272b193b"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/metrics-canonical.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/metrics-canonical.py",
+      "bytes": 1810,
+      "sha256": "23f1fa0e3612e55078cb54a580c1e7bda9967cbf508331089beaa5a05348f368"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/canonical-predictions.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/canonical-predictions.json",
+      "bytes": 29956,
+      "sha256": "0a7e9275915f180e98c9560258d58eccf2d5dc1b30236e35892d4311b29d8fbe"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/canonical-truth.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/canonical-truth.json",
+      "bytes": 2644934,
+      "sha256": "a947c98fd7f7951e1bd61098af3d053079f0138744bd805cacd5f4f8e2967ce8"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/canonical-sample.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/canonical-sample.json",
+      "bytes": 63441,
+      "sha256": "8fabf5ff582150c4cf56287b597a45002ae4baeb18605e607c09c970067e2f5d"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/global-counterexample-input.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/global-counterexample-input.json",
+      "bytes": 1290,
+      "sha256": "bafbaa49d274c059f4addab36dab712e41e55c3c81170d74360d309fe5736288"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/global-counterexample.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/global-counterexample.json",
+      "bytes": 1035970,
+      "sha256": "6bdbb0702026c3902de78bd45a6ef9bf07e8fc5e8498b55a1fe7c41c6ebf5558"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/global-verification.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/global-verification.json",
+      "bytes": 724,
+      "sha256": "b3a4ea12c70abae2ceb768a99f202131055a59fb4ee06ee12889ad9cbdfabace"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/verify-global.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/verify-global.py",
+      "bytes": 6345,
+      "sha256": "283467340c8518cab82421a034db981c825d5c5bb1fc792acbd022556c20ccd7"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/sample.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/sample.json",
+      "bytes": 68356,
+      "sha256": "f70e7f9bb6444e2b132dbaedf73c8f4a1f8324e72c37f79dbb7c2908e27bc2c8"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/truth.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/truth.json",
+      "bytes": 2932765,
+      "sha256": "65f21fcda3dd21bc697dac58ed976cbcec2a7bdc038b326eca21f138e28d2aac"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/metrics.json",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/metrics.json",
+      "bytes": 120608,
+      "sha256": "9dd472b5d99705ce9d5634b997783aac85131dd5f7e416153987e7439bbb9b89"
+    },
+    {
+      "original_path": "patterns/upper-tail/conditional-coupling/quadratic.py",
+      "retained_path": "witnesses/patterns/upper-tail/conditional-coupling/quadratic.py",
+      "bytes": 1458,
+      "sha256": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7"
+    },
+    {
+      "original_path": "patterns/upper-tail/conditional-coupling/hko-exact.json",
+      "retained_path": "witnesses/patterns/upper-tail/conditional-coupling/hko-exact.json",
+      "bytes": 108179,
+      "sha256": "4c33bcc233901583c9da856dc6585e8892ba017d0439b685da4abd0a0b02d7d3"
+    },
+    {
+      "original_path": "patterns/upper-tail/near-hko-transfer/verify.py",
+      "retained_path": "witnesses/patterns/upper-tail/near-hko-transfer/verify.py",
+      "bytes": 15502,
+      "sha256": "9e7ec5e05651c3ae8c0e8a6fced2f47349388b4b15491586720cbf5c278cfeeb"
+    },
+    {
+      "original_path": "patterns/upper-tail/canonical-transfer/REPORT.md",
+      "retained_path": "witnesses/patterns/upper-tail/canonical-transfer/REPORT.md",
+      "bytes": 9366,
+      "sha256": "66ea80838a9cf2d5330e43e31b2796a1f54055f0a9534f5df18ab95700f715c5"
+    },
+    {
+      "original_path": "patterns/upper-tail/canonical-transfer/results.json",
+      "retained_path": "witnesses/patterns/upper-tail/canonical-transfer/results.json",
+      "bytes": 733659,
+      "sha256": "45d7f349e1ac49dbe768944865dde232e8709d2bb3201c34a9f544bbdac7315d"
+    },
+    {
+      "original_path": "patterns/upper-tail/canonical-transfer/verification.json",
+      "retained_path": "witnesses/patterns/upper-tail/canonical-transfer/verification.json",
+      "bytes": 780,
+      "sha256": "5c6950f2d862d5eb4f19b483697e223ae33bee6774edfb2c5771b0838d774b61"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/global-counterexample.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/global-counterexample.py",
+      "bytes": 3182,
+      "sha256": "e8623f8d5e0a902fbd129bec74cc363c9bf92f07b784c415cc00e1da0f6418a3"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/predict-canonical.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/predict-canonical.py",
+      "bytes": 2271,
+      "sha256": "05fa93c2aae88c77d50e60a865240db4123c308d0393866c38c1111669ce0ab3"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/oracle-canonical.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/oracle-canonical.py",
+      "bytes": 2672,
+      "sha256": "88d5505dc71d91151255e52f4403d5f1c3c07399bbd32d230dfbd5f033d728a3"
+    },
+    {
+      "original_path": "patterns/upper-tail/contact-stability/freeze-canonical.py",
+      "retained_path": "witnesses/patterns/upper-tail/contact-stability/freeze-canonical.py",
+      "bytes": 2498,
+      "sha256": "99562e18397e235597966f0d0b062268a75120c4c72b58ca0d929aef910ec0dd"
+    },
+    {
+      "original_path": "patterns/upper-tail/mixed-area-order/REPORT.md",
+      "retained_path": "witnesses/patterns/upper-tail/mixed-area-order/REPORT.md",
+      "bytes": 9799,
+      "sha256": "22e06d92e9d0aaefc6dc1a51284641bfbb32a5cfb83eb3d53619f0460100d39d"
+    },
+    {
+      "original_path": "patterns/upper-tail/mixed-area-order/review.md",
+      "retained_path": "witnesses/patterns/upper-tail/mixed-area-order/review.md",
+      "bytes": 1749,
+      "sha256": "31038ccb540fed96c94bbb93593682d97c95607dea98356f69ed161eae41a3cf"
+    },
+    {
+      "original_path": "patterns/upper-tail/mixed-area-order/check.py",
+      "retained_path": "witnesses/patterns/upper-tail/mixed-area-order/check.py",
+      "bytes": 4365,
+      "sha256": "d117f31711a868720fa3857399419eef7db1d6d274a7d4540038286622df2533"
+    },
+    {
+      "original_path": "patterns/upper-tail/mixed-area-order/result.json",
+      "retained_path": "witnesses/patterns/upper-tail/mixed-area-order/result.json",
+      "bytes": 55072,
+      "sha256": "435343b3397024e4ad76f0d6bc27a6007620d2b39d3d2618049009d34f71958d"
+    }
+  ]
+}

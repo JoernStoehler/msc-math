@@ -1,0 +1,34 @@
+{
+  "checked_at": "2026-10-17T13:23:55.568212+00:00",
+  "checklist_pages": 1,
+  "deterministic_rebuild_identical": true,
+  "render": "/tmp/msc-math/owner-batch/20261017T1320Z/checklist.png",
+  "visual_inspection": "Root inspected final page: legible, no clipping/overlap or missing glyphs. Separate delivery reviewer approved checklist-v2.",
+  "candidate_pages": 105,
+  "candidate_build_identity": true,
+  "candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "files": {
+    "thesis/review/kai-packet/MEETING-CHECKLIST.md": "97062289761ac9123bac0ea5b29acb4762b53f8a5551dd9f9271a7e7d9ff7722",
+    "thesis/review/kai-packet/MEETING-CHECKLIST.pdf": "60d86f7d7e8edb7c3e597596fa6dff675be860b69d5416a0751174fb5f855912",
+    "thesis/review/kai-packet/build-meeting-checklist.py": "1445c1edb0f5e34e578f2bbf6139c06a30671df84bd30e8041e3508ac3cf6438"
+  },
+  "http": [
+    {
+      "file": "thesis/review/kai-packet/MEETING-CHECKLIST.pdf",
+      "status": 200,
+      "content_type": "application/pdf"
+    },
+    {
+      "file": "thesis/review/kai-packet/MEETING-CHECKLIST.md",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    }
+  ],
+  "source": "thesis/review/kai-packet/MEETING-AGENDA.md",
+  "message_review": {
+    "reviewer": "/root/delivery_review",
+    "candidate": "checklist-v2",
+    "verdict": "APPROVE"
+  },
+  "scope": "Printable derivative of existing meeting agenda; no new institutional rule or personal registration outcome asserted."
+}

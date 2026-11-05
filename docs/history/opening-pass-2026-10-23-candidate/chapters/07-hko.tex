@@ -1,0 +1,257 @@
+\clearpage
+\section[HKO Local Maximality]{Local maximality of the HKO pentagon product}
+\label{sec:hko-local-maximum}
+Let $P$ be the regular pentagon of circumradius one, centred at the origin
+and with vertex $(1,0)$. In coordinates $(q_1,q_2,p_1,p_2)$ put
+$K_0=P\times R(-\pi/2)P$, with symplectic form
+$\omega_0=\sum_j dq_j\wedge dp_j$.
+The Haim--Kislev--Ostrover capacity formula~\cite{HaimKislevOstrover2024} for this body gives
+\[
+ c_{\rm EHZ}(K_0)=2\cos(\pi/10)(1+\cos(\pi/5)),\qquad
+ \operatorname{sys}(K_0)=\frac{3+\sqrt5}{5}>1.
+\]
+Here $\operatorname{sys}(K)=c_{\rm EHZ}(K)^2/(2\operatorname{vol}_4 K)$.
+The counterexample itself is due to Haim--Kislev and Ostrover; the result
+proved here concerns its local maximality when the number of facets stays ten.
+\begin{theorem}\label{thm:hko-ten-facet-local-maximum}
+There is a Hausdorff neighborhood $\mathcal U$ of $K_0$ among convex
+four-dimensional polytopes with exactly ten facets such that
+$\operatorname{sys}(K)\leq\operatorname{sys}(K_0)$ for $K\in\mathcal U$.
+Equality holds precisely for those bodies in $\mathcal U$ obtained from
+$K_0$ by translation, positive dilation and a linear symplectic map.
+\end{theorem}
+\input{chapters/hko-lemma-geometry.tex}
+\input{chapters/hko-lemma-bounds.tex}
+\input{chapters/hko-lemma-conclusion.tex}
+\clearpage
+\subsection*{The twenty-six exact choices}
+\label{page:hko-exact-choices}
+The constants $c=(t^2+5)/40$ and $z=(5-t^2)/20$ are as above.
+Facet labels and positions start at one; entry numbers start at zero to
+identify the rows in the accompanying computational witness.
+Every finite decimal in the table denotes its exact rational value.
+\begingroup
+\small\renewcommand{\arraystretch}{1.25}
+\renewcommand{\baselinestretch}{1.2}\selectfont
+\input{chapters/hko-sections.tex}
+\endgroup
+
+\subsection{A second ten-facet local maximum}
+\label{subsec:non-hko-local-maximum}
+
+The HKO body is not the only local maximum in the ten-facet space. Consider
+the row-normal presentation
+\[
+A_* =
+\begin{pmatrix}
+0&2&0&0\\
+12/7&4/7&0&0\\
+12/7&-4/7&0&0\\
+0&-2&0&0\\
+-12/7&-4/7&0&0\\
+-12/7&4/7&0&0\\
+0&0&4/3&2\\
+0&0&-4&2\\
+0&0&-4&-2\\
+0&0&4/3&-2
+\end{pmatrix},
+\qquad
+P_*:=\{x\in\mathbb R^4:A_*x\leq\mathbf1\}.
+\]
+The first six rows define a hexagon and the last four a quadrilateral in
+complementary Lagrangian planes. An exact finite certificate, together with
+the neighborhood argument below, proves the following.
+
+\begin{theorem}[A non-HKO ten-facet local maximum]
+\label{thm:non-hko-ten-facet-local-maximum}
+The polytope $P_*$ is simple, has ten genuine facets and 24 vertices, and
+\[
+ \operatorname{vol}_4(P_*)=\frac12,
+ \qquad c_{\rm EHZ}(P_*)=1,
+ \qquad \operatorname{sys}(P_*)=1.
+\]
+There is a Hausdorff neighborhood $\mathcal V$ of $P_*$ among convex
+four-dimensional polytopes with exactly ten genuine facets such that
+\[
+ \operatorname{sys}(P)\leq1\qquad(P\in\mathcal V).
+\]
+The maximum is non-strict. Locally, equality holds precisely on the images
+of the two-parameter product family described below under translations,
+positive dilations and linear symplectic maps. The two parameters remain
+independent after quotienting by these symmetries.
+\end{theorem}
+
+For completeness, write
+\[
+ u=1-v+v^2,\quad a=\frac12-s,\quad b=\frac12+s,\quad t=v-\frac12,
+\]
+and let $E(v,s)=H(v,s)\times T(v)$, where
+\[
+\begin{split}
+H(v,s)&=\operatorname{conv}\{(-a,\tfrac12),(a,\tfrac12),(b,t),
+ (a,-\tfrac12),(-a,-\tfrac12),(-b,-t)\},\\
+T(v)&=\operatorname{conv}\{(u,0),(0,v),(u-1,0),(0,v-1)\}.
+\end{split}
+\]
+At $(v,s)=(1/2,1/12)$ this is $P_*$. The areas are identically $1$ and
+$1/2$, and exact continuation of all product closure cases gives
+\(c_{\rm EHZ}(E(v,s))=1\) and $\operatorname{sys}(E(v,s))=1$ for parameters
+sufficiently close to the base point.
+
+\begin{proof}
+For a word with positive feasible HK weights and objective $Q>0$, the
+Haim--Kislev formula gives the upper bound
+\[
+ \operatorname{sys}(P(A))\leq
+ U(A):=\frac{1}{8\,\operatorname{vol}_4(P(A))\,Q(A)^2}.
+\]
+Thus the selected feasible sections are upper bounds for the actual ratio;
+they are not lower bounds and need not remain optimizing away from the base.
+On the product family, the Lagrangian splitting reduces the complete capacity
+calculation to the vertices of two planar closure polytopes. Enumerating all
+624 cyclic orders gives $Q_{\max}=1/2$, 12 tight cases, and a strict gap
+of $1/14$ for every other case. Exact rational-function continuation of the
+closure supports and the tight cases proves the capacity and equality claims
+on $E(v,s)$. In this continuation every zero weight in a consistent base
+closure system is identically zero, while positive and negative weights
+retain their signs. The relevant support-system ranks persist, and
+inconsistent systems remain inconsistent. Thus no new closure vertex appears arbitrarily near
+the base; the twelve tight values remain $1/2$ identically, and the other
+values retain a strict gap on a common parameter neighborhood.
+
+For arbitrary ten-facet perturbations, 24 positive feasible sections are
+continued through the full normal chart. Their gradient bank has rank 22 and
+has a positive normalized relation whose smallest coefficient is
+$3/36617$. The symmetry tangent space has rank 15; the two parameters of
+$E(v,s)$ add two directions, and one remaining transverse direction $W$
+is checked by an exact rational-function identity. At the base its only
+nonzero rows, in the same one-based labelling as $A_*$, are
+\[
+ W_7=(1/2,1/3,0,0),\qquad
+ W_8=(3/2,-1,0,0),\qquad W_9=(1,0,0,0).
+\]
+Along this direction, with the feasible weights continued as in the
+certificate,
+\[
+ \operatorname{vol}_4(P(A_*+zW))=\frac12+\frac{13}{1728}z^2,
+ \qquad Q_j(z)=\frac12,
+ \qquad U_j''(0)=-\frac{13}{432}
+\]
+for every selected section. The last displayed number is the curvature of
+the feasible upper sections, not an asserted second derivative of the actual
+capacity.
+
+To pass from these base-point calculations to a neighborhood, write
+$A(v,s)$ for the normalized facet rows of $E(v,s)$. The certificate
+continues the twenty-four contacts and $W$ rationally along this family.
+Their ambient derivative matrix $G(v,s)$ annihilates the fifteen symmetry
+directions, the two family directions and $W(v,s)$ identically. Those
+eighteen directions remain independent near the base, while a rank-22
+minor of $G$ remains nonzero. Consequently $G$ has constant rank 22 there.
+This constant-rank conclusion uses identities along the family; base-point
+rank alone would not suffice.
+
+Choose a fixed $40\times22$ matrix $Y$ whose columns complete these
+eighteen directions to a basis at the base. The exact chart-rank check
+verifies that this is possible. The matrix $H=GY$ has full column rank.
+If $\lambda_*$ is the positive base relation, then
+\[
+ \widetilde\lambda(v,s)
+ =\bigl[I_{24}-H(H^TH)^{-1}H^T\bigr]\lambda_*,
+ \qquad
+ \lambda=\frac{\widetilde\lambda}{\mathbf1^T\widetilde\lambda}
+\]
+is a positive normalized relation after shrinking the parameter
+neighborhood. Indeed it equals $\lambda_*$ at the base, and $H$ and $G$
+have the same column space. Use local transverse coordinates
+\[
+ A(v,s,z,y)=A(v,s)+zW(v,s)+Yy,\qquad y\in\mathbb R^{22}.
+\]
+The feasible sections give smooth upper bounds $U_j(v,s,z,y)$ with
+$U_j(v,s,0,0)=1$. Their free-weight derivatives in $z$ are chosen by the
+exact certificate to give the displayed curvature at the base.
+
+Here is the uniform estimate that controls mixed perturbations. On a small
+compact parameter patch the positive relation and rank, by the same
+unit-sphere argument as in Lemma~\ref{lem:hko-negative-slopes}, give
+$\min_j(G_jY)y\leq-\alpha\|y\|$ for some $\alpha>0$.
+Since $G_jW=0$, Taylor's theorem gives a common $C>0$ such that
+\[
+ \min_j(U_j-1)\leq-\alpha\|y\|+C(\|y\|^2+z^2).
+\]
+The weighted upper bound $F=\sum_j\lambda_j(v,s)U_j$ satisfies
+$F(v,s,0,0)=1$ and $D_{(z,y)}F(v,s,0,0)=0$. Its negative $zz$ derivative
+persists near the base. Hence, for some $b,C'>0$,
+\[
+ F-1\leq-bz^2+
+ C'\bigl(\|y\|^2+|z|\|y\|+(|z|+\|y\|)^3\bigr).
+\]
+All constants may be chosen uniformly because these functions are rational
+and regular on a neighborhood of the compact patch. Choose
+$M>2C/\alpha$. If $\|y\|\geq Mz^2$ and $(z,y)\ne0$, the first estimate
+is strictly negative for sufficiently small $\|y\|$. If $\|y\|<Mz^2$,
+then $z\ne0$ and the positive terms in the second estimate are
+$O(|z|^3)$, so it too is strictly negative for sufficiently small $|z|$.
+Each estimate bounds the actual ratio from above. At $z=y=0$ that ratio
+equals one by the complete product calculation.
+
+Finally include the fifteen symmetry parameters. The differential of their
+action on this chart has rank forty at the base, so the inverse function
+theorem gives coordinates for every nearby row matrix. The simple-polytope
+and polarity argument of Lemma~\ref{lem:hko-row-neighborhood} applies to
+$P_*$ as well and turns this into a fixed-ten-facet Hausdorff neighborhood.
+The strict decrease for $(z,y)\ne0$ gives precisely the asserted equality
+family and its symmetry images.
+\end{proof}
+
+The finite witness, exact verifier and independent direct differentiation
+check are retained at \path{topics/variation-and-local-maxima/hko-local-maximum/non-hko/}.
+The packet's \path{PROOF.md}, Sections~4--7, gives the support continuation,
+contact formulas and chart choices used above; its Section~8 records the
+uniform estimate. Exact arithmetic checks the finite predicates and
+rational-function identities, while the analytic argument supplies their
+geometric implication. No numerical neighborhood radius is claimed.
+
+This result is deliberately narrower than a global theorem. It does not
+prove local maximality when facets are added, uniqueness among all ten-facet
+polytopes, or any new violation of Viterbo's inequality. Since HKO has 25
+vertices and ratio $(3+\sqrt5)/5$, while $P_*$ has 24 vertices and ratio one,
+the two bodies are not related by any invertible affine map, in particular not
+by a symplectic or anti-symplectic symmetry.
+
+\subsection{Relation to other local results}
+\label{subsec:hko-related-local-results}
+
+Local maximality has a dynamical precedent. Abbondandolo and Benedetti
+prove that Zoll contact forms, whose Reeb orbits are all closed with the
+same minimal period, locally maximize the contact systolic ratio
+\cite{AB2023}. Their results include the volume--capacity inequality near
+the ball. The HKO body presents a different setting: it has corners and a
+ratio larger than the ball's, and
+Theorem~\ref{thm:hko-ten-facet-local-maximum} concerns perturbations of its
+supporting facets.
+
+Haim--Kislev studies the HKO body through hyperplane cuts. A convex body is
+a \emph{cuts extremizer} if every cut into two pieces with nonempty interior
+strictly decreases the EHZ capacity on each piece. Numerical experiments
+suggest this property for HKO, while also suggesting that its capacity is
+not always the sum of the capacities of the pieces
+\cite[Definitions~1.1--1.2 and Example~1.12]{HaimKislev2025Zoll}.
+For sufficiently shallow cuts in certain directions, including all normals
+supported in one pentagon factor, Haim--Kislev proves this additivity identity
+\cite[Proposition~1.13]{HaimKislev2025Zoll}.
+
+Cuts give a complementary way to perturb the counterexample. Cutting off a
+small cap typically adds a facet, whereas
+Theorem~\ref{thm:hko-ten-facet-local-maximum} varies the ten existing
+facets. For a retained piece $K'$, the inequality
+$\operatorname{sys}(K')\leq\operatorname{sys}(K_0)$ is equivalent to
+\[
+ \frac{c_{\rm EHZ}(K')}{c_{\rm EHZ}(K_0)}
+ \leq
+ \left(\frac{\operatorname{vol}_4 K'}
+ {\operatorname{vol}_4 K_0}\right)^{1/2}:
+\]
+the capacity decrease must compensate for the lost volume.
+Theorem~\ref{thm:hko-ten-facet-local-maximum} establishes this balance
+throughout a neighborhood in the space of ten-facet polytopes.

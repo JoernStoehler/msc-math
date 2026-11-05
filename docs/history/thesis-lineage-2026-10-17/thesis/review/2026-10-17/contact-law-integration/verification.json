@@ -1,0 +1,38 @@
+{
+  "checked_utc": "2026-10-17T21:00:32.715241+00:00",
+  "selected_pdf": "thesis/build/main.pdf",
+  "selected_pdf_sha256": "f2369a7492370da2a5b81d446d4abcc90f660f3844a3da22f32bf63dde937ae6",
+  "selected_pages": 109,
+  "previous_working_pages": 106,
+  "net_page_increase": 3,
+  "frozen_kai_pages": 105,
+  "frozen_kai_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "frozen_kai_unchanged": true,
+  "source_bindings": {
+    "thesis/chapters/08-data-science.tex": "feade7a70947bd02ba7f488d6600d326e519b5b02a558a94ccf9af26bb5b94be",
+    "thesis/appendices/data-science-contact.tex": "4895fa983560672a8da6dbd00f2fe135de1a7d3f3a1bd4d4aab8b5406c053d24",
+    "thesis/main.tex": "f1481faf58f19a815efb0dff53e8aec49aa4324aac8a708638d8b568ef43f05b",
+    "thesis/figures/contact-cusp.png": "dea59dc505dc9c398928683a2037eda5e1f104b842de2fefce14bf8d08c07485"
+  },
+  "portable_manifest_sha256": "019a15e5daf6a07febf8f48e6681fdde0bc781af29596bcbe567cb78f656c48e",
+  "original_source_commit": "308ed31f22b502b73ab1bce988856ff13af175b0",
+  "original_source_commit_blob_bindings_verified": 41,
+  "transported_scientific_files": 41,
+  "transported_scientific_bytes": 8121223,
+  "original_HK_witness_subsection_preserved_byte_for_byte": true,
+  "fresh_check_build": "PASS; valid PDF, no overfull hbox above1pt, no undefined references",
+  "exact_base_census_replay": "PASS: original retained fullword.py replayed in scratch with local dependency skeleton, output identical byte-for-byte to original fullword.json;3000 words/50 active/20 gradients",
+  "package_check": "package-check.json",
+  "visual_pages": [
+    63,
+    64,
+    65,
+    66,
+    102,
+    103,
+    104
+  ],
+  "visual_observation": "Read rendered1400px pages: main definitions and local law, cusp/caption and HK-witness inequality, search table and chapter transition, all supplement equations and support paths legible; no clipping or overlap. Final source-route amendment on104 and conclusion66 rerendered and inspected.",
+  "scientific_review": "APPROVE contact-selected-v1 by native /root/contact_science_review for final main/supplement/README; independently verified all41 witness identities. No human scientific/prose PASS.",
+  "mathematical_limits": "Local theorem conditional on imported capacity/product reduction plus retained exact base census; exact finite-panel targets additionally import retained two-angular-word completeness proof; no explicit local radius or global ratio bound; historical transfer targets numerical; full canonical/derivative/global capacity replays not repeated for insertion."
+}

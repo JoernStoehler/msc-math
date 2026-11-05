@@ -1,0 +1,1038 @@
+{
+  "protocol": "Unlabelledcanonicalfinitegauge invariant, twofixedno-fitformulae; all54 predictions prior tothirdtruth",
+  "rows": [
+    {
+      "name": "canon_full_s0_e1of100",
+      "family": "full",
+      "seed": 0,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.014424310856283632,
+      "exp_prediction": 1.0322166811641997,
+      "reciprocal_prediction": 1.0323230469664086,
+      "raw_prediction": 1.0321286814352413,
+      "ordered_prediction": 1.0320697906723975,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s0_e1of25",
+      "family": "full",
+      "seed": 0,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.05669630485489853,
+      "exp_prediction": 0.9894922100233724,
+      "reciprocal_prediction": 0.9910260788162378,
+      "raw_prediction": 0.988165235964978,
+      "ordered_prediction": 0.9872547940970567,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s0_e1of10",
+      "family": "full",
+      "seed": 0,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.13696814560773887,
+      "exp_prediction": 0.9131681636303104,
+      "reciprocal_prediction": 0.9210579905386841,
+      "raw_prediction": 0.9057764401283566,
+      "ordered_prediction": 0.9004721821184782,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s0_e1of100",
+      "family": "support",
+      "seed": 0,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.005934724689712598,
+      "exp_prediction": 1.0410170766233917,
+      "reciprocal_prediction": 1.0410353373803436,
+      "raw_prediction": 1.040996851843256,
+      "ordered_prediction": 1.0410057195885072,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s0_e1of25",
+      "family": "support",
+      "seed": 0,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.023518507716667955,
+      "exp_prediction": 1.0228720548023809,
+      "reciprocal_prediction": 1.0231506197539608,
+      "raw_prediction": 1.022567178595421,
+      "ordered_prediction": 1.0226975364772712,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s0_e1of10",
+      "family": "support",
+      "seed": 0,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.057775580195303135,
+      "exp_prediction": 0.9884248515720078,
+      "reciprocal_prediction": 0.9900149096905839,
+      "raw_prediction": 0.986680885376677,
+      "ordered_prediction": 0.9873619590204045,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s0_e1of100",
+      "family": "angular",
+      "seed": 0,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.007959382371850536,
+      "exp_prediction": 1.038911505651461,
+      "reciprocal_prediction": 1.0389442410226268,
+      "raw_prediction": 1.0388707597220703,
+      "ordered_prediction": 1.038879918750735,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s0_e1of25",
+      "family": "angular",
+      "seed": 0,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.03135970136526409,
+      "exp_prediction": 1.0148828802095127,
+      "reciprocal_prediction": 1.015371837889058,
+      "raw_prediction": 1.0142389277666348,
+      "ordered_prediction": 1.0143828244382636,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s0_e1of10",
+      "family": "angular",
+      "seed": 0,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.0759322933174,
+      "exp_prediction": 0.9706402486451644,
+      "reciprocal_prediction": 0.973308080819013,
+      "raw_prediction": 0.9667134933693712,
+      "ordered_prediction": 0.9675807808085463,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s1_e1of100",
+      "family": "full",
+      "seed": 1,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.027294242624450293,
+      "exp_prediction": 1.0190172430321216,
+      "reciprocal_prediction": 1.0193901143888622,
+      "raw_prediction": 1.0189973171241378,
+      "ordered_prediction": 1.0188472799321306,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s1_e1of25",
+      "family": "full",
+      "seed": 1,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.10874763135180733,
+      "exp_prediction": 0.9393053060031911,
+      "reciprocal_prediction": 0.9445013147159323,
+      "raw_prediction": 0.9388286768461995,
+      "ordered_prediction": 0.9366549522066381,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s1_e1of10",
+      "family": "full",
+      "seed": 1,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.26745209635972245,
+      "exp_prediction": 0.8014608307046465,
+      "reciprocal_prediction": 0.8262352466871794,
+      "raw_prediction": 0.7969167575706709,
+      "ordered_prediction": 0.7858819459164244,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s1_e1of100",
+      "family": "support",
+      "seed": 1,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.011460041968580638,
+      "exp_prediction": 1.035280988429076,
+      "reciprocal_prediction": 1.0353484587110244,
+      "raw_prediction": 1.0351516863198766,
+      "ordered_prediction": 1.0351723441298362,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 1
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s1_e1of25",
+      "family": "support",
+      "seed": 1,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.044400647671857876,
+      "exp_prediction": 1.0017337718205939,
+      "reciprocal_prediction": 1.0026933608614381,
+      "raw_prediction": 0.9997931578985677,
+      "ordered_prediction": 1.0000677239638909,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 1
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s1_e1of10",
+      "family": "support",
+      "seed": 1,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.1044096747338374,
+      "exp_prediction": 0.9433888223264043,
+      "reciprocal_prediction": 0.9482111751260566,
+      "raw_prediction": 0.9326581573502253,
+      "ordered_prediction": 0.9337526332474988,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 1
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s1_e1of100",
+      "family": "angular",
+      "seed": 1,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.016841096158034866,
+      "exp_prediction": 1.0297250471459476,
+      "reciprocal_prediction": 1.0298694648128213,
+      "raw_prediction": 1.0295302361902112,
+      "ordered_prediction": 1.0293348681487928,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 3,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s1_e1of25",
+      "family": "angular",
+      "seed": 1,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.065115075511682,
+      "exp_prediction": 0.9811968693207411,
+      "reciprocal_prediction": 0.9831929146218081,
+      "raw_prediction": 0.978251692863634,
+      "ordered_prediction": 0.975246850092767,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 3,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s1_e1of10",
+      "family": "angular",
+      "seed": 1,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.15180955118051495,
+      "exp_prediction": 0.8997155394139488,
+      "reciprocal_prediction": 0.9091898868407939,
+      "raw_prediction": 0.8832295944204814,
+      "ordered_prediction": 0.8659669273286934,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 3,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s2_e1of100",
+      "family": "full",
+      "seed": 2,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.023842455193222627,
+      "exp_prediction": 1.0225407516466973,
+      "reciprocal_prediction": 1.0228268911766554,
+      "raw_prediction": 1.022378453402856,
+      "ordered_prediction": 1.0222768940948448,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s2_e1of25",
+      "family": "full",
+      "seed": 2,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.09348678567627444,
+      "exp_prediction": 0.9537498368632202,
+      "reciprocal_prediction": 0.957682899526126,
+      "raw_prediction": 0.9513513464713071,
+      "ordered_prediction": 0.9497543022627811,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s2_e1of10",
+      "family": "full",
+      "seed": 2,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.22457519385234093,
+      "exp_prediction": 0.8365723461142839,
+      "reciprocal_prediction": 0.8551647957244435,
+      "raw_prediction": 0.8237576014958246,
+      "ordered_prediction": 0.8141168370327952,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s2_e1of100",
+      "family": "support",
+      "seed": 2,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.013573288392832289,
+      "exp_prediction": 1.0330954946389843,
+      "reciprocal_prediction": 1.0331898122142378,
+      "raw_prediction": 1.0328371170040274,
+      "ordered_prediction": 1.0329434538877365,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s2_e1of25",
+      "family": "support",
+      "seed": 2,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.05140522766001964,
+      "exp_prediction": 0.9947415648145297,
+      "reciprocal_prediction": 0.996013304813606,
+      "raw_prediction": 0.9908810697501448,
+      "ordered_prediction": 0.992442829482507,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s2_e1of10",
+      "family": "support",
+      "seed": 2,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.11522192519840439,
+      "exp_prediction": 0.9332436112108338,
+      "reciprocal_prediction": 0.9390181199259087,
+      "raw_prediction": 0.9120127736050966,
+      "ordered_prediction": 0.9202570859941283,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s2_e1of100",
+      "family": "angular",
+      "seed": 2,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.01320795699903764,
+      "exp_prediction": 1.0334729858064524,
+      "reciprocal_prediction": 1.0335623484458607,
+      "raw_prediction": 1.033408389648445,
+      "ordered_prediction": 1.0333376555027334,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s2_e1of25",
+      "family": "angular",
+      "seed": 2,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.05209860345835778,
+      "exp_prediction": 0.994052074153579,
+      "reciprocal_prediction": 0.995356891509653,
+      "raw_prediction": 0.9930751545902249,
+      "ordered_prediction": 0.9919858448832805,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s2_e1of10",
+      "family": "angular",
+      "seed": 2,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.12675978021480516,
+      "exp_prediction": 0.9225378611895567,
+      "reciprocal_prediction": 0.9294027119962673,
+      "raw_prediction": 0.917069782510991,
+      "ordered_prediction": 0.9107708882332322,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s3_e1of100",
+      "family": "full",
+      "seed": 3,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.022302297166358842,
+      "exp_prediction": 1.024116839393687,
+      "reciprocal_prediction": 1.0243678395349876,
+      "raw_prediction": 1.023830575891572,
+      "ordered_prediction": 1.023791075409308,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s3_e1of25",
+      "family": "full",
+      "seed": 3,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.08594886780013768,
+      "exp_prediction": 0.9609662891502292,
+      "reciprocal_prediction": 0.9643304823562755,
+      "raw_prediction": 0.9567678327721668,
+      "ordered_prediction": 0.9561186906586584,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s3_e1of10",
+      "family": "full",
+      "seed": 3,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.19950302902326122,
+      "exp_prediction": 0.857812177519157,
+      "reciprocal_prediction": 0.8730395590186126,
+      "raw_prediction": 0.8355328054786932,
+      "ordered_prediction": 0.8313602916785257,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s3_e1of100",
+      "family": "support",
+      "seed": 3,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.009158203877198016,
+      "exp_prediction": 1.03766678244588,
+      "reciprocal_prediction": 1.037710035430075,
+      "raw_prediction": 1.0376580680644991,
+      "ordered_prediction": 1.0375663324323277,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s3_e1of25",
+      "family": "support",
+      "seed": 3,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.03654832790505609,
+      "exp_prediction": 1.0096306696253534,
+      "reciprocal_prediction": 1.0102892140267663,
+      "raw_prediction": 1.0095114595146977,
+      "ordered_prediction": 1.0080419434419052,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s3_e1of10",
+      "family": "support",
+      "seed": 3,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.09112729702523355,
+      "exp_prediction": 0.9560028557201949,
+      "reciprocal_prediction": 0.9597538237334924,
+      "raw_prediction": 0.9554879740422557,
+      "ordered_prediction": 0.9462861242753492,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s3_e1of100",
+      "family": "angular",
+      "seed": 3,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.00951119557747169,
+      "exp_prediction": 1.037300559324691,
+      "reciprocal_prediction": 1.037347183555423,
+      "raw_prediction": 1.0372748001585201,
+      "ordered_prediction": 1.0372581220742405,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s3_e1of25",
+      "family": "angular",
+      "seed": 3,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.037750676102729926,
+      "exp_prediction": 1.0084174714988576,
+      "reciprocal_prediction": 1.0091186829506735,
+      "raw_prediction": 1.0080207987930445,
+      "ordered_prediction": 1.0077663110529353,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s3_e1of10",
+      "family": "angular",
+      "seed": 3,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.09295625341152924,
+      "exp_prediction": 0.9542559661712641,
+      "reciprocal_prediction": 0.9581477687063951,
+      "raw_prediction": 0.9519646573916628,
+      "ordered_prediction": 0.9505250970521876,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s4_e1of100",
+      "family": "full",
+      "seed": 4,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.011220740043560528,
+      "exp_prediction": 1.0355287628078043,
+      "reciprocal_prediction": 1.0355934703780374,
+      "raw_prediction": 1.0353861796053854,
+      "ordered_prediction": 1.0354183600790559,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s4_e1of25",
+      "family": "full",
+      "seed": 4,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.04331969271590142,
+      "exp_prediction": 1.0028171863614566,
+      "reciprocal_prediction": 1.00373222398776,
+      "raw_prediction": 1.0006993997985614,
+      "ordered_prediction": 1.0012326049670313,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s4_e1of10",
+      "family": "full",
+      "seed": 4,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.10133908645049874,
+      "exp_prediction": 0.9462900329229972,
+      "reciprocal_prediction": 0.950854835158006,
+      "raw_prediction": 0.9347730662584173,
+      "ordered_prediction": 0.9382809162940676,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 2,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s4_e1of100",
+      "family": "support",
+      "seed": 4,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.01128893423362037,
+      "exp_prediction": 1.0354581481703222,
+      "reciprocal_prediction": 1.0355236372615528,
+      "raw_prediction": 1.03536759496059,
+      "ordered_prediction": 1.0353353577880815,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 1
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s4_e1of25",
+      "family": "support",
+      "seed": 4,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.044138370604965615,
+      "exp_prediction": 1.0019965380733484,
+      "reciprocal_prediction": 1.0029452273583344,
+      "raw_prediction": 1.0006275535929399,
+      "ordered_prediction": 1.0001319405399853,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 1
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s4_e1of10",
+      "family": "support",
+      "seed": 4,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.10560199458604476,
+      "exp_prediction": 0.9422646714120969,
+      "reciprocal_prediction": 0.9471885910372763,
+      "raw_prediction": 0.9346052928951899,
+      "ordered_prediction": 0.9317394329283735,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 1
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s4_e1of100",
+      "family": "angular",
+      "seed": 4,
+      "epsilon": "1/100",
+      "transformed_from": null,
+      "invariant": 0.007911052588573705,
+      "exp_prediction": 1.0389617172327206,
+      "reciprocal_prediction": 1.0389940588610922,
+      "raw_prediction": 1.0389127915586864,
+      "ordered_prediction": 1.0389470800865883,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 4,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s4_e1of25",
+      "family": "angular",
+      "seed": 4,
+      "epsilon": "1/25",
+      "transformed_from": null,
+      "invariant": 0.031421972616235846,
+      "exp_prediction": 1.0148196841506414,
+      "reciprocal_prediction": 1.0153105356517333,
+      "raw_prediction": 1.014403078741553,
+      "ordered_prediction": 1.0146004570619995,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s4_e1of10",
+      "family": "angular",
+      "seed": 4,
+      "epsilon": "1/10",
+      "transformed_from": null,
+      "invariant": 0.0777562804832292,
+      "exp_prediction": 0.9688714269334441,
+      "reciprocal_prediction": 0.97166086105332,
+      "raw_prediction": 0.9671046887294102,
+      "ordered_prediction": 0.9672719859317442,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s0_e1of25_group",
+      "family": "full",
+      "seed": 0,
+      "epsilon": "1/25",
+      "transformed_from": "canon_full_s0_e1of25",
+      "invariant": 0.05669630485489872,
+      "exp_prediction": 0.9894922100233722,
+      "reciprocal_prediction": 0.9910260788162376,
+      "raw_prediction": 0.8222521751347969,
+      "ordered_prediction": 0.9872547940970567,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 0,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s0_e1of25_group",
+      "family": "support",
+      "seed": 0,
+      "epsilon": "1/25",
+      "transformed_from": "canon_support_s0_e1of25",
+      "invariant": 0.023518507716667938,
+      "exp_prediction": 1.0228720548023809,
+      "reciprocal_prediction": 1.0231506197539608,
+      "raw_prediction": 0.8380500164931238,
+      "ordered_prediction": 1.0226975364772712,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s0_e1of25_group",
+      "family": "angular",
+      "seed": 0,
+      "epsilon": "1/25",
+      "transformed_from": "canon_angular_s0_e1of25",
+      "invariant": 0.0313597013652637,
+      "exp_prediction": 1.0148828802095131,
+      "reciprocal_prediction": 1.0153718378890582,
+      "raw_prediction": 0.8170954232104883,
+      "ordered_prediction": 1.0143828244382638,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s1_e1of25_group",
+      "family": "full",
+      "seed": 1,
+      "epsilon": "1/25",
+      "transformed_from": "canon_full_s1_e1of25",
+      "invariant": 0.10874763135180714,
+      "exp_prediction": 0.9393053060031914,
+      "reciprocal_prediction": 0.9445013147159325,
+      "raw_prediction": 0.8114971994319904,
+      "ordered_prediction": 0.9366549522066383,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s1_e1of25_group",
+      "family": "support",
+      "seed": 1,
+      "epsilon": "1/25",
+      "transformed_from": "canon_support_s1_e1of25",
+      "invariant": 0.04440064767185807,
+      "exp_prediction": 1.0017337718205936,
+      "reciprocal_prediction": 1.002693360861438,
+      "raw_prediction": 0.7701732566585906,
+      "ordered_prediction": 1.0000677239638909,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 0,
+        "B_start": 2
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s1_e1of25_group",
+      "family": "angular",
+      "seed": 1,
+      "epsilon": "1/25",
+      "transformed_from": "canon_angular_s1_e1of25",
+      "invariant": 0.06511507551168218,
+      "exp_prediction": 0.9811968693207409,
+      "reciprocal_prediction": 0.9831929146218079,
+      "raw_prediction": 0.8120087728619955,
+      "ordered_prediction": 0.9752468500927675,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 3,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_full_s2_e1of25_group",
+      "family": "full",
+      "seed": 2,
+      "epsilon": "1/25",
+      "transformed_from": "canon_full_s2_e1of25",
+      "invariant": 0.09348678567627432,
+      "exp_prediction": 0.9537498368632203,
+      "reciprocal_prediction": 0.9576828995261262,
+      "raw_prediction": 0.8202996432301368,
+      "ordered_prediction": 0.9497543022627812,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 3,
+        "B_start": 0
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_support_s2_e1of25_group",
+      "family": "support",
+      "seed": 2,
+      "epsilon": "1/25",
+      "transformed_from": "canon_support_s2_e1of25",
+      "invariant": 0.05140522766001951,
+      "exp_prediction": 0.9947415648145298,
+      "reciprocal_prediction": 0.9960133048136062,
+      "raw_prediction": 0.8014838744585343,
+      "ordered_prediction": 0.992442829482507,
+      "selected_labels": {
+        "swapped": true,
+        "reverse": true,
+        "A_start": 2,
+        "B_start": 4
+      },
+      "valid_candidates": 50
+    },
+    {
+      "name": "canon_angular_s2_e1of25_group",
+      "family": "angular",
+      "seed": 2,
+      "epsilon": "1/25",
+      "transformed_from": "canon_angular_s2_e1of25",
+      "invariant": 0.05209860345835766,
+      "exp_prediction": 0.9940520741535791,
+      "reciprocal_prediction": 0.995356891509653,
+      "raw_prediction": 0.8388587439677737,
+      "ordered_prediction": 0.9919858448832802,
+      "selected_labels": {
+        "swapped": false,
+        "reverse": false,
+        "A_start": 1,
+        "B_start": 3
+      },
+      "valid_candidates": 50
+    }
+  ],
+  "input_sha256": {
+    "CANONICAL-PLAN.md": "1f3edb16c1d7d52aaa5146a9da86e41aad6c070a50a50d49765c1e80b42387a7",
+    "canonical.py": "01f6a72a8ec3a7aefb4e9024ea799df8d09aa669f04ef02dc33c315cd702abf9",
+    "canonical-sample.json": "8fabf5ff582150c4cf56287b597a45002ae4baeb18605e607c09c970067e2f5d",
+    "predictions.json": "31a2ae1377e6e87cf86c2ab63a06237b755568999bc526e58139f8582bddfcb3",
+    "predict-canonical.py": "05fa93c2aae88c77d50e60a865240db4123c308d0393866c38c1111669ce0ab3"
+  }
+}

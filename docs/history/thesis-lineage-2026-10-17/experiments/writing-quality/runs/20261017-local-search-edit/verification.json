@@ -1,0 +1,18 @@
+{
+  "source": "thesis/chapters/08-data-science.tex",
+  "source_sha256": "218b8721a3c6ccd8ab1245e0aa9a8902a7a7911bd8d62c42801cdd745160bf1b",
+  "start_line": 516,
+  "end_line_exclusive": 558,
+  "before_sha256": "0706291eb0fc1626e9fd0dba59594df797710f567125023f0af27fb761bd8a3c",
+  "after_sha256": "9fb3a67511031672eae10cfce8be8767a6b83fd0929f26722c07989d2b2bdb41",
+  "table_byte_identical": true,
+  "label_ref_cite_multisets_equal": true,
+  "patch_applies_to_current_source": true,
+  "manuscript_unchanged_by_worker": true,
+  "build_performed_by_worker": false,
+  "human_judgment": null,
+  "word_counts_whitespace_including_TeX": {
+    "before": 258,
+    "after": 239
+  }
+}

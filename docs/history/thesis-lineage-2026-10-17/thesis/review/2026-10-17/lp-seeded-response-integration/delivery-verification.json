@@ -1,0 +1,54 @@
+{
+  "checked_at": "2026-10-17T18:06:28.292538+00:00",
+  "scientific_commit": "254574fcef15d0b795dc119f4c6f9ecfc4d26953",
+  "patterns_worktree_clean": true,
+  "scientific_report_sha256": "e24eda40e4cc979bf820098d780f2318e9650247540967be46b7afb3c0398367",
+  "scientific_manifest_sha256": "3fa675891bec29489a56b02b82047ac36cf045b82575f89e9c95cc47814b3eef",
+  "root_packet_hashes": {
+    "root-prediction-freeze.json": "ba7821b2bd37825f2adab40b8845a2b742059468aacf8df14a946e4f5802b3cc",
+    "README.md": "25b95d95c0916fccdaa4edc3768da8cd5df71869e0514f1faf8d0a3c46ce6d8e",
+    "review.md": "947f4268c3f91a7b7245fa7e93fdd5bc9cbffc9bf97f63762b8b4d47faee52f2",
+    "verification.json": "e0f437c273b690e96f20b3efe86ca44b9b10c637b93c095558c434d7bf8b377b",
+    "diagnostic-verification.json": "67979b0a824cf52356ce951367e60a06fc01512e4ab90526b8acc165151256b0",
+    "PLAN.md": "40e343ff4f7a3c10da56bc9bc884edf43eac08ac428e973c14c2943889e7b6c9",
+    "root-freeze.json": "5868b244e42f98f99a9a1f0ab058fe24f009f20854e15e34d174ee6ebfeb8493",
+    "owner-mechanism.py": "7e46b14e3e92a070f97c7ae05dcc745071c5bf412f222bd448de96e44f2a8704",
+    "owner-verify.py": "b258864e801e01d63d24827eedb77a424f74f2e65765ad8173c6e80ee1eeb5d6",
+    "mechanism-verification.json": "58adfbbf00e44f33051588b42542cf15251a4df0d809bf9cd121c34a1a2813e0"
+  },
+  "local_links_checked": 8,
+  "http": [
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/lp-seeded-response-integration/README.md",
+      "status": 200,
+      "bytes": 15988,
+      "mathml": true
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/lp-seeded-response/REPORT.md",
+      "status": 200,
+      "bytes": 27448,
+      "mathml": true
+    }
+  ],
+  "checks": [
+    "root independent math and mechanism PASS",
+    "8dashboard tests PASS",
+    "coordination state/source check PASS",
+    "exact scientific/report/delivery review APPROVE"
+  ],
+  "scope": "Research-only integration and browser-rendered Markdown access; no fresh manuscript build, human PASS or expanded scientific cohort.",
+  "final_pm_check": {
+    "unconsumed_answers": 0,
+    "open_questions": 5,
+    "task": "df066e63",
+    "task_state": "done",
+    "result": "5add9353",
+    "uncertainty": "3b04abff"
+  },
+  "scientific_manifest_files_verified": 16,
+  "workflow_projection": "PASS",
+  "no_manuscript_changes": true,
+  "kai_candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "approved_candidate_byte_identity": "PASS"
+}

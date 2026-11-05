@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "scope": "Independent all-intersection rational convex hull, LP anchor formula and maximal-contact check; direct 4D HK chosen-word verification and chosen-pair order optimum. Numerical regular controls use independent analytic area when present. No original-body capacity optimality claim.",
+  "rows": [
+    {
+      "name": "random_5x6_s2_220",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.1641158952006379,
+      "exact_gain_over_width": "50918495823147341283112205569547235157275993717006445260241659569839332841915612354831895205409/190215423302744556142609918982497089917007777785610683690312981090529446924062447247780286876712"
+    },
+    {
+      "name": "random_6x6_s1_194",
+      "word_orders_checked": 120,
+      "capacity_over_historical": 1.384932878328975,
+      "exact_gain_over_width": "15110100803774772009163196852842617780919390131300840059664298029522287287781816588091608170195/803062999072061451204377785322920677974732513201538616744051733491734674384585814556765978607222"
+    }
+  ],
+  "regular_controls": [],
+  "falsifier": null,
+  "bound_above_HKO": [
+    {
+      "name": "random_6x6_s1_194",
+      "ratio_upper_bound": 1.1646061943640518,
+      "strictly_above_HKO_by_exact_squaring": true
+    }
+  ],
+  "results_sha256": "7ba43de5bea54e51dfec35681c1ec3b8ec940b46cea45a6f047de190faf9547e"
+}

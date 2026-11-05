@@ -1,0 +1,18 @@
+{
+  "local_links_checked": 6,
+  "missing": [],
+  "http": [
+    {
+      "file": "thesis/review/2026-10-17/full-partner-validation-integration/README.md",
+      "status": 200
+    },
+    {
+      "file": "thesis/review/2026-10-17/full-partner-validation-integration/EXPLANATION-CANDIDATE.md",
+      "status": 200
+    },
+    {
+      "file": "docs/dashboard/thesis.html",
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Native reviewer: /root/queue_triage
+Scope: private independent mathematical challenge; condensed integration note, not a verbatim transcript.
+
+The construction is correct for full-dimensional bounded planar P,Q with origin interior and irredundant facet inequalities normalized to support1.
+At an opposite support vertex p*, -a_i=c_j a_j+c_k a_k, c_j,c_k>=0 and c_j+c_k=h_P(-a_i). Weights (1,c_j,c_k)/(1+h) attain t_i. Dotting any closure with p* gives lambda_i<=1/(1+h). Supporting-edge degeneracy gives one zero coefficient.
+Planarity gives (P-P)^polar=conv{+/-a_i/(1+h_P(-a_i))}.
+For unhalved closure vectors, the displayed word has signed cross-sum2M. Actual HK weights are halved, so Q=M/2 and C<=1/|M|. Reverse for negative M. The displayed order reproduces width; all-order optimization may improve it. No universal tightness conclusion.

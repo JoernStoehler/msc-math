@@ -1,0 +1,62 @@
+{
+  "checked_at": "2026-10-17T18:59:09.022601+00:00",
+  "status": "PASS",
+  "isolated_build": "latexmk/biber success",
+  "preview_pages": 108,
+  "selected_pages": 105,
+  "net_page_addition": 3,
+  "main_preview_pages": [
+    63,
+    64
+  ],
+  "supplement_preview_pages": [
+    101,
+    102,
+    103
+  ],
+  "rendered_and_visually_inspected": [
+    1,
+    63,
+    64,
+    65,
+    101,
+    102,
+    103
+  ],
+  "new_undefined_references": false,
+  "overfull_boxes": false,
+  "snippet_in_isolated_source_identity": true,
+  "selected_candidate_build_identity": true,
+  "selected_candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "preview_sha256": "2ab4e7d66f4217598d2e185529fe9a5353d03faba554ab2a4ebe16991e52bc8a",
+  "retained_snippet_hashes": {
+    "passage.tex": "cb8dc2cba0a877c5b552c062a8faaae0c06a7fe7408378847b816a784293994f",
+    "definitions-and-proof.tex": "1da8413c752d243e07419da9f748582f061e47d09a564701103b99ab74ab0cd4",
+    "PASSAGE.md": "0ae812fb696c8e36bb914a431ae0e3439b0dec660cc20e1753231c108297fd8d",
+    "SOURCE-AND-PLACEMENT.md": "af354f64d75fb556f09b89b513fbc3a4bae867da594d107b1b1b5b9dddfd0f67",
+    "contact-cusp.svg": "702deb3e8d0be0d2288ad23784676cfbbb9f44612fc30b2ba59101277908d03b",
+    "contact-cusp.png": "dea59dc505dc9c398928683a2037eda5e1f104b842de2fefce14bf8d08c07485"
+  },
+  "http": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "bytes": 11015
+    },
+    {
+      "file": "OPTIONAL-PREVIEW.pdf",
+      "status": 200,
+      "bytes": 1827630
+    },
+    {
+      "file": "contact-cusp.svg",
+      "status": 200,
+      "bytes": 2369
+    }
+  ],
+  "browser_html_dom": "Chrome AX shows actual text, native math, PDF/source links and model image; screenshot capture timed out; PDF and PNG visual checks independently completed.",
+  "scope": "Optional isolated integration/layout preview and evidence audit. Current selected thesis and scientific sibling unchanged; witness-access integration and human acceptance remain separate.",
+  "all_108_pages_marked_optional": true,
+  "pdf_metadata_title": "OPTIONAL PREVIEW: local contact passage",
+  "cover_marking_fix_preserves_six_inspected_page_rasters": true
+}

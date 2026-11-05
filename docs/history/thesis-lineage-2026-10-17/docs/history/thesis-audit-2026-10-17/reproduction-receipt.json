@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-17T08:09:19.722985+00:00",
+  "status": "PASS bounded option A",
+  "source_base_commit_before_audit_commit": "51ae8e2b6c7d4c6a791ce958067874d6a449f1e6",
+  "source_manifest_sha256": "76e6d4fe86cdf9b35565bed62784c6f83c43397829e86229aca9b7f256319ae9",
+  "source_inventory": "final-source-inventory.json",
+  "registry_sha256": "98ff772d6ee2a60e1312634a38f5920ea65b7cb33ebd7250a0411c583b2833f7",
+  "artifacts_script_sha256": "70f4c43069ebc43c05c9d5a40ca17e6ee3bbd137facd69acfc571552de8b84ee",
+  "build": {
+    "started_at": "2026-10-17T08:06:55.029851+00:00",
+    "completed_at": "2026-10-17T08:07:20.256852+00:00",
+    "command": [
+      "docker",
+      "exec",
+      "--user",
+      "1000",
+      "--workdir",
+      "/work",
+      "msc-thesis3-20261017-reproduction",
+      "timeout",
+      "180s",
+      "bash",
+      "thesis/check-build.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 23.95025705899934,
+    "source_manifest_sha256": "76e6d4fe86cdf9b35565bed62784c6f83c43397829e86229aca9b7f256319ae9",
+    "source_files": 64,
+    "build_directory_absent_before_run": true,
+    "host_candidate": {
+      "sha256": "bfbe9d25547b0262d62df26e33bdd33a94887a5c0d0bc470138af97e2ce8cff8",
+      "bytes": 1784097,
+      "pages": 105,
+      "layout_text_sha256": "5b676a4832ab5541d73dd6c275956e306dea3caad3d793cb5cf9fbff7359be33"
+    },
+    "image": "sha256:f61a94c452ec20c17a9ff338601a9ade32326be8928fd13239fae03e7367f295",
+    "cpus": 2,
+    "memory_bytes": 2147483648,
+    "pids_limit": 256,
+    "network_attached_during_build": false,
+    "scope": "Frozen current candidate source and retained figure inputs in new source/build directory, fresh disposable existing-image container with documented lmodern repair; no empirical reruns or fresh-machine installation.",
+    "undefined_references_or_citations": false,
+    "overfull_hboxes_over_1pt": [],
+    "isolated_pdf": {
+      "sha256": "4513109ce7bf021583604226a849b7d47244bc99fd7e72df5e962b87e1b7867c",
+      "bytes": 1769205,
+      "pages": 105,
+      "layout_text_sha256": "ca24aa6bf59d06cad05a5c1eb72cf4910a75822bc0044de2278182038679eda7"
+    },
+    "layout_text_identical": false,
+    "pdf_bytes_identical": false,
+    "canonical_manuscript_inputs_unchanged_during_build": true,
+    "container_absent_after_run": true,
+    "cleanup_exit_code": 0,
+    "added_or_changed_packages": [
+      "libfontenc1\t1:1.1.8-1build2",
+      "lmodern\t2.005-1build1",
+      "xfonts-encodings\t1:1.0.5-0ubuntu3",
+      "xfonts-utils\t1:7.7+7build1"
+    ],
+    "removed_or_replaced_packages": []
+  },
+  "comparison": {
+    "normalization": "Unicode NFKC, remove soft hyphen, collapse all whitespace; no other token removal",
+    "normalized_layout_text_identical": false,
+    "normalized_host_layout_sha256": "a15cf9896c6bd056c7b7d1dc74ad6bd7507248f0dbfd191b029e4e0d9120e6a9",
+    "normalized_isolated_layout_sha256": "0e2e0cb0a21e38615f6215990bdaa6bf56b773716b322ea00a5b5646c7cc2fb9",
+    "token_edit_blocks": 6,
+    "token_differences": [
+      {
+        "operation": "replace",
+        "host_tokens": [
+          "14"
+        ],
+        "isolated_tokens": [
+          "41"
+        ]
+      },
+      {
+        "operation": "replace",
+        "host_tokens": [
+          "̸="
+        ],
+        "isolated_tokens": [
+          "=",
+          "̸"
+        ]
+      },
+      {
+        "operation": "replace",
+        "host_tokens": [
+          "k≠"
+        ],
+        "isolated_tokens": [
+          "k",
+          "̸="
+        ]
+      },
+      {
+        "operation": "replace",
+        "host_tokens": [
+          "v",
+          "̸="
+        ],
+        "isolated_tokens": [
+          "v=",
+          "̸"
+        ]
+      },
+      {
+        "operation": "replace",
+        "host_tokens": [
+          "0"
+        ],
+        "isolated_tokens": [
+          "0",
+          ""
+        ]
+      },
+      {
+        "operation": "replace",
+        "host_tokens": [
+          "21"
+        ],
+        "isolated_tokens": [
+          "12"
+        ]
+      }
+    ],
+    "toc_identical": true,
+    "reference_label_lines_identical": false,
+    "host_label_count": 174,
+    "isolated_label_count": 174,
+    "toc_diff": [],
+    "reference_key_number_page_tuples_identical": true,
+    "reference_key_number_page_tuple_count": 174,
+    "visual_comparison": {
+      "pdf_pages": [
+        15,
+        28,
+        49,
+        52
+      ],
+      "host_and_isolated_rendered": true,
+      "resolution_dpi": {
+        "15": 120,
+        "28": 100,
+        "49": 100,
+        "52": 120
+      },
+      "result": "All six normalized-text token differences inspected in paired page renders; fractions remain 1/4 and 1/2, not-equal signs and matrix entries render correctly in both environments. No content change observed on these pages; no full raster-identity claim."
+    },
+    "reference_destination_note": "All 174 label key, displayed number and page triples match. Raw label lines differ because current hyperref writes equation.N destinations in isolated TeX 2025 vs equation.section.N in host TeX 2023; no undefined references or duplicate-destination warnings were found.",
+    "duplicate_destination_warnings": false
+  },
+  "environment_preparation": {
+    "started_at": "2026-10-17T08:04:51.576442+00:00",
+    "completed_at": "2026-10-17T08:05:10.868351+00:00",
+    "image": "sha256:f61a94c452ec20c17a9ff338601a9ade32326be8928fd13239fae03e7367f295",
+    "container_name": "msc-thesis3-20261017-reproduction",
+    "scope": "Fresh disposable container from existing TeX image, installing only documented lmodern and package-manager dependencies, then disconnected network. Not fresh-machine provisioning.",
+    "steps": [
+      {
+        "step": "container-create",
+        "command": [
+          "docker",
+          "run",
+          "-d",
+          "--name",
+          "msc-thesis3-20261017-reproduction",
+          "--network",
+          "bridge",
+          "--cpus",
+          "2",
+          "--memory",
+          "2g",
+          "--pids-limit",
+          "256",
+          "--user",
+          "0",
+          "--mount",
+          "type=bind,source=/tmp/msc-math/thesis3/20261017/reproduction/source,target=/work",
+          "--workdir",
+          "/work",
+          "--entrypoint",
+          "/bin/sh",
+          "sha256:f61a94c452ec20c17a9ff338601a9ade32326be8928fd13239fae03e7367f295",
+          "-c",
+          "exec sleep 14400"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.4561413930005074
+      },
+      {
+        "step": "packages-before",
+        "command": [
+          "docker",
+          "exec",
+          "msc-thesis3-20261017-reproduction",
+          "dpkg-query",
+          "-W",
+          "-f=${Package}\t${Version}\n"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.14057069299997238
+      },
+      {
+        "step": "package-index",
+        "command": [
+          "docker",
+          "exec",
+          "msc-thesis3-20261017-reproduction",
+          "env",
+          "DEBIAN_FRONTEND=noninteractive",
+          "apt-get",
+          "update",
+          "-o",
+          "Acquire::Retries=0",
+          "-o",
+          "Acquire::http::Timeout=20",
+          "-o",
+          "Acquire::https::Timeout=20"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 5.766120034000778
+      },
+      {
+        "step": "lmodern-install",
+        "command": [
+          "docker",
+          "exec",
+          "msc-thesis3-20261017-reproduction",
+          "env",
+          "DEBIAN_FRONTEND=noninteractive",
+          "apt-get",
+          "install",
+          "-y",
+          "--no-install-recommends",
+          "-o",
+          "Acquire::Retries=0",
+          "-o",
+          "Acquire::http::Timeout=20",
+          "-o",
+          "Acquire::https::Timeout=20",
+          "lmodern"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.150188696999976
+      },
+      {
+        "step": "packages-after",
+        "command": [
+          "docker",
+          "exec",
+          "msc-thesis3-20261017-reproduction",
+          "dpkg-query",
+          "-W",
+          "-f=${Package}\t${Version}\n"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.1446012199994584
+      },
+      {
+        "step": "container-disconnect",
+        "command": [
+          "docker",
+          "network",
+          "disconnect",
+          "bridge",
+          "msc-thesis3-20261017-reproduction"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.1559890919997997
+      },
+      {
+        "step": "tool-versions",
+        "command": [
+          "docker",
+          "exec",
+          "msc-thesis3-20261017-reproduction",
+          "sh",
+          "-c",
+          "pdflatex --version; biber --version; latexmk -v; python3 --version"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.4253187679987604
+      },
+      {
+        "step": "container-identity",
+        "command": [
+          "docker",
+          "inspect",
+          "--format",
+          "{{json .NetworkSettings.Networks}} {{.HostConfig.Memory}} {{.HostConfig.NanoCpus}}",
+          "msc-thesis3-20261017-reproduction"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.0528770410001016
+      }
+    ],
+    "build_pending": true
+  },
+  "tool_versions": {
+    "host": {
+      "pdftex": "1.40.25",
+      "tex_live": "2023/Debian",
+      "biber": "2.19",
+      "latexmk": "4.83",
+      "python": "3.12.3",
+      "rclone": "v1.60.1-DEV",
+      "docker_engine": "29.9.1"
+    },
+    "isolated": {
+      "pdftex": "1.40.28",
+      "tex_live": "2025/Debian",
+      "biber": "2.21",
+      "latexmk": "4.87",
+      "python": "3.14.7"
+    }
+  },
+  "registered_input_receipt": "registered-input-receipt.json",
+  "registered_inputs": {
+    "all_passed": true,
+    "artifacts": 12,
+    "files": 21,
+    "payload_bytes": 748982368,
+    "elapsed_seconds": 60.8046882510007,
+    "empty_cache_before_run": true,
+    "release_false_snapshot_excluded": "covariance-rho-frozen-packet",
+    "remote_operations": "read-only manifest/list/download; no upload, publish, synchronization or deletion",
+    "repository_consumer_links_installed": false
+  },
+  "scratch_directory": "/tmp/msc-math/thesis3/20261017/reproduction",
+  "boundaries": [
+    "New source/build directory plus disposable existing-image environment after one documented dependency repair, not a fresh-machine tool installation.",
+    "Build and registered-object retrieval/integrity only. No expensive empirical producer or raw capacity evaluation executed.",
+    "PDF bytes, raw layout text and minimally normalized text differ across TeX versions; all 105 page counts, TOC bytes and 174 label key/number/page tuples match.",
+    "Only the four pages containing all six normalized text differences were rendered for paired visual comparison; no full page raster identity claimed.",
+    "No publication, final release packaging or sending to Kai performed."
+  ]
+}

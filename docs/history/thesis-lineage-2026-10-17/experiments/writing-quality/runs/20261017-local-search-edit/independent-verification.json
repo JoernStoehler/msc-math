@@ -1,0 +1,31 @@
+{
+  "scope": "Root independent source/record checks, clean isolated whole-thesis build and visual inspection; no human prose acceptance, new experiment or producer validation.",
+  "source_span_only_changed": true,
+  "table_byte_identical": true,
+  "labels_references_citations_preserved": true,
+  "live_manuscript_unchanged": true,
+  "build_command": "sh thesis/build.sh",
+  "isolated_source_root": "/tmp/msc-math/prose-local-search/20261017/root-check",
+  "build_exit_code": 0,
+  "candidate_pages": 105,
+  "undefined_references_or_citations": false,
+  "label_count": 174,
+  "labels_equal_selected_build": true,
+  "rendered_pages": [
+    64,
+    65
+  ],
+  "visual_inspection": "Before/after pages64–65: all text/table/adjacent section and figure legible; no overlap, clipping or broken transition.",
+  "pdf_sha256": "13567eddd49d0f110c79e0d33cbe17db79182744bdfc68200a6b6a0ffc2b11d8",
+  "retained_render_hashes": {
+    "before-page-064.png": "4fdf72404947d33c28556c419ae84d0a558502605d3ec3ee745dd3eeb484c131",
+    "before-page-065.png": "9bb42295c9d7a2d0df6263560e5b9b9dff614bfc5cf14d4f1d77b2a14f8b9104",
+    "after-page-064.png": "5419757e5648096a46065ea69ea56d5967f85598451632c527da17bb7b1b3621",
+    "after-page-065.png": "dbf64fcd0b9d75007d742abfb49aa8b2aa094bb3fb95c0edda720838e4a74987"
+  },
+  "observed_build_warnings": [
+    "Underfull \\hbox (badness 5970) in paragraph at lines 250--250",
+    "Underfull \\hbox (badness 10000) in paragraph at lines 250--250",
+    "Underfull \\hbox (badness 10000) in paragraph at lines 35--43"
+  ]
+}

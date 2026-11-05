@@ -1,0 +1,150 @@
+{
+  "subsec:black-box-datascience-finite-budget-optimization": [
+    "{8.10}{64}{Competing branches in local search}{subsection.8.10}{}}",
+    "{8.11}{64}{Competing branches in local search}{subsection.8.11}{}}"
+  ],
+  "fig:rotated-pentagons-curve": [
+    "{10}{65}{Systolic ratios for the rotating pentagon product. The blue markers are numerical evaluations of the finite quadratic programs; the black curve is the formula proved in this chapter. The horizontal line marks $\\operatorname {sys}=1$}{figure.10}{}}",
+    "{10}{66}{Systolic ratios for the rotating pentagon product. The blue markers are numerical evaluations of the finite quadratic programs; the black curve is the formula proved in this chapter. The horizontal line marks $\\operatorname {sys}=1$}{figure.10}{}}"
+  ],
+  "eq:pentagon-feasibility": [
+    "{41}{66}{Feasible weights under rotation}{equation.9.41}{}}",
+    "{41}{67}{Feasible weights under rotation}{equation.9.41}{}}"
+  ],
+  "eq:pentagon-q-definition": [
+    "{42}{66}{Feasible weights under rotation}{equation.9.42}{}}",
+    "{42}{67}{Feasible weights under rotation}{equation.9.42}{}}"
+  ],
+  "eq:pentagon-hk": [
+    "{43}{66}{Feasible weights under rotation}{equation.9.43}{}}",
+    "{43}{67}{Feasible weights under rotation}{equation.9.43}{}}"
+  ],
+  "eq:pentagon-attaining-word": [
+    "{44}{67}{Feasible weights under rotation}{equation.9.44}{}}",
+    "{44}{68}{Feasible weights under rotation}{equation.9.44}{}}"
+  ],
+  "eq:pentagon-upper-bound": [
+    "{45}{67}{Feasible weights under rotation}{equation.9.45}{}}",
+    "{45}{68}{Feasible weights under rotation}{equation.9.45}{}}"
+  ],
+  "eq:pentagon-interpolation": [
+    "{46}{67}{Bounding all choices by their endpoint values}{equation.9.46}{}}",
+    "{46}{68}{Bounding all choices by their endpoint values}{equation.9.46}{}}"
+  ],
+  "sec:pentagon-affine": [
+    "{10}{68}{Independent linear deformations of the pentagon factors}{section.10}{}}",
+    "{10}{69}{Independent linear deformations of the pentagon factors}{section.10}{}}"
+  ],
+  "thm:pentagon-affine-capacity": [
+    "{10.1}{68}{}{theorem.10.1}{}}",
+    "{10.1}{69}{}{theorem.10.1}{}}"
+  ],
+  "lem:pentagon-affine-identities": [
+    "{10.2}{70}{}{theorem.10.2}{}}",
+    "{10.2}{71}{}{theorem.10.2}{}}"
+  ],
+  "lem:pentagon-affine-containment": [
+    "{10.3}{70}{}{theorem.10.3}{}}",
+    "{10.3}{71}{}{theorem.10.3}{}}"
+  ],
+  "thm:pentagon-symmetric-partner": [
+    "{11.1}{72}{}{theorem.11.1}{}}",
+    "{11.1}{73}{}{theorem.11.1}{}}"
+  ],
+  "fig:pentagon-symmetric-reference": [
+    "{11}{73}{A translated normal triangle in $B$. Its longest side joins antipodal vertices; its third vertex lies inside the dashed incircle. The same placement works after each rotation by $\\pi /5$}{figure.11}{}}",
+    "{11}{74}{A translated normal triangle in $B$. Its longest side joins antipodal vertices; its third vertex lies inside the dashed incircle. The same placement works after each rotation by $\\pi /5$}{figure.11}{}}"
+  ],
+  "thm:product-initial-rotation": [
+    "{12.1}{74}{}{theorem.12.1}{}}",
+    "{12.1}{75}{}{theorem.12.1}{}}"
+  ],
+  "sec:visualization-3d": [
+    "{13}{76}{Viewing four-dimensional boundaries in three dimensions}{section.13}{}}",
+    "{13}{77}{Viewing four-dimensional boundaries in three dimensions}{section.13}{}}"
+  ],
+  "fig:visualization-projections": [
+    "{12}{77}{Radial and stereographic views of four-dimensional polytopes. In (a), colour separates projected two-face meshes of the cube. In (b), the grey one-skeleton belongs to the Lagrangian product of two regular pentagons and the dark-outlined orange curve is a recovered six-segment closed Reeb orbit. Both panels use the pole \\(e_4\\) and omit parts mapped beyond the viewer's clipping radius. They are qualitative explanatory views, not symplectic invariants or proof evidence}{figure.12}{}}",
+    "{12}{78}{Radial and stereographic views of four-dimensional polytopes. In (a), colour separates projected two-face meshes of the cube. In (b), the grey one-skeleton belongs to the Lagrangian product of two regular pentagons and the dark-outlined orange curve is a recovered six-segment closed Reeb orbit. Both panels use the pole \\(e_4\\) and omit parts mapped beyond the viewer's clipping radius. They are qualitative explanatory views, not symplectic invariants or proof evidence}{figure.12}{}}"
+  ],
+  "sec:numerics": [
+    "{14}{78}{Numerics}{section.14}{}}",
+    "{14}{79}{Numerics}{section.14}{}}"
+  ],
+  "sec:published-code-data": [
+    "{15}{81}{Availability of Code and Data}{section.15}{}}",
+    "{15}{82}{Availability of Code and Data}{section.15}{}}"
+  ],
+  "sec:use-of-ai": [
+    "{16}{84}{AI in the research process}{section.16}{}}",
+    "{16}{85}{AI in the research process}{section.16}{}}"
+  ],
+  "sec:conclusion": [
+    "{17}{87}{Conclusion}{section.17}{}}",
+    "{17}{88}{Conclusion}{section.17}{}}"
+  ],
+  "app:datascience-results": [
+    "{A}{88}{Data-science methods and additional results}{appendix.A}{}}",
+    "{A}{89}{Data-science methods and additional results}{appendix.A}{}}"
+  ],
+  "app:ds-triangle-profile": [
+    "{A.1}{88}{Exact profile of equilateral-triangle products}{subsection.A.1}{}}",
+    "{A.1}{89}{Exact profile of equilateral-triangle products}{subsection.A.1}{}}"
+  ],
+  "app:ds-generation": [
+    "{A.2}{89}{Sampling and retained data}{subsection.A.2}{}}",
+    "{A.2}{90}{Sampling and retained data}{subsection.A.2}{}}"
+  ],
+  "app:ds-evaluation": [
+    "{A.3}{89}{Numerical evaluation and capacity checks}{subsection.A.3}{}}",
+    "{A.3}{90}{Numerical evaluation and capacity checks}{subsection.A.3}{}}"
+  ],
+  "app:ds-prediction": [
+    "{A.4}{90}{Prediction models and feature families}{subsection.A.4}{}}",
+    "{A.4}{91}{Prediction models and feature families}{subsection.A.4}{}}"
+  ],
+  "app:ds-selection": [
+    "{A.5}{91}{Selection and comparison rules}{subsection.A.5}{}}",
+    "{A.5}{92}{Selection and comparison rules}{subsection.A.5}{}}"
+  ],
+  "app:ds-deformations": [
+    "{A.6}{92}{Paired height changes and ambient rotations}{subsection.A.6}{}}",
+    "{A.6}{93}{Paired height changes and ambient rotations}{subsection.A.6}{}}"
+  ],
+  "app:ds-balance": [
+    "{A.7}{93}{Factor covariance balancing}{subsection.A.7}{}}",
+    "{A.7}{94}{Factor covariance balancing}{subsection.A.7}{}}"
+  ],
+  "app:ds-local-optimization": [
+    "{A.8}{94}{Finite-budget local optimizer comparison}{subsection.A.8}{}}",
+    "{A.8}{95}{Finite-budget local optimizer comparison}{subsection.A.8}{}}"
+  ],
+  "tab:black-box-datascience-f10-optimizer-steps": [
+    "{2}{94}{One outer iteration of each optimizer in the recorded comparison}{table.2}{}}",
+    "{2}{95}{One outer iteration of each optimizer in the recorded comparison}{table.2}{}}"
+  ],
+  "app:ds-probes": [
+    "{A.9}{95}{Endpoint probes and continuation}{subsection.A.9}{}}",
+    "{A.9}{96}{Endpoint probes and continuation}{subsection.A.9}{}}"
+  ],
+  "fig:black-box-datascience-hko-optimizer-calibration": [
+    "{13}{96}{One-step calibration on known perturbations of HKO. From top to bottom, the panels show recovered evaluator gap, removed distance, and residual evaluator gap}{figure.13}{}}",
+    "{13}{97}{One-step calibration on known perturbations of HKO. From top to bottom, the panels show recovered evaluator gap, removed distance, and residual evaluator gap}{figure.13}{}}"
+  ],
+  "fig:black-box-datascience-kkt-trust-scale": [
+    "{14}{97}{Finite differences for two failed affine proposals and one positive control. Prediction changes regime when the KKT perturbation becomes large relative to the smallest source eigenvalue magnitude (bottom). Dotted lines in the top two panels are the analytic derivatives}{figure.14}{}}",
+    "{14}{98}{Finite differences for two failed affine proposals and one positive control. Prediction changes regime when the KKT perturbation becomes large relative to the smallest source eigenvalue magnitude (bottom). Dotted lines in the top two panels are the analytic derivatives}{figure.14}{}}"
+  ],
+  "app:ds-adaptive": [
+    "{A.10}{98}{Adaptive product sampling}{subsection.A.10}{}}",
+    "{A.10}{99}{Adaptive product sampling}{subsection.A.10}{}}"
+  ],
+  "tab:ds-evidence-index": [
+    "{3}{99}{Source packets for the chapter}{table.3}{}}",
+    "{3}{100}{Source packets for the chapter}{table.3}{}}"
+  ],
+  "app:hko-cas": [
+    "{B.1}{101}{Executable exact verification of the HKO bounds}{subsection.B.1}{}}",
+    "{B.1}{102}{Executable exact verification of the HKO bounds}{subsection.B.1}{}}"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-17T16:58:10.537936+00:00",
+  "status": "PASS",
+  "scope": "Independent narrow comparison, joining previously verified source rows; no LP or capacity producer rerun.",
+  "overlap": 35,
+  "old_only": [
+    "random_5x6_s1_198"
+  ],
+  "geometry_and_label_joins": 35,
+  "historical_worst_name": "random_5x5_s3_227",
+  "old_gap_percent": 1.5186788152022013,
+  "new_exact_capacity": "415970254804634857113831125425929214279774261118282723905109780687482334970880297285491940655104/73080613499572627588182076090356686260688312039602576043471339421025792196532004509908692809051",
+  "new_exact_capacity_float": 5.691937093646148,
+  "exact_bound_cut_percent": 1.4959599877838405,
+  "prior_certified_result_hashes_match": true
+}

@@ -1,0 +1,6 @@
+Frozen UTC: 2026-09-15T14:23:43.567481+00:00
+Elapsed review seconds: 577.6
+REPORT.md SHA256: 43f10622d56229600db3a54895b65d6bac093653f9a3af4b8bd18fd25b23395c
+Candidate PDF SHA256: d7dae9a78dffc87fe89f3005bed9b6b51d28728fa90e1a5c811bc09b236e1695
+Pro review not received or read before this freeze.
+Preserve REPORT.md; subsequent comparison belongs in a separate file.

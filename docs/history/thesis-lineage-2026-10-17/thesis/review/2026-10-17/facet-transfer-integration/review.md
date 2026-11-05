@@ -1,0 +1,2 @@
+Native reviewer /root/intake: APPROVE facet-science-v1
+The generalized extraction preserves the frozen rule. Independent geometry, LP, trajectory and prefix-oracle checks support all twelve exact recoveries and the seven-body added-facet observation. Prediction checkpointing supports absence of truth leakage. Reports, links and replay instructions are consistent. The text correctly limits the outcome to finite local transfer evidence, records no material new insight, and stops without expansion.

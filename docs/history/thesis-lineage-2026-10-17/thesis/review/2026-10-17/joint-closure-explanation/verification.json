@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "scope": "Narrow editorial claim/source and unchanged-candidate checks; existing primal/dual science checks reused, no producer or new theorem validation.",
+  "counts": {
+    "all": 35,
+    "tails": 26,
+    "exact": 26,
+    "exact_tails": 17,
+    "uncertified": 9
+  },
+  "material_capacity_cut": 0.014959599877838405,
+  "manuscript_insertion_prerequisite": "Sparse reduction present; two-shadow theorem absent in inspected product section.",
+  "candidate_sha256": "64011c4f346ab4866141959870a61efd5cc7eeff25a5d68ddceb574860091ea2",
+  "files": {
+    "../patterns-2026-10-17/patterns/upper-tail/conditional-validation/results.json": "382cd4ac9d165172c717c2a1b74015505e2a73bddd15ebe00fd4c1cf6b794e1a",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/chapters/04-quadratic-program.tex": "98919a7cce75ee7868eb27931730872ac99684bf3dacb88825e3ee464f947be7",
+    "../patterns-2026-10-17/patterns/upper-tail/mixed-area-order/REPORT.md": "22e06d92e9d0aaefc6dc1a51284641bfbb32a5cfb83eb3d53619f0460100d39d",
+    "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/conditional-validation-integration/verification.json": "1eeb31d07165c29cc882920891857f9cf4343e4175f7647c84bf701e146ac04f",
+    "thesis/review/2026-10-17/joint-closure-explanation/EXACT-CERTIFICATE-DRAFT.md": "51a87aa62dbca267176c7f3b3d4a36bc622d523cc2484a6a4573bf3a6ace9623",
+    "thesis/review/2026-10-17/joint-closure-explanation/PLACEMENT.md": "d1955f051af1b9b819fc294c07459c8a318560ad6090f03f18ac3edb48e975bb",
+    "thesis/review/2026-10-17/joint-closure-explanation/README.md": "42b64e94d77c4934de619eac4c83dc88844c04e1de6c7fdf896458b74f32a885",
+    "thesis/review/2026-10-17/joint-closure-explanation/SELECTION-DRAFT.md": "e29ce170ef2038d6a7133a36793880d735fe3ad7113ce24ef7d22107e0e8d7af",
+    "thesis/review/2026-10-17/joint-closure-explanation/review.md": "520d1c7d8142a026459c103bbf3ce0bc6a6de5525553b4fbd08b9a54a44ef833"
+  }
+}

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DS reading sample</title>
+<style>body{max-width:46rem;margin:3rem auto;padding:0 2rem 5rem;font:18px/1.65 Georgia,serif;color:#202124;background:#fff}h1,h2{line-height:1.25}h1{font-size:1.8rem}h2{font-size:1.3rem;margin-top:2rem}aside{font:15px/1.5 system-ui,sans-serif;border-bottom:1px solid #ddd;padding-bottom:1.2rem;margin-bottom:2rem;color:#454545}math[display="block"]{overflow-x:auto;margin:1.3rem 0} @media(max-width:700px){body{margin:1.5rem auto;padding:0 1rem 4rem}}</style>
+<script src="https://hypothes.is/embed.js" async></script></head><body>
+<aside><strong>Review sample DS-01</strong><p>Read this as a standalone account of the experiments. Is its writing and organization acceptable to you as thesis prose? Mark whatever deserves attention; local explanations are optional. Give any overall reaction at the end, including if more context is needed.</p><p>This is an experimental draft. Your judgment informs whether this repair is acceptable as writing; it does not validate the experiments or authorize manuscript changes.</p></aside>
+<main><h1 id="choosing-examples-then-testing-changes">Choosing examples, then
+testing changes</h1>
+<p>We used data science to search for convex bodies with large systolic
+ratios. For a convex body
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>⊂</mo><msup><mi>ℝ</mi><mn>4</mn></msup></mrow><annotation encoding="application/x-tex">K\subset\mathbb R^4</annotation></semantics></math>,
+the ratio is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>sys</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mi>c</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><mo>vol</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">
+\operatorname{sys}(K)=\frac{c(K)^2}{2\operatorname{vol}(K)},
+</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">c(K)</annotation></semantics></math>
+is its Ekeland–Hofer–Zehnder capacity and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>vol</mo><annotation encoding="application/x-tex">\operatorname{vol}</annotation></semantics></math>
+is four-dimensional volume. The search sought values above 1. A common
+dilation by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">t&gt;0</annotation></semantics></math>
+multiplies capacity by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>t</mi><mn>2</mn></msup><annotation encoding="application/x-tex">t^2</annotation></semantics></math>
+and volume by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>t</mi><mn>4</mn></msup><annotation encoding="application/x-tex">t^4</annotation></semantics></math>,
+leaving the ratio unchanged. Size alone therefore offers no way to
+improve it.</p>
+<p>The exploratory route was to sample varied random polytopes and
+compare their ratios with readily available geometric measurements, both
+symplectic and non-symplectic. We could temporarily set the meanings of
+those measurements aside and look for statistical patterns. A promising
+pattern would then need a geometric interpretation: why might the
+measured quantity matter, and could it help choose or change examples?
+The longer-term aim was to turn such interpretations into tentative
+conjectures and seek rigorous explanations. The AI-assisted experiments
+reported here reach the earlier stages of that route: a descriptor
+associated with high ratios, tests of its use for selection, and two
+experiments on changing bodies.</p>
+<h2 id="from-measurements-to-selection">From measurements to
+selection</h2>
+<p>Many examples were products of planar polygons. In coordinates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>q</mi><mn>1</mn></msub><mo>,</mo><msub><mi>q</mi><mn>2</mn></msub><mo>,</mo><msub><mi>p</mi><mn>1</mn></msub><mo>,</mo><msub><mi>p</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(q_1,q_2,p_1,p_2)</annotation></semantics></math>,
+we formed</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>=</mo><mi>P</mi><mo>×</mo><mi>Q</mi><mo>,</mo><mspace width="2.0em"></mspace><mi>P</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>q</mi><mo>∈</mo><msup><mi>ℝ</mi><mn>2</mn></msup><mo>:</mo><mo stretchy="false" form="prefix">⟨</mo><msub><mi>n</mi><mi>i</mi></msub><mo>,</mo><mi>q</mi><mo stretchy="false" form="postfix">⟩</mo><mo>≤</mo><msub><mi>h</mi><mi>i</mi></msub><mo>,</mo><mspace width="0.222em"></mspace><mi>i</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>k</mi><mo stretchy="false" form="postfix">}</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">
+K=P\times Q,\qquad
+P=\{q\in\mathbb R^2:\langle n_i,q\rangle\leq h_i,
+\ i=1,\ldots,k\},
+</annotation></semantics></math></p>
+<p>with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>
+described by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+analogous inequalities. The unit normals came from independent uniform
+angles, and the heights were sampled independently from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0.8</mn><mo>,</mo><mn>1.2</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">[0.8,1.2)</annotation></semantics></math>.
+We retained bounded polygons in which every proposed side was present.
+Thus a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>×</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">k\times m</annotation></semantics></math>
+sample has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+sides in the first factor and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+in the second; this rejection rule is part of the sampling
+distribution.</p>
+<p>The ratios below are numerical values obtained from computed
+capacities and volumes. The new experiments bound the capacity error,
+but volume is still computed in floating-point arithmetic.</p>
+<p>One useful descriptor came from the two-dimensional faces, called
+ridges in dimension four. For a ridge
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math>
+with cyclically ordered vertices
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mn>0</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>v</mi><mrow><mi>r</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">v_0,\ldots,v_{r-1}</annotation></semantics></math>,
+define its absolute symplectic area by</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>ω</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo stretchy="true" form="prefix">|</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mrow><mi>r</mi><mo>−</mo><mn>1</mn></mrow></munderover><msub><mi>ω</mi><mn>0</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>v</mi><mi>i</mi></msub><mo>,</mo><msub><mi>v</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">|</mo></mrow><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>v</mi><mi>r</mi></msub><mo>=</mo><msub><mi>v</mi><mn>0</mn></msub><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>ω</mi><mn>0</mn></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mn>2</mn></munderover><mi>d</mi><msub><mi>q</mi><mi>j</mi></msub><mo>∧</mo><mi>d</mi><msub><mi>p</mi><mi>j</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+A_\omega(R)=\frac12\left|\sum_{i=0}^{r-1}\omega_0(v_i,v_{i+1})\right|,
+\qquad v_r=v_0,\qquad
+\omega_0=\sum_{j=1}^{2}dq_j\wedge dp_j.
+</annotation></semantics></math></p>
+<p>Summing these areas and normalizing gives</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><munder><mo>∑</mo><mi>R</mi></munder><msub><mi>A</mi><mi>ω</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>R</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><msqrt><mrow><mo>vol</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>K</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+S(K)=\frac{\sum_R A_\omega(R)}{\sqrt{\operatorname{vol}(K)}}.
+</annotation></semantics></math></p>
+<p>In the original samples, smaller
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+tended to accompany larger systolic ratios. The association persisted
+within groups having the same numbers of sides in their two factors.</p>
+<p>The geometry of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+makes this pattern worth examining. The formula for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>ω</mi></msub><annotation encoding="application/x-tex">A_\omega</annotation></semantics></math>
+replaces the planar determinant in polygonal area by the symplectic
+pairing. A ridge can therefore have positive Euclidean area but zero
+symplectic area. Both the numerator and denominator of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+scale by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>t</mi><mn>2</mn></msup><annotation encoding="application/x-tex">t^2</annotation></semantics></math>;
+the descriptor is unchanged by a common dilation, by translation, and by
+linear symplectic maps.</p>
+<p>The association suggested a practical selection test: generate many
+bodies, compute their ridge areas, and calculate capacities for those
+with low
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>.
+On fresh candidates, this selection could raise ratios relative to
+controls. It supplied a way to choose examples, but no prescription for
+changing a given body. We examined that separate question through
+support heights and rotations.</p>
+<h2 id="changing-support-heights">Changing support heights</h2>
+<p>One possible change is to replace all support heights of a polygon by
+1 while keeping its normals fixed. Its sides then lie on tangent lines
+to the unit circle. We tested this operation on sixteen independently
+generated pairs of polygons: eight of type
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">4\times4</annotation></semantics></math>
+and eight of type
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">4\times6</annotation></semantics></math>.</p>
+<p>Each pair supplied four products: the original, one with only the
+first factor changed, one with only the second changed, and one with
+both changed. Before evaluating any ratios, we accepted a pair only if
+all four constructions were valid. The comparison therefore applies to
+this jointly admissible sample.</p>
+<p>We then scaled each planar factor to area one. This leaves the
+mathematical ratio unchanged: separate factor dilations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>diag</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>a</mi><msub><mi>I</mi><mn>2</mn></msub><mo>,</mo><mi>b</mi><msub><mi>I</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{diag}(aI_2,bI_2)</annotation></semantics></math>
+are a common dilation composed with the symplectic map</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>diag</mo><mspace width="-0.167em"></mspace><mrow><mo stretchy="true" form="prefix">(</mo><msqrt><mrow><mi>a</mi><mi>/</mi><mi>b</mi></mrow></msqrt><mspace width="0.167em"></mspace><msub><mi>I</mi><mn>2</mn></msub><mo>,</mo><msqrt><mrow><mi>b</mi><mi>/</mi><mi>a</mi></mrow></msqrt><mspace width="0.167em"></mspace><msub><mi>I</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\operatorname{diag}\!\left(\sqrt{a/b}\,I_2,\sqrt{b/a}\,I_2\right).
+</annotation></semantics></math></p>
+<p>Thus replacing unequal support heights produces the shape change; the
+area normalization does not account for a change in ratio.</p>
+<p>Changing both factors increased the mean numerical ratio by 0.0153.
+Eleven pairs improved and five became worse. The mean increase was about
+0.004 for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">4\times4</annotation></semantics></math>
+and 0.027 for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">4\times6</annotation></semantics></math>.
+The average gain consequently does not support a rule that the operation
+always helps: even with the normals fixed, its effect varied across
+bodies.</p>
+<h2 id="changing-symplectic-alignment">Changing symplectic
+alignment</h2>
+<p>Rotation offers a different experiment. An orthogonal map preserves
+Euclidean shape but need not preserve
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ω</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\omega_0</annotation></semantics></math>.
+A rotated Lagrangian product can cease to be a Lagrangian product for
+the fixed symplectic form, and its capacity can change. Rotations
+therefore let us explore symplectic alignment while holding Euclidean
+geometry fixed.</p>
+<p>To test whether this freedom was useful for the search, we compared
+two allocations of sixteen evaluations. The first evaluated a fresh
+product, one symplectic rotation as a control, and fourteen prescribed
+orthogonal rotations. The second evaluated sixteen fresh products,
+sharing its first body with the rotation experiment. We ran four
+comparisons, twice for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>×</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">3\times3</annotation></semantics></math>
+and twice for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">4\times4</annotation></semantics></math>.
+All source bodies and rotations were fixed before evaluation. The
+symplectic controls preserved the ratios to within
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>⋅</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>16</mn></mrow></msup></mrow><annotation encoding="application/x-tex">4\cdot10^{-16}</annotation></semantics></math>.</p>
+<p>Rotation improved three of the four starting bodies, but fresh
+sampling produced the larger maximum in all four comparisons. In one
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">4\times4</annotation></semantics></math>
+case, rotation increased the ratio from 0.328 to 0.529, whereas sixteen
+fresh products reached 0.774. The rotation calculations also took
+longer. For these four starting bodies and prescribed rotations, fresh
+sampling was the more effective use of sixteen evaluations.</p>
+<p>Together, the experiments separate a useful selection pattern from
+proposed ways to improve a body. Low-ridge selection could help on fresh
+candidates; equalizing support heights helped on average but sometimes
+hurt; and the tested rotations lost to fresh sampling at the same
+evaluation count. These observations provide questions for geometric
+explanation. They do not establish a general improvement rule or a
+rigorous explanation of the descriptor association.</p>
+</main></body></html>

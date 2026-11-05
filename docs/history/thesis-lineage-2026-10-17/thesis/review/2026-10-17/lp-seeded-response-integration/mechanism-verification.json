@@ -1,0 +1,143 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "name": "lpseed_near_hko_s0_e100",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 16,
+      "strict_coordinate_below_own_word_max": 12,
+      "strict_coordinate_below_global_after_best_order": 14
+    },
+    {
+      "name": "lpseed_near_hko_s0_e20",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 11,
+      "strict_coordinate_below_own_word_max": 11,
+      "strict_coordinate_below_global_after_best_order": 11
+    },
+    {
+      "name": "lpseed_near_hko_s1_e100",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 16,
+      "strict_coordinate_below_own_word_max": 11,
+      "strict_coordinate_below_global_after_best_order": 16
+    },
+    {
+      "name": "lpseed_near_hko_s1_e20",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 16,
+      "strict_coordinate_below_own_word_max": 11,
+      "strict_coordinate_below_global_after_best_order": 16
+    },
+    {
+      "name": "lpseed_near_hko_s2_e100",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 16,
+      "strict_coordinate_below_own_word_max": 14,
+      "strict_coordinate_below_global_after_best_order": 12
+    },
+    {
+      "name": "lpseed_near_hko_s2_e20",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 16,
+      "strict_coordinate_below_own_word_max": 14,
+      "strict_coordinate_below_global_after_best_order": 12
+    },
+    {
+      "name": "lpseed_near_hko_s3_e100",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 15,
+      "strict_coordinate_below_own_word_max": 10,
+      "strict_coordinate_below_global_after_best_order": 10
+    },
+    {
+      "name": "lpseed_near_hko_s3_e20",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 15,
+      "strict_coordinate_below_own_word_max": 10,
+      "strict_coordinate_below_global_after_best_order": 10
+    },
+    {
+      "name": "lpseed_near_hko_s4_e100",
+      "one_response_exact": false,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 18,
+      "strict_coordinate_below_own_word_max": 15,
+      "strict_coordinate_below_global_after_best_order": 15
+    },
+    {
+      "name": "lpseed_near_hko_s4_e20",
+      "one_response_exact": false,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 18,
+      "strict_coordinate_below_own_word_max": 15,
+      "strict_coordinate_below_global_after_best_order": 15
+    },
+    {
+      "name": "lpseed_near_hko_s5_e100",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 14,
+      "strict_coordinate_below_own_word_max": 14,
+      "strict_coordinate_below_global_after_best_order": 14
+    },
+    {
+      "name": "lpseed_near_hko_s5_e20",
+      "one_response_exact": true,
+      "completion_exact": true,
+      "strict_coordinate_below_global": 14,
+      "strict_coordinate_below_own_word_max": 14,
+      "strict_coordinate_below_global_after_best_order": 14
+    }
+  ],
+  "strict_coordinate_endpoints_below_global": 185,
+  "strict_coordinate_endpoints_below_global_after_best_order": 159,
+  "specific_trap": {
+    "name": "lpseed_near_hko_s0_e100",
+    "shadow_sign": 1,
+    "kind": "row",
+    "index": 4,
+    "A_support": [
+      1,
+      2,
+      4
+    ],
+    "B_support": [
+      0,
+      2,
+      3
+    ],
+    "Q": "24751765278273751790691272836009/247533028083666522052000000000000",
+    "Q_true": "12752842534368736095884078607357/126484868947827511455500000000000",
+    "pair_best_all_orders": "24751765278273751790691272836009/247533028083666522052000000000000",
+    "A_margin": "2752441048172208001848851614826139343/13756864565266083150330064987000000000000",
+    "B_margin": "36750558630195220288770270071761254773/43750157074533521570011705423195520000000",
+    "same_word_competitor_Q": "100278157491270831180990668725143/994612709865517349156000000000000",
+    "same_word_competitor_A": [
+      "0",
+      "498973110039/1111517495000",
+      "0",
+      "247922083/889213996",
+      "27512889201/101047045000"
+    ],
+    "same_word_competitor_B": [
+      "316987746211/1118530201211",
+      "0",
+      "499585603750/1118530201211",
+      "0",
+      "301956851250/1118530201211"
+    ],
+    "capacity_over_global": "6313499458412946590949059482269509872468271779873128/6261447574899685701894421788141960108096392840802199"
+  },
+  "one_response_misses": 2,
+  "completion_misses": 0,
+  "scope": "No new predictions: independently checks post-score seed/mixture explanation, same-word strict competitor and best-order support gap. 600 direct per-word pair objectives plus coordinate-margin checks."
+}

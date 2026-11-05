@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "name": "random_5x5_s0_92",
+  "all_canonical_gauges_reconstructed": 50,
+  "exact_invariant_above_four_fifths": true,
+  "exact_ratio_above_four_fifths": true,
+  "exact_reciprocal_prediction_below_three_fifths": true,
+  "all_cyclic_words": 1800,
+  "closure_counts": [
+    3,
+    5
+  ],
+  "genuine_five_by_five_verified": true,
+  "both_global_bound_extensions_refuted": true,
+  "input_sha256": {
+    "global-counterexample-input.json": "bafbaa49d274c059f4addab36dab712e41e55c3c81170d74360d309fe5736288",
+    "global-counterexample.json": "6bdbb0702026c3902de78bd45a6ef9bf07e8fc5e8498b55a1fe7c41c6ebf5558",
+    "verify-global.py": "283467340c8518cab82421a034db981c825d5c5bb1fc792acbd022556c20ccd7"
+  }
+}

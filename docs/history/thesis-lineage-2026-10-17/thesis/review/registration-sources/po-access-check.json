@@ -1,0 +1,24 @@
+{
+  "checked_at": "2026-10-17T12:21:53.530081+00:00",
+  "answer": "af7cca6f",
+  "question": "c4794f55",
+  "public_web": "Official legal collection retrieved using web browsing; latest listed consolidated PO is M-420-2-3-002, 2013 as amended 2015.",
+  "pdf": {
+    "url": "https://assets.uni-augsburg.de/media/filer_public/c7/ca/c7ca192b-ebc8-4200-9906-cfa736063088/m-420-2-3-002.pdf",
+    "direct_download_http": 200,
+    "sha256": "d1d311395a7401901e79cb561f43dc9744284d5c4a3325ca5c1ac9d0f34d7e22",
+    "text_check": "Section26 on page22 distinguishes first intake summer2013 from earlier students; amendment effective1October2015.",
+    "access_limit": "Web browsing PDF open failed; direct HTTPS download and pdftotext succeeded."
+  },
+  "personal_evidence": {
+    "inspected_in_place": "/home/joern/Documents/Administration/2024MasterMatheEinschreibung/Antrag auf Immatrikulation.pdf",
+    "limited_fields_rechecked": [
+      "summer2024 application",
+      "Master of Science Mathematik",
+      "first subject semester"
+    ],
+    "authenticated_studis_inspected": false,
+    "document_copied": false
+  },
+  "conclusion": "Use public 2013/2015 PO provisionally for preparation; retain personal confirmation in Kai paperwork rather than repeat a dashboard lookup question. This establishes no registration, signature, issue date, or permission for immediate hand-in."
+}

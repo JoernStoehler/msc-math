@@ -1,0 +1,38 @@
+{
+  "checked_local_markdown_targets": 164,
+  "missing": [],
+  "http": [
+    {
+      "path": "thesis/review/JOERN-READING-GUIDE.md",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 31254
+    },
+    {
+      "path": "thesis/review/kai-packet/thesis-for-kai.pdf",
+      "status": 200,
+      "content_type": "application/pdf",
+      "bytes": 1784097,
+      "pdf_bytes_match": true
+    },
+    {
+      "path": "thesis/review/kai-packet/cover-note-draft.pdf",
+      "status": 200,
+      "content_type": "application/pdf",
+      "bytes": 3418,
+      "pdf_bytes_match": true
+    },
+    {
+      "path": "docs/dashboard/thesis.html",
+      "status": 200,
+      "content_type": "text/html",
+      "bytes": 48049
+    },
+    {
+      "path": "meta-topics/thesis-submission/requirements-2026-10-17.md",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 16976
+    }
+  ]
+}

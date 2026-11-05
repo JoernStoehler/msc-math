@@ -1,0 +1,8 @@
+Reviewer: /root/question_triage
+Candidate: containment-v1
+
+APPROVE containment-v1.
+
+The artifacts consistently distinguish the historical containment metric, the retained worst-gap body’s later exact certificate, and the excluded obstruction. “From canonical cone-volume closures” matches both original method reports.
+
+No consequential objection. Commit completion and final clean-branch verification remain root’s delivery conditions; this review does not establish those future actions.

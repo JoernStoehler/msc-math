@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "scope": "Independent root source/prose/rounded-value and retained-input identity checks; no experiment rerun, human acceptance or general prose score",
+  "source_pdf_match": {
+    "source": "thesis/chapters/08-data-science.tex",
+    "source_sha256": "218b8721a3c6ccd8ab1245e0aa9a8902a7a7911bd8d62c42801cdd745160bf1b",
+    "pdf": "thesis/review/kai-packet/thesis-for-kai.pdf",
+    "pdf_sha256": "a5d47a8eb6442a1e07f9f04e10e37b687da45961183abc826c7b44be46258273",
+    "physical_page": 59,
+    "excerpt_words": 266,
+    "excerpt_sha256": "fd807af45dcf73aa85243b7c296d1669c5ac202427af0adbc44639cd14d24a1c",
+    "pdf_prose_match": "PASS: both complete prose parts around the displayed equation match fixed PDF after whitespace, line hyphenation and math-marker normalization",
+    "transformation": "Subsection heading and labels omitted; body unchanged; TeX rendered by Pandoc",
+    "limits": "No new human verdict; source/prose matching does not check the displayed equation or visual layout."
+  },
+  "rounded_comparisons": [
+    "0.626",
+    "0.316",
+    "0.034",
+    "0.032"
+  ],
+  "concentration_positive_groups": 8,
+  "conditional_extreme_tenth_positive_groups": 2,
+  "shared_panel_seed": 1618033,
+  "shared_panel_input_sha256": {
+    "selected-candidates-before-sys.jsonl": "58ba9b40889335271d7002a11de2eabada7f5b9a93f6be40ab25fed0e8ebaec7",
+    "selection-plan.json": "3f87a89b8d0e54a4580c20a1df04a5f2ddc9a786041b671bce57cbb417bb7c8a",
+    "sys-evaluation-cache.jsonl": "a938349e24603710a61964875e276417f418cfdd4f95e042a58dcb4b69f6f413"
+  },
+  "appendix_source": "thesis/appendices/data-science.tex:203",
+  "root_source_observation": "Paragraphs two and three use the same retained conditional panel, distinct from the initial coarse-selection panel.",
+  "worker_report_sha256": "8e487385f7d22b71488292a4f4d008baca3000f6ca5ccfb3d30d9a5246666828",
+  "patch_sha256": "ab91df219da9a3948393245452ff57f402f58f6850083d09d97cb2aa55c6a599",
+  "patch_application_check": "git apply --check PASS; not applied",
+  "patch_preserves_all_math_numbers_labels_refs": true,
+  "retained_report_links": 14,
+  "worker_source_hashes": "all match",
+  "worker_output_hashes": "all match",
+  "new_manuscript_diff": ""
+}

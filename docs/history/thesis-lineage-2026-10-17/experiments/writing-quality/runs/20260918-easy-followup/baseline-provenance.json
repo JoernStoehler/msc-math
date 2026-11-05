@@ -1,0 +1,7 @@
+{
+  "source": "experiments/writing-quality/runs/20260918-easy-routes/route-reader/final.md",
+  "sha256": "dc2f268875887cf8bfad3f513a68d3294f5652d5d689be7406a301d9ed335a36",
+  "source_commit": "801ebda2",
+  "operation": "byte-identical no-change control",
+  "coordinator_thread": "01a0b3fa-fe9e-7753-8ebd-97bea0a3b40c"
+}
