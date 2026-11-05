@@ -471,6 +471,106 @@ The opposite exact laws for pentagons and triangles, the global
 counterexample and the paired shape changes constrain any broader
 explanation.
 
+\subsection{Contact loss predicts a constructed upper tail near HKO}
+\label{subsec:ds-local-contact-loss}
+
+Near HKO, the branches of the capacity formula give a more precise geometric
+signal than a broad correlation. Write
+$z=(a_0,\ldots,a_4,b_0,\ldots,b_4)\in\mathbb R^{20}$ for the dual normals
+of a pentagon product, $z_H$ for the fixed HKO reference and $V(z)$ for its
+four-dimensional volume. Let $\mathcal A_H$ contain the capacity-word branches
+$Q_w$ attaining the reference maximum. Define
+\[
+ D(\delta)=\max_{w\in\mathcal A_H}
+ \left.\mathrm d\log\bigl(8VQ_w^2\bigr)\right|_{z_H}[\delta].
+\]
+Each branch measures the logarithmic increase of inverse ratio; $D$ takes
+the largest first-order loss. The branch definitions and coordinate
+normalization are given in Appendix~\ref{app:ds-local-contact-definitions}.
+Fifty active words produce only twenty distinct linear forms. Their maximum
+is piecewise linear: tied contact orders exchange control as the geometry
+changes. For the direction $\delta a_0=a_0$, $\delta a_1=-a_1$, with all
+other changes zero,
+\[
+ D(t\delta)=\frac{2\sqrt5}{5}|t|.
+\]
+Thus a deformation can lower the ratio linearly in either direction,
+producing a corner rather than a smooth quadratic peak. Figure~\ref{fig:ds-contact-cusp} shows this change.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=.76\linewidth]{figures/contact-cusp.png}
+\caption{The first-order contact loss along the displayed shape change.
+Two active linear forms (dashed) exchange control at HKO; their maximum
+(purple) gives the corner $D(t\delta)=2\sqrt5|t|/5$. This is the
+exact first-order model, not measured ratios or a fitted curve.}
+\label{fig:ds-contact-cusp}
+\end{figure}
+
+Writing $\rho_H=(3+\sqrt5)/5$, the local law is
+\[
+ \log\frac{\operatorname{sys}(z_H+\delta)}{\rho_H}
+ =-D(\delta)+O(\|\delta\|^2).
+\]
+A strict gap excludes inactive words near the reference; Taylor expansion
+of the remaining finite analytic branches gives the uniform quadratic
+remainder. This uses the six-facet product reduction and supplies no
+numerical neighborhood radius. HKO local maximality was already established
+in a broader class; the content here is the explicit loss law.
+
+Finite affine normalization makes a corresponding score $I$ invariant
+under translations, common dilation and product-preserving linear symplectic
+maps, with the same local law. The parameter-free prediction
+$\rho_H e^{-I}$ was frozen before capacity evaluation on forty-five distinct
+constructed perturbations. Among the twenty-three exact ratios above one,
+median relative error was $0.00656\%$ and worst error $0.12860\%$.
+Directions were reused across mechanisms and scales, so these are correlated
+local tests.
+
+The same prediction failed on the historical sample of 1,024 random
+pentagon products: its upper-decile rank correlation was $-0.008$.
+An exact example also has ratio $\approx0.83853$, above the reciprocal prediction
+$\rho_H/(1+I)\approx0.55906$, refuting that global upper bound and the smaller
+exponential one. The local mechanism therefore leaves broad upper-tail
+prediction and global maximality open.
+
+\subsection{From a geometric score to a ratio bound}
+\label{subsec:ds-geometric-witness}
+
+A geometric rule need not predict capacity accurately to bound the systolic
+ratio. It is enough to select one sufficiently strong feasible candidate in
+the Haim--Kislev formula. For a polytope $K$ with
+$0\in\operatorname{int}(K)$, let $V=\operatorname{vol}_4(K)$ and let
+$q=Q_\sigma(\beta)>0$ for weights satisfying the normalization and closure
+constraints of Section~\ref{sec:quadratic-program-algorithm-hk2019}.
+Theorem~\ref{thm:quadratic-program-algorithm-hk2019-hk-formula} gives
+\[
+ q\leq Q_{\max},\qquad
+ c_{\mathrm{EHZ}}(K)\leq\frac1{2q},\qquad
+ \operatorname{sys}(K)\leq\frac1{8Vq^2}.
+\]
+Thus a target ceiling $S>0$ follows whenever the selected candidate satisfies
+$q\geq(8SV)^{-1/2}$. To establish HKO maximality in a specified class,
+one would need such a choice for every body in that class with
+$S=(3+\sqrt5)/5$. This is a sufficient criterion, not an established
+bound for arbitrary bodies.
+
+For polygon products, Theorem~\ref{thm:quadratic-program-product-six-facet}
+reduces the search to at most three facets from each factor. A geometric selector
+must still choose facets, closure weights and an order giving a strong
+enough candidate. The ridge sum aggregates absolute pairings of all primal
+edges; the capacity formula instead uses signed pairings of dual facet
+vectors, with weights constrained by closure. This identifies structure
+that a sharper explanation could use, without explaining the observed
+statistical association by itself.
+
+A proposed rule should therefore be assessed against its intended conclusion.
+For prediction, ordering and errors within the high-ratio population matter.
+For a ratio bound, the candidate must meet the displayed threshold throughout
+the stated class. A candidate below that threshold leaves the bound undecided
+for that body; it does not disprove it. Recovery of HKO or success on finitely
+many sampled bodies cannot establish the required uniform inequality.
+
 \subsection{Using evaluated ratios to guide search}
 
 Geometric selection and subsequent improvement are separate search tasks.

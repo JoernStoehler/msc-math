@@ -21,7 +21,11 @@ gained 62 commits since. Nothing here is built into `thesis/`.
 Related and already in main: `patterns/` (research results), `topics/` research records.
 Unaccepted introduction v5 and its chapter edits: `../opening-pass-2026-10-23-candidate/`.
 
-## Decision still open (Jörn)
+## Status: §8.9 adopted into the thesis on 5 Nov
+
+The contact-loss subsection, the following "geometric score to a ratio bound" subsection, appendix A.12 and the cusp figure were copied into `thesis/` (build passes). Remove them to prune; this snapshot keeps the originals.
+
+## Former decision (superseded)
 
 Whether to adopt the Chapter 8 contact-loss section into the thesis. See main `STATUS.md`
 ("Thesis scope"). To try it: diff `08-data-science.tex` here against `thesis/chapters/`,
