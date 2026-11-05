@@ -1,0 +1,2156 @@
+{
+  "hko": {
+    "status": "PASS",
+    "capacity": {
+      "rational": "5",
+      "sqrt5": "0"
+    },
+    "eta": {
+      "rational": "1",
+      "sqrt5": "0"
+    },
+    "ratio": {
+      "rational": "3/5",
+      "sqrt5": "1/5"
+    },
+    "star_sizes": [
+      11,
+      11
+    ],
+    "closure_counts": [
+      5,
+      5
+    ],
+    "witness": {
+      "sign": 1,
+      "word": [
+        0,
+        8,
+        1,
+        9,
+        2,
+        5,
+        3,
+        6,
+        4,
+        7
+      ],
+      "candidates": [
+        {
+          "kind": "A",
+          "index": 0,
+          "alpha": [
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0
+          ],
+          "Q": {
+            "rational": "0",
+            "sqrt5": "1/25"
+          },
+          "coefficients": [
+            {
+              "rational": "1/20",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "-1/20",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/20",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/20",
+              "sqrt5": "1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 1,
+          "alpha": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 2,
+          "alpha": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "gamma": [
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 3,
+          "alpha": [
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            }
+          ],
+          "gamma": [
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "-1/8",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/8",
+              "sqrt5": "1/40"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 4,
+          "alpha": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 5,
+          "alpha": [
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "1/8",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-1/8",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/8",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/8",
+              "sqrt5": "1/40"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 6,
+          "alpha": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 7,
+          "alpha": [
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "1/8",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/8",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 8,
+          "alpha": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 9,
+          "alpha": [
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "gamma": [
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            }
+          ]
+        },
+        {
+          "kind": "A",
+          "index": 10,
+          "alpha": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 0,
+          "alpha": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0
+          ],
+          "gamma": [
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/5",
+              "sqrt5": "0"
+            }
+          ],
+          "Q": {
+            "rational": "0",
+            "sqrt5": "1/25"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/20",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/20",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/20",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "-1/20",
+              "sqrt5": "1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/25"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 1,
+          "alpha": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0
+          ],
+          "gamma": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/8",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/8",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/8",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-1/8",
+              "sqrt5": "3/40"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 2,
+          "alpha": [
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 3,
+          "alpha": [
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/8",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/8",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 4,
+          "alpha": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0
+          ],
+          "gamma": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 5,
+          "alpha": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 6,
+          "alpha": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0
+          ],
+          "gamma": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 7,
+          "alpha": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0
+          ],
+          "gamma": [
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 8,
+          "alpha": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 9,
+          "alpha": [
+            0,
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "gamma": [
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "1/8",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/20"
+            },
+            {
+              "rational": "-1/8",
+              "sqrt5": "3/40"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "1/40",
+              "sqrt5": "1/40"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-3/40",
+              "sqrt5": "3/40"
+            }
+          ]
+        },
+        {
+          "kind": "B",
+          "index": 10,
+          "alpha": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            0,
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            0
+          ],
+          "gamma": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "Q": {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          "coefficients": [
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/4",
+              "sqrt5": "-1/20"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            }
+          ],
+          "response_values": [
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "1/10",
+              "sqrt5": "0"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            },
+            {
+              "rational": "3/10",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "-1/4",
+              "sqrt5": "3/20"
+            }
+          ]
+        }
+      ],
+      "best": {
+        "kind": "A",
+        "index": 1,
+        "alpha": [
+          {
+            "rational": "0",
+            "sqrt5": "0"
+          },
+          {
+            "rational": "1/4",
+            "sqrt5": "1/20"
+          },
+          {
+            "rational": "1/4",
+            "sqrt5": "-1/20"
+          },
+          {
+            "rational": "1/4",
+            "sqrt5": "-1/20"
+          },
+          {
+            "rational": "1/4",
+            "sqrt5": "1/20"
+          }
+        ],
+        "gamma": [
+          {
+            "rational": "0",
+            "sqrt5": "1/5"
+          },
+          0,
+          {
+            "rational": "1/2",
+            "sqrt5": "-1/10"
+          },
+          {
+            "rational": "1/2",
+            "sqrt5": "-1/10"
+          },
+          0
+        ],
+        "Q": {
+          "rational": "1/10",
+          "sqrt5": "0"
+        },
+        "coefficients": [
+          {
+            "rational": "0",
+            "sqrt5": "1/10"
+          },
+          {
+            "rational": "0",
+            "sqrt5": "1/20"
+          },
+          {
+            "rational": "0",
+            "sqrt5": "0"
+          },
+          {
+            "rational": "0",
+            "sqrt5": "0"
+          },
+          {
+            "rational": "0",
+            "sqrt5": "1/20"
+          }
+        ],
+        "response_values": [
+          {
+            "rational": "-3/40",
+            "sqrt5": "3/40"
+          },
+          {
+            "rational": "1/10",
+            "sqrt5": "0"
+          },
+          {
+            "rational": "-3/40",
+            "sqrt5": "3/40"
+          },
+          {
+            "rational": "1/40",
+            "sqrt5": "1/40"
+          },
+          {
+            "rational": "1/40",
+            "sqrt5": "1/40"
+          }
+        ]
+      }
+    }
+  },
+  "invariance": {
+    "status": "PASS",
+    "rows": [
+      {
+        "name": "random_5x5_s0_92",
+        "capacity": "400578039844458989534193571416958127933474369098542397219213678183676573322544091732373242668287276271407729349429499911764091577958717775617609530593399414780597317997440151653218593404218416951624898960758536409291561982969359909024831314949214581523236385124794858464346724493780953956075936830396627574593623014573354397190109139836612583125264213771177216958380586998141560629556158389028093257386161361327570208196126346779826126848702019364563991765763558342098489725299527617893722349352188704126451247985591969113403471839798999721543331032578978018310961387475381959760109454362543846469800359032198385862027346843676804452092563071754060910148963742628020551508944839210723769056715994991081789464581693606665049378944249482712422051095663843823248934356445435813398480439515744899766512003491961182148894111301632/77523316304473895724287987200549706142212817110956242030721346086656350909042234008369582191215730265204622245153957550851126328803962593930094049057398018493674049680088198289964454064069227747464713198342097172231048281543073825030208896177946106120095181115478283345729388391752861553370312161305519654673543144744051221082387777092097670504799794116655853933677417965088222438755065960014007583210657591634188386772173407930824690093760908993043572522003884180909316201997587759117695696676960501694921406423034238404413372789263244701289913643054265728688928045623408449593816172565618267063027685587158753562375003892747594224412237097551011620059820867904124147872480714165050982271899427224798055718791785442391948550509115877045196021741962582582212841066379142105809786031999867115069068564894780613019128569182707",
+        "ratio": "649884114671515200774372965959025288071270891157970845744439032893120720301605462552462756434092217626078827712793604367194791777160307472484287018004115584450081922573340903832098058683464179746954587098392696120251448551408745886952211394110878813477282438573619588903475152668869150704483043507031285098356413453960086526924955517296640245776119191204229796132716658024212761283495041310732226871076078532897037120788940032064852145570297762108788957955519358528411645004324430853440556520239250531915443800391181732948527737921173069938777827639037915818768764224539292921701064874287227726991133360865722676239422794942393751729400404627013228912196178080993216250602444518611353736659965009710993973825661061160112298842397625289579218866483371565049661904180460982444385155539529159052850912261626064629164533973329451999393812747470886796195793825932351318708614296729498641087886582314813622311659456533472195554422454274775880221523198550848756527101091375827776524902466376584399474253899263316913520967811502373716888596045663279051879084235373191468142004817648587638753986568186718728856825303622990722454996407093828137684162268952099465303468106528824462563074586962385519442736357743717344527962715341392609778336236821010217518897142295635048408399678225356496861441720974290875970090961357105167820429084600439313673421568964738142122961029062088097826617578804707074123363570131039932064051917249454449306420746748280348120877697412274787905378317520934038032515138323072909113470558890500396003353726168073557304952205613620074035837554475148667204706672252891294228830654155541428620166239401166314438431310609058256530810413981940192228625567735540170620978176475920193403456456956139794263231484575499744031504145672352/774380308770797520431745246343677290494740300890898461385598992427528317049046187963514053024832755071078838341925324325644447924079572941101679372589314900690387276918278749808102712756404328971469520951696027427655873215383156843050102541074872669434600715977542801435521136462204088872637612264203741986989533340389447625875077386479350500386307567455682391836459076885588019627126849731652450765907889175116322783435141583940683260799266266320507641038053429544323825406428142944049638456633365191792824402923660510748185213858308302115547914109746580918478492086485914806418844626649275397073969653036799216486622491947808380970719213737559414732263507542881143998026653744238240173129052099339691174185311144338605554270757135128165988321143773357834541137731724934898584000189607150873953289416574581403363826767553502143359896178060499895093653121247077716121318270762558867055383573910227254281109380519958306514671941096068835586909060205855085969722708556109339994332386365579475158718723312387855015326518337214007831451887137570152229115867365705760402064754912225832858388385773415636207759708608486443134240722703370769570403930069152718325540285550030305232648073927765242421597849023534645188117430432256283893580988325068911198777096877341517969990958311658808765899514669596250072334579773492819744218613762828339968127137039234616009137866955826914586908595988497963217161054512609975657743271059117037981954190527839579729845274679163504107841637314691626920768175208780139450779738835452156506603094116853556980836432176895090012800987582344775961592226341823837392964092246689850183891821392237075553347933950845633849463051123390385696089411686713535760020388316191941884792663712501009383105722763930381733142725221747",
+        "eta": "5236387159316391835739681368297513509595929194870589456431062657383295188263415079483465958031868141221455553179694587852833963986642615004275353407408324971145351371857957221667499647428470747916358734814406163583010889666461492112483330335086689158921826935416425229362712793385054396379723615253067342930731967795854651973977882568052537943730822471996891897059302578030230730731220917822769505610798482913182545464272543521124559249484279810988202914368784888045241887388800746621456657216713129649352988408124337670904190561338104525376479462140456872835314049143833901300455827877794448106868109226485189580953724783543393892112290675450302351994389102097994592799638814033679199504839313330339364654522081074104824414549913815807743158646518565570562686689571356093844667336131304236626141941726542277672462007016567800192267322300822985089371962931247845434482716977521147806412183194396330281810402623070136175708603840186207005929947083585609751205751725429302717720510280118611422668109952734388605318374615297291053729621123932826493481923754626057482001818304866771130477850201304619817822163538256784294671525628601538303043051814647756453728800978096362369598102167205283459655344333791712370299970144302492174567504686289224335657987575562632735962460058151970748565166661160149183579303631194920892252009690182051987806670335247172924991906778915643571864738206552632811062050/8092513203319898169151344787085340072010044358444616586230967927850111962840715647401662712828118243303655144883366979405741169270063273678455739432378516892518739015095966156684950594931609896965897299531688020472691764815632547490871922845076901269365089291415637904664479719712213301288765466582536073660080110970593444915064276237779768240743511869081809419491512123751113681302738958603046075607221357339113043969760602173519171906707245716410473713784442767796071291675243870050090195603390525695486871886866667298544649022171737951678126281314530464336401476715444751920918546571909083712867348268246079503267289711285632673749635206108146593910500201278737839254475177297838494530979310127306977302370498468485565277281197350268491087533881289926949377140608351653242245171934921346139221367035691363097110276590028702957510966137911962018874291776816967666725041505749304434963281631275822484347261915649435311243682602701861193166314282638813181714912846908503954329405659303501714214891703674573995828656305621195430211658623250825724742002180905663779467303525965634169677604894038278138470125355058745712020111071679470321587685026949582890624176183185796298088534632510210215192012961780691729322261705600182991685300670231217122145924435882043056013656956554317297938834108909049103267754747145841252900526796121909985853942632609817247623294680001441673086952882260691674250529"
+      },
+      {
+        "name": "permutation",
+        "capacity": "400578039844458989534193571416958127933474369098542397219213678183676573322544091732373242668287276271407729349429499911764091577958717775617609530593399414780597317997440151653218593404218416951624898960758536409291561982969359909024831314949214581523236385124794858464346724493780953956075936830396627574593623014573354397190109139836612583125264213771177216958380586998141560629556158389028093257386161361327570208196126346779826126848702019364563991765763558342098489725299527617893722349352188704126451247985591969113403471839798999721543331032578978018310961387475381959760109454362543846469800359032198385862027346843676804452092563071754060910148963742628020551508944839210723769056715994991081789464581693606665049378944249482712422051095663843823248934356445435813398480439515744899766512003491961182148894111301632/77523316304473895724287987200549706142212817110956242030721346086656350909042234008369582191215730265204622245153957550851126328803962593930094049057398018493674049680088198289964454064069227747464713198342097172231048281543073825030208896177946106120095181115478283345729388391752861553370312161305519654673543144744051221082387777092097670504799794116655853933677417965088222438755065960014007583210657591634188386772173407930824690093760908993043572522003884180909316201997587759117695696676960501694921406423034238404413372789263244701289913643054265728688928045623408449593816172565618267063027685587158753562375003892747594224412237097551011620059820867904124147872480714165050982271899427224798055718791785442391948550509115877045196021741962582582212841066379142105809786031999867115069068564894780613019128569182707",
+        "ratio": "649884114671515200774372965959025288071270891157970845744439032893120720301605462552462756434092217626078827712793604367194791777160307472484287018004115584450081922573340903832098058683464179746954587098392696120251448551408745886952211394110878813477282438573619588903475152668869150704483043507031285098356413453960086526924955517296640245776119191204229796132716658024212761283495041310732226871076078532897037120788940032064852145570297762108788957955519358528411645004324430853440556520239250531915443800391181732948527737921173069938777827639037915818768764224539292921701064874287227726991133360865722676239422794942393751729400404627013228912196178080993216250602444518611353736659965009710993973825661061160112298842397625289579218866483371565049661904180460982444385155539529159052850912261626064629164533973329451999393812747470886796195793825932351318708614296729498641087886582314813622311659456533472195554422454274775880221523198550848756527101091375827776524902466376584399474253899263316913520967811502373716888596045663279051879084235373191468142004817648587638753986568186718728856825303622990722454996407093828137684162268952099465303468106528824462563074586962385519442736357743717344527962715341392609778336236821010217518897142295635048408399678225356496861441720974290875970090961357105167820429084600439313673421568964738142122961029062088097826617578804707074123363570131039932064051917249454449306420746748280348120877697412274787905378317520934038032515138323072909113470558890500396003353726168073557304952205613620074035837554475148667204706672252891294228830654155541428620166239401166314438431310609058256530810413981940192228625567735540170620978176475920193403456456956139794263231484575499744031504145672352/774380308770797520431745246343677290494740300890898461385598992427528317049046187963514053024832755071078838341925324325644447924079572941101679372589314900690387276918278749808102712756404328971469520951696027427655873215383156843050102541074872669434600715977542801435521136462204088872637612264203741986989533340389447625875077386479350500386307567455682391836459076885588019627126849731652450765907889175116322783435141583940683260799266266320507641038053429544323825406428142944049638456633365191792824402923660510748185213858308302115547914109746580918478492086485914806418844626649275397073969653036799216486622491947808380970719213737559414732263507542881143998026653744238240173129052099339691174185311144338605554270757135128165988321143773357834541137731724934898584000189607150873953289416574581403363826767553502143359896178060499895093653121247077716121318270762558867055383573910227254281109380519958306514671941096068835586909060205855085969722708556109339994332386365579475158718723312387855015326518337214007831451887137570152229115867365705760402064754912225832858388385773415636207759708608486443134240722703370769570403930069152718325540285550030305232648073927765242421597849023534645188117430432256283893580988325068911198777096877341517969990958311658808765899514669596250072334579773492819744218613762828339968127137039234616009137866955826914586908595988497963217161054512609975657743271059117037981954190527839579729845274679163504107841637314691626920768175208780139450779738835452156506603094116853556980836432176895090012800987582344775961592226341823837392964092246689850183891821392237075553347933950845633849463051123390385696089411686713535760020388316191941884792663712501009383105722763930381733142725221747",
+        "eta": "5236387159316391835739681368297513509595929194870589456431062657383295188263415079483465958031868141221455553179694587852833963986642615004275353407408324971145351371857957221667499647428470747916358734814406163583010889666461492112483330335086689158921826935416425229362712793385054396379723615253067342930731967795854651973977882568052537943730822471996891897059302578030230730731220917822769505610798482913182545464272543521124559249484279810988202914368784888045241887388800746621456657216713129649352988408124337670904190561338104525376479462140456872835314049143833901300455827877794448106868109226485189580953724783543393892112290675450302351994389102097994592799638814033679199504839313330339364654522081074104824414549913815807743158646518565570562686689571356093844667336131304236626141941726542277672462007016567800192267322300822985089371962931247845434482716977521147806412183194396330281810402623070136175708603840186207005929947083585609751205751725429302717720510280118611422668109952734388605318374615297291053729621123932826493481923754626057482001818304866771130477850201304619817822163538256784294671525628601538303043051814647756453728800978096362369598102167205283459655344333791712370299970144302492174567504686289224335657987575562632735962460058151970748565166661160149183579303631194920892252009690182051987806670335247172924991906778915643571864738206552632811062050/8092513203319898169151344787085340072010044358444616586230967927850111962840715647401662712828118243303655144883366979405741169270063273678455739432378516892518739015095966156684950594931609896965897299531688020472691764815632547490871922845076901269365089291415637904664479719712213301288765466582536073660080110970593444915064276237779768240743511869081809419491512123751113681302738958603046075607221357339113043969760602173519171906707245716410473713784442767796071291675243870050090195603390525695486871886866667298544649022171737951678126281314530464336401476715444751920918546571909083712867348268246079503267289711285632673749635206108146593910500201278737839254475177297838494530979310127306977302370498468485565277281197350268491087533881289926949377140608351653242245171934921346139221367035691363097110276590028702957510966137911962018874291776816967666725041505749304434963281631275822484347261915649435311243682602701861193166314282638813181714912846908503954329405659303501714214891703674573995828656305621195430211658623250825724742002180905663779467303525965634169677604894038278138470125355058745712020111071679470321587685026949582890624176183185796298088534632510210215192012961780691729322261705600182991685300670231217122145924435882043056013656956554317297938834108909049103267754747145841252900526796121909985853942632609817247623294680001441673086952882260691674250529"
+      },
+      {
+        "name": "factor_swap",
+        "capacity": "400578039844458989534193571416958127933474369098542397219213678183676573322544091732373242668287276271407729349429499911764091577958717775617609530593399414780597317997440151653218593404218416951624898960758536409291561982969359909024831314949214581523236385124794858464346724493780953956075936830396627574593623014573354397190109139836612583125264213771177216958380586998141560629556158389028093257386161361327570208196126346779826126848702019364563991765763558342098489725299527617893722349352188704126451247985591969113403471839798999721543331032578978018310961387475381959760109454362543846469800359032198385862027346843676804452092563071754060910148963742628020551508944839210723769056715994991081789464581693606665049378944249482712422051095663843823248934356445435813398480439515744899766512003491961182148894111301632/77523316304473895724287987200549706142212817110956242030721346086656350909042234008369582191215730265204622245153957550851126328803962593930094049057398018493674049680088198289964454064069227747464713198342097172231048281543073825030208896177946106120095181115478283345729388391752861553370312161305519654673543144744051221082387777092097670504799794116655853933677417965088222438755065960014007583210657591634188386772173407930824690093760908993043572522003884180909316201997587759117695696676960501694921406423034238404413372789263244701289913643054265728688928045623408449593816172565618267063027685587158753562375003892747594224412237097551011620059820867904124147872480714165050982271899427224798055718791785442391948550509115877045196021741962582582212841066379142105809786031999867115069068564894780613019128569182707",
+        "ratio": "649884114671515200774372965959025288071270891157970845744439032893120720301605462552462756434092217626078827712793604367194791777160307472484287018004115584450081922573340903832098058683464179746954587098392696120251448551408745886952211394110878813477282438573619588903475152668869150704483043507031285098356413453960086526924955517296640245776119191204229796132716658024212761283495041310732226871076078532897037120788940032064852145570297762108788957955519358528411645004324430853440556520239250531915443800391181732948527737921173069938777827639037915818768764224539292921701064874287227726991133360865722676239422794942393751729400404627013228912196178080993216250602444518611353736659965009710993973825661061160112298842397625289579218866483371565049661904180460982444385155539529159052850912261626064629164533973329451999393812747470886796195793825932351318708614296729498641087886582314813622311659456533472195554422454274775880221523198550848756527101091375827776524902466376584399474253899263316913520967811502373716888596045663279051879084235373191468142004817648587638753986568186718728856825303622990722454996407093828137684162268952099465303468106528824462563074586962385519442736357743717344527962715341392609778336236821010217518897142295635048408399678225356496861441720974290875970090961357105167820429084600439313673421568964738142122961029062088097826617578804707074123363570131039932064051917249454449306420746748280348120877697412274787905378317520934038032515138323072909113470558890500396003353726168073557304952205613620074035837554475148667204706672252891294228830654155541428620166239401166314438431310609058256530810413981940192228625567735540170620978176475920193403456456956139794263231484575499744031504145672352/774380308770797520431745246343677290494740300890898461385598992427528317049046187963514053024832755071078838341925324325644447924079572941101679372589314900690387276918278749808102712756404328971469520951696027427655873215383156843050102541074872669434600715977542801435521136462204088872637612264203741986989533340389447625875077386479350500386307567455682391836459076885588019627126849731652450765907889175116322783435141583940683260799266266320507641038053429544323825406428142944049638456633365191792824402923660510748185213858308302115547914109746580918478492086485914806418844626649275397073969653036799216486622491947808380970719213737559414732263507542881143998026653744238240173129052099339691174185311144338605554270757135128165988321143773357834541137731724934898584000189607150873953289416574581403363826767553502143359896178060499895093653121247077716121318270762558867055383573910227254281109380519958306514671941096068835586909060205855085969722708556109339994332386365579475158718723312387855015326518337214007831451887137570152229115867365705760402064754912225832858388385773415636207759708608486443134240722703370769570403930069152718325540285550030305232648073927765242421597849023534645188117430432256283893580988325068911198777096877341517969990958311658808765899514669596250072334579773492819744218613762828339968127137039234616009137866955826914586908595988497963217161054512609975657743271059117037981954190527839579729845274679163504107841637314691626920768175208780139450779738835452156506603094116853556980836432176895090012800987582344775961592226341823837392964092246689850183891821392237075553347933950845633849463051123390385696089411686713535760020388316191941884792663712501009383105722763930381733142725221747",
+        "eta": "5236387159316391835739681368297513509595929194870589456431062657383295188263415079483465958031868141221455553179694587852833963986642615004275353407408324971145351371857957221667499647428470747916358734814406163583010889666461492112483330335086689158921826935416425229362712793385054396379723615253067342930731967795854651973977882568052537943730822471996891897059302578030230730731220917822769505610798482913182545464272543521124559249484279810988202914368784888045241887388800746621456657216713129649352988408124337670904190561338104525376479462140456872835314049143833901300455827877794448106868109226485189580953724783543393892112290675450302351994389102097994592799638814033679199504839313330339364654522081074104824414549913815807743158646518565570562686689571356093844667336131304236626141941726542277672462007016567800192267322300822985089371962931247845434482716977521147806412183194396330281810402623070136175708603840186207005929947083585609751205751725429302717720510280118611422668109952734388605318374615297291053729621123932826493481923754626057482001818304866771130477850201304619817822163538256784294671525628601538303043051814647756453728800978096362369598102167205283459655344333791712370299970144302492174567504686289224335657987575562632735962460058151970748565166661160149183579303631194920892252009690182051987806670335247172924991906778915643571864738206552632811062050/8092513203319898169151344787085340072010044358444616586230967927850111962840715647401662712828118243303655144883366979405741169270063273678455739432378516892518739015095966156684950594931609896965897299531688020472691764815632547490871922845076901269365089291415637904664479719712213301288765466582536073660080110970593444915064276237779768240743511869081809419491512123751113681302738958603046075607221357339113043969760602173519171906707245716410473713784442767796071291675243870050090195603390525695486871886866667298544649022171737951678126281314530464336401476715444751920918546571909083712867348268246079503267289711285632673749635206108146593910500201278737839254475177297838494530979310127306977302370498468485565277281197350268491087533881289926949377140608351653242245171934921346139221367035691363097110276590028702957510966137911962018874291776816967666725041505749304434963281631275822484347261915649435311243682602701861193166314282638813181714912846908503954329405659303501714214891703674573995828656305621195430211658623250825724742002180905663779467303525965634169677604894038278138470125355058745712020111071679470321587685026949582890624176183185796298088534632510210215192012961780691729322261705600182991685300670231217122145924435882043056013656956554317297938834108909049103267754747145841252900526796121909985853942632609817247623294680001441673086952882260691674250529"
+      },
+      {
+        "name": "translation",
+        "capacity": "400578039844458989534193571416958127933474369098542397219213678183676573322544091732373242668287276271407729349429499911764091577958717775617609530593399414780597317997440151653218593404218416951624898960758536409291561982969359909024831314949214581523236385124794858464346724493780953956075936830396627574593623014573354397190109139836612583125264213771177216958380586998141560629556158389028093257386161361327570208196126346779826126848702019364563991765763558342098489725299527617893722349352188704126451247985591969113403471839798999721543331032578978018310961387475381959760109454362543846469800359032198385862027346843676804452092563071754060910148963742628020551508944839210723769056715994991081789464581693606665049378944249482712422051095663843823248934356445435813398480439515744899766512003491961182148894111301632/77523316304473895724287987200549706142212817110956242030721346086656350909042234008369582191215730265204622245153957550851126328803962593930094049057398018493674049680088198289964454064069227747464713198342097172231048281543073825030208896177946106120095181115478283345729388391752861553370312161305519654673543144744051221082387777092097670504799794116655853933677417965088222438755065960014007583210657591634188386772173407930824690093760908993043572522003884180909316201997587759117695696676960501694921406423034238404413372789263244701289913643054265728688928045623408449593816172565618267063027685587158753562375003892747594224412237097551011620059820867904124147872480714165050982271899427224798055718791785442391948550509115877045196021741962582582212841066379142105809786031999867115069068564894780613019128569182707",
+        "ratio": "649884114671515200774372965959025288071270891157970845744439032893120720301605462552462756434092217626078827712793604367194791777160307472484287018004115584450081922573340903832098058683464179746954587098392696120251448551408745886952211394110878813477282438573619588903475152668869150704483043507031285098356413453960086526924955517296640245776119191204229796132716658024212761283495041310732226871076078532897037120788940032064852145570297762108788957955519358528411645004324430853440556520239250531915443800391181732948527737921173069938777827639037915818768764224539292921701064874287227726991133360865722676239422794942393751729400404627013228912196178080993216250602444518611353736659965009710993973825661061160112298842397625289579218866483371565049661904180460982444385155539529159052850912261626064629164533973329451999393812747470886796195793825932351318708614296729498641087886582314813622311659456533472195554422454274775880221523198550848756527101091375827776524902466376584399474253899263316913520967811502373716888596045663279051879084235373191468142004817648587638753986568186718728856825303622990722454996407093828137684162268952099465303468106528824462563074586962385519442736357743717344527962715341392609778336236821010217518897142295635048408399678225356496861441720974290875970090961357105167820429084600439313673421568964738142122961029062088097826617578804707074123363570131039932064051917249454449306420746748280348120877697412274787905378317520934038032515138323072909113470558890500396003353726168073557304952205613620074035837554475148667204706672252891294228830654155541428620166239401166314438431310609058256530810413981940192228625567735540170620978176475920193403456456956139794263231484575499744031504145672352/774380308770797520431745246343677290494740300890898461385598992427528317049046187963514053024832755071078838341925324325644447924079572941101679372589314900690387276918278749808102712756404328971469520951696027427655873215383156843050102541074872669434600715977542801435521136462204088872637612264203741986989533340389447625875077386479350500386307567455682391836459076885588019627126849731652450765907889175116322783435141583940683260799266266320507641038053429544323825406428142944049638456633365191792824402923660510748185213858308302115547914109746580918478492086485914806418844626649275397073969653036799216486622491947808380970719213737559414732263507542881143998026653744238240173129052099339691174185311144338605554270757135128165988321143773357834541137731724934898584000189607150873953289416574581403363826767553502143359896178060499895093653121247077716121318270762558867055383573910227254281109380519958306514671941096068835586909060205855085969722708556109339994332386365579475158718723312387855015326518337214007831451887137570152229115867365705760402064754912225832858388385773415636207759708608486443134240722703370769570403930069152718325540285550030305232648073927765242421597849023534645188117430432256283893580988325068911198777096877341517969990958311658808765899514669596250072334579773492819744218613762828339968127137039234616009137866955826914586908595988497963217161054512609975657743271059117037981954190527839579729845274679163504107841637314691626920768175208780139450779738835452156506603094116853556980836432176895090012800987582344775961592226341823837392964092246689850183891821392237075553347933950845633849463051123390385696089411686713535760020388316191941884792663712501009383105722763930381733142725221747",
+        "eta": "5236387159316391835739681368297513509595929194870589456431062657383295188263415079483465958031868141221455553179694587852833963986642615004275353407408324971145351371857957221667499647428470747916358734814406163583010889666461492112483330335086689158921826935416425229362712793385054396379723615253067342930731967795854651973977882568052537943730822471996891897059302578030230730731220917822769505610798482913182545464272543521124559249484279810988202914368784888045241887388800746621456657216713129649352988408124337670904190561338104525376479462140456872835314049143833901300455827877794448106868109226485189580953724783543393892112290675450302351994389102097994592799638814033679199504839313330339364654522081074104824414549913815807743158646518565570562686689571356093844667336131304236626141941726542277672462007016567800192267322300822985089371962931247845434482716977521147806412183194396330281810402623070136175708603840186207005929947083585609751205751725429302717720510280118611422668109952734388605318374615297291053729621123932826493481923754626057482001818304866771130477850201304619817822163538256784294671525628601538303043051814647756453728800978096362369598102167205283459655344333791712370299970144302492174567504686289224335657987575562632735962460058151970748565166661160149183579303631194920892252009690182051987806670335247172924991906778915643571864738206552632811062050/8092513203319898169151344787085340072010044358444616586230967927850111962840715647401662712828118243303655144883366979405741169270063273678455739432378516892518739015095966156684950594931609896965897299531688020472691764815632547490871922845076901269365089291415637904664479719712213301288765466582536073660080110970593444915064276237779768240743511869081809419491512123751113681302738958603046075607221357339113043969760602173519171906707245716410473713784442767796071291675243870050090195603390525695486871886866667298544649022171737951678126281314530464336401476715444751920918546571909083712867348268246079503267289711285632673749635206108146593910500201278737839254475177297838494530979310127306977302370498468485565277281197350268491087533881289926949377140608351653242245171934921346139221367035691363097110276590028702957510966137911962018874291776816967666725041505749304434963281631275822484347261915649435311243682602701861193166314282638813181714912846908503954329405659303501714214891703674573995828656305621195430211658623250825724742002180905663779467303525965634169677604894038278138470125355058745712020111071679470321587685026949582890624176183185796298088534632510210215192012961780691729322261705600182991685300670231217122145924435882043056013656956554317297938834108909049103267754747145841252900526796121909985853942632609817247623294680001441673086952882260691674250529"
+      },
+      {
+        "name": "positive_GL",
+        "capacity": "400578039844458989534193571416958127933474369098542397219213678183676573322544091732373242668287276271407729349429499911764091577958717775617609530593399414780597317997440151653218593404218416951624898960758536409291561982969359909024831314949214581523236385124794858464346724493780953956075936830396627574593623014573354397190109139836612583125264213771177216958380586998141560629556158389028093257386161361327570208196126346779826126848702019364563991765763558342098489725299527617893722349352188704126451247985591969113403471839798999721543331032578978018310961387475381959760109454362543846469800359032198385862027346843676804452092563071754060910148963742628020551508944839210723769056715994991081789464581693606665049378944249482712422051095663843823248934356445435813398480439515744899766512003491961182148894111301632/77523316304473895724287987200549706142212817110956242030721346086656350909042234008369582191215730265204622245153957550851126328803962593930094049057398018493674049680088198289964454064069227747464713198342097172231048281543073825030208896177946106120095181115478283345729388391752861553370312161305519654673543144744051221082387777092097670504799794116655853933677417965088222438755065960014007583210657591634188386772173407930824690093760908993043572522003884180909316201997587759117695696676960501694921406423034238404413372789263244701289913643054265728688928045623408449593816172565618267063027685587158753562375003892747594224412237097551011620059820867904124147872480714165050982271899427224798055718791785442391948550509115877045196021741962582582212841066379142105809786031999867115069068564894780613019128569182707",
+        "ratio": "649884114671515200774372965959025288071270891157970845744439032893120720301605462552462756434092217626078827712793604367194791777160307472484287018004115584450081922573340903832098058683464179746954587098392696120251448551408745886952211394110878813477282438573619588903475152668869150704483043507031285098356413453960086526924955517296640245776119191204229796132716658024212761283495041310732226871076078532897037120788940032064852145570297762108788957955519358528411645004324430853440556520239250531915443800391181732948527737921173069938777827639037915818768764224539292921701064874287227726991133360865722676239422794942393751729400404627013228912196178080993216250602444518611353736659965009710993973825661061160112298842397625289579218866483371565049661904180460982444385155539529159052850912261626064629164533973329451999393812747470886796195793825932351318708614296729498641087886582314813622311659456533472195554422454274775880221523198550848756527101091375827776524902466376584399474253899263316913520967811502373716888596045663279051879084235373191468142004817648587638753986568186718728856825303622990722454996407093828137684162268952099465303468106528824462563074586962385519442736357743717344527962715341392609778336236821010217518897142295635048408399678225356496861441720974290875970090961357105167820429084600439313673421568964738142122961029062088097826617578804707074123363570131039932064051917249454449306420746748280348120877697412274787905378317520934038032515138323072909113470558890500396003353726168073557304952205613620074035837554475148667204706672252891294228830654155541428620166239401166314438431310609058256530810413981940192228625567735540170620978176475920193403456456956139794263231484575499744031504145672352/774380308770797520431745246343677290494740300890898461385598992427528317049046187963514053024832755071078838341925324325644447924079572941101679372589314900690387276918278749808102712756404328971469520951696027427655873215383156843050102541074872669434600715977542801435521136462204088872637612264203741986989533340389447625875077386479350500386307567455682391836459076885588019627126849731652450765907889175116322783435141583940683260799266266320507641038053429544323825406428142944049638456633365191792824402923660510748185213858308302115547914109746580918478492086485914806418844626649275397073969653036799216486622491947808380970719213737559414732263507542881143998026653744238240173129052099339691174185311144338605554270757135128165988321143773357834541137731724934898584000189607150873953289416574581403363826767553502143359896178060499895093653121247077716121318270762558867055383573910227254281109380519958306514671941096068835586909060205855085969722708556109339994332386365579475158718723312387855015326518337214007831451887137570152229115867365705760402064754912225832858388385773415636207759708608486443134240722703370769570403930069152718325540285550030305232648073927765242421597849023534645188117430432256283893580988325068911198777096877341517969990958311658808765899514669596250072334579773492819744218613762828339968127137039234616009137866955826914586908595988497963217161054512609975657743271059117037981954190527839579729845274679163504107841637314691626920768175208780139450779738835452156506603094116853556980836432176895090012800987582344775961592226341823837392964092246689850183891821392237075553347933950845633849463051123390385696089411686713535760020388316191941884792663712501009383105722763930381733142725221747",
+        "eta": "5236387159316391835739681368297513509595929194870589456431062657383295188263415079483465958031868141221455553179694587852833963986642615004275353407408324971145351371857957221667499647428470747916358734814406163583010889666461492112483330335086689158921826935416425229362712793385054396379723615253067342930731967795854651973977882568052537943730822471996891897059302578030230730731220917822769505610798482913182545464272543521124559249484279810988202914368784888045241887388800746621456657216713129649352988408124337670904190561338104525376479462140456872835314049143833901300455827877794448106868109226485189580953724783543393892112290675450302351994389102097994592799638814033679199504839313330339364654522081074104824414549913815807743158646518565570562686689571356093844667336131304236626141941726542277672462007016567800192267322300822985089371962931247845434482716977521147806412183194396330281810402623070136175708603840186207005929947083585609751205751725429302717720510280118611422668109952734388605318374615297291053729621123932826493481923754626057482001818304866771130477850201304619817822163538256784294671525628601538303043051814647756453728800978096362369598102167205283459655344333791712370299970144302492174567504686289224335657987575562632735962460058151970748565166661160149183579303631194920892252009690182051987806670335247172924991906778915643571864738206552632811062050/8092513203319898169151344787085340072010044358444616586230967927850111962840715647401662712828118243303655144883366979405741169270063273678455739432378516892518739015095966156684950594931609896965897299531688020472691764815632547490871922845076901269365089291415637904664479719712213301288765466582536073660080110970593444915064276237779768240743511869081809419491512123751113681302738958603046075607221357339113043969760602173519171906707245716410473713784442767796071291675243870050090195603390525695486871886866667298544649022171737951678126281314530464336401476715444751920918546571909083712867348268246079503267289711285632673749635206108146593910500201278737839254475177297838494530979310127306977302370498468485565277281197350268491087533881289926949377140608351653242245171934921346139221367035691363097110276590028702957510966137911962018874291776816967666725041505749304434963281631275822484347261915649435311243682602701861193166314282638813181714912846908503954329405659303501714214891703674573995828656305621195430211658623250825724742002180905663779467303525965634169677604894038278138470125355058745712020111071679470321587685026949582890624176183185796298088534632510210215192012961780691729322261705600182991685300670231217122145924435882043056013656956554317297938834108909049103267754747145841252900526796121909985853942632609817247623294680001441673086952882260691674250529"
+      },
+      {
+        "name": "negative_GL",
+        "capacity": "400578039844458989534193571416958127933474369098542397219213678183676573322544091732373242668287276271407729349429499911764091577958717775617609530593399414780597317997440151653218593404218416951624898960758536409291561982969359909024831314949214581523236385124794858464346724493780953956075936830396627574593623014573354397190109139836612583125264213771177216958380586998141560629556158389028093257386161361327570208196126346779826126848702019364563991765763558342098489725299527617893722349352188704126451247985591969113403471839798999721543331032578978018310961387475381959760109454362543846469800359032198385862027346843676804452092563071754060910148963742628020551508944839210723769056715994991081789464581693606665049378944249482712422051095663843823248934356445435813398480439515744899766512003491961182148894111301632/77523316304473895724287987200549706142212817110956242030721346086656350909042234008369582191215730265204622245153957550851126328803962593930094049057398018493674049680088198289964454064069227747464713198342097172231048281543073825030208896177946106120095181115478283345729388391752861553370312161305519654673543144744051221082387777092097670504799794116655853933677417965088222438755065960014007583210657591634188386772173407930824690093760908993043572522003884180909316201997587759117695696676960501694921406423034238404413372789263244701289913643054265728688928045623408449593816172565618267063027685587158753562375003892747594224412237097551011620059820867904124147872480714165050982271899427224798055718791785442391948550509115877045196021741962582582212841066379142105809786031999867115069068564894780613019128569182707",
+        "ratio": "649884114671515200774372965959025288071270891157970845744439032893120720301605462552462756434092217626078827712793604367194791777160307472484287018004115584450081922573340903832098058683464179746954587098392696120251448551408745886952211394110878813477282438573619588903475152668869150704483043507031285098356413453960086526924955517296640245776119191204229796132716658024212761283495041310732226871076078532897037120788940032064852145570297762108788957955519358528411645004324430853440556520239250531915443800391181732948527737921173069938777827639037915818768764224539292921701064874287227726991133360865722676239422794942393751729400404627013228912196178080993216250602444518611353736659965009710993973825661061160112298842397625289579218866483371565049661904180460982444385155539529159052850912261626064629164533973329451999393812747470886796195793825932351318708614296729498641087886582314813622311659456533472195554422454274775880221523198550848756527101091375827776524902466376584399474253899263316913520967811502373716888596045663279051879084235373191468142004817648587638753986568186718728856825303622990722454996407093828137684162268952099465303468106528824462563074586962385519442736357743717344527962715341392609778336236821010217518897142295635048408399678225356496861441720974290875970090961357105167820429084600439313673421568964738142122961029062088097826617578804707074123363570131039932064051917249454449306420746748280348120877697412274787905378317520934038032515138323072909113470558890500396003353726168073557304952205613620074035837554475148667204706672252891294228830654155541428620166239401166314438431310609058256530810413981940192228625567735540170620978176475920193403456456956139794263231484575499744031504145672352/774380308770797520431745246343677290494740300890898461385598992427528317049046187963514053024832755071078838341925324325644447924079572941101679372589314900690387276918278749808102712756404328971469520951696027427655873215383156843050102541074872669434600715977542801435521136462204088872637612264203741986989533340389447625875077386479350500386307567455682391836459076885588019627126849731652450765907889175116322783435141583940683260799266266320507641038053429544323825406428142944049638456633365191792824402923660510748185213858308302115547914109746580918478492086485914806418844626649275397073969653036799216486622491947808380970719213737559414732263507542881143998026653744238240173129052099339691174185311144338605554270757135128165988321143773357834541137731724934898584000189607150873953289416574581403363826767553502143359896178060499895093653121247077716121318270762558867055383573910227254281109380519958306514671941096068835586909060205855085969722708556109339994332386365579475158718723312387855015326518337214007831451887137570152229115867365705760402064754912225832858388385773415636207759708608486443134240722703370769570403930069152718325540285550030305232648073927765242421597849023534645188117430432256283893580988325068911198777096877341517969990958311658808765899514669596250072334579773492819744218613762828339968127137039234616009137866955826914586908595988497963217161054512609975657743271059117037981954190527839579729845274679163504107841637314691626920768175208780139450779738835452156506603094116853556980836432176895090012800987582344775961592226341823837392964092246689850183891821392237075553347933950845633849463051123390385696089411686713535760020388316191941884792663712501009383105722763930381733142725221747",
+        "eta": "5236387159316391835739681368297513509595929194870589456431062657383295188263415079483465958031868141221455553179694587852833963986642615004275353407408324971145351371857957221667499647428470747916358734814406163583010889666461492112483330335086689158921826935416425229362712793385054396379723615253067342930731967795854651973977882568052537943730822471996891897059302578030230730731220917822769505610798482913182545464272543521124559249484279810988202914368784888045241887388800746621456657216713129649352988408124337670904190561338104525376479462140456872835314049143833901300455827877794448106868109226485189580953724783543393892112290675450302351994389102097994592799638814033679199504839313330339364654522081074104824414549913815807743158646518565570562686689571356093844667336131304236626141941726542277672462007016567800192267322300822985089371962931247845434482716977521147806412183194396330281810402623070136175708603840186207005929947083585609751205751725429302717720510280118611422668109952734388605318374615297291053729621123932826493481923754626057482001818304866771130477850201304619817822163538256784294671525628601538303043051814647756453728800978096362369598102167205283459655344333791712370299970144302492174567504686289224335657987575562632735962460058151970748565166661160149183579303631194920892252009690182051987806670335247172924991906778915643571864738206552632811062050/8092513203319898169151344787085340072010044358444616586230967927850111962840715647401662712828118243303655144883366979405741169270063273678455739432378516892518739015095966156684950594931609896965897299531688020472691764815632547490871922845076901269365089291415637904664479719712213301288765466582536073660080110970593444915064276237779768240743511869081809419491512123751113681302738958603046075607221357339113043969760602173519171906707245716410473713784442767796071291675243870050090195603390525695486871886866667298544649022171737951678126281314530464336401476715444751920918546571909083712867348268246079503267289711285632673749635206108146593910500201278737839254475177297838494530979310127306977302370498468485565277281197350268491087533881289926949377140608351653242245171934921346139221367035691363097110276590028702957510966137911962018874291776816967666725041505749304434963281631275822484347261915649435311243682602701861193166314282638813181714912846908503954329405659303501714214891703674573995828656305621195430211658623250825724742002180905663779467303525965634169677604894038278138470125355058745712020111071679470321587685026949582890624176183185796298088534632510210215192012961780691729322261705600182991685300670231217122145924435882043056013656956554317297938834108909049103267754747145841252900526796121909985853942632609817247623294680001441673086952882260691674250529"
+      }
+    ]
+  },
+  "plan_sha256": "3ff502e9b24e93ddfcee95c7cde792bfb3ab5d3b7c1068f3f07972057accb236",
+  "script_sha256": "ef48c770551115ed923a986cd6fe35aca5069d5727387cf4b92d2a45f1fa44cf",
+  "elapsed_seconds": 5.366638939005497
+}

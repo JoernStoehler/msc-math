@@ -1,0 +1,1666 @@
+{
+  "contract": "Floating-point exhaustive support and twelve-order enumeration; not exact certification",
+  "rows": [
+    {
+      "n": 3,
+      "m": 3,
+      "closures_n": 1,
+      "closures_m": 1,
+      "six_coefficients": 12,
+      "four_hull_sides": 6,
+      "max_six_gauge": 1.999999999999999,
+      "max_six_radial_ratio": 1.7320508075688765,
+      "incircle_radius_ratio": 0.8660254037844387,
+      "four_block_max_sys": 1.9999999999999996,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "m": 4,
+      "closures_n": 1,
+      "closures_m": 0,
+      "six_coefficients": 0,
+      "four_hull_sides": 12,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9659258262890683,
+      "four_block_max_sys": 0.9282032302755093,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 3,
+      "m": 5,
+      "closures_n": 1,
+      "closures_m": 5,
+      "six_coefficients": 60,
+      "four_hull_sides": 30,
+      "max_six_gauge": 1.2360679774997898,
+      "max_six_radial_ratio": 1.229296667787119,
+      "incircle_radius_ratio": 0.9945218953682733,
+      "four_block_max_sys": 1.2051494114953574,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "m": 6,
+      "closures_n": 1,
+      "closures_m": 2,
+      "six_coefficients": 24,
+      "four_hull_sides": 6,
+      "max_six_gauge": 1.3333333333333333,
+      "max_six_radial_ratio": 1.1547005383792515,
+      "incircle_radius_ratio": 0.8660254037844387,
+      "four_block_max_sys": 1.3333333333333333,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "m": 7,
+      "closures_n": 1,
+      "closures_m": 14,
+      "six_coefficients": 168,
+      "four_hull_sides": 42,
+      "max_six_gauge": 1.1771836259052633,
+      "max_six_radial_ratio": 1.1738919817322384,
+      "incircle_radius_ratio": 0.9972037971811801,
+      "four_block_max_sys": 1.1500893843206634,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "m": 8,
+      "closures_n": 1,
+      "closures_m": 8,
+      "six_coefficients": 96,
+      "four_hull_sides": 24,
+      "max_six_gauge": 1.131652497587396,
+      "max_six_radial_ratio": 1.131652497587396,
+      "incircle_radius_ratio": 0.9914448613738104,
+      "four_block_max_sys": 1.0635041501655325,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "m": 9,
+      "closures_n": 1,
+      "closures_m": 30,
+      "six_coefficients": 360,
+      "four_hull_sides": 18,
+      "max_six_gauge": 1.210138312730603,
+      "max_six_radial_ratio": 1.1917535925942098,
+      "incircle_radius_ratio": 0.984807753012208,
+      "four_block_max_sys": 1.1614847993123727,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          3,
+          6
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "m": 10,
+      "closures_n": 1,
+      "closures_m": 20,
+      "six_coefficients": 240,
+      "four_hull_sides": 30,
+      "max_six_gauge": 1.141678493317207,
+      "max_six_radial_ratio": 1.1354242590750232,
+      "incircle_radius_ratio": 0.9945218953682733,
+      "four_block_max_sys": 1.0779184028589937,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          4,
+          7
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "m": 11,
+      "closures_n": 1,
+      "closures_m": 55,
+      "six_coefficients": 660,
+      "four_hull_sides": 66,
+      "max_six_gauge": 1.1675213535775386,
+      "max_six_radial_ratio": 1.1661989478873398,
+      "incircle_radius_ratio": 0.998867339183008,
+      "four_block_max_sys": 1.1208071851505863,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          3,
+          7
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 3,
+      "m": 12,
+      "closures_n": 1,
+      "closures_m": 40,
+      "six_coefficients": 480,
+      "four_hull_sides": 12,
+      "max_six_gauge": 1.1547005383792515,
+      "max_six_radial_ratio": 1.1547005383792515,
+      "incircle_radius_ratio": 0.9659258262890683,
+      "four_block_max_sys": 1.1547005383792517,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          3,
+          8
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          2,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 4,
+      "m": 4,
+      "closures_n": 0,
+      "closures_m": 0,
+      "six_coefficients": 0,
+      "four_hull_sides": 4,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.7071067811865476,
+      "four_block_max_sys": 1.0000000000000004,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 4,
+      "m": 5,
+      "closures_n": 0,
+      "closures_m": 5,
+      "six_coefficients": 0,
+      "four_hull_sides": 20,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9876883405951378,
+      "four_block_max_sys": 0.7054546646781792,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 4,
+      "m": 6,
+      "closures_n": 0,
+      "closures_m": 2,
+      "six_coefficients": 0,
+      "four_hull_sides": 12,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9659258262890683,
+      "four_block_max_sys": 0.6188021535170062,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 4,
+      "m": 7,
+      "closures_n": 0,
+      "closures_m": 14,
+      "six_coefficients": 0,
+      "four_hull_sides": 28,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9937122098932426,
+      "four_block_max_sys": 0.6686788122281097,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 4,
+      "m": 8,
+      "closures_n": 0,
+      "closures_m": 8,
+      "six_coefficients": 0,
+      "four_hull_sides": 8,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9238795325112867,
+      "four_block_max_sys": 0.7071067811865478,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 4,
+      "m": 9,
+      "closures_n": 0,
+      "closures_m": 30,
+      "six_coefficients": 0,
+      "four_hull_sides": 36,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9961946980917455,
+      "four_block_max_sys": 0.6553410444767769,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 4,
+      "m": 10,
+      "closures_n": 0,
+      "closures_m": 20,
+      "six_coefficients": 0,
+      "four_hull_sides": 20,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9876883405951378,
+      "four_block_max_sys": 0.6309778341058911,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 4,
+      "m": 11,
+      "closures_n": 0,
+      "closures_m": 55,
+      "six_coefficients": 0,
+      "four_hull_sides": 44,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9974521146102535,
+      "four_block_max_sys": 0.6489358902227871,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 4,
+      "m": 12,
+      "closures_n": 0,
+      "closures_m": 40,
+      "six_coefficients": 0,
+      "four_hull_sides": 12,
+      "max_six_gauge": 0.0,
+      "max_six_radial_ratio": 0.0,
+      "incircle_radius_ratio": 0.9659258262890683,
+      "four_block_max_sys": 0.666666666666667,
+      "max_gauge_witness": null
+    },
+    {
+      "n": 5,
+      "m": 5,
+      "closures_n": 5,
+      "closures_m": 5,
+      "six_coefficients": 300,
+      "four_hull_sides": 10,
+      "max_six_gauge": 1.0000000000000004,
+      "max_six_radial_ratio": 0.9538501225300159,
+      "incircle_radius_ratio": 0.9510565162951535,
+      "four_block_max_sys": 1.0472135954999586,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          1,
+          3,
+          4
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 5,
+      "m": 6,
+      "closures_n": 5,
+      "closures_m": 2,
+      "six_coefficients": 120,
+      "four_hull_sides": 30,
+      "max_six_gauge": 0.8240453183331936,
+      "max_six_radial_ratio": 0.8195311118580798,
+      "incircle_radius_ratio": 0.9945218953682733,
+      "four_block_max_sys": 0.803432940996905,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 5,
+      "m": 7,
+      "closures_n": 5,
+      "closures_m": 14,
+      "six_coefficients": 840,
+      "four_hull_sides": 70,
+      "max_six_gauge": 0.9818014108445703,
+      "max_six_radial_ratio": 0.9808128021542064,
+      "incircle_radius_ratio": 0.9989930665413147,
+      "four_block_max_sys": 0.9106527968427938,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          1,
+          4,
+          6
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          2,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 5,
+      "m": 8,
+      "closures_n": 5,
+      "closures_m": 8,
+      "six_coefficients": 480,
+      "four_hull_sides": 40,
+      "max_six_gauge": 0.8525104791077192,
+      "max_six_radial_ratio": 0.8506031654976031,
+      "incircle_radius_ratio": 0.996917333733128,
+      "four_block_max_sys": 0.8358654200315238,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 5,
+      "m": 9,
+      "closures_n": 5,
+      "closures_m": 30,
+      "six_coefficients": 1800,
+      "four_hull_sides": 90,
+      "max_six_gauge": 0.968371450870769,
+      "max_six_radial_ratio": 0.9682555402210375,
+      "incircle_radius_ratio": 0.9993908270190958,
+      "four_block_max_sys": 0.8962394624134122,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          2,
+          5,
+          7
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 5,
+      "m": 10,
+      "closures_n": 5,
+      "closures_m": 20,
+      "six_coefficients": 1200,
+      "four_hull_sides": 10,
+      "max_six_gauge": 0.9442719099991591,
+      "max_six_radial_ratio": 0.898055953159171,
+      "incircle_radius_ratio": 0.9510565162951535,
+      "four_block_max_sys": 0.9366563145999496,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          2,
+          5,
+          8
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 5,
+      "m": 11,
+      "closures_n": 5,
+      "closures_m": 55,
+      "six_coefficients": 3300,
+      "four_hull_sides": 110,
+      "max_six_gauge": 0.9776209564979705,
+      "max_six_radial_ratio": 0.9772222756605982,
+      "incircle_radius_ratio": 0.9995921928281892,
+      "four_block_max_sys": 0.889363195591041,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          3,
+          6,
+          9
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 5,
+      "m": 12,
+      "closures_n": 5,
+      "closures_m": 40,
+      "six_coefficients": 2400,
+      "four_hull_sides": 60,
+      "max_six_gauge": 0.9113555346473391,
+      "max_six_radial_ratio": 0.9104521302655171,
+      "incircle_radius_ratio": 0.9986295347545738,
+      "four_block_max_sys": 0.8584726110296206,
+      "max_gauge_witness": [
+        [
+          0,
+          1,
+          3
+        ],
+        [
+          4,
+          7,
+          11
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "m": 6,
+      "closures_n": 2,
+      "closures_m": 2,
+      "six_coefficients": 48,
+      "four_hull_sides": 6,
+      "max_six_gauge": 0.8888888888888891,
+      "max_six_radial_ratio": 0.7698003589195013,
+      "incircle_radius_ratio": 0.8660254037844387,
+      "four_block_max_sys": 0.8888888888888891,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "m": 7,
+      "closures_n": 2,
+      "closures_m": 14,
+      "six_coefficients": 336,
+      "four_hull_sides": 42,
+      "max_six_gauge": 0.7847890839368427,
+      "max_six_radial_ratio": 0.7825946544881593,
+      "incircle_radius_ratio": 0.9972037971811801,
+      "four_block_max_sys": 0.7667262562137757,
+      "max_gauge_witness": [
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "m": 8,
+      "closures_n": 2,
+      "closures_m": 8,
+      "six_coefficients": 192,
+      "four_hull_sides": 24,
+      "max_six_gauge": 0.7544349983915977,
+      "max_six_radial_ratio": 0.7544349983915976,
+      "incircle_radius_ratio": 0.9914448613738104,
+      "four_block_max_sys": 0.7090027667770219,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "m": 9,
+      "closures_n": 2,
+      "closures_m": 30,
+      "six_coefficients": 720,
+      "four_hull_sides": 18,
+      "max_six_gauge": 0.8067588751537357,
+      "max_six_radial_ratio": 0.7945023950628068,
+      "incircle_radius_ratio": 0.984807753012208,
+      "four_block_max_sys": 0.7743231995415819,
+      "max_gauge_witness": [
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          0,
+          3,
+          6
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          2,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "m": 10,
+      "closures_n": 2,
+      "closures_m": 20,
+      "six_coefficients": 480,
+      "four_hull_sides": 30,
+      "max_six_gauge": 0.761118995544805,
+      "max_six_radial_ratio": 0.7569495060500159,
+      "incircle_radius_ratio": 0.9945218953682733,
+      "four_block_max_sys": 0.7186122685726627,
+      "max_gauge_witness": [
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          2,
+          5,
+          9
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "m": 11,
+      "closures_n": 2,
+      "closures_m": 55,
+      "six_coefficients": 1320,
+      "four_hull_sides": 66,
+      "max_six_gauge": 0.7783475690516927,
+      "max_six_radial_ratio": 0.7774659652582269,
+      "incircle_radius_ratio": 0.998867339183008,
+      "four_block_max_sys": 0.7472047901003909,
+      "max_gauge_witness": [
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          1,
+          4,
+          8
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          2,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 6,
+      "m": 12,
+      "closures_n": 2,
+      "closures_m": 40,
+      "six_coefficients": 960,
+      "four_hull_sides": 12,
+      "max_six_gauge": 0.7698003589195015,
+      "max_six_radial_ratio": 0.7698003589195012,
+      "incircle_radius_ratio": 0.9659258262890683,
+      "four_block_max_sys": 0.7698003589195012,
+      "max_gauge_witness": [
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          2,
+          6,
+          11
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 7,
+      "m": 7,
+      "closures_n": 14,
+      "closures_m": 14,
+      "six_coefficients": 2352,
+      "four_hull_sides": 14,
+      "max_six_gauge": 0.9577874343941676,
+      "max_six_radial_ratio": 0.9337737037278911,
+      "incircle_radius_ratio": 0.9749279121818236,
+      "four_block_max_sys": 0.9174081963710669,
+      "max_gauge_witness": [
+        [
+          2,
+          4,
+          6
+        ],
+        [
+          2,
+          5,
+          6
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 7,
+      "m": 8,
+      "closures_n": 14,
+      "closures_m": 8,
+      "six_coefficients": 1344,
+      "four_hull_sides": 56,
+      "max_six_gauge": 0.8560323945319401,
+      "max_six_radial_ratio": 0.8560323945319401,
+      "incircle_radius_ratio": 0.9984268150178166,
+      "four_block_max_sys": 0.7995617894784878,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 7,
+      "m": 9,
+      "closures_n": 14,
+      "closures_m": 30,
+      "six_coefficients": 5040,
+      "four_hull_sides": 126,
+      "max_six_gauge": 0.9310152899183155,
+      "max_six_radial_ratio": 0.9308776323429945,
+      "incircle_radius_ratio": 0.9996891820008162,
+      "four_block_max_sys": 0.8593986087263609,
+      "max_gauge_witness": [
+        [
+          1,
+          2,
+          5
+        ],
+        [
+          2,
+          5,
+          7
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 7,
+      "m": 10,
+      "closures_n": 14,
+      "closures_m": 20,
+      "six_coefficients": 3360,
+      "four_hull_sides": 70,
+      "max_six_gauge": 0.8781498780214634,
+      "max_six_radial_ratio": 0.8772656395275431,
+      "incircle_radius_ratio": 0.9989930665413147,
+      "four_block_max_sys": 0.814512623056317,
+      "max_gauge_witness": [
+        [
+          2,
+          4,
+          6
+        ],
+        [
+          1,
+          3,
+          7
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 7,
+      "m": 11,
+      "closures_n": 14,
+      "closures_m": 55,
+      "six_coefficients": 9240,
+      "four_hull_sides": 154,
+      "max_six_gauge": 0.9462557186677591,
+      "max_six_radial_ratio": 0.9460588295269022,
+      "incircle_radius_ratio": 0.9997919281892065,
+      "four_block_max_sys": 0.852973350470791,
+      "max_gauge_witness": [
+        [
+          1,
+          2,
+          5
+        ],
+        [
+          2,
+          5,
+          10
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 7,
+      "m": 12,
+      "closures_n": 14,
+      "closures_m": 40,
+      "six_coefficients": 6720,
+      "four_hull_sides": 84,
+      "max_six_gauge": 0.8838023364275034,
+      "max_six_radial_ratio": 0.8838023364275033,
+      "incircle_radius_ratio": 0.9993007047883985,
+      "four_block_max_sys": 0.8225697228153024,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          2,
+          7,
+          9
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 8,
+      "m": 8,
+      "closures_n": 8,
+      "closures_m": 8,
+      "six_coefficients": 768,
+      "four_hull_sides": 8,
+      "max_six_gauge": 0.8284271247461906,
+      "max_six_radial_ratio": 0.7672972243252213,
+      "incircle_radius_ratio": 0.9238795325112867,
+      "four_block_max_sys": 0.853553390593274,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          2,
+          5,
+          7
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 8,
+      "m": 9,
+      "closures_n": 8,
+      "closures_m": 30,
+      "six_coefficients": 2880,
+      "four_hull_sides": 72,
+      "max_six_gauge": 0.8376447737998787,
+      "max_six_radial_ratio": 0.8368482010533219,
+      "incircle_radius_ratio": 0.9990482215818578,
+      "four_block_max_sys": 0.7865541169908226,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          2,
+          5,
+          7
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 8,
+      "m": 10,
+      "closures_n": 8,
+      "closures_m": 20,
+      "six_coefficients": 1920,
+      "four_hull_sides": 40,
+      "max_six_gauge": 0.7974526533261088,
+      "max_six_radial_ratio": 0.7974526533261088,
+      "incircle_radius_ratio": 0.996917333733128,
+      "four_block_max_sys": 0.7476207596927604,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          0,
+          3,
+          6
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 8,
+      "m": 11,
+      "closures_n": 8,
+      "closures_m": 55,
+      "six_coefficients": 5280,
+      "four_hull_sides": 88,
+      "max_six_gauge": 0.8383765382383652,
+      "max_six_radial_ratio": 0.8383765382383651,
+      "incircle_radius_ratio": 0.9993628256569916,
+      "four_block_max_sys": 0.7803424151899799,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          1,
+          4,
+          7
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 8,
+      "m": 12,
+      "closures_n": 8,
+      "closures_m": 40,
+      "six_coefficients": 3840,
+      "four_hull_sides": 24,
+      "max_six_gauge": 0.8045660371092622,
+      "max_six_radial_ratio": 0.8008863345149985,
+      "incircle_radius_ratio": 0.9914448613738104,
+      "four_block_max_sys": 0.763844321643414,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          3,
+          6,
+          10
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 9,
+      "m": 9,
+      "closures_n": 30,
+      "closures_m": 30,
+      "six_coefficients": 10800,
+      "four_hull_sides": 18,
+      "max_six_gauge": 0.927019729872655,
+      "max_six_radial_ratio": 0.9156025779493009,
+      "incircle_radius_ratio": 0.984807753012208,
+      "four_block_max_sys": 0.8722454642458305,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          5
+        ],
+        [
+          2,
+          6,
+          7
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 9,
+      "m": 10,
+      "closures_n": 30,
+      "closures_m": 20,
+      "six_coefficients": 7200,
+      "four_hull_sides": 90,
+      "max_six_gauge": 0.8661377566468551,
+      "max_six_radial_ratio": 0.8660340830100087,
+      "incircle_radius_ratio": 0.9993908270190958,
+      "four_block_max_sys": 0.8016209448297029,
+      "max_gauge_witness": [
+        [
+          1,
+          3,
+          6
+        ],
+        [
+          0,
+          4,
+          8
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 9,
+      "m": 11,
+      "closures_n": 30,
+      "closures_m": 55,
+      "six_coefficients": 19800,
+      "four_hull_sides": 198,
+      "max_six_gauge": 0.9312150722553286,
+      "max_six_radial_ratio": 0.9310978580480612,
+      "incircle_radius_ratio": 0.9998741276738751,
+      "four_block_max_sys": 0.8400034304465956,
+      "max_gauge_witness": [
+        [
+          2,
+          6,
+          7
+        ],
+        [
+          1,
+          6,
+          9
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 9,
+      "m": 12,
+      "closures_n": 30,
+      "closures_m": 40,
+      "six_coefficients": 14400,
+      "four_hull_sides": 36,
+      "max_six_gauge": 0.8791433303767864,
+      "max_six_radial_ratio": 0.8775896740189244,
+      "incircle_radius_ratio": 0.9961946980917455,
+      "four_block_max_sys": 0.8152553580908622,
+      "max_gauge_witness": [
+        [
+          1,
+          3,
+          6
+        ],
+        [
+          0,
+          2,
+          7
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          2,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 10,
+      "m": 10,
+      "closures_n": 20,
+      "closures_m": 20,
+      "six_coefficients": 4800,
+      "four_hull_sides": 10,
+      "max_six_gauge": 0.8445824720006733,
+      "max_six_radial_ratio": 0.8032456635449093,
+      "incircle_radius_ratio": 0.9510565162951535,
+      "four_block_max_sys": 0.8377708763999661,
+      "max_gauge_witness": [
+        [
+          0,
+          3,
+          6
+        ],
+        [
+          2,
+          6,
+          8
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 10,
+      "m": 11,
+      "closures_n": 20,
+      "closures_m": 55,
+      "six_coefficients": 13200,
+      "four_hull_sides": 110,
+      "max_six_gauge": 0.8744107659831307,
+      "max_six_radial_ratio": 0.8740541750016543,
+      "incircle_radius_ratio": 0.9995921928281892,
+      "four_block_max_sys": 0.7954706248112036,
+      "max_gauge_witness": [
+        [
+          0,
+          4,
+          6
+        ],
+        [
+          1,
+          6,
+          9
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ]
+    },
+    {
+      "n": 10,
+      "m": 12,
+      "closures_n": 20,
+      "closures_m": 40,
+      "six_coefficients": 9600,
+      "four_hull_sides": 60,
+      "max_six_gauge": 0.8151411708568458,
+      "max_six_radial_ratio": 0.8143331414132758,
+      "incircle_radius_ratio": 0.9986295347545738,
+      "four_block_max_sys": 0.7678412460335865,
+      "max_gauge_witness": [
+        [
+          0,
+          2,
+          6
+        ],
+        [
+          4,
+          7,
+          11
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 11,
+      "m": 11,
+      "closures_n": 55,
+      "closures_m": 55,
+      "six_coefficients": 36300,
+      "four_hull_sides": 22,
+      "max_six_gauge": 0.9350855601450363,
+      "max_six_radial_ratio": 0.926698247290637,
+      "incircle_radius_ratio": 0.9898214418809327,
+      "four_block_max_sys": 0.850918743995463,
+      "max_gauge_witness": [
+        [
+          0,
+          4,
+          9
+        ],
+        [
+          1,
+          5,
+          7
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "n": 11,
+      "m": 12,
+      "closures_n": 55,
+      "closures_m": 40,
+      "six_coefficients": 26400,
+      "four_hull_sides": 132,
+      "max_six_gauge": 0.8894441288431303,
+      "max_six_radial_ratio": 0.8894441288431303,
+      "incircle_radius_ratio": 0.9997167946931291,
+      "four_block_max_sys": 0.8036338499746962,
+      "max_gauge_witness": [
+        [
+          1,
+          6,
+          9
+        ],
+        [
+          0,
+          5,
+          10
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "n": 12,
+      "m": 12,
+      "closures_n": 40,
+      "closures_m": 40,
+      "six_coefficients": 19200,
+      "four_hull_sides": 12,
+      "max_six_gauge": 0.8452994616207488,
+      "max_six_radial_ratio": 0.8185983044786057,
+      "incircle_radius_ratio": 0.9659258262890683,
+      "four_block_max_sys": 0.8293446239041952,
+      "max_gauge_witness": [
+        [
+          0,
+          5,
+          7
+        ],
+        [
+          4,
+          7,
+          11
+        ],
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ]
+    }
+  ],
+  "seconds": 1.3588127269995312
+}

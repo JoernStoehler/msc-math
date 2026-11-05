@@ -1,0 +1,19 @@
+{
+  "FACET-PLAN.md": "5114e19ee8f2e4456cad2f25360be0e423ecc2bd78407f386acee586eb0563db",
+  "FACET-AMENDMENT.md": "a31f3bb3e61fdc820eaa751dac6554a874fdf2eda985065467a99862a341ce6d",
+  "PRUNING-PLAN.md": "1d5ed287eb5719ded699ddba9e3067ec934dffe8a9106ea7483f5778ad967101",
+  "PRUNING-AMENDMENT.md": "f08e7b0ba10b75eec4d6f3a4df6661c3fdb3112181b3b8cb0c1409535a194878",
+  "facet-certificates.json.gz": "b6a591b1f50a5cfb319c072cb4d71948760353429a551c9c37873b40291bd02e",
+  "pruning-certificates.json.gz": "2362aa614dcfffd6314de58b6afb2628815ed7495683d19700187ee692973ff6",
+  "facet-limit.json": "6af16934eedb49f7840448ca11a13216fc2659e1d550fff37bdf274124b1274a",
+  "facet_check.py": "875322f286d72509899fa7e97f9ae6ae1eeae4bfa5ef60ecf9daa3499a8579f9",
+  "pruning_probe.py": "220924b264220afb9162c585622de1344ee6dd7cf77c4659c3e8583263a32900",
+  "pruning_check.py": "9c3922248893ea355aabe6e02697863702be3c1daa4cc8c4a468c957f1b5a298",
+  "facet-limit-verification.json": "6655874665dae30a7e851535767929913152aac43936f05d6675e0812871f1aa",
+  "pruning-inclusion-verification.json": "61a8d53b447f2f80db262605340ba495a5cdc1ceb3ca267f88ff8d156ae9ff00",
+  "pruning-summary.json": "021e4320df56479a31bf81eeeb0c1632dffb3db454df771b508a048ee3f4ebc2",
+  "facet-sources.json": "c40214b790c2e987ca13481464c61cde0ad1f4cebf87f745fd6e446c8cdf374c",
+  "facet-verification.json": "107d6ba828db20479398f457d0b725fbbcf4fef5c6cca816d8b46f73e2af161e",
+  "pruning-star-verification.json": "44977c687be9860e705ffb37d7c5af774a72ebb59297daee2b6506ada4eea7de",
+  "amendment-review.md": "1ec3562e3505ec00ab2728f9f1ccf1e47ea33855f8a4dadbde42d44c594ef0fe"
+}

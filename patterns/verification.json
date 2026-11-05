@@ -1,0 +1,259 @@
+{
+  "checked_at_utc": "2026-10-17T09:18:13.355356+00:00",
+  "branch": "codex/patterns-2026-10-17",
+  "base_commit": "5a4b45db856db1c3beaf12d105f00937123153e9",
+  "status": "PASS for bounded packet checks",
+  "proof_checks": {
+    "product_rational": {
+      "status": "PASS",
+      "controls": [
+        {
+          "name": "P x P",
+          "cyclic_words": 120,
+          "max_Q": "1/9",
+          "capacity": "9/2",
+          "two_bounce_capacity": "9/2",
+          "factor_area": "9/2",
+          "sym_factor_area": "27/4",
+          "sys": "1/2",
+          "sym_sys": "2/9",
+          "sym_over_original": "4/9",
+          "maximizing_words": 6
+        },
+        {
+          "name": "P x JP",
+          "cyclic_words": 120,
+          "max_Q": "1/9",
+          "capacity": "9/2",
+          "two_bounce_capacity": "9",
+          "factor_area": "9/2",
+          "sym_factor_area": "27/4",
+          "sys": "1/2",
+          "sym_sys": "8/9",
+          "sym_over_original": "16/9",
+          "maximizing_words": 1
+        }
+      ],
+      "assumptions": [
+        "Product six-facet/closure-vertex reduction",
+        "Known capacity=inradius theorem for two centrally symmetric factors"
+      ]
+    },
+    "heptagon_integer_intervals": {
+      "status": "PASS",
+      "cases": 48,
+      "dyadic_bits": 160,
+      "bound": "24/25",
+      "maximum_mass_upper_numerator": 1399807903582040072072266258464949268200001493163,
+      "denominator": 1461501637330902918203684832716283019655932542976,
+      "maximum_mass_upper_decimal": 0.9577874343941671,
+      "sharp_sys_interval": [
+        "670396790548552512047309409545618673456723681217/730750818665451459101842416358141509827966271488",
+        "670396790548552512047309409545618673456723681395/730750818665451459101842416358141509827966271488"
+      ],
+      "sharp_sys_decimal": 0.9174081963710671
+    },
+    "simplex_polytope": {
+      "all_active_bases": 134596,
+      "independent_active_bases": 31616,
+      "vertices": 20,
+      "triangle_circuit_equality": true,
+      "positive_graph_triangles": 0,
+      "negative_graph_triangles": 0,
+      "seconds": 7.604488289998699
+    },
+    "simplex_equal_ridge": {
+      "status": "PASS",
+      "same_volume": "1/192",
+      "same_R_squared": "363",
+      "controls": [
+        {
+          "dual_vertices": [
+            [
+              "5",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-10",
+              "0"
+            ],
+            [
+              "-5",
+              "5",
+              "-10",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-10",
+              "-20"
+            ],
+            [
+              "0",
+              "-5",
+              "30",
+              "20"
+            ]
+          ],
+          "volume": "1/192",
+          "Q": "10",
+          "capacity": "1/20",
+          "sys": "6/25",
+          "ridge_sum": "11/8",
+          "R_squared": "363"
+        },
+        {
+          "dual_vertices": [
+            [
+              "5",
+              "0",
+              "0",
+              "0"
+            ],
+            [
+              "0",
+              "0",
+              "-10",
+              "0"
+            ],
+            [
+              "-5",
+              "5",
+              "-10",
+              "0"
+            ],
+            [
+              "5/2",
+              "0",
+              "-10",
+              "-20"
+            ],
+            [
+              "-5/2",
+              "-5",
+              "30",
+              "20"
+            ]
+          ],
+          "volume": "1/192",
+          "Q": "8",
+          "capacity": "1/16",
+          "sys": "3/8",
+          "ridge_sum": "11/8",
+          "R_squared": "363"
+        }
+      ],
+      "assumptions": [
+        "HK formula; unique strictly positive simplex closure"
+      ]
+    }
+  },
+  "numerical_reproduction": {
+    "simplex": "scan.json;512 rows, max relative capacity error8.33e-15, max relativeR error4e-15",
+    "features": "independent NumPy/environment comparison within1.11e-16; see features/verification.json",
+    "products": "10240 reconstructed factor geometries;58 cross-method width checks within4.65e-14; see product-shape/summary.json"
+  },
+  "independent_reviews": {
+    "regular": "reviews/regular.md: APPROVE complete affine theorem and exact report",
+    "product_and_features": "reviews/product-and-features.md: APPROVE rational controls, moment proof, model interpretation and final exact reports",
+    "simplex": "reviews/simplex.md: APPROVE simplex-report-v4/simplex-proof-v2 and exact equal-ridge controls"
+  },
+  "links": {
+    "local_markdown_targets": 66,
+    "missing": []
+  },
+  "figures": {
+    "patterns/regular/heptagon-structure.png": {
+      "width": 1980,
+      "height": 810,
+      "sha256": "12b4a00dd318a276e4507d753cbd7d45f5aed5378a8bfc8d79d3d2c5e500764f",
+      "visual_inspection": "passed: owner; root additionally inspected simplex/heptagon/top-shapes"
+    },
+    "patterns/features/covariance-patterns.png": {
+      "width": 2550,
+      "height": 765,
+      "sha256": "befc72e89d27f1ce17a5cda0f7a023a0a3e0e89cf9db1e634c8b1902cd3f8851",
+      "visual_inspection": "passed: owner; root additionally inspected simplex/heptagon/top-shapes"
+    },
+    "patterns/simplex/simplex-ridge.png": {
+      "width": 1760,
+      "height": 688,
+      "sha256": "23b5731895f21509e0d28b1c3324370b12c3c3591780ac0fadb06bf008864b4c",
+      "visual_inspection": "passed: owner; root additionally inspected simplex/heptagon/top-shapes"
+    },
+    "patterns/product-shape/width-screen.png": {
+      "width": 1120,
+      "height": 800,
+      "sha256": "70b6a2a26f56514a2fb16b073c142df2b9a88f4f2bb4a040b6eb0b891e33de3e",
+      "visual_inspection": "passed: owner; root additionally inspected simplex/heptagon/top-shapes"
+    },
+    "patterns/product-shape/top-shapes.png": {
+      "width": 1920,
+      "height": 1040,
+      "sha256": "009221adc3f6e1f1020b68f8b7c25291f23abfbf6825a5b1c6bf7938b2d7d86f",
+      "visual_inspection": "passed: owner; root additionally inspected simplex/heptagon/top-shapes"
+    },
+    "patterns/product-shape/symmetrization.png": {
+      "width": 1760,
+      "height": 1280,
+      "sha256": "665c5b01f4f85badf75ec44e8f0aa40607232aedbff989dbfcd670527c6b4d9b",
+      "visual_inspection": "passed: owner; root additionally inspected simplex/heptagon/top-shapes"
+    }
+  },
+  "coordination": {
+    "state_and_served_links": "PASS scripts/serve-project-dashboard.py --check",
+    "projection": "PASS scripts/render-workflow-graph.py --check",
+    "focused_tests": "PASS python3 -m unittest scripts/test_project_dashboard.py:8tests5.934s",
+    "historical_scientific_source_reconciliation": false,
+    "source_digest_note": "Preexisting historical digests remain explicitly stale; no thesis-sources.json refresh or human PASS claimed."
+  },
+  "thesis_source_diff": "none against base_commit",
+  "limits": [
+    "Exact proof predicates rely on imported HK/product theorems as stated.",
+    "Historical empirical targets and volumes remain numerical; no certified systolic intervals claimed.",
+    "No external novelty or human proof/prose acceptance assessed."
+  ],
+  "http_render": {
+    "gallery_status": 200,
+    "mathml_elements": 44,
+    "images": [
+      {
+        "image": "product-shape/symmetrization.png",
+        "status": 200,
+        "content_type": "image/png"
+      },
+      {
+        "image": "features/covariance-patterns.png",
+        "status": 200,
+        "content_type": "image/png"
+      },
+      {
+        "image": "simplex/simplex-ridge.png",
+        "status": 200,
+        "content_type": "image/png"
+      },
+      {
+        "image": "regular/heptagon-structure.png",
+        "status": 200,
+        "content_type": "image/png"
+      },
+      {
+        "image": "product-shape/top-shapes.png",
+        "status": 200,
+        "content_type": "image/png"
+      },
+      {
+        "image": "product-shape/width-screen.png",
+        "status": 200,
+        "content_type": "image/png"
+      }
+    ],
+    "math_delimiters": "Dollar math verified in actual Pandoc GFM viewer"
+  },
+  "csv_line_endings": "Retained feature CSV and producer useLF; normalization preserves every parsed cell"
+}

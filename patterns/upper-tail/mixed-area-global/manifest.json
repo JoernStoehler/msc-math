@@ -1,0 +1,33 @@
+{
+  "contract": "Selected owned packet bytes; excludes this manifest and disposable Python bytecode.",
+  "files": {
+    "PLAN.md": {
+      "bytes": 1967,
+      "sha256": "3092a60112f63339f2733240661e610b70549b33bd1ea0aaafb652a08bc4c002"
+    },
+    "REPORT.md": {
+      "bytes": 12562,
+      "sha256": "f91aea3615c2aff2e68550d51a0487c1b74b5cb1d1a31deb2195383ea8f3f9b0"
+    },
+    "mixed-area-phase.png": {
+      "bytes": 255149,
+      "sha256": "932b7fc98878669661a4d2d0ef60a393074a87b5272f19224377b833ba3cd975"
+    },
+    "mixed-area-phase.svg": {
+      "bytes": 79035,
+      "sha256": "303138f1ca240ceb95bd93ed59c5699a6279e870251bb1ebf9201692fd993a40"
+    },
+    "plot.py": {
+      "bytes": 2748,
+      "sha256": "37d5eebd5a6be5a354d157ac1e4a6c3b16781cf8b750fec07bcdeff2ad661ee8"
+    },
+    "verification.json": {
+      "bytes": 20911,
+      "sha256": "9cb53b91a0b3e918e68ff535d3144a44dd4aa9ce7bae3f388dd69746ae06f8ff"
+    },
+    "verify.py": {
+      "bytes": 9016,
+      "sha256": "81b4d5eeb714ea8e0407f46f71a5312876cd21b88966ffe43bafdb1c5693b80e"
+    }
+  }
+}

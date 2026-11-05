@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "factor": "A",
+      "status": "PASS",
+      "unique_minimum_deleted": 5,
+      "outer_bounded_by_positive_closure": true,
+      "R": "133072295395959188028343994547209842681151348873929730839475763606211420479743342430680947/132939220133608988512561508943759940474522504823377786483388599390912808843168100319696144",
+      "all_original_halfspaces_verified_on_scaled_outer_vertices": true
+    },
+    {
+      "factor": "B",
+      "status": "PASS",
+      "unique_minimum_deleted": 5,
+      "outer_bounded_by_positive_closure": true,
+      "R": "6955257703716601754187999075618515050476438079399114364866645137996869644727612600483342520014/6948270843917388556815518349661191742249124830173537064875479927341313211004443956842104333743",
+      "all_original_halfspaces_verified_on_scaled_outer_vertices": true
+    }
+  ],
+  "input_sha256": "2d06032f0eb19403f47af2b4e8e5b96351832bd1e700e819b6e17222b4a2da23",
+  "script_sha256": "9c3922248893ea355aabe6e02697863702be3c1daa4cc8c4a468c957f1b5a298",
+  "scope": "Independent exact facet selection, outer boundedness, full original-centroid support dilations and sandwich endpoint arithmetic; unchanged verify.py checks outer chord-star"
+}

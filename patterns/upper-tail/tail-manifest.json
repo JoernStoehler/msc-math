@@ -1,0 +1,41 @@
+{
+  "contract": "Focused frozen-selector diagnostic artifact hashes; timing observational; manifest excludes itself; original source/width hashes live in tail-summary.json",
+  "files": {
+    "FROZEN-TAIL.md": {
+      "bytes": 9664,
+      "sha256": "ec34ebea63b7abf94e50fa263a0f4028ef6dbf697056d7d324fcc132da641af3"
+    },
+    "TAIL-PLAN.md": {
+      "bytes": 2448,
+      "sha256": "0c5f5af3f616751399a01f73bd08edde455a6eed621ac0c5fae520619a07c773"
+    },
+    "frozen_tail.py": {
+      "bytes": 7027,
+      "sha256": "03f80c0629ecff2ff460ee3e2076bf971b40239f505c89512438bf64b348a83e"
+    },
+    "verify_frozen_tail.py": {
+      "bytes": 4523,
+      "sha256": "40b26c69d39bf7ee4fc1193e78f75bf8663504caa12cddc76f3c026573468908"
+    },
+    "tail-rows.jsonl.gz": {
+      "bytes": 3555217,
+      "sha256": "6be644d8be43e64abef577b8e282b778b178601e42293f57b8ab186144eebe01"
+    },
+    "tail-summary.json": {
+      "bytes": 60341,
+      "sha256": "0a7554c12182325761cf45cd23ad283b9411677a2abeedf2c1b276f45badd41b"
+    },
+    "tail-verification.json": {
+      "bytes": 641,
+      "sha256": "cd12cde6bec61c99e9ad73ae9ce3460fa642b17ec9396f04d9bf67cd211cbcca"
+    },
+    "triangle_envelope.py": {
+      "bytes": 6112,
+      "sha256": "03e0a9459cf40696b57d0f2119779d06274c9232eef02c04b28ce5a0e2323704"
+    },
+    "verify_triangle_certificate.py": {
+      "bytes": 3159,
+      "sha256": "1021f3a2730017e2e82050ceed1010b336bf0b7ffa88f45a954cdb8d15064f2c"
+    }
+  }
+}

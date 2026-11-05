@@ -1,0 +1,366 @@
+{
+  "method": "Mechanistic transfer control, frozen after retained-data fits but before fresh oracle labels: c_pred=5/alpha, exact on independently affinely regular pentagon products by the imported affine theorem; no assertion beyond that family",
+  "source_blind_prediction_sha256": "9afc08272e9e179eb9274a59680c9b28ebfd8e80733e343b823c4e7125367b06",
+  "rows": [
+    {
+      "name": "contact_full_s0_e3of1000",
+      "family": "full",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0423704789690533
+    },
+    {
+      "name": "contact_full_s0_e1of100",
+      "family": "full",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0312832327304355
+    },
+    {
+      "name": "contact_full_s0_e3of100",
+      "family": "full",
+      "epsilon": "3/100",
+      "predicted_sys": 1.0009049074079412
+    },
+    {
+      "name": "contact_full_s0_e2of25",
+      "family": "full",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9298933354974034
+    },
+    {
+      "name": "contact_support_s0_e3of1000",
+      "family": "support",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.046243591454054
+    },
+    {
+      "name": "contact_support_s0_e1of100",
+      "family": "support",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0440167563391256
+    },
+    {
+      "name": "contact_support_s0_e3of100",
+      "family": "support",
+      "epsilon": "3/100",
+      "predicted_sys": 1.0379324412489777
+    },
+    {
+      "name": "contact_support_s0_e2of25",
+      "family": "support",
+      "epsilon": "2/25",
+      "predicted_sys": 1.024470363532152
+    },
+    {
+      "name": "contact_angular_s0_e3of1000",
+      "family": "angular",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.043949347914813
+    },
+    {
+      "name": "contact_angular_s0_e1of100",
+      "family": "angular",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0364879207714341
+    },
+    {
+      "name": "contact_angular_s0_e3of100",
+      "family": "angular",
+      "epsilon": "3/100",
+      "predicted_sys": 1.016328974720011
+    },
+    {
+      "name": "contact_angular_s0_e2of25",
+      "family": "angular",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9728855880713045
+    },
+    {
+      "name": "contact_full_s1_e3of1000",
+      "family": "full",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0416567334538671
+    },
+    {
+      "name": "contact_full_s1_e1of100",
+      "family": "full",
+      "epsilon": "1/100",
+      "predicted_sys": 1.028896763930436
+    },
+    {
+      "name": "contact_full_s1_e3of100",
+      "family": "full",
+      "epsilon": "3/100",
+      "predicted_sys": 0.9939781412219733
+    },
+    {
+      "name": "contact_full_s1_e2of25",
+      "family": "full",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9158884272017004
+    },
+    {
+      "name": "contact_support_s1_e3of1000",
+      "family": "support",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0414944387803498
+    },
+    {
+      "name": "contact_support_s1_e1of100",
+      "family": "support",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0282298416393085
+    },
+    {
+      "name": "contact_support_s1_e3of100",
+      "family": "support",
+      "epsilon": "3/100",
+      "predicted_sys": 0.9909422566536693
+    },
+    {
+      "name": "contact_support_s1_e2of25",
+      "family": "support",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9015801933393558
+    },
+    {
+      "name": "contact_angular_s1_e3of1000",
+      "family": "angular",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0446199490731052
+    },
+    {
+      "name": "contact_angular_s1_e1of100",
+      "family": "angular",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0386193327990223
+    },
+    {
+      "name": "contact_angular_s1_e3of100",
+      "family": "angular",
+      "epsilon": "3/100",
+      "predicted_sys": 1.0218634056790694
+    },
+    {
+      "name": "contact_angular_s1_e2of25",
+      "family": "angular",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9823915332609171
+    },
+    {
+      "name": "contact_full_s2_e3of1000",
+      "family": "full",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0429519223637718
+    },
+    {
+      "name": "contact_full_s2_e1of100",
+      "family": "full",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0330780885784179
+    },
+    {
+      "name": "contact_full_s2_e3of100",
+      "family": "full",
+      "epsilon": "3/100",
+      "predicted_sys": 1.005413666354093
+    },
+    {
+      "name": "contact_full_s2_e2of25",
+      "family": "full",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9398961606782684
+    },
+    {
+      "name": "contact_support_s2_e3of1000",
+      "family": "support",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0427299474006773
+    },
+    {
+      "name": "contact_support_s2_e1of100",
+      "family": "support",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0323714856524746
+    },
+    {
+      "name": "contact_support_s2_e3of100",
+      "family": "support",
+      "epsilon": "3/100",
+      "predicted_sys": 1.0035508140362157
+    },
+    {
+      "name": "contact_support_s2_e2of25",
+      "family": "support",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9361756465349991
+    },
+    {
+      "name": "contact_angular_s2_e3of1000",
+      "family": "angular",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.044452657207895
+    },
+    {
+      "name": "contact_angular_s2_e1of100",
+      "family": "angular",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0380967258308864
+    },
+    {
+      "name": "contact_angular_s2_e3of100",
+      "family": "angular",
+      "epsilon": "3/100",
+      "predicted_sys": 1.0205837748377158
+    },
+    {
+      "name": "contact_angular_s2_e2of25",
+      "family": "angular",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9807089691651023
+    },
+    {
+      "name": "contact_full_s3_e3of1000",
+      "family": "full",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.042482623536449
+    },
+    {
+      "name": "contact_full_s3_e1of100",
+      "family": "full",
+      "epsilon": "1/100",
+      "predicted_sys": 1.031589125373272
+    },
+    {
+      "name": "contact_full_s3_e3of100",
+      "family": "full",
+      "epsilon": "3/100",
+      "predicted_sys": 1.0015604257437711
+    },
+    {
+      "name": "contact_full_s3_e2of25",
+      "family": "full",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9331927821883919
+    },
+    {
+      "name": "contact_support_s3_e3of1000",
+      "family": "support",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.043960387971172
+    },
+    {
+      "name": "contact_support_s3_e1of100",
+      "family": "support",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0363838718562695
+    },
+    {
+      "name": "contact_support_s3_e3of100",
+      "family": "support",
+      "epsilon": "3/100",
+      "predicted_sys": 1.014844044822087
+    },
+    {
+      "name": "contact_support_s3_e2of25",
+      "family": "support",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9616484459454534
+    },
+    {
+      "name": "contact_angular_s3_e3of1000",
+      "family": "angular",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0435915996859775
+    },
+    {
+      "name": "contact_angular_s3_e1of100",
+      "family": "angular",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0352215086140053
+    },
+    {
+      "name": "contact_angular_s3_e3of100",
+      "family": "angular",
+      "epsilon": "3/100",
+      "predicted_sys": 1.011918722851997
+    },
+    {
+      "name": "contact_angular_s3_e2of25",
+      "family": "angular",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9573894191582023
+    },
+    {
+      "name": "contact_full_s4_e3of1000",
+      "family": "full",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.039468261119129
+    },
+    {
+      "name": "contact_full_s4_e1of100",
+      "family": "full",
+      "epsilon": "1/100",
+      "predicted_sys": 1.021512019050741
+    },
+    {
+      "name": "contact_full_s4_e3of100",
+      "family": "full",
+      "epsilon": "3/100",
+      "predicted_sys": 0.9711385439107716
+    },
+    {
+      "name": "contact_full_s4_e2of25",
+      "family": "full",
+      "epsilon": "2/25",
+      "predicted_sys": 0.851691348967968
+    },
+    {
+      "name": "contact_support_s4_e3of1000",
+      "family": "support",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0428325343800864
+    },
+    {
+      "name": "contact_support_s4_e1of100",
+      "family": "support",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0327212906199597
+    },
+    {
+      "name": "contact_support_s4_e3of100",
+      "family": "support",
+      "epsilon": "3/100",
+      "predicted_sys": 1.0046640335441923
+    },
+    {
+      "name": "contact_support_s4_e2of25",
+      "family": "support",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9395168205241411
+    },
+    {
+      "name": "contact_angular_s4_e3of1000",
+      "family": "angular",
+      "epsilon": "3/1000",
+      "predicted_sys": 1.0420559191520704
+    },
+    {
+      "name": "contact_angular_s4_e1of100",
+      "family": "angular",
+      "epsilon": "1/100",
+      "predicted_sys": 1.0302768637702666
+    },
+    {
+      "name": "contact_angular_s4_e3of100",
+      "family": "angular",
+      "epsilon": "3/100",
+      "predicted_sys": 0.9985002033385318
+    },
+    {
+      "name": "contact_angular_s4_e2of25",
+      "family": "angular",
+      "epsilon": "2/25",
+      "predicted_sys": 0.9298511496933486
+    }
+  ]
+}

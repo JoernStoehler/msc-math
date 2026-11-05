@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "producer_vs_independent": "Exact capacities, sys ratios, all27ridges and960words per product match",
+  "producer_source_sha256": "871cee77df8e9747b206336c993884b84b5a1d67eee0d3e62702e3a95c35c384",
+  "independent_source_sha256": "7f28a53672a8affd23d4838dae11f0a1456ebbdbd47b2b233f824b1890820f00",
+  "mathematical_reviewer": "/root/intake_review",
+  "review_schema_note": "Private mathematical review read initial producer key names sys2_* and nonzero_or_cross_ridge_count; final producer uses sys_* and mixed_ridge_count. Values unchanged; root independently reran retained code after those metadata-only renames.",
+  "human_acceptance": "pending",
+  "external_novelty": "unassessed"
+}

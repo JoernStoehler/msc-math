@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "vertices": [
+    [
+      "-1",
+      "-1"
+    ],
+    [
+      "7/4",
+      "-1"
+    ],
+    [
+      "7/4",
+      "-3/4"
+    ],
+    [
+      "-3/4",
+      "7/4"
+    ],
+    [
+      "-1",
+      "7/4"
+    ]
+  ],
+  "area": "71/16",
+  "maximum_symplectic_ridge_area": "25/2",
+  "capacity_lower_bound": "441/128",
+  "sys_lower_bound": "194481/645248",
+  "normalized_maximum_ridge_area": "200/71",
+  "sys_times_rmax_squared_lower_bound": "121550625/50823362",
+  "lower_bound_decimal": 2.3916289717315435,
+  "affine_pentagon_law_constant": "8/25",
+  "exact_hexagon_comparison": {
+    "imported_sys": "8/9",
+    "factor_area": "27/4",
+    "maximum_ridge_area": "9/4",
+    "sys_times_rmax_squared": "8/81"
+  },
+  "violation_factor_lower_bound": 7.473840536661073,
+  "assumptions": [
+    "capacity monotonicity and degree-two conformality",
+    "exact c(T x_L T)=9/2 and symmetrized S x J S sys=8/9, independently verified in patterns/product-shape/exact_controls.py"
+  ]
+}

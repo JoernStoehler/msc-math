@@ -1,0 +1,11 @@
+{
+  "candidate": "contact-v2",
+  "reviewer": "/root/patterns_investigation/contact_review",
+  "verdict": "APPROVE contact-v2",
+  "report_sha256": "7c9f1438e95d0ce27101583555cad6d204fe54edecee584f67d47b373298d098",
+  "index_addition_sha256": "2f347e4d036a3d2ef33a1b4bba6981feac4989557ffca04048444bac3079211c",
+  "verbatim_return": "APPROVE contact-v2.\n\nThe correction resolves the vector-invariance error. The report and unchanged index are supported by the inspected evidence and accurately limit the conclusion to this frozen selector.",
+  "independent_code_reviewer": "/root/patterns_investigation/contact_verify",
+  "independent_root_check": "Root independently verified all12 rational contacts, direct4D selected objectives/orders, areas and challenger; receipt owner root under /tmp/msc-math/selector-owner/20261017T1307Z",
+  "reviewed_correction": "Paired GL steps transform contragrediently; pairings/output preserved, vectors themselves not fixed."
+}

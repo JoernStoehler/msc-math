@@ -1,0 +1,2100 @@
+{
+  "method": "Frozen exact minimum-area supporting triangles; all exact area minimizers per factor; all120cyclic orders per selected pair; U=min(exact triangle capacity bound,numerical retained width). No fitted selector or added supports.",
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "width_sha256": "dcffead16ab5ad0fcdf6ae55d78375bea5b6ee7274877a33846cf4c3c2a7d57f",
+  "selector_sha256": "03e0a9459cf40696b57d0f2119779d06274c9232eef02c04b28ce5a0e2323704",
+  "selector_module": "triangle_envelope.py",
+  "tail_contract": "Descending inherited historical sys; ties by ascending name; ceil(1024*fraction); quantiles use linear interpolation.",
+  "label_limits": "Historical numerical capacity/sys and numerical width remain uncertified; exact rational triangle bound certificates do not certify these labels or U.",
+  "rows": 3072,
+  "source_rows": 10240,
+  "word_evaluations": 368640,
+  "buckets": {
+    "5x5": {
+      "all": {
+        "n": 1024,
+        "historical_sys": {
+          "min": 0.0014871974285491458,
+          "q10": 0.11636737829516397,
+          "median": 0.4127981325580254,
+          "q90": 0.6487449730096356,
+          "q95": 0.7076506881826514,
+          "max": 0.8437955079134134
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999848,
+          "q10": 1.0,
+          "median": 1.0000000000000007,
+          "q90": 1.0473474719443587,
+          "q95": 1.0725627448625472,
+          "max": 1.154727820294172
+        },
+        "width_over_historical_capacity": {
+          "min": 0.9999999999999848,
+          "q10": 1.0,
+          "median": 1.0035656662836314,
+          "q90": 1.1115560998639116,
+          "q95": 1.1770755627255356,
+          "max": 1.5281121838751552
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999994,
+          "q10": 1.0000000000000004,
+          "median": 1.1624855505900578,
+          "q90": 1.4599009198308384,
+          "q95": 1.5706730718156403,
+          "max": 3.3391383397128944
+        },
+        "U_gap_within": {
+          "1%": 713,
+          "5%": 930,
+          "10%": 1008
+        },
+        "triangle_tightens_width": 221,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 1024
+        },
+        "worst_rows": [
+          {
+            "name": "random_5x5_s3_114",
+            "bucket": "5x5",
+            "historical_sys": 0.45061470992746494,
+            "U_over_historical_capacity": 1.154727820294172,
+            "width_over_historical_capacity": 1.154727820294172,
+            "triangle_over_historical_capacity": 1.207422439797582,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                1,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s3_243",
+            "bucket": "5x5",
+            "historical_sys": 0.42519386240416,
+            "U_over_historical_capacity": 1.1507181580076051,
+            "width_over_historical_capacity": 1.1899603017565783,
+            "triangle_over_historical_capacity": 1.1507181580076051,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s1_229",
+            "bucket": "5x5",
+            "historical_sys": 0.7079304338663177,
+            "U_over_historical_capacity": 1.147932787076824,
+            "width_over_historical_capacity": 1.147932787076824,
+            "triangle_over_historical_capacity": 1.1487854073188504,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              5,
+              3
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s1_250",
+            "bucket": "5x5",
+            "historical_sys": 0.6149225522090485,
+            "U_over_historical_capacity": 1.144154539346592,
+            "width_over_historical_capacity": 1.2524946419618568,
+            "triangle_over_historical_capacity": 1.144154539346592,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                3
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s3_178",
+            "bucket": "5x5",
+            "historical_sys": 0.5859494492230907,
+            "U_over_historical_capacity": 1.1335312805588953,
+            "width_over_historical_capacity": 1.1335312805588953,
+            "triangle_over_historical_capacity": 1.1458927516071036,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              4
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top10%": {
+        "n": 103,
+        "historical_sys": {
+          "min": 0.6491351316298536,
+          "q10": 0.6641571160350306,
+          "median": 0.7077407482686484,
+          "q90": 0.7795327555390595,
+          "q95": 0.79906673777776,
+          "max": 0.8437955079134134
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999994,
+          "q10": 0.9999999999999999,
+          "median": 1.0192151273412497,
+          "q90": 1.072312062071698,
+          "q95": 1.080627128546635,
+          "max": 1.147932787076824
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0,
+          "q10": 1.0010262339502938,
+          "median": 1.0423884802806074,
+          "q90": 1.1626596109148855,
+          "q95": 1.1921131320201896,
+          "max": 1.2255310422166152
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999994,
+          "q10": 0.9999999999999999,
+          "median": 1.0650361531675563,
+          "q90": 1.2530582118246472,
+          "q95": 1.2983224336667503,
+          "max": 1.7531280790896757
+        },
+        "U_gap_within": {
+          "1%": 47,
+          "5%": 79,
+          "10%": 100
+        },
+        "triangle_tightens_width": 46,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 103
+        },
+        "worst_rows": [
+          {
+            "name": "random_5x5_s1_229",
+            "bucket": "5x5",
+            "historical_sys": 0.7079304338663177,
+            "U_over_historical_capacity": 1.147932787076824,
+            "width_over_historical_capacity": 1.147932787076824,
+            "triangle_over_historical_capacity": 1.1487854073188504,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              5,
+              3
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s0_67",
+            "bucket": "5x5",
+            "historical_sys": 0.6676656059552307,
+            "U_over_historical_capacity": 1.126536644760199,
+            "width_over_historical_capacity": 1.1781029313454137,
+            "triangle_over_historical_capacity": 1.126536644760199,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                4
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s1_102",
+            "bucket": "5x5",
+            "historical_sys": 0.6653632212751882,
+            "U_over_historical_capacity": 1.1253852698606632,
+            "width_over_historical_capacity": 1.1420891624420286,
+            "triangle_over_historical_capacity": 1.1253852698606632,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                4
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s1_64",
+            "bucket": "5x5",
+            "historical_sys": 0.7642685047274448,
+            "U_over_historical_capacity": 1.099046370702183,
+            "width_over_historical_capacity": 1.099046370702183,
+            "triangle_over_historical_capacity": 1.1064515171421563,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              5
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s3_217",
+            "bucket": "5x5",
+            "historical_sys": 0.730617078032232,
+            "U_over_historical_capacity": 1.0950105398834002,
+            "width_over_historical_capacity": 1.0950105398834002,
+            "triangle_over_historical_capacity": 1.195683567737517,
+            "selected_support_indices": [
+              [
+                0,
+                3,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              4
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top5%": {
+        "n": 52,
+        "historical_sys": {
+          "min": 0.7077407482686484,
+          "q10": 0.7134004847682592,
+          "median": 0.7469502302125147,
+          "q90": 0.79906673777776,
+          "q95": 0.8046872011025454,
+          "max": 0.8437955079134134
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999997,
+          "q10": 1.0,
+          "median": 1.0218257372503432,
+          "q90": 1.0744005133518515,
+          "q95": 1.0872442624188565,
+          "max": 1.147932787076824
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0000000000000004,
+          "q10": 1.0054881484368572,
+          "median": 1.0425989860544735,
+          "q90": 1.1261427356467835,
+          "q95": 1.149629792346664,
+          "max": 1.1632182593186515
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999997,
+          "q10": 1.0,
+          "median": 1.0627706300803186,
+          "q90": 1.2105918662043367,
+          "q95": 1.2831748507035132,
+          "max": 1.5613808564159173
+        },
+        "U_gap_within": {
+          "1%": 21,
+          "5%": 41,
+          "10%": 51
+        },
+        "triangle_tightens_width": 22,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 52
+        },
+        "worst_rows": [
+          {
+            "name": "random_5x5_s1_229",
+            "bucket": "5x5",
+            "historical_sys": 0.7079304338663177,
+            "U_over_historical_capacity": 1.147932787076824,
+            "width_over_historical_capacity": 1.147932787076824,
+            "triangle_over_historical_capacity": 1.1487854073188504,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              5,
+              3
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s1_64",
+            "bucket": "5x5",
+            "historical_sys": 0.7642685047274448,
+            "U_over_historical_capacity": 1.099046370702183,
+            "width_over_historical_capacity": 1.099046370702183,
+            "triangle_over_historical_capacity": 1.1064515171421563,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              5
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s3_217",
+            "bucket": "5x5",
+            "historical_sys": 0.730617078032232,
+            "U_over_historical_capacity": 1.0950105398834002,
+            "width_over_historical_capacity": 1.0950105398834002,
+            "triangle_over_historical_capacity": 1.195683567737517,
+            "selected_support_indices": [
+              [
+                0,
+                3,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s1_221",
+            "bucket": "5x5",
+            "historical_sys": 0.804944954189425,
+            "U_over_historical_capacity": 1.0808900354024118,
+            "width_over_historical_capacity": 1.0808900354024118,
+            "triangle_over_historical_capacity": 1.5613808564159173,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                3
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              3
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s3_14",
+            "bucket": "5x5",
+            "historical_sys": 0.7840247956627127,
+            "U_over_historical_capacity": 1.0782609668446421,
+            "width_over_historical_capacity": 1.0782609668446421,
+            "triangle_over_historical_capacity": 1.110818633472763,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              5,
+              4
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top2%": {
+        "n": 21,
+        "historical_sys": {
+          "min": 0.7571917775528394,
+          "q10": 0.7630626294583688,
+          "median": 0.7795379158876371,
+          "q90": 0.804944954189425,
+          "q95": 0.8385328153862057,
+          "max": 0.8437955079134134
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999998,
+          "q10": 1.0000000000000002,
+          "median": 1.035638324946196,
+          "q90": 1.0782609668446421,
+          "q95": 1.0808900354024118,
+          "max": 1.099046370702183
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0000000000000004,
+          "q10": 1.0140854884600163,
+          "median": 1.0754663938071554,
+          "q90": 1.1010852367419115,
+          "q95": 1.1063369022887704,
+          "max": 1.1278791317737402
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999998,
+          "q10": 1.0000000000000002,
+          "median": 1.073696947460478,
+          "q90": 1.2313587340740344,
+          "q95": 1.268027267740276,
+          "max": 1.5613808564159173
+        },
+        "U_gap_within": {
+          "1%": 8,
+          "5%": 13,
+          "10%": 21
+        },
+        "triangle_tightens_width": 11,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 21
+        },
+        "worst_rows": [
+          {
+            "name": "random_5x5_s1_64",
+            "bucket": "5x5",
+            "historical_sys": 0.7642685047274448,
+            "U_over_historical_capacity": 1.099046370702183,
+            "width_over_historical_capacity": 1.099046370702183,
+            "triangle_over_historical_capacity": 1.1064515171421563,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              5
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s1_221",
+            "bucket": "5x5",
+            "historical_sys": 0.804944954189425,
+            "U_over_historical_capacity": 1.0808900354024118,
+            "width_over_historical_capacity": 1.0808900354024118,
+            "triangle_over_historical_capacity": 1.5613808564159173,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                3
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              3
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s3_14",
+            "bucket": "5x5",
+            "historical_sys": 0.7840247956627127,
+            "U_over_historical_capacity": 1.0782609668446421,
+            "width_over_historical_capacity": 1.0782609668446421,
+            "triangle_over_historical_capacity": 1.110818633472763,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              5,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s2_68",
+            "bucket": "5x5",
+            "historical_sys": 0.7644469781209553,
+            "U_over_historical_capacity": 1.0743495278000486,
+            "width_over_historical_capacity": 1.0890063131083514,
+            "triangle_over_historical_capacity": 1.0743495278000486,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                0,
+                1,
+                2
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x5_s0_135",
+            "bucket": "5x5",
+            "historical_sys": 0.7752876638930474,
+            "U_over_historical_capacity": 1.073696947460478,
+            "width_over_historical_capacity": 1.1063369022887704,
+            "triangle_over_historical_capacity": 1.073696947460478,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                3
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              4
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      }
+    },
+    "5x6": {
+      "all": {
+        "n": 1024,
+        "historical_sys": {
+          "min": 0.0014421949035220163,
+          "q10": 0.1574627594037253,
+          "median": 0.46953390477604806,
+          "q90": 0.6694336396369927,
+          "q95": 0.7145715685179074,
+          "max": 0.86258589584944
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999933,
+          "q10": 1.0,
+          "median": 1.0000265247212736,
+          "q90": 1.0496250817517834,
+          "q95": 1.0743949910147854,
+          "max": 1.2312223408490668
+        },
+        "width_over_historical_capacity": {
+          "min": 0.9999999999999933,
+          "q10": 1.0,
+          "median": 1.0029930105257012,
+          "q90": 1.0988331271922345,
+          "q95": 1.1497825615970976,
+          "max": 1.5896459583537903
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999993,
+          "q10": 1.0163980229667022,
+          "median": 1.1864664897437023,
+          "q90": 1.4614895848109588,
+          "q95": 1.5892128514901422,
+          "max": 2.123468553680155
+        },
+        "U_gap_within": {
+          "1%": 707,
+          "5%": 922,
+          "10%": 999
+        },
+        "triangle_tightens_width": 155,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 1024
+        },
+        "worst_rows": [
+          {
+            "name": "random_5x6_s3_29",
+            "bucket": "5x6",
+            "historical_sys": 0.6171660281739725,
+            "U_over_historical_capacity": 1.2312223408490668,
+            "width_over_historical_capacity": 1.2312223408490668,
+            "triangle_over_historical_capacity": 1.2590485890199126,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                1,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s0_14",
+            "bucket": "5x6",
+            "historical_sys": 0.43553605072539875,
+            "U_over_historical_capacity": 1.1916331737991623,
+            "width_over_historical_capacity": 1.1916331737991623,
+            "triangle_over_historical_capacity": 1.2287764574153281,
+            "selected_support_indices": [
+              [
+                1,
+                3,
+                4
+              ],
+              [
+                0,
+                2,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s0_12",
+            "bucket": "5x6",
+            "historical_sys": 0.3934539419691907,
+            "U_over_historical_capacity": 1.1542753409332573,
+            "width_over_historical_capacity": 1.1542753409332573,
+            "triangle_over_historical_capacity": 1.1758165791587352,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                4
+              ],
+              [
+                0,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              4
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s0_219",
+            "bucket": "5x6",
+            "historical_sys": 0.6593386845344583,
+            "U_over_historical_capacity": 1.1495595997244132,
+            "width_over_historical_capacity": 1.1515166351096495,
+            "triangle_over_historical_capacity": 1.1495595997244132,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                4
+              ],
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s3_79",
+            "bucket": "5x6",
+            "historical_sys": 0.6935922649093785,
+            "U_over_historical_capacity": 1.1409698842289955,
+            "width_over_historical_capacity": 1.1409698842289955,
+            "triangle_over_historical_capacity": 1.1851843954332815,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              5,
+              8
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top10%": {
+        "n": 103,
+        "historical_sys": {
+          "min": 0.6696304078717445,
+          "q10": 0.6793426040691435,
+          "median": 0.7146071904536574,
+          "q90": 0.792775954996467,
+          "q95": 0.7980386915367993,
+          "max": 0.86258589584944
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999996,
+          "q10": 1.0,
+          "median": 1.015555414160583,
+          "q90": 1.0870403334406362,
+          "q95": 1.1049145300462004,
+          "max": 1.1409698842289955
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0,
+          "q10": 1.0000000000000004,
+          "median": 1.0377932101146046,
+          "q90": 1.1239444010355475,
+          "q95": 1.1629807049663357,
+          "max": 1.1935241037323088
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999996,
+          "q10": 1.0106782194118118,
+          "median": 1.114912241604028,
+          "q90": 1.2515706257175658,
+          "q95": 1.306021328127801,
+          "max": 1.5081743082821697
+        },
+        "U_gap_within": {
+          "1%": 38,
+          "5%": 77,
+          "10%": 97
+        },
+        "triangle_tightens_width": 29,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 103
+        },
+        "worst_rows": [
+          {
+            "name": "random_5x6_s3_79",
+            "bucket": "5x6",
+            "historical_sys": 0.6935922649093785,
+            "U_over_historical_capacity": 1.1409698842289955,
+            "width_over_historical_capacity": 1.1409698842289955,
+            "triangle_over_historical_capacity": 1.1851843954332815,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              5,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s1_184",
+            "bucket": "5x6",
+            "historical_sys": 0.6908205023505315,
+            "U_over_historical_capacity": 1.1373718097357632,
+            "width_over_historical_capacity": 1.1637167776337725,
+            "triangle_over_historical_capacity": 1.1373718097357632,
+            "selected_support_indices": [
+              [
+                1,
+                3,
+                4
+              ],
+              [
+                0,
+                1,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s2_150",
+            "bucket": "5x6",
+            "historical_sys": 0.7946614734448304,
+            "U_over_historical_capacity": 1.12742285912023,
+            "width_over_historical_capacity": 1.129839773372994,
+            "triangle_over_historical_capacity": 1.12742285912023,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                0,
+                1,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s1_199",
+            "bucket": "5x6",
+            "historical_sys": 0.7320751319667425,
+            "U_over_historical_capacity": 1.1083588193692968,
+            "width_over_historical_capacity": 1.1083588193692968,
+            "triangle_over_historical_capacity": 1.257324890617423,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s0_107",
+            "bucket": "5x6",
+            "historical_sys": 0.6696304078717445,
+            "U_over_historical_capacity": 1.1067499210976826,
+            "width_over_historical_capacity": 1.1067499210976826,
+            "triangle_over_historical_capacity": 1.114912241604028,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                4
+              ],
+              [
+                0,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              6
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top5%": {
+        "n": 52,
+        "historical_sys": {
+          "min": 0.7146071904536574,
+          "q10": 0.7206411425033958,
+          "median": 0.7506852987795891,
+          "q90": 0.7980386915367993,
+          "q95": 0.8095053363974269,
+          "max": 0.86258589584944
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999996,
+          "q10": 1.0,
+          "median": 1.020775461612315,
+          "q90": 1.085164109500421,
+          "q95": 1.1005566219160121,
+          "max": 1.12742285912023
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0,
+          "q10": 1.0007459429346877,
+          "median": 1.0568227839713324,
+          "q90": 1.11931789939998,
+          "q95": 1.1417720982868786,
+          "max": 1.1935241037323088
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999996,
+          "q10": 1.0000000000000002,
+          "median": 1.0932896355104096,
+          "q90": 1.1848572558331742,
+          "q95": 1.2415006621428155,
+          "max": 1.289494097498148
+        },
+        "U_gap_within": {
+          "1%": 18,
+          "5%": 39,
+          "10%": 49
+        },
+        "triangle_tightens_width": 19,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 52
+        },
+        "worst_rows": [
+          {
+            "name": "random_5x6_s2_150",
+            "bucket": "5x6",
+            "historical_sys": 0.7946614734448304,
+            "U_over_historical_capacity": 1.12742285912023,
+            "width_over_historical_capacity": 1.129839773372994,
+            "triangle_over_historical_capacity": 1.12742285912023,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                0,
+                1,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s1_199",
+            "bucket": "5x6",
+            "historical_sys": 0.7320751319667425,
+            "U_over_historical_capacity": 1.1083588193692968,
+            "width_over_historical_capacity": 1.1083588193692968,
+            "triangle_over_historical_capacity": 1.257324890617423,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s0_180",
+            "bucket": "5x6",
+            "historical_sys": 0.7226325815921457,
+            "U_over_historical_capacity": 1.1058829540751314,
+            "width_over_historical_capacity": 1.1058829540751314,
+            "triangle_over_historical_capacity": 1.1444069659990843,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                3
+              ],
+              [
+                0,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s1_68",
+            "bucket": "5x6",
+            "historical_sys": 0.8003739215041985,
+            "U_over_historical_capacity": 1.0961987137858238,
+            "width_over_historical_capacity": 1.0961987137858238,
+            "triangle_over_historical_capacity": 1.137584201948103,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                3
+              ],
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s0_117",
+            "bucket": "5x6",
+            "historical_sys": 0.7555257764430767,
+            "U_over_historical_capacity": 1.093247266409254,
+            "width_over_historical_capacity": 1.093247266409254,
+            "triangle_over_historical_capacity": 1.1814986681847268,
+            "selected_support_indices": [
+              [
+                1,
+                3,
+                4
+              ],
+              [
+                1,
+                4,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              8
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top2%": {
+        "n": 21,
+        "historical_sys": {
+          "min": 0.7660986155217913,
+          "q10": 0.7686071863953676,
+          "median": 0.7934717095902393,
+          "q90": 0.8175472710023671,
+          "q95": 0.8459037671362852,
+          "max": 0.86258589584944
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999996,
+          "q10": 1.0000000000000002,
+          "median": 1.018908190343991,
+          "q90": 1.086289887293145,
+          "q95": 1.0961987137858238,
+          "max": 1.12742285912023
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0,
+          "q10": 1.0000000000000002,
+          "median": 1.0462229225604032,
+          "q90": 1.0961987137858238,
+          "q95": 1.129839773372994,
+          "max": 1.1781698115298844
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999996,
+          "q10": 1.0099063345543706,
+          "median": 1.0544713494403877,
+          "q90": 1.1794513946874075,
+          "q95": 1.1852304322385572,
+          "max": 1.1892448049628648
+        },
+        "U_gap_within": {
+          "1%": 9,
+          "5%": 16,
+          "10%": 20
+        },
+        "triangle_tightens_width": 8,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 21
+        },
+        "worst_rows": [
+          {
+            "name": "random_5x6_s2_150",
+            "bucket": "5x6",
+            "historical_sys": 0.7946614734448304,
+            "U_over_historical_capacity": 1.12742285912023,
+            "width_over_historical_capacity": 1.129839773372994,
+            "triangle_over_historical_capacity": 1.12742285912023,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                4
+              ],
+              [
+                0,
+                1,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s1_68",
+            "bucket": "5x6",
+            "historical_sys": 0.8003739215041985,
+            "U_over_historical_capacity": 1.0961987137858238,
+            "width_over_historical_capacity": 1.0961987137858238,
+            "triangle_over_historical_capacity": 1.137584201948103,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                3
+              ],
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s2_7",
+            "bucket": "5x6",
+            "historical_sys": 0.7670852749632621,
+            "U_over_historical_capacity": 1.086289887293145,
+            "width_over_historical_capacity": 1.086289887293145,
+            "triangle_over_historical_capacity": 1.139652509604898,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                2
+              ],
+              [
+                1,
+                2,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              3,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s2_112",
+            "bucket": "5x6",
+            "historical_sys": 0.7814548356466064,
+            "U_over_historical_capacity": 1.0692953157371259,
+            "width_over_historical_capacity": 1.0692953157371259,
+            "triangle_over_historical_capacity": 1.1892448049628648,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                3
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              5,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_5x6_s2_227",
+            "bucket": "5x6",
+            "historical_sys": 0.7934717095902393,
+            "U_over_historical_capacity": 1.05799167284567,
+            "width_over_historical_capacity": 1.05799167284567,
+            "triangle_over_historical_capacity": 1.0938662477712582,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                3
+              ],
+              [
+                0,
+                1,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              6
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      }
+    },
+    "6x6": {
+      "all": {
+        "n": 1024,
+        "historical_sys": {
+          "min": 0.002305048917497889,
+          "q10": 0.19434750820754082,
+          "median": 0.5118341795064609,
+          "q90": 0.7082581054962026,
+          "q95": 0.7498293014095222,
+          "max": 0.8536118881702471
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999978,
+          "q10": 1.0,
+          "median": 1.0000000000000007,
+          "q90": 1.0342672836815114,
+          "q95": 1.0609198336302097,
+          "max": 1.1858416895211055
+        },
+        "width_over_historical_capacity": {
+          "min": 0.9999999999999978,
+          "q10": 1.0,
+          "median": 1.0000000000000009,
+          "q90": 1.0632336544394625,
+          "q95": 1.1020891978524725,
+          "max": 1.4114909066629067
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999994,
+          "q10": 1.0303775152588441,
+          "median": 1.2253263153312985,
+          "q90": 1.4935478951874852,
+          "q95": 1.5972561315763736,
+          "max": 2.2593885795886677
+        },
+        "U_gap_within": {
+          "1%": 772,
+          "5%": 957,
+          "10%": 1011
+        },
+        "triangle_tightens_width": 108,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 1024
+        },
+        "worst_rows": [
+          {
+            "name": "random_6x6_s2_3",
+            "bucket": "6x6",
+            "historical_sys": 0.6097873901945506,
+            "U_over_historical_capacity": 1.1858416895211055,
+            "width_over_historical_capacity": 1.1858416895211055,
+            "triangle_over_historical_capacity": 1.2245259988664179,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                5
+              ],
+              [
+                1,
+                2,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s3_21",
+            "bucket": "6x6",
+            "historical_sys": 0.5919038848628014,
+            "U_over_historical_capacity": 1.1494753335326795,
+            "width_over_historical_capacity": 1.1494753335326795,
+            "triangle_over_historical_capacity": 1.1983836470791587,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                4
+              ],
+              [
+                1,
+                4,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s0_122",
+            "bucket": "6x6",
+            "historical_sys": 0.4811848442778804,
+            "U_over_historical_capacity": 1.1379341615530423,
+            "width_over_historical_capacity": 1.1379341615530423,
+            "triangle_over_historical_capacity": 1.438696838022498,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                3
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s0_91",
+            "bucket": "6x6",
+            "historical_sys": 0.6315913309240921,
+            "U_over_historical_capacity": 1.1377668141233495,
+            "width_over_historical_capacity": 1.1377668141233495,
+            "triangle_over_historical_capacity": 1.3470017747756358,
+            "selected_support_indices": [
+              [
+                1,
+                3,
+                5
+              ],
+              [
+                0,
+                1,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s1_139",
+            "bucket": "6x6",
+            "historical_sys": 0.6148177818946469,
+            "U_over_historical_capacity": 1.134457738618805,
+            "width_over_historical_capacity": 1.134457738618805,
+            "triangle_over_historical_capacity": 1.1894889376485003,
+            "selected_support_indices": [
+              [
+                0,
+                3,
+                4
+              ],
+              [
+                2,
+                4,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              4,
+              6
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top10%": {
+        "n": 103,
+        "historical_sys": {
+          "min": 0.7083745973636716,
+          "q10": 0.7153789624072504,
+          "median": 0.7501025225323367,
+          "q90": 0.7954169823372228,
+          "q95": 0.8113560781178553,
+          "max": 0.8536118881702471
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999996,
+          "q10": 1.0000000000000002,
+          "median": 1.0069103771459647,
+          "q90": 1.0605232339948574,
+          "q95": 1.0666935043912025,
+          "max": 1.1060120209935491
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0,
+          "q10": 1.0000000000000004,
+          "median": 1.0182254033540614,
+          "q90": 1.084558436305671,
+          "q95": 1.1142511866570741,
+          "max": 1.1709551631926192
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999996,
+          "q10": 1.0004067779366481,
+          "median": 1.1025459623702518,
+          "q90": 1.2237072866689978,
+          "q95": 1.2848457655441927,
+          "max": 1.4053285472666788
+        },
+        "U_gap_within": {
+          "1%": 59,
+          "5%": 88,
+          "10%": 102
+        },
+        "triangle_tightens_width": 25,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 103
+        },
+        "worst_rows": [
+          {
+            "name": "random_6x6_s2_99",
+            "bucket": "6x6",
+            "historical_sys": 0.7401558825515109,
+            "U_over_historical_capacity": 1.1060120209935491,
+            "width_over_historical_capacity": 1.1511154392609013,
+            "triangle_over_historical_capacity": 1.1060120209935491,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s1_149",
+            "bucket": "6x6",
+            "historical_sys": 0.717343525014596,
+            "U_over_historical_capacity": 1.0873930615426473,
+            "width_over_historical_capacity": 1.0873930615426473,
+            "triangle_over_historical_capacity": 1.2230110019005425,
+            "selected_support_indices": [
+              [
+                0,
+                4,
+                5
+              ],
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s3_172",
+            "bucket": "6x6",
+            "historical_sys": 0.739049891658231,
+            "U_over_historical_capacity": 1.0845789734885778,
+            "width_over_historical_capacity": 1.0845789734885778,
+            "triangle_over_historical_capacity": 1.164058460435475,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                5
+              ],
+              [
+                0,
+                2,
+                3
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s1_52",
+            "bucket": "6x6",
+            "historical_sys": 0.7683579417014876,
+            "U_over_historical_capacity": 1.0755593396065783,
+            "width_over_historical_capacity": 1.0755593396065783,
+            "triangle_over_historical_capacity": 1.1017166647996064,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                5
+              ],
+              [
+                0,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s3_218",
+            "bucket": "6x6",
+            "historical_sys": 0.7603177716893835,
+            "U_over_historical_capacity": 1.0695559260230962,
+            "width_over_historical_capacity": 1.0695559260230962,
+            "triangle_over_historical_capacity": 1.162128702469442,
+            "selected_support_indices": [
+              [
+                1,
+                4,
+                5
+              ],
+              [
+                1,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top5%": {
+        "n": 52,
+        "historical_sys": {
+          "min": 0.7501025225323367,
+          "q10": 0.7522686204520981,
+          "median": 0.7757347829197696,
+          "q90": 0.8113560781178553,
+          "q95": 0.8249597106891173,
+          "max": 0.8536118881702471
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999999,
+          "q10": 1.0000000000000002,
+          "median": 1.00933046495431,
+          "q90": 1.0625524326074147,
+          "q95": 1.0653769800978385,
+          "max": 1.0755593396065783
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0,
+          "q10": 1.0000000000000004,
+          "median": 1.0208889949110678,
+          "q90": 1.0690817992559496,
+          "q95": 1.078185298611504,
+          "max": 1.141940053662872
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999999,
+          "q10": 1.0075276441838885,
+          "median": 1.083050091653484,
+          "q90": 1.1829541886294475,
+          "q95": 1.2455429070977688,
+          "max": 1.363687649587071
+        },
+        "U_gap_within": {
+          "1%": 28,
+          "5%": 42,
+          "10%": 52
+        },
+        "triangle_tightens_width": 11,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 52
+        },
+        "worst_rows": [
+          {
+            "name": "random_6x6_s1_52",
+            "bucket": "6x6",
+            "historical_sys": 0.7683579417014876,
+            "U_over_historical_capacity": 1.0755593396065783,
+            "width_over_historical_capacity": 1.0755593396065783,
+            "triangle_over_historical_capacity": 1.1017166647996064,
+            "selected_support_indices": [
+              [
+                1,
+                2,
+                5
+              ],
+              [
+                0,
+                3,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s3_218",
+            "bucket": "6x6",
+            "historical_sys": 0.7603177716893835,
+            "U_over_historical_capacity": 1.0695559260230962,
+            "width_over_historical_capacity": 1.0695559260230962,
+            "triangle_over_historical_capacity": 1.162128702469442,
+            "selected_support_indices": [
+              [
+                1,
+                4,
+                5
+              ],
+              [
+                1,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s3_124",
+            "bucket": "6x6",
+            "historical_sys": 0.7940437296341297,
+            "U_over_historical_capacity": 1.0660642622320942,
+            "width_over_historical_capacity": 1.0739645382776586,
+            "triangle_over_historical_capacity": 1.0660642622320942,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s1_49",
+            "bucket": "6x6",
+            "historical_sys": 0.7754689397376794,
+            "U_over_historical_capacity": 1.0648146583516294,
+            "width_over_historical_capacity": 1.0648146583516294,
+            "triangle_over_historical_capacity": 1.1803806005421138,
+            "selected_support_indices": [
+              [
+                1,
+                3,
+                5
+              ],
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s1_218",
+            "bucket": "6x6",
+            "historical_sys": 0.8117826273691138,
+            "U_over_historical_capacity": 1.064197297093562,
+            "width_over_historical_capacity": 1.064197297093562,
+            "triangle_over_historical_capacity": 1.1066944607012839,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                3
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              8
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      },
+      "top2%": {
+        "n": 21,
+        "historical_sys": {
+          "min": 0.7788172724218558,
+          "q10": 0.7806185522704935,
+          "median": 0.7957602955129961,
+          "q90": 0.8309527767863086,
+          "q95": 0.8450470460361871,
+          "max": 0.8536118881702471
+        },
+        "U_over_historical_capacity": {
+          "min": 0.9999999999999999,
+          "q10": 1.0000000000000002,
+          "median": 1.0250173778625487,
+          "q90": 1.0627088900759118,
+          "q95": 1.064197297093562,
+          "max": 1.0660642622320942
+        },
+        "width_over_historical_capacity": {
+          "min": 1.0000000000000002,
+          "q10": 1.0000000000000007,
+          "median": 1.0322600053320126,
+          "q90": 1.064197297093562,
+          "q95": 1.0739645382776586,
+          "max": 1.0813948040619685
+        },
+        "triangle_over_historical_capacity": {
+          "min": 0.9999999999999999,
+          "q10": 1.0003469690489069,
+          "median": 1.0660642622320942,
+          "q90": 1.1510619551467671,
+          "q95": 1.1544572844276162,
+          "max": 1.2105443152387807
+        },
+        "U_gap_within": {
+          "1%": 8,
+          "5%": 16,
+          "10%": 21
+        },
+        "triangle_tightens_width": 6,
+        "U_below_historical_more_than_1e_8": 0,
+        "selected_tie_counts": {
+          "1x1": 21
+        },
+        "worst_rows": [
+          {
+            "name": "random_6x6_s3_124",
+            "bucket": "6x6",
+            "historical_sys": 0.7940437296341297,
+            "U_over_historical_capacity": 1.0660642622320942,
+            "width_over_historical_capacity": 1.0739645382776586,
+            "triangle_over_historical_capacity": 1.0660642622320942,
+            "selected_support_indices": [
+              [
+                0,
+                2,
+                4
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s1_218",
+            "bucket": "6x6",
+            "historical_sys": 0.8117826273691138,
+            "U_over_historical_capacity": 1.064197297093562,
+            "width_over_historical_capacity": 1.064197297093562,
+            "triangle_over_historical_capacity": 1.1066944607012839,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                3
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s0_53",
+            "bucket": "6x6",
+            "historical_sys": 0.779403561695335,
+            "U_over_historical_capacity": 1.0627088900759118,
+            "width_over_historical_capacity": 1.0627088900759118,
+            "triangle_over_historical_capacity": 1.1544572844276162,
+            "selected_support_indices": [
+              [
+                0,
+                1,
+                3
+              ],
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s1_18",
+            "bucket": "6x6",
+            "historical_sys": 0.7816697996092749,
+            "U_over_historical_capacity": 1.0611443153909415,
+            "width_over_historical_capacity": 1.0611443153909415,
+            "triangle_over_historical_capacity": 1.1027553674610624,
+            "selected_support_indices": [
+              [
+                1,
+                4,
+                5
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              6,
+              8
+            ],
+            "producer_bounces": 3
+          },
+          {
+            "name": "random_6x6_s2_98",
+            "bucket": "6x6",
+            "historical_sys": 0.7957602955129961,
+            "U_over_historical_capacity": 1.0531193960759793,
+            "width_over_historical_capacity": 1.0531193960759793,
+            "triangle_over_historical_capacity": 1.1208743942775614,
+            "selected_support_indices": [
+              [
+                1,
+                3,
+                5
+              ],
+              [
+                0,
+                2,
+                4
+              ]
+            ],
+            "feasible_triangle_counts": [
+              8,
+              6
+            ],
+            "producer_bounces": 3
+          }
+        ]
+      }
+    }
+  },
+  "hko": {
+    "kind": "Separate regular-pentagon numerical control; exact known sys imported, not certified here",
+    "selected_triangles": [
+      5,
+      5
+    ],
+    "word_evaluations": 3000,
+    "triangle_capacity_upper_bound": 3.4409548011779334,
+    "triangle_ratio_upper_bound": 1.0472135954999575,
+    "known_width_capacity": 3.4409548011779343,
+    "known_exact_ratio_expression": "(3+sqrt(5))/5",
+    "known_ratio": 1.047213595499958,
+    "tightens_width": false
+  },
+  "stop_decision": "STOP fixed selector as uniformly tight upper-tail explanation",
+  "elapsed_seconds": 21.241414580999844
+}

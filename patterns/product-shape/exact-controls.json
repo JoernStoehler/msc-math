@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "controls": [
+    {
+      "name": "P x P",
+      "cyclic_words": 120,
+      "max_Q": "1/9",
+      "capacity": "9/2",
+      "two_bounce_capacity": "9/2",
+      "factor_area": "9/2",
+      "sym_factor_area": "27/4",
+      "sys": "1/2",
+      "sym_sys": "2/9",
+      "sym_over_original": "4/9",
+      "maximizing_words": 6
+    },
+    {
+      "name": "P x JP",
+      "cyclic_words": 120,
+      "max_Q": "1/9",
+      "capacity": "9/2",
+      "two_bounce_capacity": "9",
+      "factor_area": "9/2",
+      "sym_factor_area": "27/4",
+      "sys": "1/2",
+      "sym_sys": "8/9",
+      "sym_over_original": "16/9",
+      "maximizing_words": 1
+    }
+  ],
+  "assumptions": [
+    "Product six-facet/closure-vertex reduction",
+    "Known capacity=inradius theorem for two centrally symmetric factors"
+  ]
+}

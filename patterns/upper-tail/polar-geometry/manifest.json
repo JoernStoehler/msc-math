@@ -1,0 +1,97 @@
+{
+  "contract": "Selected owned packet bytes; excludes this manifest and disposable Python bytecode.",
+  "files": {
+    "PLAN.md": {
+      "bytes": 2263,
+      "sha256": "c7e6e7948834c97833e2b8b97d8039be9a62a3b463bd2108e565a921c3ee194a"
+    },
+    "REPORT.md": {
+      "bytes": 14423,
+      "sha256": "f172abcd43939d3fdd9195ba2b1b4cfbef037a49f669993194f8b73459025264"
+    },
+    "analyze.py": {
+      "bytes": 8226,
+      "sha256": "2439bcc5c755470b658f3ae00538d2064062fc1801893ebeecd4a3709e622bf9"
+    },
+    "baselines.json": {
+      "bytes": 7338,
+      "sha256": "80d162a3ed5c529585c225a7ce8fac97859341c3dbfadeecb708b75993a229ec"
+    },
+    "baselines.py": {
+      "bytes": 1402,
+      "sha256": "10dbbec486b542f2d3921f5dbdbcfb93e116c69582c11710ea0ded9d16350e60"
+    },
+    "blind-predictions.json": {
+      "bytes": 47900,
+      "sha256": "9afc08272e9e179eb9274a59680c9b28ebfd8e80733e343b823c4e7125367b06"
+    },
+    "blind-results.json": {
+      "bytes": 67651,
+      "sha256": "b181c84bb968990fc198485db2cbb21ae0c9526db3b51fc423993c60106103b9"
+    },
+    "center_stable.py": {
+      "bytes": 2730,
+      "sha256": "5a8f542698b6c395b3d514b7fef3f62f0b451783d1edbe61ed0764ef0fb79d0a"
+    },
+    "centering-initial.json": {
+      "bytes": 80209,
+      "sha256": "d1f1485ca01229f31fa106ea196fcdceb857e3bc21bf3b9c8a364e507be1ecb3"
+    },
+    "centering-stable.json": {
+      "bytes": 100307,
+      "sha256": "97c5f5b3756ea6d68540b6a289743b168e2f0d9f526ad3aa5c7286ff7f9a0942"
+    },
+    "exact-counterexample.json": {
+      "bytes": 13713,
+      "sha256": "e21ed612c82008afaa78fbab118f5e5c9db82fb34c8fa2282dc308e1ee25e6c9"
+    },
+    "exact-threshold-counterexample.json": {
+      "bytes": 13241,
+      "sha256": "cc47847e35e646858254757cf65f715eeb9b9c8be712e30f4de3892897bc21ee"
+    },
+    "exact_counterexample.py": {
+      "bytes": 5378,
+      "sha256": "e20a0496943ba3e7310a735c0d75a7a0f6cd0b5cfc1fb105ab42dd69a5b00075"
+    },
+    "features.jsonl.gz": {
+      "bytes": 1922566,
+      "sha256": "3bde1f6a7831e7fa2f1d285983f89e027db80605021c2a2d056c8eb9cd283db8"
+    },
+    "figure.py": {
+      "bytes": 2038,
+      "sha256": "85bf9baf88120ff9f94c3a1188a9712db71cc61e60fa3abb8a7dd598dae3fca0"
+    },
+    "heldout-predictions.csv.gz": {
+      "bytes": 950413,
+      "sha256": "6ca589f21122df649c9c8348bb85de934f70d7039eafe27649ea8ba531de36b4"
+    },
+    "mechanistic-blind.json": {
+      "bytes": 9355,
+      "sha256": "d4495a37a5761a88adf1bf05b023ad777c503a5b2ca5856e20783d584d3d1b0e"
+    },
+    "polar-threshold-collision.pdf": {
+      "bytes": 22364,
+      "sha256": "76fec6ddd40e5c0594c134b1967daaa1cb1a3ee491e21ca60c66c7c0e607a564"
+    },
+    "polar-threshold-collision.png": {
+      "bytes": 117398,
+      "sha256": "8da3d2597f371d2456ebed367183a9c39ed2f0ace85f1bcead909775bfa122ed"
+    },
+    "results.json": {
+      "bytes": 116166,
+      "sha256": "05a3d8a0e0cc7ace3180f4151713f43f28895ed116cb125c2eeb6114d29373bf"
+    },
+    "score_blind.py": {
+      "bytes": 2511,
+      "sha256": "6ba152c667dd8d08b683848f8193561326ba822b5f8274eaae12ce63cc0bae50"
+    },
+    "verification.json": {
+      "bytes": 5089,
+      "sha256": "45b0c95eb509da358dc8c6ffec46ef11165cccf430f6888abe0b8156cf386847"
+    },
+    "verify_numerics.py": {
+      "bytes": 1900,
+      "sha256": "5f56ef6a505df5ca989e64c9cf58e49405537afa12020c992e4073aaeba9da8d"
+    }
+  }
+}

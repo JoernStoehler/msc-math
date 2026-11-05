@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "sample_count": 36,
+  "tail_count": 27,
+  "bulk_count": 9,
+  "source_and_code_hashes": "PASS",
+  "sample_membership": "PASS",
+  "all_stored_metrics": "PASS",
+  "exact_ratio_arithmetic": "PASS",
+  "obstruction_lower_bound": "Cfull/Cinc > 1.0789 > 1.05",
+  "results_sha256": "65bf41aad8eb1a3d7a74512c3f91a4f1fc75f012326c264709d9013ac8e0144c",
+  "scope": "Independent membership, inherited width-label joins, exact comparison/ratio arithmetic and all metrics; geometry/witness feasibility delegated to separate checker."
+}

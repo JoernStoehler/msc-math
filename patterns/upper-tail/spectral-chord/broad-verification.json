@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "bodies": 1024,
+  "exact_original_normal_closures": 2048,
+  "exact_HK_witnesses": 1024,
+  "exact_area_products": 1024,
+  "maximum_summary_relative_error": 0,
+  "elapsed_seconds": 4.349614663995453,
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "summary_sha256": "780bda0f96976965ff3f07636764facb2c87abad88f5b1cc180e59f0fd64f214",
+  "witnesses_sha256": "e21a7a92943ff1dcee481b3581cbfbe0d5ddbeeaf54a5a5009ef9a4b9c8f712e",
+  "checker_sha256": "b8b88a98276182cf9c5b1ae73c168867d93e0610b99942f9419877b8ad345e45",
+  "limits": "Certifies feasible capacity/ratio upper bounds for exact dyadic source bodies; no capacity optimality, eigenspace selection, metric audit or historical-target certification."
+}

@@ -1,0 +1,6 @@
+Native reviewer /root/message_reviewer
+APPROVE unsigned-result-v2
+
+The exact obstruction, quantitative prediction limit and remaining scope are supported. The initial exact-text review requested correction of old reviewer markers in two parent continuation files; those now name the actual current reviewer.
+
+Independent mathematical review: /root/intake_review; retained in mathematical-review.md.

@@ -1,0 +1,32 @@
+{
+  "status": "Scientific result verified; report review recorded separately",
+  "files": {
+    "PLAN.md": "f001803d1e9a3728679fa28112ead434ce7622a8131edde8adca90a2b6d9e90d",
+    "REPORT.md": "e24eda40e4cc979bf820098d780f2318e9650247540967be46b7afb3c0398367",
+    "freeze.py": "52d78308afb35e6e8dba157477c519a4617b833491331f8a7fc7c06266e8b86f",
+    "analyze.py": "7d9670450cc12a3a8bdaf6840eb2b119d1fe2e70f86623fde03a795833dace2f",
+    "verify.py": "d44b9bcc25fc52e43ecbbc8778297bb967829f8b6a4d9d6695979847c9b7dd4e",
+    "pre-score-verify.py": "4de3b66e50f48ad45df85299a8ab57f85f01539070f7ad8e3d7d02131871c324",
+    "describe.py": "b6a07ba658877052fecd8dbff39d4510937ae96277fcf1ac3511a8eb153cb5e3",
+    "sample.json": "668594f0b2b82dc2c5ed9237c7a14314e77abab6b0fa7f7dc0206fce0a0a3154",
+    "frozen-manifest.json": "55a6aa2e5c7de760b06ddb6863de861d6907853cf452e73db11baec3174fbf54",
+    "geometry.json": "add2e9baa531d7e76365015097f51cffd1a79c296b56bd1954fcd0ebbc6e6bfd",
+    "diagnostics.json": "d117b086c957e2e4d7f82790ca4b88936bbf8ed3c6f72934d79ae32e11df1b44",
+    "predictions.json": "0c5ca4cb4b6599a2be092b6a82c2fef3a4cfd57c8d1596beceb7eaf15f207ef7",
+    "results.json": "96f7a2229618b5d2444fa71ce17f166b18d070569a7a6f3a723062b733d07c9d",
+    "mechanism.json": "7b36eb106c900c7402434c16f7ce74614a9f3128e1d16e41253c770d5233de74",
+    "verification.json": "068fd1c32a30279ff7a26d46ac0866b1e50e4f15b0a18627d04bfc37c9743f20",
+    "review.md": "eb2ce819dce8626fe5249bdb5dba2477a967e94a02dbacc0efb75eaccda3896d"
+  },
+  "provenance": {
+    "scratch": "/tmp/msc-math/lp-seeded-response/20261017T1800Z",
+    "pre_score_geometry": "geometry.json binds pre-score-verify.py; only geometry mode was used before predictions/oracle; all-mode metadata and generic diagnostic assumptions are superseded by verify.py",
+    "scientific_selector_frozen": "analyze.py and sample.json match pre-execution frozen-manifest.json",
+    "root_independent_audit": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/lp-seeded-response-integration/"
+  },
+  "report_approval": {
+    "reviewer": "/root/intake_review",
+    "report_sha256": "e24eda40e4cc979bf820098d780f2318e9650247540967be46b7afb3c0398367",
+    "status": "APPROVE"
+  }
+}

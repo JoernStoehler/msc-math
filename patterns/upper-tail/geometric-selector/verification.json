@@ -1,0 +1,200 @@
+{
+  "status": "PASS",
+  "method": "Independent stdlib fractions; original primal projections + generic Gaussian elimination + direct 4D symplectic objective; no analyze import, no capacity/sys labels accessed",
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "results_sha256": "68a80dc661543d7bb14e06c5f5f7c26bc1a9c61d494dfc996d2620dfc3cd5606",
+  "falsifier_sha256": "f1f9bd2d5fa6d6966167a305c3fbc1f5033488e4b9ff7135ba971f11326eea48",
+  "verify_sha256": "e9e3fca9eaea82c066b59de85c305b3d2394ce43d3a1e2670a7d4c34662ff32f",
+  "stress_results_sha256": "7ba43de5bea54e51dfec35681c1ec3b8ec940b46cea45a6f047de190faf9547e",
+  "controls": [
+    {
+      "name": "random_5x5_s1_64",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_5x6_s2_150",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_6x6_s3_124",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_5x5_s3_114",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_5x6_s3_29",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_6x6_s2_3",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_5x5_s1_221",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_5x5_s0_8",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_5x6_s0_102",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_6x6_s0_194",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_5x6_s2_220",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    },
+    {
+      "name": "random_6x6_s1_194",
+      "primal_projection_and_halfplane_agreement": "PASS",
+      "all_anchor_positive_closures_and_maximality": "PASS",
+      "selected_contact_and_support_completeness": "PASS",
+      "direct_4D_objective_and_all_selected_orders": "PASS",
+      "exact_area_and_ratio": "PASS",
+      "selected_support_pairs": 1,
+      "cyclic_orders": 120,
+      "invariance": {
+        "paired_GL": "PASS",
+        "translation": "PASS"
+      }
+    }
+  ],
+  "falsifier": {
+    "name": "random_5x5_s1_64",
+    "positive_normalized_4D_closure": "PASS",
+    "direct_HK_Q": "715414928266732390772704086720173106801118225108120519895309986719970069214942022355312738714255/8875761691761654720051866432928396187624480485858421897507989854826176968762680687988528556015616",
+    "witness_capacity_upper_bound": "4437880845880827360025933216464198093812240242929210948753994927413088484381340343994264278007808/715414928266732390772704086720173106801118225108120519895309986719970069214942022355312738714255",
+    "selector_over_witness": "29142266590404876687679955362390494983110620415290918493867063011587347034163586364108072427075492367888440940218015797613101370796042716542076839340429651846488/26515957258278224958535407617353306090114441343657525829096277236198891670165851656792019489424032617045967007420844675101180367469217474977351864906314169897633",
+    "selector_over_true_capacity_lower_bound": 1.0990463707021825,
+    "claim": "Ctrue <= Cwitness, hence Cselector/Ctrue >= Cselector/Cwitness; no equality claim for Ctrue"
+  },
+  "elapsed_seconds": 1.2455968809990736,
+  "HKO_envelope_obstruction": {
+    "name": "random_6x6_s1_194",
+    "exact_selected_ratio": "234833312764909028928973161869576516025212992596000654856303190829960716421793344890941043235162269513438060135930403670723075012700049254382461545337810010084462314464781702936766678735171296781706453707513289294761754584362464483525437139385033805355236328326778078379341043229810337404266273846959078887741789086480267943832808107968924201273770995730645747432608441690520390603598073359065436970385989036020537493069898909622842844632144038974580315620140562669568696622053316873883800667383831375510631552000/201641820128857201156400590115092324167556533574918938913001331336870270828223530068562931104188200466397660260457050971022524954348903362212917727831567100004169464954547940322113383357874584585146873700311225034801848826368494875769354694779810848414680586490729025712649457232056556122657998080720778937161669371781906268379401585470685341459687142946036895857554876195282386702367106420073466907531171955496496532400875902009369494271381123300170751388458944004243086969616268954174790285598298092608797070321",
+    "ratio": 1.1646061943640518,
+    "comparison": "r > (3+sqrt(5))/5",
+    "rational_sign_checks": {
+      "5r-3_positive": true,
+      "(5r-3)^2_greater_than_5": true
+    },
+    "claim": "Frozen selector upper envelope exceeds HKO; no claim true ratio exceeds HKO"
+  }
+}

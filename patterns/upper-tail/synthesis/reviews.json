@@ -1,0 +1,70 @@
+{
+  "recorded_at_utc": "2026-10-17T18:30:31.137542+00:00",
+  "scope": "Native read-only scientific and exact-text reviews; no human acceptance or formal proof-assistant claim.",
+  "reviews": [
+    {
+      "path": "spectral-geometry/REPORT.md",
+      "reviewer": "/root/review_spectra",
+      "verdict": "APPROVE spectral-report-v1",
+      "sha256": "43525d27f93cfae86c4c095e31b5f2b7c1a835dd38ce535fab05615327d863f3"
+    },
+    {
+      "path": "mixed-area-global/REPORT.md",
+      "reviewer": "/root/review_mixed",
+      "verdict": "APPROVE mixed-report-v2",
+      "sha256": "f91aea3615c2aff2e68550d51a0487c1b74b5cb1d1a31deb2195383ea8f3f9b0"
+    },
+    {
+      "path": "polar-geometry/REPORT.md",
+      "reviewer": "/root/review_spectra",
+      "verdict": "APPROVE polar-report-v1",
+      "sha256": "f172abcd43939d3fdd9195ba2b1b4cfbef037a49f669993194f8b73459025264"
+    },
+    {
+      "path": "action-spectrum/REPORT.md",
+      "reviewer": "/root/review_spectra",
+      "verdict": "APPROVE action-report-v2",
+      "sha256": "d61c566c748222b81cceaf684762164f30b0e92af9342e4266c4115505be38bc"
+    },
+    {
+      "path": "symbolic-search/REPORT.md",
+      "reviewer": "/root/review_mixed",
+      "verdict": "APPROVE symbolic-report-v2",
+      "sha256": "ddc5d97fc05d124265460b3b33dc0ff3a603c0304f7461673a2da8c15177acec"
+    },
+    {
+      "path": "canonical-transfer/REPORT.md",
+      "reviewer": "/root/review_mixed",
+      "verdict": "APPROVE canonical-transfer-v1",
+      "sha256": "66ea80838a9cf2d5330e43e31b2796a1f54055f0a9534f5df18ab95700f715c5"
+    },
+    {
+      "path": "contact-stability/REPORT.md",
+      "reviewer": "/root/review_contact",
+      "verdict": "APPROVE contact-report-v2",
+      "sha256": "50d6cf7922673e99522e235c8a4e41c619740b0ee0fa286a92c9ec902802005d"
+    },
+    {
+      "path": "contact-stability/CANONICAL.md",
+      "reviewer": "/root/review_contact",
+      "verdict": "APPROVE contact-canonical-v2",
+      "sha256": "6fb479cabba0f7d59dd2a5491b53008a9723a2a9c6a164b6b8c7643f4d87cdc7"
+    },
+    {
+      "path": "contact-stability/OBSTRUCTION.md",
+      "reviewer": "/root/review_contact",
+      "verdict": "APPROVE contact-obstruction-v1",
+      "sha256": "a9d1efeb1413b28aae51fa02c4797077fb5b972b3a1791f2795139c636b02df0"
+    }
+  ],
+  "delivery_reviews": {
+    "reviewer": "/root/run_reviewer",
+    "verdict": "APPROVE delivery-v1; APPROVE QUESTION-v1; APPROVE targets-v2",
+    "files": {
+      "patterns/UPPER-TAIL.md": "5420889756d4e38e3bb71af5ea2c6525958f3d3a70a4b550b1aefb3e26c5ff60",
+      "patterns/GALLERY.md": "c0737b1dce41af2027e3bebb94cb2c9b45c6f6bb60bcef2fc72213c7a92bd1ec",
+      "patterns/README.md": "08dfde571c44c49eac412933a6f4adc9119d3356091c25076c17a490721c091a",
+      "patterns/upper-tail/RUN-TARGETS.md": "acb1da3f5ba9d432ee3e88344d6a9527bcc2a73881c633aab36976050963b242"
+    }
+  }
+}

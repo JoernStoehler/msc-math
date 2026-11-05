@@ -1,0 +1,520 @@
+{
+  "status": "PASS",
+  "path": "exact HKO+t times fixed contact_full_s0 published rational direction",
+  "factor_certificates": {
+    "A": {
+      "direction": [
+        [
+          "93/128",
+          "-39/64"
+        ],
+        [
+          "3/8",
+          "1/128"
+        ],
+        [
+          "-87/128",
+          "-7/64"
+        ],
+        [
+          "-65/128",
+          "-49/128"
+        ],
+        [
+          "1/128",
+          "3/16"
+        ]
+      ],
+      "opposite_vertex_indices": [
+        2,
+        3,
+        4,
+        0,
+        1
+      ],
+      "candidates": [
+        {
+          "support": [
+            0,
+            1,
+            3
+          ],
+          "weights_at_base": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "-297/128",
+            "sqrt5": "35/32"
+          }
+        },
+        {
+          "support": [
+            0,
+            2,
+            3
+          ],
+          "weights_at_base": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "1767/512",
+            "sqrt5": "-771/512"
+          }
+        },
+        {
+          "support": [
+            0,
+            2,
+            4
+          ],
+          "weights_at_base": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "-1623/512",
+            "sqrt5": "709/512"
+          }
+        },
+        {
+          "support": [
+            1,
+            2,
+            4
+          ],
+          "weights_at_base": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "817/512",
+            "sqrt5": "-395/512"
+          }
+        },
+        {
+          "support": [
+            1,
+            3,
+            4
+          ],
+          "weights_at_base": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "227/512",
+            "sqrt5": "-103/512"
+          }
+        }
+      ],
+      "selected": {
+        "support": [
+          0,
+          1,
+          3
+        ],
+        "weights_at_base": [
+          {
+            "rational": "1/2",
+            "sqrt5": "-1/10"
+          },
+          {
+            "rational": "1/2",
+            "sqrt5": "-1/10"
+          },
+          {
+            "rational": "0",
+            "sqrt5": "1/5"
+          }
+        ],
+        "lambda_at_base": {
+          "rational": "-1",
+          "sqrt5": "1"
+        },
+        "lambda_derivative": {
+          "rational": "-297/128",
+          "sqrt5": "35/32"
+        }
+      },
+      "strict_first_derivative_gaps": [
+        {
+          "rational": "-2955/512",
+          "sqrt5": "1331/512"
+        },
+        {
+          "rational": "435/512",
+          "sqrt5": "-149/512"
+        },
+        {
+          "rational": "-2005/512",
+          "sqrt5": "955/512"
+        },
+        {
+          "rational": "-1415/512",
+          "sqrt5": "663/512"
+        }
+      ],
+      "edge_determinant_contrast_derivative": {
+        "rational": "3805/512",
+        "sqrt5": "-1553/512"
+      }
+    },
+    "B": {
+      "direction": [
+        [
+          "25/64",
+          "47/128"
+        ],
+        [
+          "-33/64",
+          "105/128"
+        ],
+        [
+          "-87/128",
+          "23/32"
+        ],
+        [
+          "3/32",
+          "-37/64"
+        ],
+        [
+          "95/128",
+          "-1/64"
+        ]
+      ],
+      "opposite_vertex_indices": [
+        2,
+        3,
+        4,
+        0,
+        1
+      ],
+      "candidates": [
+        {
+          "support": [
+            0,
+            1,
+            3
+          ],
+          "weights_at_base": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "81/512",
+            "sqrt5": "-23/2560"
+          }
+        },
+        {
+          "support": [
+            0,
+            2,
+            3
+          ],
+          "weights_at_base": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "1415/512",
+            "sqrt5": "-3223/2560"
+          }
+        },
+        {
+          "support": [
+            0,
+            2,
+            4
+          ],
+          "weights_at_base": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "-75/16",
+            "sqrt5": "1293/640"
+          }
+        },
+        {
+          "support": [
+            1,
+            2,
+            4
+          ],
+          "weights_at_base": [
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "2371/512",
+            "sqrt5": "-5363/2560"
+          }
+        },
+        {
+          "support": [
+            1,
+            3,
+            4
+          ],
+          "weights_at_base": [
+            {
+              "rational": "0",
+              "sqrt5": "1/5"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            },
+            {
+              "rational": "1/2",
+              "sqrt5": "-1/10"
+            }
+          ],
+          "lambda_at_base": {
+            "rational": "-1",
+            "sqrt5": "1"
+          },
+          "lambda_derivative": {
+            "rational": "-1467/512",
+            "sqrt5": "3437/2560"
+          }
+        }
+      ],
+      "selected": {
+        "support": [
+          0,
+          1,
+          3
+        ],
+        "weights_at_base": [
+          {
+            "rational": "1/2",
+            "sqrt5": "-1/10"
+          },
+          {
+            "rational": "1/2",
+            "sqrt5": "-1/10"
+          },
+          {
+            "rational": "0",
+            "sqrt5": "1/5"
+          }
+        ],
+        "lambda_at_base": {
+          "rational": "-1",
+          "sqrt5": "1"
+        },
+        "lambda_derivative": {
+          "rational": "81/512",
+          "sqrt5": "-23/2560"
+        }
+      },
+      "strict_first_derivative_gaps": [
+        {
+          "rational": "-667/256",
+          "sqrt5": "5/4"
+        },
+        {
+          "rational": "2481/512",
+          "sqrt5": "-1039/512"
+        },
+        {
+          "rational": "-1145/256",
+          "sqrt5": "267/128"
+        },
+        {
+          "rational": "387/128",
+          "sqrt5": "-173/128"
+        }
+      ],
+      "edge_determinant_contrast_derivative": {
+        "rational": "-4115/512",
+        "sqrt5": "1537/512"
+      }
+    }
+  },
+  "selected_supports": [
+    [
+      0,
+      1,
+      3
+    ],
+    [
+      0,
+      1,
+      3
+    ]
+  ],
+  "limiting_max_Q": {
+    "rational": "3/10",
+    "sqrt5": "-1/10"
+  },
+  "attaining_positive_shadow_word": [
+    0,
+    8,
+    1,
+    9,
+    2,
+    5,
+    3,
+    6,
+    4,
+    7
+  ],
+  "positive_shadow_Q": {
+    "rational": "3/10",
+    "sqrt5": "-1/10"
+  },
+  "positive_shadow_ten_distinct_rays": true,
+  "true_HKO_Q": {
+    "rational": "1/10",
+    "sqrt5": "0"
+  },
+  "limiting_capacity_inflation": {
+    "rational": "3/4",
+    "sqrt5": "1/4"
+  },
+  "limiting_ratio_inflation": {
+    "rational": "7/8",
+    "sqrt5": "3/8"
+  },
+  "limiting_ratio_upper_bound": {
+    "rational": "9/10",
+    "sqrt5": "2/5"
+  },
+  "limiting_capacity_inflation_float": 1.3090169943749475,
+  "limiting_ratio_upper_bound_float": 1.794427190999916,
+  "all_selected_cyclic_words": 120,
+  "base_input_sha256": "8cb5aaa95655b2759b560d709dbd970b339c23a692bba4f4b475e5b30b45cac2",
+  "sample_sha256": "f70e7f9bb6444e2b132dbaedf73c8f4a1f8324e72c37f79dbb7c2908e27bc2c8",
+  "plan_sha256": "acb918aaf7774b7d4c15fe886a22615ed57e3e48d2c2abfdc05922a644c3701e",
+  "script_sha256": "1cb97ad82d2b7de4695db41f2d85c492072e5df1971df0bea03635645b6fdea4"
+}

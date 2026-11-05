@@ -1,0 +1,253 @@
+{
+  "sample": [
+    {
+      "name": "random_5x5_s3_6",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 4
+    },
+    {
+      "name": "random_5x5_s2_239",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 5
+    },
+    {
+      "name": "random_5x5_s3_227",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 6
+    },
+    {
+      "name": "random_5x5_s2_152",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 7
+    },
+    {
+      "name": "random_5x5_s3_14",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 8
+    },
+    {
+      "name": "random_5x5_s0_68",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 9
+    },
+    {
+      "name": "random_5x5_s0_177",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 10
+    },
+    {
+      "name": "random_5x5_s3_234",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 11
+    },
+    {
+      "name": "random_5x5_s3_54",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 12
+    },
+    {
+      "name": "random_5x5_s0_113",
+      "bucket": "5x5",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 359
+    },
+    {
+      "name": "random_5x5_s2_0",
+      "bucket": "5x5",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 1024
+    },
+    {
+      "name": "random_5x5_s3_58",
+      "bucket": "5x5",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 230
+    },
+    {
+      "name": "random_5x6_s1_68",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 5
+    },
+    {
+      "name": "random_5x6_s2_163",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 6
+    },
+    {
+      "name": "random_5x6_s2_17",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 7
+    },
+    {
+      "name": "random_5x6_s2_62",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 8
+    },
+    {
+      "name": "random_5x6_s3_233",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 10
+    },
+    {
+      "name": "random_5x6_s2_227",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 11
+    },
+    {
+      "name": "random_5x6_s3_255",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 12
+    },
+    {
+      "name": "random_5x6_s3_166",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 13
+    },
+    {
+      "name": "random_5x6_s3_32",
+      "bucket": "5x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 106
+    },
+    {
+      "name": "random_5x6_s1_141",
+      "bucket": "5x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 629
+    },
+    {
+      "name": "random_5x6_s0_94",
+      "bucket": "5x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 899
+    },
+    {
+      "name": "random_6x6_s2_63",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 4
+    },
+    {
+      "name": "random_6x6_s2_233",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 5
+    },
+    {
+      "name": "random_6x6_s1_218",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 6
+    },
+    {
+      "name": "random_6x6_s3_200",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 7
+    },
+    {
+      "name": "random_6x6_s3_88",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 8
+    },
+    {
+      "name": "random_6x6_s0_193",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 9
+    },
+    {
+      "name": "random_6x6_s2_158",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 10
+    },
+    {
+      "name": "random_6x6_s2_98",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 11
+    },
+    {
+      "name": "random_6x6_s2_150",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 13
+    },
+    {
+      "name": "random_6x6_s0_90",
+      "bucket": "6x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 598
+    },
+    {
+      "name": "random_6x6_s0_240",
+      "bucket": "6x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 765
+    },
+    {
+      "name": "random_6x6_s1_164",
+      "bucket": "6x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 285
+    }
+  ],
+  "excluded20": [
+    "random_5x5_s1_64",
+    "random_5x6_s2_150",
+    "random_6x6_s3_124",
+    "random_5x5_s3_114",
+    "random_5x6_s3_29",
+    "random_6x6_s2_3",
+    "random_5x5_s1_221",
+    "random_5x5_s0_8",
+    "random_5x6_s0_102",
+    "random_6x6_s0_194",
+    "random_5x6_s2_220",
+    "random_6x6_s1_194",
+    "random_5x5_s2_104",
+    "random_5x5_s0_92",
+    "random_5x6_s3_168",
+    "random_5x6_s0_25",
+    "random_5x6_s1_100",
+    "random_6x6_s1_114",
+    "random_6x6_s2_187",
+    "random_6x6_s0_219"
+  ],
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "sources": {
+    "patterns/upper-tail/full-partner-validation/sample.json": "09a361c3b24d76a052833372a4204b31cee7c8308c3ff31ef67d7e18a9770338",
+    "patterns/upper-tail/full-partner-validation/results.json": "65bf41aad8eb1a3d7a74512c3f91a4f1fc75f012326c264709d9013ac8e0144c",
+    "patterns/upper-tail/conditional-coupling/analyze.py": "753db15b6bdafbaff4877324dd35e559177911dc074a4bcda98c103913609d74",
+    "patterns/upper-tail/conditional-coupling/hko-exact.json": "4c33bcc233901583c9da856dc6585e8892ba017d0439b685da4abd0a0b02d7d3",
+    "patterns/upper-tail/conditional-coupling/quadratic.py": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7",
+    "patterns/upper-tail/conditional-rounding/analyze.py": "8961b4e34a72da30594d56d72b56f68179853e6533368768fbdf77a8747e2ae8",
+    "patterns/upper-tail/conditional-rounding/results.json": "a98a8b0744f6b8443585cd1f1f6a57409754b41b5531c227f9574642c04329ae",
+    "patterns/upper-tail/signed-prefix-response/analyze.py": "0faab684d4b582a628009e938798ed7496d0bb2eb1ae9e282ad24b5a40a93f29"
+  },
+  "conditional_design_excluded": [
+    "random_5x5_s1_64",
+    "random_5x6_s1_198",
+    "random_6x6_s3_124"
+  ],
+  "parent_panel": "patterns/upper-tail/full-partner-validation/sample.json"
+}

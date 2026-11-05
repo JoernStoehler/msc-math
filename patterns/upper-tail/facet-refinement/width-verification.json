@@ -1,0 +1,69 @@
+{
+  "status": "PASS",
+  "arithmetic": "exact Q(sqrt(5)); generic polynomial coefficient identity",
+  "h": {
+    "rational": "1/4",
+    "sqrt5": "1/4"
+  },
+  "squared_sine": {
+    "rational": "5/8",
+    "sqrt5": "-1/8"
+  },
+  "hko_ratio": {
+    "rational": "3/5",
+    "sqrt5": "1/5"
+  },
+  "strict_interval": "0 < delta < sin(pi/5)^2",
+  "ratio_exact_formula": "rho_H * ((1-delta/(1+h))^2 / (1-delta^2/sin(pi/5)^2))^2",
+  "right_derivative": {
+    "rational": "-8/5",
+    "sqrt5": "-8/25"
+  },
+  "algebra_controls": [
+    {
+      "delta": {
+        "rational": "1/1000",
+        "sqrt5": "0"
+      },
+      "area_factor": {
+        "rational": "499999/500000",
+        "sqrt5": "-1/2500000"
+      },
+      "capacity_factor_bound": {
+        "rational": "2495003/2500000",
+        "sqrt5": "999/2500000"
+      },
+      "width_ratio_bound": {
+        "rational": "1460938290610315017480007/2441386718804687437500025",
+        "sqrt5": "487499219378434994507997/2441386718804687437500025"
+      },
+      "width_ratio_bound_float": 1.0449060218397386
+    },
+    {
+      "delta": {
+        "rational": "5/16",
+        "sqrt5": "-1/16"
+      },
+      "area_factor": {
+        "rational": "27/32",
+        "sqrt5": "1/32"
+      },
+      "capacity_factor_bound": {
+        "rational": "15/32",
+        "sqrt5": "5/32"
+      },
+      "width_ratio_bound": {
+        "rational": "13815/32761",
+        "sqrt5": "6125/32761"
+      },
+      "width_ratio_bound_float": 0.8397459284571964
+    }
+  ],
+  "imports": [
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/upper-tail/conditional-coupling/quadratic.py",
+      "sha256": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7"
+    }
+  ],
+  "checker_sha256": "d6dcd2ce4f5e960f800e1c4ec1b9637b6e69e7d708b5f22e35c0974215a3c145"
+}

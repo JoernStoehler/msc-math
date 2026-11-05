@@ -1,0 +1,159 @@
+{
+  "name": "near_hko_s4_e100",
+  "unique_winning_supports": {
+    "A": [
+      0,
+      2,
+      3
+    ],
+    "B": [
+      1,
+      2,
+      4
+    ]
+  },
+  "both_words_same_unique_pair": true,
+  "stability": {
+    "shadows": {
+      "1": {
+        "equality_rank": 17,
+        "positive_count": 17,
+        "nonbasic_count": 8,
+        "positive_basis_columns": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          9,
+          11,
+          13,
+          14,
+          15,
+          16,
+          17,
+          19,
+          20,
+          21,
+          23
+        ],
+        "reduced_rows": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "positive_basis_determinant": "-167308991987780492541874788799406542605684781759462532078558205182034247016503187901/62500000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "min_positive_primal": "119915331544355155494357860154783966840115294474700718750/5787673030986693536703391459347019819873866588875061109793",
+        "min_nonbasic_dual_slack": "386896350088073357813526648774136248571794122960615294085965148903/4702484337676688498571505560719453603647516603460987151706812500000000",
+        "min_absolute_shadow_ray_determinant": "417051/200000000",
+        "min_absolute_shadow_y": "1/200",
+        "unique_non_degenerate_LP_optimum": true
+      },
+      "-1": {
+        "equality_rank": 17,
+        "positive_count": 17,
+        "nonbasic_count": 8,
+        "positive_basis_columns": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          9,
+          11,
+          13,
+          14,
+          15,
+          16,
+          17,
+          19,
+          20,
+          21,
+          23
+        ],
+        "reduced_rows": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "positive_basis_determinant": "-167308991987780492541874788799406542605684781759462532078558205182034247016503187901/62500000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "min_positive_primal": "119915331544355155494357860154783966840115294474700718750/5787673030986693536703391459347019819873866588875061109793",
+        "min_nonbasic_dual_slack": "258135265842827990661079708066662152411415254804341683821507430803851/75239749402827015977144088971511257658360265655375794427309000000000000",
+        "min_absolute_shadow_ray_determinant": "417051/200000000",
+        "min_absolute_shadow_y": "1/200",
+        "unique_non_degenerate_LP_optimum": true
+      }
+    },
+    "geometry": {
+      "A": {
+        "min_absolute_pair_determinant": "121790283/200000000",
+        "min_absolute_triple_affine_determinant": "274674717/200000000"
+      },
+      "B": {
+        "min_absolute_pair_determinant": "2432161/4000000",
+        "min_absolute_triple_affine_determinant": "170096765039/125000000000"
+      }
+    },
+    "conclusion": "For exact LP solves, the same unique bases and strict nonzero row/column masses persist locally; finite one-response maxima and exact capacity vary continuously. Strict Q_round<Q_true and sys>1 persist on some open neighborhood inside the planar 5x5 product geometry chamber. No numerical radius or arbitrary alternative-optimizer assumption is needed; actual solver/reconstruction success on every nearby machine input is not asserted."
+  },
+  "winning_factors_absent_from_both_shadows_conditionals": true,
+  "best_rounded_candidate": {
+    "shadow_sign": 1,
+    "kind": "row",
+    "index": 0
+  },
+  "best_fixed_B_support": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "good_B_support": [
+    1,
+    2,
+    4
+  ],
+  "bad_B_support": [
+    1,
+    3,
+    4
+  ],
+  "good_B_mixture_weight": "288743526589183882173667635863415637485770895105/468709669366553352197129050722759042012776652914",
+  "bad_B_mixture_weight": "179966142777369470023461414859343404527005757809/468709669366553352197129050722759042012776652914",
+  "Q_true": "235970890203063841411016855771/2332456764724528410000000000000",
+  "Q_bad_pair": "2093243945561946980276245529311/20737052149767484998000000000000",
+  "Q_round": "2731098691780219630856380652375611319868790751101019416912612629937/27018766620940377990309541814527979752349412172280537043000000000000",
+  "Q_gap_identity": "117791070802437542493007967235959567358536247265333210028639362208107639/1356383423084137013891864172688280811376961585649106548780275790000000000000",
+  "relative_capacity_error": "5644860184046988667836485689096153813983818476905952615773937/6570450794636325597230422418402510617661452336963437263699500630",
+  "geometry_statement": "Best candidate already has winning A but fixes a strict mixture of winning B{1,2,4} and losing B{1,3,4}. Uniqueness of maximizing vertex pair plus absence of either pure winning conditional forces every one-response candidate strictly below the true Q."
+}

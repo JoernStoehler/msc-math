@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "source_cache": "Offline scripts/artifacts.py verify-cache polytope-datasets: 3 files, 252398018 bytes, snapshot f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96; no remote check",
+  "rerun": "All non-timing results.json fields equal; features.csv bytes equal across two scratch directories",
+  "rows": 10240,
+  "runtimes_seconds": [
+    4.005377536002925,
+    4.102491920999455
+  ],
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "limits": "Historical numerical sys labels remain uncertified; no prospective validation, proof of model impossibility, universal systolic bound or original-body full capacity/volume producer. Executed selected-triangle bound has26rational controls and a separate numericalHKO control.",
+  "files": {
+    "triangle_envelope.py": "03e0a9459cf40696b57d0f2119779d06274c9232eef02c04b28ce5a0e2323704",
+    "verify_triangle_certificate.py": "1021f3a2730017e2e82050ceed1010b336bf0b7ffa88f45a954cdb8d15064f2c",
+    "REPORT.md": "f33731bee2fd73605c0b45612cb71d190a196d0c6b0ae3bf7c7c38461115a38a",
+    "results.json": "aee455c41a50beb69c0adf195e75b70e8fd401544d117a7d8c0a976ebeb76e7b",
+    "triangle-envelope.json": "7f59c17a0c2ea8011952150e024e1f97ecfced8a5f78f752b4a87898d017d724",
+    "analyze.py": "f599bbf36db28e45a78602f9ba6d2f378f531f61ee4ff04e156f8fb650021fff"
+  },
+  "triangle_envelope": {
+    "status": "PASS",
+    "rational_body_witnesses": 26,
+    "exact_above_one_rejections": 25,
+    "word_evaluations": 3120,
+    "max_rejected_upper_bound": 0.8089260666693922,
+    "discovery_seconds": 1.4615980290000152,
+    "independent_verifier": "All feasible pairwise rational line intersections + convex hull; one feasible HK word per body; no optimization",
+    "hko": "Separate numerical control, excluded from exact count",
+    "limits": "Finite screen only; one unrejected historical false positive; no universal maximum claim or original-full-body capacity/volume producer"
+  }
+}

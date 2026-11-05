@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "independent_direct_HK_orders": 6000,
+  "all_support_pair_count": 25,
+  "closure_vertices_per_factor": 5,
+  "strictly_convex_genuine_pentagon": true,
+  "non_affine_regular_proof": "consecutive oriented edge determinants are not all equal",
+  "signed_ridge_square_identical_entrywise": true,
+  "normalized_spectral_magnitude": "6999735409/4817154572",
+  "checks": [
+    {
+      "name": "low_angle",
+      "ratio": "137794907198448317521809183688691325324025/136670414554261888853925759040988821049472",
+      "ratio_float": 1.008227769322672,
+      "Q": "219891602115190612971/1484829456596000145620",
+      "capacity": "742414728298000072810/219891602115190612971"
+    },
+    {
+      "name": "near_hko",
+      "ratio": "1224820103074216185001156932464968749388009/1172184858786887249255691108638520197120000",
+      "ratio_float": 1.0449035353875855,
+      "Q": "160993910704445761400/1106715908927948945747",
+      "capacity": "1106715908927948945747/321987821408891522800"
+    }
+  ],
+  "continuum_certificate": {
+    "tangent_half_angle_interval": [
+      "1/8",
+      "4/25"
+    ],
+    "distinct_sinusoidal_word_coefficients": 351,
+    "quartic_Bernstein_coefficients_per_objective": 5,
+    "minimum_positive_Bernstein_coefficient": "190039256867506444872298765461723222399457/22576317595393772342773216655555186741088256",
+    "minimum_positive_Bernstein_coefficient_float": 0.008417637467426485,
+    "all_exact_ratios_strictly_above_one": true
+  },
+  "elapsed_seconds": 0.30657548200542806,
+  "hashes": {
+    "PLAN.md": "acfff57310c0855c78794739abafcbcca4780f094f3fb2e4c574e5e778d9ebb7",
+    "construct.py": "bfb2240b0f6d2965dfc48cd3e16f4b44b90f72d985cab46510e2d98fabee920f",
+    "score.py": "1bf785d54e938dea60a52f42bb55f4c3a45059ade17b9f00c267a9474a4e96be",
+    "verify.py": "6c27b0c77eb866daf511e8aff30a23e4c532daee955537ff063f4bacdc91f6a8",
+    "sample.json": "e5de306b9460510214067c2d890db8620aeaa366ba6d8d97c9117e0c02618b10",
+    "frozen-manifest.json": "a61bac88170d2d4c9e3d263d4d01aa2f822c97e7ea695091fd09e48aac20e770",
+    "results.json": "76c3b35e5a6c32085a8355cebea0a774a3b8198fe34f1f6fc00cd6dc753ab33f"
+  }
+}

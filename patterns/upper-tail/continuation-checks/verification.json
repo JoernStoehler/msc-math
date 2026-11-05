@@ -1,0 +1,14 @@
+{
+  "checked_utc": "2026-10-17T21:36:10.685447+00:00",
+  "scope": "Root independent replays performed during the current batch, before retention; mathematical premises and original report limits remain explicit.",
+  "receipt_sha256": {
+    "chord-star-root.json": "b813f1f6dac2f1aa1195006e9844bdacba4135c4b2d8c2bc6aead5d325373824",
+    "closure-root-positive-verification.json": "d98adb6fc497d7d2cadc2ca462b51d9dd5da3fbc907693b9c5b1e19161369fe7",
+    "reflected-root-minkowski-verification.json": "b597840af470e6c3cf191bda610295a981235a5f01d66fe5b6c646ff3c6cc724",
+    "spectral-root-verification.json": "596a4e9c02055b6957f706bfe496db39f00997f99e6b34b8efaf272ffbc6b227",
+    "spectral-broad-root-broad-verification.json": "7220c7e3571cd46bbaf06782f68af30ba3a897571ad8ef205dd227121e0324b3"
+  },
+  "contact_integration": "../../../../thesis-2026-10-16/thesis/review/2026-10-17/contact-law-integration/verification.json",
+  "final_crux": "../ceiling-crux/verification.json",
+  "status": "PASS; no human acceptance or broad held-out accuracy claimed"
+}

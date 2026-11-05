@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "all610rows_permuted_with_positive_scaling": true,
+  "target_invariant": true,
+  "rotation_order": 10,
+  "equality_ray_indices_in_closed_sector": [
+    0
+  ],
+  "determinant_identity_exact": true,
+  "proof": "For detB>0, (t,u/tau) is nonzero by the determinant identity. The exact action tprime=b(t-u), uprime=b(tau2*t+u) rotates this vector by36degrees. Ten rotations cover the closed36degree wedge u>=0,tau2*t-u>=0. Row permutation and target invariance carry positivity questions into this sector.",
+  "limitation": "Only the ten-ray certificate obstruction disappears after sector restriction; no sector positivity proof or feasible SDP certificate is established."
+}

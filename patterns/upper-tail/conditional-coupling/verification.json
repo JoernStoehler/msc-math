@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "rational_LP_certificates": 6,
+  "algebraic_LP_certificates": 2,
+  "direct_four_dimensional_feasible_witnesses": 3,
+  "rows": [
+    {
+      "name": "random_5x5_s1_64",
+      "exact_capacity": true,
+      "capacity_lower": 6.2032265060958105,
+      "capacity_upper": 6.2032265060958105,
+      "interval_factor": 1.0
+    },
+    {
+      "name": "random_5x6_s1_198",
+      "exact_capacity": false,
+      "capacity_lower": 4.4365955819815195,
+      "capacity_upper": 4.484227519554728,
+      "interval_factor": 1.0107361459238378
+    },
+    {
+      "name": "random_6x6_s3_124",
+      "exact_capacity": false,
+      "capacity_lower": 4.474980102946307,
+      "capacity_upper": 4.606321493224962,
+      "interval_factor": 1.0293501618458996
+    }
+  ],
+  "HKO_LP_Q_over_true": 1.170820393249937,
+  "HKO_capacity_lower_over_true": 0.8541019662496847,
+  "source_hashes_checked": true,
+  "input_sha256": {
+    "results.json": "3270bf2b47c4cb164a5b92ffdbd3025df437f16006c054783fc31dfe4216e53e",
+    "hko-exact.json": "4c33bcc233901583c9da856dc6585e8892ba017d0439b685da4abd0a0b02d7d3",
+    "verify.py": "60acb4bdd331510f0ba1bbe4ef03996659e48fff918b5b2ba911443511ab5d58",
+    "quadratic.py": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "all_cyclic_words": 362880,
+  "uniform_max_Q": {
+    "rational": "0",
+    "sqrt5": "1/25"
+  },
+  "maximizing_words": 1,
+  "one_maximizing_word": [
+    0,
+    8,
+    1,
+    9,
+    2,
+    5,
+    3,
+    6,
+    4,
+    7
+  ],
+  "ratio_inflation_exact": "5/4",
+  "seconds": 1.4086716929959948,
+  "input_sha256": "8cb5aaa95655b2759b560d709dbd970b339c23a692bba4f4b475e5b30b45cac2",
+  "verifier_sha256": "0c114c6b309cab2fa3b7bca8f0162afe3a1a3af1116e7868468a6a0cfb4f334f"
+}

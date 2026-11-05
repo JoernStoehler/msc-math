@@ -1,0 +1,61 @@
+{
+  "contract": "Width-contact bounded geometric-selector packet; manifest excludes itself; source identities in results; timing not byte reproducibility",
+  "files": {
+    "AMENDMENT.md": {
+      "bytes": 680,
+      "sha256": "0004403db04643688d67afd1012be09d1d168be97141ed0af43ff70df26705a8"
+    },
+    "PLAN.md": {
+      "bytes": 3037,
+      "sha256": "668995feea79205cf8803fc92e5dc820b60368eb229e04228738c853ec064062"
+    },
+    "REPORT.md": {
+      "bytes": 10397,
+      "sha256": "7c9f1438e95d0ce27101583555cad6d204fe54edecee584f67d47b373298d098"
+    },
+    "additional-names.json": {
+      "bytes": 43,
+      "sha256": "7332e9733604d3d7810378ae0755b1a042a2590c8c1b60bdd1e7dec0038acba3"
+    },
+    "analyze.py": {
+      "bytes": 7715,
+      "sha256": "f2ecd45ed3aab493e74981eaf821e418af306e3ea3369ec712148de443225be1"
+    },
+    "falsifier.json": {
+      "bytes": 3287,
+      "sha256": "f1f9bd2d5fa6d6966167a305c3fbc1f5033488e4b9ff7135ba971f11326eea48"
+    },
+    "falsify.py": {
+      "bytes": 2472,
+      "sha256": "8a213bb45a5063ae241bf6232fb8b1dbbe827b0a93b39f23a8f587000f1fa6cd"
+    },
+    "results.json": {
+      "bytes": 44969,
+      "sha256": "68a80dc661543d7bb14e06c5f5f7c26bc1a9c61d494dfc996d2620dfc3cd5606"
+    },
+    "review.json": {
+      "bytes": 961,
+      "sha256": "a3a0bbb1c5c5c16d7d2d1340c10a18b34f7b08dffaca0ad8f3d130bdeaa48942"
+    },
+    "run-provenance.json": {
+      "bytes": 842,
+      "sha256": "4173a77a60aab52b332ae97c9b192fd76cc0c1496650bd1819e93080313b40dd"
+    },
+    "stress-results.json": {
+      "bytes": 8512,
+      "sha256": "7ba43de5bea54e51dfec35681c1ec3b8ec940b46cea45a6f047de190faf9547e"
+    },
+    "stress.py": {
+      "bytes": 2190,
+      "sha256": "0a3fbc938c802f865415798744adeb028e4ffedefe131f0b1f23d001e4b7d440"
+    },
+    "verification.json": {
+      "bytes": 8927,
+      "sha256": "3360ad67b2a6112b4a1bf8c88085c9df82e44ccc2167a7fa0b0b83c34a45a91d"
+    },
+    "verify.py": {
+      "bytes": 11536,
+      "sha256": "e9e3fca9eaea82c066b59de85c305b3d2394ce43d3a1e2670a7d4c34662ff32f"
+    }
+  }
+}

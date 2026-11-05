@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "rational_witnesses": 3072,
+  "buckets": {
+    "5x5": 1024,
+    "5x6": 1024,
+    "6x6": 1024
+  },
+  "independent_geometry": "All feasible pairwise rational supporting-line intersections and rational monotone hull; no optimization",
+  "prior26_exact_witness_matches": 26,
+  "tail_selection_checks": "All/top10%103/top5%52/top2%21 per bucket; checked membership,extrema and gap counts",
+  "elapsed_seconds": 7.350024119998125,
+  "limits": "Feasible exact triangle upper bounds only; no original-body optimality, historical label certification, numerical-width certification, or independent selector optimality proof"
+}

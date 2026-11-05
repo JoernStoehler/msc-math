@@ -1,0 +1,53 @@
+{
+  "contract": "Frozen two-shadow mixed-area response; exact finite bounds and nonglobal coordinate trap; manifest excludes itself",
+  "files": {
+    "PLAN.md": {
+      "bytes": 3900,
+      "sha256": "d1dd0ffd85bbcb4319611af169bf9717f20eb40fab9178e330099ec088aab381"
+    },
+    "REPORT.md": {
+      "bytes": 14226,
+      "sha256": "39f0b43010f332aa8cfd82d9372db930079d46d12f8bc379b2174cef3f0cfed9"
+    },
+    "analyze.py": {
+      "bytes": 7180,
+      "sha256": "0faab684d4b582a628009e938798ed7496d0bb2eb1ae9e282ad24b5a40a93f29"
+    },
+    "compare_incumbent.py": {
+      "bytes": 2385,
+      "sha256": "12c889c59c38e426f92b9b87b69302eea4cfa9551b4926695ef3f4c3be5005a8"
+    },
+    "geometry-verification.json": {
+      "bytes": 8787,
+      "sha256": "d6398312f4f55234c1f1548892631f8c111271e823027bad5262c34b7d136bf8"
+    },
+    "incumbent-comparison.json": {
+      "bytes": 20503,
+      "sha256": "ca51f1b40ff0a9c51d17ad5386dc0b30ff696b78c852b73f64b1360d73e818c9"
+    },
+    "lp-verification.json": {
+      "bytes": 12487,
+      "sha256": "aaccc6a7b7b4f3609736efaf1ef89e419cd33a4784860acd08828b36b9a819b0"
+    },
+    "results.json": {
+      "bytes": 282986,
+      "sha256": "9743d5088f04f8444ffb32b617ed145bdbe1726f93e52a34442888e8aa217e2f"
+    },
+    "review.md": {
+      "bytes": 2058,
+      "sha256": "15f19aba09a302bd45b977bdf9ff4d9c8cb6daf6586d77dea6508b861806e2f1"
+    },
+    "verification.json": {
+      "bytes": 683,
+      "sha256": "0194d904877d158eaebd62c391377978000f4693f13db9923dae33ca3f4dd6ad"
+    },
+    "verify_geometry.py": {
+      "bytes": 9096,
+      "sha256": "31e432b54f0c090173b15ab22e73c500ca3376d750ec6516d88f5877ab0ab723"
+    },
+    "verify_lp.py": {
+      "bytes": 4262,
+      "sha256": "e5dc6d5d5d4d7f5522cfcf156a6ed21c66056f9aae659b14599f676c0636e365"
+    }
+  }
+}

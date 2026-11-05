@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "rows": 10240,
+  "factors": 20480,
+  "checked": "original halfplane containment, scalar25-pair capacity formula, shoelace areas, historical source labels and pinned width baseline, bracket arithmetic, frozen partition, all10 top21 memberships, all/calibration/diagnostic/per-family/tail scores, separate regular/HKO scalar control",
+  "max_halfplane_violation": 5.81756864903582e-13,
+  "max_relative_scalar_capacity_error": 3.3240077357277187e-13,
+  "max_coverage_error": 1.6089352072867769e-12,
+  "max_relative_volume_error": 7.838174553853605e-13,
+  "limits": "No new capacity solving or historical label certification; binary64 verification, not exact containment certification."
+}

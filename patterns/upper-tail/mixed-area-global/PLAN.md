@@ -1,0 +1,9 @@
+# Target, alternatives and selected pilot
+
+17 October 2026; owner `/root/mixed_area_global`; receiving/integration owner `/root`. Scope: bounded local math and standard-library checks, own `patterns/upper-tail/mixed-area-global/`; no producer reruns, external actions, other edits, commits or questions.
+
+Target: either an arbitrary-factor mixed-area inequality sharp at HKO with an actual proof route, or an exact upper-tail obstruction to a broad simple geometric class. Cannot skip prior-route audit (avoid renaming full capacity enumeration), distinct mechanisms before calculation (avoid selecting a numerical accident), closed-form adversarial control (ensure above-one relevance), and independent scientific review by root (separate finite replay from proof).
+
+Options considered: universal Minkowski-average inequality; sparse enhancement of mixed area; circumradius/normal-triangle duality; Blaschke or support-correlation profiles; minimum-area supporting triangles. The average gives only sys<=2, the duality repeats existing fitting, and max-area closures exactly duplicate the stopped outer-triangle selector. A raw tightness rubric rewards hidden capacity solving; a simplicity rubric rewards weak bounds; a symmetry rubric can select the familiar low-value regular family. Require new upper-tail separation or a sharp global implication. Select a support-phase obstruction using nonregular offset deformations near HKO, because it can falsify every rotational mixed-area autocorrelation at once.
+
+End state: explicit `P_+(epsilon),P_-(epsilon),Q` with equal areas, perimeter, all rotated self mixed-area profiles and all mixed-area profiles against the fixed regular Q; prove exact unequal capacities from the established equiangular capacity-core theorem, including an above-one/below-one threshold separation. Retain exact radical check plus a numerical independent polygon/support check. No held-out predictive claim or new global bound is implied.

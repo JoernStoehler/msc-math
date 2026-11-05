@@ -1,0 +1,44 @@
+{
+  "contract": "Frozen full-partner contact selector; manifest excludes itself; exact controls are retrospective, not original-body capacity evaluation",
+  "files": {
+    "PLAN.md": {
+      "bytes": 4623,
+      "sha256": "cf54eaad32a8b17bfd57963f7e90702074ac19cf093f38a38d8f119126dc30d2"
+    },
+    "REPORT.md": {
+      "bytes": 13354,
+      "sha256": "c6993f2090f6e6dbd978a7947d667997d972f1ba896d27b327e519c9153b7da8"
+    },
+    "analyze.py": {
+      "bytes": 7178,
+      "sha256": "00f7c7e1af34acea3c4d3540766a7b76bd3a5f2155b3c1511efa6375c4a5a3bf"
+    },
+    "compare.py": {
+      "bytes": 1321,
+      "sha256": "f1eae242f0b539448b16b7d8c781272e124d0c1a94b860de38ab00aeb7483312"
+    },
+    "comparison.json": {
+      "bytes": 15984,
+      "sha256": "cfdcb2280fe3e7f7cc683ae3806876f26aaaaaa91a2ebdcb83f87c9ae97aa9f2"
+    },
+    "first-controls.json": {
+      "bytes": 117995,
+      "sha256": "fc5eb826c1693368cf52d28cd29b160258545de618a0d2a973102a6c1076a32a"
+    },
+    "results.json": {
+      "bytes": 1617117,
+      "sha256": "acd14209f77889c6065fdc0d35728c27ad04c28ab8e7c4921162c881b1441b87"
+    },
+    "review.md": {
+      "bytes": 1877,
+      "sha256": "15428910a278aabd7a2af8d53f787a79aa071e4619d39045b037fcd2dd336716"
+    }
+  },
+  "dependencies": {
+    "patterns/upper-tail/signed-prefix-response/analyze.py": "0faab684d4b582a628009e938798ed7496d0bb2eb1ae9e282ad24b5a40a93f29",
+    "patterns/upper-tail/geometric-selector/analyze.py": "f2ecd45ed3aab493e74981eaf821e418af306e3ea3369ec712148de443225be1",
+    "patterns/upper-tail/signed-prefix-response/results.json": "9743d5088f04f8444ffb32b617ed145bdbe1726f93e52a34442888e8aa217e2f",
+    "patterns/upper-tail/signed-prefix-response/incumbent-comparison.json": "ca51f1b40ff0a9c51d17ad5386dc0b30ff696b78c852b73f64b1360d73e818c9",
+    "patterns/upper-tail/geometric-selector/falsifier.json": "f1f9bd2d5fa6d6966167a305c3fbc1f5033488e4b9ff7135ba971f11326eea48"
+  }
+}

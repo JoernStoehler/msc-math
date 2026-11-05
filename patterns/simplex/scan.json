@@ -1,0 +1,36 @@
+{
+  "n": 512,
+  "source_sha256": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f",
+  "source_contract": "Historical numerical capacity/volume; independent floating reconstruction of exact simplex formulas, not certified intervals",
+  "max_capacity_relative_error": 8.326672684688674e-15,
+  "max_ridge_relative_error": 3.9968028886505635e-15,
+  "max_pfvolume_error": 2.6756374893466273e-13,
+  "max_sys_absolute_error": 3.1086244689504383e-15,
+  "chi_quantiles": [
+    0.33473898332357793,
+    0.3500571932468154,
+    0.39299599453160033,
+    0.453993488650518,
+    0.5436471141490448
+  ],
+  "sys_quantiles": [
+    0.00031794754526907963,
+    0.014462353327493944,
+    0.10238006147413739,
+    0.35604027629944995,
+    0.714410363898728
+  ],
+  "max_row": {
+    "name": "random_F5_s3_8",
+    "poly_id": "2887256559785badff917c0620f12edc78b878dff5a89e7ba64ba38f06f00a72",
+    "sys": 0.714410363898728,
+    "capacity": 12.774837793535692,
+    "reconstructed_c": 12.774837793535696,
+    "volume": 114.21760440353995,
+    "R": 14.99533203877984,
+    "stored_R": 14.995332038779843,
+    "chi": 0.33473898332357793,
+    "pf_abs_volume": 0.9999999999999999,
+    "pf_sys": 0.7144103638987283
+  }
+}

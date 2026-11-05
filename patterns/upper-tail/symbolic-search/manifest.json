@@ -1,0 +1,45 @@
+{
+  "contract": "Selected owned packet bytes; excludes this manifest and disposable Python bytecode.",
+  "files": {
+    "LOBO-predictions.jsonl.gz": {
+      "bytes": 442982,
+      "sha256": "0dd5fe897dd03457f7f55f96b9faeddc279f99acb437693e52b29186fc332284"
+    },
+    "PLAN.md": {
+      "bytes": 4139,
+      "sha256": "19eaab50c1263c9e345cb41387069cafff8266ec4d5a3117258df897e43609df"
+    },
+    "REPORT.md": {
+      "bytes": 12574,
+      "sha256": "ddc5d97fc05d124265460b3b33dc0ff3a603c0304f7461673a2da8c15177acec"
+    },
+    "blind-results.json": {
+      "bytes": 28313,
+      "sha256": "02bca30f4d06259b2abbb483bc0d5da7750f18dd69f44b83db1c633ae32b73fa"
+    },
+    "frozen-predictions.json": {
+      "bytes": 26306,
+      "sha256": "80500673dfb68400c26601d043caf1d9ee6463388bc901ee920c1b337b4a37de"
+    },
+    "results.json": {
+      "bytes": 126219,
+      "sha256": "8d7b464e68c19e65f23424aed0ff2e72ebdeffe4ed8209ccfd39ec48ee6507e9"
+    },
+    "score.py": {
+      "bytes": 2452,
+      "sha256": "6b0f321898cdaffffb5f58e412bfe72f906f652da713901d26623575e9f181f1"
+    },
+    "search.py": {
+      "bytes": 11903,
+      "sha256": "f5d54a4263d608f03c231028ec5bfc8d4d9a7d752eb58b49794bcbc316eb6e52"
+    },
+    "verification.json": {
+      "bytes": 1054,
+      "sha256": "7522a39271a8e8545bb9e4b72667a77bdc73343f7edd596a4efb01f2d520ba04"
+    },
+    "verify.py": {
+      "bytes": 3864,
+      "sha256": "2eafcf8eb484b30c4d41ae0d828f32732ff0d02a50126bceec823e2156fd9a83"
+    }
+  }
+}

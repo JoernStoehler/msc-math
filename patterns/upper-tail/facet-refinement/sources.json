@@ -1,0 +1,26 @@
+{
+  "created_at": "2026-10-17T21:47:26.653428+00:00",
+  "scope": "Retained analytic family; no capacity oracle or sampled cohort. Root independent checker uses only existing Q(sqrt5) arithmetic. Listed local sources are direct evidence/helper bindings, not an exhaustive import closure.",
+  "files": {
+    "OWNER-PLAN.md": "3992c92f500b3024addf2a30cf4cc0a3c44c42501c6124536ef75b1dcf8e61a4",
+    "PLAN.md": "9720c62e4ef5d1e8000af56a9803baebacf6624395b3646a62a1326f9f85fc7e",
+    "REPORT.md": "48d7870ff601ccaf5d73c4f95c7072d6fb846194ad676b54f2a0903eff8b3978",
+    "WIDTH-PROTECTION.md": "9aa05976f51ed551b512982977eb50206b125dee3ddb37dd0715b8207db5a65f",
+    "check.py": "eb7d1dee56ff01bce5f9d5d3d3279375b9c7222bef89052add7a8b00b4a0a1fe",
+    "delivery-review.txt": "b5be3cd69c36c6e84f0b929dc9eb653cf668737107009f2f89660d56411d9fcd",
+    "finite.json.gz": "8a5a1eedba355a9a0fcb43cb6ebd9731d3e6208c22b2b3a962b01316700ed68f",
+    "finite.py": "c048b1f1191ff14ef06c3f903f967929748539e3a3efb1ca2201f715385b10c2",
+    "review.md": "3ac5965cc9d9acb000d882e341984fbe3bef6fbcb8ac6cb1379552a43455a31b",
+    "root-verification.json": "9325afb000ceee22a9b599fecf46f9e7abe0c06b9256f7ebe06ab3e19caaa413",
+    "width-check.py": "d6dcd2ce4f5e960f800e1c4ec1b9637b6e69e7d708b5f22e35c0974215a3c145",
+    "width-verification.json": "01dc687f39c867905a528c7bcb8b50cd0b01c0cd40374e86aaf1e4088f5e3cbc"
+  },
+  "local_source_bindings": {
+    "patterns/upper-tail/conditional-coupling/quadratic.py": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7",
+    "patterns/upper-tail/chord-star/probe.py": "ef48c770551115ed923a986cd6fe35aca5069d5727387cf4b92d2a45f1fa44cf",
+    "patterns/upper-tail/signed-prefix-response/analyze.py": "0faab684d4b582a628009e938798ed7496d0bb2eb1ae9e282ad24b5a40a93f29",
+    "patterns/upper-tail/spectral-chord/cut.py": "d4468a5584593e622c09f6dc1e4b272c2f9164e366fd96b24a8b684d5d4e6e46",
+    "patterns/upper-tail/chord-star/REPORT.md": "18f99d2d2aa6679afe149c11770e64e4d81fb440a053013f2db42bf570957e91",
+    "patterns/upper-tail/ceiling-crux/REPORT.md": "6e04a5d0d7556c308a865c9afea7e4461d17a4e40ddd8014c85fe98d37922667"
+  }
+}

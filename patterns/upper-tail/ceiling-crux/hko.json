@@ -1,0 +1,162 @@
+{
+  "status": "PASS",
+  "capacity": {
+    "rational": "5",
+    "sqrt5": "0"
+  },
+  "ratio": {
+    "rational": "3/5",
+    "sqrt5": "1/5"
+  },
+  "best": {
+    "sign": 1,
+    "word": [
+      0,
+      8,
+      1,
+      9,
+      2,
+      5,
+      3,
+      6,
+      4,
+      7
+    ],
+    "best": {
+      "role": "A",
+      "index": 1,
+      "Q": {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      "alpha": [
+        {
+          "rational": "0",
+          "sqrt5": "0"
+        },
+        {
+          "rational": "1/4",
+          "sqrt5": "1/20"
+        },
+        {
+          "rational": "1/4",
+          "sqrt5": "-1/20"
+        },
+        {
+          "rational": "1/4",
+          "sqrt5": "-1/20"
+        },
+        {
+          "rational": "1/4",
+          "sqrt5": "1/20"
+        }
+      ],
+      "gamma": [
+        {
+          "rational": "0",
+          "sqrt5": "1/5"
+        },
+        "0",
+        {
+          "rational": "1/2",
+          "sqrt5": "-1/10"
+        },
+        {
+          "rational": "1/2",
+          "sqrt5": "-1/10"
+        },
+        "0"
+      ]
+    },
+    "candidate_Q": [
+      {
+        "rational": "0",
+        "sqrt5": "1/25"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "0",
+        "sqrt5": "1/25"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      },
+      {
+        "rational": "1/10",
+        "sqrt5": "0"
+      }
+    ]
+  }
+}

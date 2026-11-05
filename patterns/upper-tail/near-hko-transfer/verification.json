@@ -1,0 +1,109 @@
+{
+  "status": "PASS",
+  "frozen_inputs": 12,
+  "predictions_checked": 12,
+  "exact_LP_certificates_checked": 24,
+  "rounded_candidates_checked": 240,
+  "scored": 10,
+  "oracle_pair_word_evaluations": 500,
+  "exact_recoveries": 9,
+  "above_one": 10,
+  "unscored": [
+    "near_hko_s5_e1000",
+    "near_hko_s5_e100"
+  ],
+  "checks": [
+    {
+      "name": "near_hko_s0_e1000",
+      "exact_recovery": true,
+      "ratio": 1.0458121614240725,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s0_e100",
+      "exact_recovery": true,
+      "ratio": 1.0333464733124826,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s1_e1000",
+      "exact_recovery": true,
+      "ratio": 1.0449347558594866,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s1_e100",
+      "exact_recovery": true,
+      "ratio": 1.0251858312109294,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s2_e1000",
+      "exact_recovery": true,
+      "ratio": 1.0446556840930477,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s2_e100",
+      "exact_recovery": true,
+      "ratio": 1.0220680490140885,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s3_e1000",
+      "exact_recovery": true,
+      "ratio": 1.0456432576480783,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s3_e100",
+      "exact_recovery": true,
+      "ratio": 1.0318114032576484,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s4_e1000",
+      "exact_recovery": true,
+      "ratio": 1.0453695522040753,
+      "above_one": true,
+      "capacity_error": 0.0,
+      "all_pair_word_evaluations": 50
+    },
+    {
+      "name": "near_hko_s4_e100",
+      "exact_recovery": false,
+      "ratio": 1.02888100195557,
+      "above_one": true,
+      "capacity_error": 0.000859128294310502,
+      "all_pair_word_evaluations": 50
+    }
+  ],
+  "obstruction_verified": true,
+  "hashes": {
+    "PLAN.md": "937925eefdab98bfe5bc70cb6addc0800612248a4126e6eeb00c265ed9d7b227",
+    "freeze.py": "2e825da03895c4fb4694c4b4d49ff058bdf47db16257c42c87a0d538224e3fc6",
+    "sample.json": "83f89a57fd12bf6a072c8d551edfdbba83e26f30e101521d6708c075f3b2d3a0",
+    "frozen-manifest.json": "897ed4481e34e7a89687321cce2f0078799ac9ba313f6886220c576ed9e1a715",
+    "analyze.py": "67227c1aa0985640ea6ed89b33331d1d80d1e24365b5e2d59649ed3f497e05ff",
+    "predictions.json": "466172b4064e7a23c8325e1fc8f54af6227103c45ed7692003458b0c69566702",
+    "results.json": "17db888aa1cfb7a6d90e53b896e16c5dda5d090fd694d7b3240e674e060d46e1",
+    "verify.py": "9e7ec5e05651c3ae8c0e8a6fced2f47349388b4b15491586720cbf5c278cfeeb",
+    "obstruction.json": "8f0b269da810988782e832d0e32f67a562180d27d1973cd548fd0891de72cae6"
+  }
+}

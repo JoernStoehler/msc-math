@@ -1,0 +1,13 @@
+{
+  "OPTIONS.md": "54a94e56cf32c551473993be08370face2528867d956819fd7badd2f3f564870",
+  "PLAN.md": "d21d70fc62e6677f3a4f8313545950286af67e336b18b2f39852089f6f10d77a",
+  "REPORT.md": "35612db13934902297ab0d372e3ebc925d18c19a52e593be3e64a5a4777e9b16",
+  "discover.py": "871cee77df8e9747b206336c993884b84b5a1d67eee0d3e62702e3a95c35c384",
+  "geometry.json": "9f59b69708f1ec7828d0b44a8518bc5facad555dfa6414736527961896bb4bc7",
+  "independent-verification.json": "4de96fe2ca72727dbcc27b5a2999e12bad60867a6c8acd927259b4afbb28ebd1",
+  "independent_verify.py": "7f28a53672a8affd23d4838dae11f0a1456ebbdbd47b2b233f824b1890820f00",
+  "integration-verification.json": "2cdccc0a0b883a4bd70916a2934964be76d94ac2705ef750c5d58d1e7bc261cd",
+  "mathematical-review.md": "303438ab927fd78a83d0c2be7a5b1b35ab7a452430f08852986547d47a2b5963",
+  "message-review.txt": "edc1e1177b53371bc33c694636e2add828b0a5d7af07ec5f8e2a890e7f06e558",
+  "result.json": "ef748bf6a4ab3a74e3d8be67ee65dd2593174419ce59bca23bb5399f3dc04d5a"
+}

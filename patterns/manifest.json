@@ -1,0 +1,241 @@
+{
+  "contract": "SHA256 of selected pattern packet files; excludes itself. Upper-tail child manifests pin their full selected packets; exact-run timing is observational.",
+  "files": {
+    "GALLERY.md": {
+      "bytes": 16352,
+      "sha256": "c0737b1dce41af2027e3bebb94cb2c9b45c6f6bb60bcef2fc72213c7a92bd1ec"
+    },
+    "PROPOSED-CHAPTER-TEXT.md": {
+      "bytes": 8529,
+      "sha256": "5beb50adf9ff158eeca53b91133b3148cfcbcd40b5b33d54307292edeab20f0d"
+    },
+    "README.md": {
+      "bytes": 7533,
+      "sha256": "08dfde571c44c49eac412933a6f4adc9119d3356091c25076c17a490721c091a"
+    },
+    "SUCCESS.md": {
+      "bytes": 4834,
+      "sha256": "9bbb9f6335b6de1094825d6c07d29fc6758f5c02f8bc1d994838129a3e8a417b"
+    },
+    "UPPER-TAIL.md": {
+      "bytes": 15497,
+      "sha256": "5420889756d4e38e3bb71af5ea2c6525958f3d3a70a4b550b1aefb3e26c5ff60"
+    },
+    "features/REPORT.md": {
+      "bytes": 11017,
+      "sha256": "6f5a9e85cec9652319dbc11c5b4aefb9d6ad0948d87f975ba5701acaa55970fa"
+    },
+    "features/analyze.py": {
+      "bytes": 12131,
+      "sha256": "fdf8f2f737ef98c4b2db00b7797440d319c7a0b546d4cc5fa51b51f6308cc2f8"
+    },
+    "features/by-bucket.csv": {
+      "bytes": 12045,
+      "sha256": "fff18f58841ecf65bb821398f757e52e8a399ae27acd38353b6356c38048704a"
+    },
+    "features/covariance-patterns.pdf": {
+      "bytes": 54909,
+      "sha256": "5341e36729a3f17768ac6c6a0d5317e5a3a13bbb7143f7e37840aae977a03233"
+    },
+    "features/covariance-patterns.png": {
+      "bytes": 250636,
+      "sha256": "befc72e89d27f1ce17a5cda0f7a023a0a3e0e89cf9db1e634c8b1902cd3f8851"
+    },
+    "features/results.json": {
+      "bytes": 40499,
+      "sha256": "1145136884f2e9f01620280826139c88d90f7e0f8a1e9e931936cc703e582cf8"
+    },
+    "features/verification.json": {
+      "bytes": 1036,
+      "sha256": "0c75e4be883987271913184da50fd8fd3add93a0f2828f0b0f20dbf7fff83b2e"
+    },
+    "product-shape/REPORT.md": {
+      "bytes": 10815,
+      "sha256": "19228b2ec3abe42d1a04a21fac227f5d6767629627a8b697d94c9bc4b0c877ce"
+    },
+    "product-shape/analyze.py": {
+      "bytes": 8563,
+      "sha256": "b0d629e6857d01305d48d7730c9d7446825048e9b7927715fa9e571a60ab53ae"
+    },
+    "product-shape/cache-verification.json": {
+      "bytes": 342,
+      "sha256": "320d23027b215d31c758e8e9316f8f722a86557de0b44043ddcbca6dc713ab28"
+    },
+    "product-shape/exact-controls.json": {
+      "bytes": 817,
+      "sha256": "3439dfc8884b0714ac50541b8833a11412a3bf85b5aa6783043d5dd96371c861"
+    },
+    "product-shape/exact_controls.py": {
+      "bytes": 4054,
+      "sha256": "00dd511a5e6df0eb3beb475b0fb7ee7ae9641afc1c47aaa1485120d8d26a532a"
+    },
+    "product-shape/features.csv.gz": {
+      "bytes": 779988,
+      "sha256": "dcffead16ab5ad0fcdf6ae55d78375bea5b6ee7274877a33846cf4c3c2a7d57f"
+    },
+    "product-shape/plot_top_shapes.py": {
+      "bytes": 2920,
+      "sha256": "cbd5f858c246c06e2430f860d70bef4d11d674ef525cab30972b79b38f936335"
+    },
+    "product-shape/summary.json": {
+      "bytes": 24021,
+      "sha256": "0df2aae7c7bd85c02fab6bc748f9f64b321450cecce0b209dcd0f6419ea2f84b"
+    },
+    "product-shape/symmetrization.png": {
+      "bytes": 414059,
+      "sha256": "665c5b01f4f85badf75ec44e8f0aa40607232aedbff989dbfcd670527c6b4d9b"
+    },
+    "product-shape/top-shapes.json": {
+      "bytes": 4386,
+      "sha256": "b1e5771e156de33d5b33549a9673c8c9c5cf47597a74e4a6e36841e04fc37b9a"
+    },
+    "product-shape/top-shapes.png": {
+      "bytes": 141033,
+      "sha256": "009221adc3f6e1f1020b68f8b7c25291f23abfbf6825a5b1c6bf7938b2d7d86f"
+    },
+    "product-shape/width-screen.png": {
+      "bytes": 154351,
+      "sha256": "70b6a2a26f56514a2fb16b073c142df2b9a88f4f2bb4a040b6eb0b891e33de3e"
+    },
+    "regular/REPORT.md": {
+      "bytes": 10440,
+      "sha256": "773f39146276cce0b206dde59dd71a0ae6bc7b96f7e41efee692ace0a98c8c4c"
+    },
+    "regular/certificate.py": {
+      "bytes": 6563,
+      "sha256": "685e52a21d94baa0b1cc04520be0866c21c5dd39950701845ccac3d57b13c602"
+    },
+    "regular/figure.py": {
+      "bytes": 2424,
+      "sha256": "140ee608c7b4487c3417dd528d518a741563b2c372d8606392a35f1a47aa86e5"
+    },
+    "regular/heptagon-certificate.json": {
+      "bytes": 21273,
+      "sha256": "26f01bee1f4e9522e11483c1db7936d0fe1a2351a1fa471c7cb6965504827405"
+    },
+    "regular/heptagon-structure.pdf": {
+      "bytes": 20687,
+      "sha256": "dcbdf0ff383d311aeb24992afb4b98dd58929a8929685e085571bc744bd2ac8a"
+    },
+    "regular/heptagon-structure.png": {
+      "bytes": 198915,
+      "sha256": "12b4a00dd318a276e4507d753cbd7d45f5aed5378a8bfc8d79d3d2c5e500764f"
+    },
+    "regular/scan.json": {
+      "bytes": 31138,
+      "sha256": "1135ee373ce8765751cb777032ad4de2925198eb9ec9ee92138ba5e719e65fce"
+    },
+    "regular/scan.py": {
+      "bytes": 2522,
+      "sha256": "11cb6cb7215f1b39b9e87078b5258533e19ec77237ca0dceef36d15c1f34d6d2"
+    },
+    "regular/tensor.json": {
+      "bytes": 6656,
+      "sha256": "267d88ffd948396d4957772ce178e67cb767e409f671faccdc62febfcc508aca"
+    },
+    "regular/tensor.py": {
+      "bytes": 1391,
+      "sha256": "b3493df5ba2fa4cc924718c66ff4f311b30426f602c60b2ce6ec8f439cdc673e"
+    },
+    "regular/verification.json": {
+      "bytes": 568,
+      "sha256": "a065476c79df562dabeb3c1b9f23b238f7806503a9677e2f8b44c08696fd18d8"
+    },
+    "reviews/product-and-features.md": {
+      "bytes": 6000,
+      "sha256": "23ffc2475e8406a19897b6e7c225604687c9a27cf62b163ab62b4266ab42fb7e"
+    },
+    "reviews/regular.md": {
+      "bytes": 7163,
+      "sha256": "f7867617ebb33aecf54f58a337494754f7c67cbdb64309dd1809441c53abfd65"
+    },
+    "reviews/simplex.md": {
+      "bytes": 3665,
+      "sha256": "749c4387a49e06eca29a664e6121bcd2e24895603e060492ee80f29d03eecdd5"
+    },
+    "simplex/PROOF.md": {
+      "bytes": 8464,
+      "sha256": "572d24e40f05f669ceba445cd0dd8b6aff1428040c23db37d4bed0799457fb1f"
+    },
+    "simplex/REPORT.md": {
+      "bytes": 6941,
+      "sha256": "9fb93d71a24b16e9a0b3e5cad0f6ecef1262c686be6a4849f4ae79c06d216e4b"
+    },
+    "simplex/analyze.py": {
+      "bytes": 4590,
+      "sha256": "2b93fc09988f8c4d630786786f7c8df4120a0c19aa6d5719f3ff5e7d19dcf87c"
+    },
+    "simplex/exact_polytope.json": {
+      "bytes": 7156,
+      "sha256": "748f1a26219c473f27234f172d28245bd26fc4dd44faedf178c2a71e1511b592"
+    },
+    "simplex/exact_polytope.py": {
+      "bytes": 2317,
+      "sha256": "d18a406a6203628fdad907d3e2ee2a8276ae9dc220ad453d0c6a8edca8d27f72"
+    },
+    "simplex/ridge-controls.json": {
+      "bytes": 1380,
+      "sha256": "940b8f2ecbf7282897da4c402f3861134e884561bbf6ec71b167f3af40e39349"
+    },
+    "simplex/ridge_controls.py": {
+      "bytes": 2390,
+      "sha256": "be4ee3d0d3467ed026e5b647d485279b5102f4b9fab83c0e9254419fe0f5c6cf"
+    },
+    "simplex/rows.json": {
+      "bytes": 222813,
+      "sha256": "a6391530d7fdb06447620fe6952d99f7020480fffffaaf05c8908a2f507f09b8"
+    },
+    "simplex/scan.json": {
+      "bytes": 1205,
+      "sha256": "7ca402c25225f9021be1ac0479b12dd8cb2ff5bcce5efb234296d4605ca99e27"
+    },
+    "simplex/simplex-ridge.pdf": {
+      "bytes": 49604,
+      "sha256": "b1f559620bfedbfec736043eb1f9daaa3e93da51fbecfab17e633ae4272a7b79"
+    },
+    "simplex/simplex-ridge.png": {
+      "bytes": 192038,
+      "sha256": "23b5731895f21509e0d28b1c3324370b12c3c3591780ac0fadb06bf008864b4c"
+    },
+    "upper-tail/RUN-TARGETS.md": {
+      "bytes": 2893,
+      "sha256": "acb1da3f5ba9d432ee3e88344d6a9527bcc2a73881c633aab36976050963b242"
+    },
+    "upper-tail/action-spectrum/manifest.json": {
+      "bytes": 2006,
+      "sha256": "171998ed0778783ba92d3a8c66357fb199785cb4421ed8fbc0ab3837878b081b"
+    },
+    "upper-tail/canonical-transfer/manifest.json": {
+      "bytes": 1466,
+      "sha256": "52c972f786bbbd916a34578a69823ba75f3ae8c9ff3a55d5a9664788a28d57ff"
+    },
+    "upper-tail/contact-stability/manifest.json": {
+      "bytes": 5626,
+      "sha256": "8b62bf831f5b177e128af542bfd29021d1d9c696a6f674631db517fff654879d"
+    },
+    "upper-tail/mixed-area-global/manifest.json": {
+      "bytes": 1062,
+      "sha256": "48e8b2a7bc9f5dca8475567fe75ebf5e47b3c8bed7b3a93fbaadb64bdfb4abbc"
+    },
+    "upper-tail/polar-geometry/manifest.json": {
+      "bytes": 3349,
+      "sha256": "d1d88ebcbdc342b9909be7d9d117491c265c6ced437ce08f03ba6923bc54ea71"
+    },
+    "upper-tail/spectral-geometry/manifest.json": {
+      "bytes": 1317,
+      "sha256": "b03c1d5d6f5f6bab6433aecf3d5208c2a8de19cd98cddda631a6ddceed56b71e"
+    },
+    "upper-tail/symbolic-search/manifest.json": {
+      "bytes": 1476,
+      "sha256": "03150e47a3ba74c961ec08813a2d20273021d6a9b334e55b9a82b923d9ab7aca"
+    },
+    "upper-tail/synthesis/manifest.json": {
+      "bytes": 1078,
+      "sha256": "fb61d57846e6e95ff350c727a8700cec523d5ed7342abc907f96ed25b1ee9020"
+    },
+    "verification.json": {
+      "bytes": 8272,
+      "sha256": "18fbac2fe1e9f0dc2b8403996f50315511c28e6338b6db98485684be4fb960d2"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "source_sha256": "9f02548e305ed586b83b2709719818281847ce2d2e5b66981b35973acc07e9b6",
+  "dual_sha256": "fd804326c155c416163159c770eebc7994fb36657ca9b0fcc299846ae58fe753",
+  "checker_sha256": "8c6e726626a676a9effd07db1eb296bdfe22369640755820776f7a695b3c9dda",
+  "method": "all612row-pair signs in integral Q(sqrt5); positive definite via7Bareiss leading minors; full congruence target trace",
+  "row_count": 612,
+  "strict_positive_product_checks": 187578,
+  "moment_integer_scale": 1000,
+  "positive_leading_principal_minors": [
+    "2048000",
+    "2047982311",
+    "791023617811",
+    "505672176907068",
+    "19395735150350412",
+    "6194236702288460982",
+    "341226207847707795037"
+  ],
+  "target_pairing": [
+    "3719/4000",
+    "-8857/20000"
+  ],
+  "elapsed_seconds": 0.8247910080026486
+}

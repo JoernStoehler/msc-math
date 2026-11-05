@@ -1,0 +1,101 @@
+{
+  "packet": "positive-closure symmetry obstruction and reflected-cover face discontinuity",
+  "status": "PASS: exact worker checks, retained-script replay, independent scientific and final exact-text review",
+  "files": {
+    "LIMIT-PLAN.md": {
+      "bytes": 1718,
+      "sha256": "acb918aaf7774b7d4c15fe886a22615ed57e3e48d2c2abfdc05922a644c3701e"
+    },
+    "MINKOWSKI-PLAN.md": {
+      "bytes": 4228,
+      "sha256": "9be85820e40a6623adeb104ad0cd71ac3f79499b5a8a168ac6e081dd05fb088c"
+    },
+    "MINKOWSKI-REPORT.md": {
+      "bytes": 10761,
+      "sha256": "95303cdfef1764edba40a41c00a76291cf1966f4e348e857be3f60d28a5c9882"
+    },
+    "PLAN.md": {
+      "bytes": 5060,
+      "sha256": "0a3b35e1a9c65e828dc162c06d358b13c6fb41d4b78216e34b11bbef5eb2d61d"
+    },
+    "POSITIVE-CLOSURE.md": {
+      "bytes": 5552,
+      "sha256": "6571fc4b16c4ff1a49d9b111b2449f9076f2abd7f75a2cf9288943583e8100ce"
+    },
+    "exact_hko.py": {
+      "bytes": 2474,
+      "sha256": "98742ce6da972ea0dc6437be9dc1d115545873d66ea2a6fffa2fce32601e47d1"
+    },
+    "hko-exact.json": {
+      "bytes": 11595,
+      "sha256": "8cb5aaa95655b2759b560d709dbd970b339c23a692bba4f4b475e5b30b45cac2"
+    },
+    "limit-certificate.json": {
+      "bytes": 10763,
+      "sha256": "0ca2af79a7f62e55058e362e3c46e713976d1688616e9b59d40905753622f620"
+    },
+    "limit.py": {
+      "bytes": 5899,
+      "sha256": "1cb97ad82d2b7de4695db41f2d85c492072e5df1971df0bea03635645b6fdea4"
+    },
+    "minkowski-predictions.json": {
+      "bytes": 267661,
+      "sha256": "3cbd0f61433630e38f6c9ae111a7b6b7fdb7db42efbe9dd6f866afd26a6ae77c"
+    },
+    "minkowski-results.json": {
+      "bytes": 319174,
+      "sha256": "2d8fa9cc909257904eb7cdf2a49173ca33c9ab69fd4ea53425038e60e735827d"
+    },
+    "minkowski-verification.json": {
+      "bytes": 199780,
+      "sha256": "b5ef6395ea6b33e990d2558aa9d3b3f7d72fdbc649d9ab22734f72c88cc6a9d8"
+    },
+    "minkowski.py": {
+      "bytes": 6377,
+      "sha256": "ae1f7d253d4de3dd2940b26b20304114e24972356ba24564037672d5464caef8"
+    },
+    "positive-verification.json": {
+      "bytes": 488,
+      "sha256": "97176388b35f1bc6f30df6398cc3be7bae920abfb280d54a9ce7a59d4ef740dd"
+    },
+    "reproduction-verification.json": {
+      "bytes": 511,
+      "sha256": "c828486a9d65a9b76c1300cf1dd8d6c88afb296845d0008cff818dcd1b09b466"
+    },
+    "review.md": {
+      "bytes": 1013,
+      "sha256": "c74e7fe0f130079de6edaf57bb5853f00f7e6630673c3753de02fdcfb7997cf8"
+    },
+    "verify_minkowski.py": {
+      "bytes": 5878,
+      "sha256": "708702d1bff7c514077d928ddd38705743964a0c8a0c7344d27040f22a4d6346"
+    },
+    "verify_positive.py": {
+      "bytes": 2106,
+      "sha256": "0c114c6b309cab2fa3b7bca8f0162afe3a1a3af1116e7868468a6a0cfb4f334f"
+    }
+  },
+  "imported_sources": {
+    "patterns/upper-tail/signed-prefix-response/analyze.py": "0faab684d4b582a628009e938798ed7496d0bb2eb1ae9e282ad24b5a40a93f29",
+    "patterns/upper-tail/geometric-selector/analyze.py": "f2ecd45ed3aab493e74981eaf821e418af306e3ea3369ec712148de443225be1",
+    "patterns/upper-tail/conditional-coupling/quadratic.py": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7",
+    "patterns/upper-tail/contact-stability/sample.json": "f70e7f9bb6444e2b132dbaedf73c8f4a1f8324e72c37f79dbb7c2908e27bc2c8",
+    "patterns/upper-tail/contact-stability/truth.json": "65f21fcda3dd21bc697dac58ed976cbcec2a7bdc038b326eca21f138e28d2aac",
+    "patterns/upper-tail/contact-stability/global-counterexample-input.json": "bafbaa49d274c059f4addab36dab712e41e55c3c81170d74360d309fe5736288",
+    "patterns/upper-tail/contact-stability/global-counterexample.json": "6bdbb0702026c3902de78bd45a6ef9bf07e8fc5e8498b55a1fe7c41c6ebf5558",
+    "patterns/upper-tail/mixed-area-order/REPORT.md": "22e06d92e9d0aaefc6dc1a51284641bfbb32a5cfb83eb3d53619f0460100d39d",
+    "patterns/upper-tail/fixed-closure/REPORT.md": "e5ead7853e58cf7411e721f5d2169b727be7ba215d3daaf66b02c140174254e4",
+    "topics/products/product-qp-six-facet-reduction.tex": "f74325caef85829b5a6595f414d17e0e0b4ab60a5b17fae8ca78ae6eacbccf82"
+  },
+  "no_broad_random_scan": true,
+  "scoped_random_pilots": [
+    "random_5x5_s1_64",
+    "random_5x6_s2_150",
+    "random_6x6_s3_124"
+  ],
+  "receiving_owner": "standing thesis owner",
+  "original_source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "retained_path": "patterns/upper-tail/reflected-contact",
+  "review_candidate": "reflected-contact-final-v2",
+  "actual_native_reviewer": "/root/closure_review"
+}

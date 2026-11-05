@@ -1,0 +1,35 @@
+{
+  "checked_at_utc": "2026-10-17T18:33:27.737098+00:00",
+  "status": "PASS",
+  "python_AST_files": 42,
+  "strict_JSON_files": 50,
+  "markdown_files": 23,
+  "broken_local_links": [],
+  "http": [
+    {
+      "path": "patterns/UPPER-TAIL.md",
+      "status": 200,
+      "mathml_elements": 24,
+      "images": 1,
+      "image_statuses": [
+        200
+      ]
+    },
+    {
+      "path": "patterns/GALLERY.md",
+      "status": 200,
+      "mathml_elements": 45,
+      "images": 7,
+      "image_statuses": [
+        200,
+        200,
+        200,
+        200,
+        200,
+        200,
+        200
+      ]
+    }
+  ],
+  "combined_figure_visually_inspected": true
+}

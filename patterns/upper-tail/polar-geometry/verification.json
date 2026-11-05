@@ -1,0 +1,150 @@
+{
+  "checks": [
+    {
+      "name": "random_F5_s0_0",
+      "intervention": "symplectic_shear",
+      "alpha_root_volume_relative_error": 1.5543122344752192e-15,
+      "mahler_relative_error": 1.3322676295501878e-15
+    },
+    {
+      "name": "random_F5_s0_0",
+      "intervention": "symplectic_stretch",
+      "alpha_root_volume_relative_error": 1.1102230246251565e-16,
+      "mahler_relative_error": 4.440892098500626e-16
+    },
+    {
+      "name": "random_F5_s0_0",
+      "intervention": "dilation",
+      "alpha_root_volume_relative_error": 4.440892098500626e-16,
+      "mahler_relative_error": 1.7763568394002505e-15
+    },
+    {
+      "name": "random_F5_s0_0",
+      "intervention": "general_affine_mahler_only",
+      "mahler_relative_error": 6.661338147750939e-16
+    },
+    {
+      "name": "random_F5_s0_1",
+      "intervention": "symplectic_shear",
+      "alpha_root_volume_relative_error": 4.440892098500626e-16,
+      "mahler_relative_error": 4.440892098500626e-16
+    },
+    {
+      "name": "random_F5_s0_1",
+      "intervention": "symplectic_stretch",
+      "alpha_root_volume_relative_error": 0.0,
+      "mahler_relative_error": 3.3306690738754696e-16
+    },
+    {
+      "name": "random_F5_s0_1",
+      "intervention": "dilation",
+      "alpha_root_volume_relative_error": 2.220446049250313e-16,
+      "mahler_relative_error": 1.1102230246251565e-15
+    },
+    {
+      "name": "random_F5_s0_1",
+      "intervention": "general_affine_mahler_only",
+      "mahler_relative_error": 2.220446049250313e-16
+    },
+    {
+      "name": "random_F5_s0_2",
+      "intervention": "symplectic_shear",
+      "alpha_root_volume_relative_error": 8.881784197001252e-16,
+      "mahler_relative_error": 4.440892098500626e-16
+    },
+    {
+      "name": "random_F5_s0_2",
+      "intervention": "symplectic_stretch",
+      "alpha_root_volume_relative_error": 0.0,
+      "mahler_relative_error": 1.1102230246251565e-15
+    },
+    {
+      "name": "random_F5_s0_2",
+      "intervention": "dilation",
+      "alpha_root_volume_relative_error": 6.661338147750939e-16,
+      "mahler_relative_error": 2.220446049250313e-16
+    },
+    {
+      "name": "random_F5_s0_2",
+      "intervention": "general_affine_mahler_only",
+      "mahler_relative_error": 3.3306690738754696e-16
+    },
+    {
+      "name": "random_3x3_s0_0",
+      "intervention": "symplectic_shear",
+      "alpha_root_volume_relative_error": 7.771561172376096e-16,
+      "mahler_relative_error": 2.220446049250313e-16
+    },
+    {
+      "name": "random_3x3_s0_0",
+      "intervention": "symplectic_stretch",
+      "alpha_root_volume_relative_error": 4.440892098500626e-16,
+      "mahler_relative_error": 2.220446049250313e-16
+    },
+    {
+      "name": "random_3x3_s0_0",
+      "intervention": "dilation",
+      "alpha_root_volume_relative_error": 4.440892098500626e-16,
+      "mahler_relative_error": 2.220446049250313e-16
+    },
+    {
+      "name": "random_3x3_s0_0",
+      "intervention": "general_affine_mahler_only",
+      "mahler_relative_error": 4.440892098500626e-16
+    },
+    {
+      "name": "random_3x3_s0_1",
+      "intervention": "symplectic_shear",
+      "alpha_root_volume_relative_error": 2.220446049250313e-16,
+      "mahler_relative_error": 3.3306690738754696e-16
+    },
+    {
+      "name": "random_3x3_s0_1",
+      "intervention": "symplectic_stretch",
+      "alpha_root_volume_relative_error": 2.220446049250313e-16,
+      "mahler_relative_error": 1.1102230246251565e-16
+    },
+    {
+      "name": "random_3x3_s0_1",
+      "intervention": "dilation",
+      "alpha_root_volume_relative_error": 0.0,
+      "mahler_relative_error": 0.0
+    },
+    {
+      "name": "random_3x3_s0_1",
+      "intervention": "general_affine_mahler_only",
+      "mahler_relative_error": 2.220446049250313e-16
+    },
+    {
+      "name": "random_3x3_s0_2",
+      "intervention": "symplectic_shear",
+      "alpha_root_volume_relative_error": 0.0,
+      "mahler_relative_error": 5.551115123125783e-16
+    },
+    {
+      "name": "random_3x3_s0_2",
+      "intervention": "symplectic_stretch",
+      "alpha_root_volume_relative_error": 2.220446049250313e-16,
+      "mahler_relative_error": 2.220446049250313e-16
+    },
+    {
+      "name": "random_3x3_s0_2",
+      "intervention": "dilation",
+      "alpha_root_volume_relative_error": 2.220446049250313e-16,
+      "mahler_relative_error": 3.3306690738754696e-16
+    },
+    {
+      "name": "random_3x3_s0_2",
+      "intervention": "general_affine_mahler_only",
+      "mahler_relative_error": 1.2212453270876722e-15
+    }
+  ],
+  "max_symplectic_alpha_relative_error": 1.5543122344752192e-15,
+  "max_mahler_relative_error": 1.7763568394002505e-15,
+  "auxiliary_source_sha256": {
+    "topics/empirical-studies/sys-datascience/methods/canonical-vertex-covariance/artifacts/current/per_polytope.jsonl": "88cba83c48996309d6f4f050adb44413d449acb873d3222c515040087a7c8301",
+    "topics/empirical-studies/retrospective-revalidation/geometry-full/polytope-table.jsonl.gz": "466068ace1248c0d2ab3bb55bfa8269bf8597ad475ede6bbd3739d87500ddd45"
+  },
+  "source_table_join_rows_checked": 14334,
+  "main_polar_rows": 14336
+}

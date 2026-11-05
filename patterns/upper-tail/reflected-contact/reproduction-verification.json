@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "retained_scripts_replayed": true,
+  "deterministic_certificate_byte_matches": {
+    "hko-exact.json": true,
+    "limit-certificate.json": true,
+    "minkowski-predictions.json": true
+  },
+  "minkowski_results_equal_except_elapsed_seconds": true,
+  "positive_verification": "PASS",
+  "minkowski_verification": "PASS",
+  "replay_directory": "/tmp/msc-math/reflected-contact-replay",
+  "review_candidate": "reflected-contact-final-v2",
+  "actual_native_reviewer": "/root/closure_review"
+}

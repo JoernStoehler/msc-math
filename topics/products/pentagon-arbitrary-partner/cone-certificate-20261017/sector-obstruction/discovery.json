@@ -1,0 +1,27 @@
+{
+  "status": "InsufficientProgress",
+  "iterations": 8,
+  "solve_time": 0.488172145,
+  "wall_time": 0.44771068100089906,
+  "obj_val": 0.0,
+  "obj_val_dual": 5316.407764084659,
+  "r_prim": 0.19916709640857422,
+  "r_dual": 2.525798940832984e-08,
+  "source_sha256": "9f02548e305ed586b83b2709719818281847ce2d2e5b66981b35973acc07e9b6",
+  "solver": "Clarabel 0.11.1",
+  "call_count": 1,
+  "equality_equations": 27,
+  "nonnegative_product_variables": 12050,
+  "psd_size": 6,
+  "max_iterations": 80,
+  "time_limit_seconds": 30,
+  "max_threads": 1,
+  "tolerance": 1e-09,
+  "numerical_status_used_as_proof": false,
+  "discovery_only": "Normalize first27 dual entries by maximum absolute value, round to nearest 1/1000; hardcode rational v,D and verify independently.",
+  "packages": [
+    "/home/joern/.cache/uv/archive-v0/JwLaNCjplNf0I8dQ",
+    "/home/joern/.cache/uv/archive-v0/RcJQTM1A-Mr1_OFP",
+    "/home/joern/.cache/uv/archive-v0/BdkG5We34Xm1t-b1"
+  ]
+}

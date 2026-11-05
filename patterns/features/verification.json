@@ -1,0 +1,16 @@
+{
+  "numeric_rerun_max_absolute_difference": 1.1102230246251565e-16,
+  "numeric_rerun_tolerance": 1e-12,
+  "numeric_rerun_status": "passed across system NumPy and existing cached environment",
+  "source_cache_verification": "scripts/artifacts.py verify-cache polytope-datasets: verified-local-cache",
+  "figure_visual_inspection": "PNG inspected; three panels and labels legible",
+  "artifacts": {
+    "by-bucket.csv": "fff18f58841ecf65bb821398f757e52e8a399ae27acd38353b6356c38048704a",
+    "covariance-patterns.pdf": "5341e36729a3f17768ac6c6a0d5317e5a3a13bbb7143f7e37840aae977a03233",
+    "covariance-patterns.png": "befc72e89d27f1ce17a5cda0f7a023a0a3e0e89cf9db1e634c8b1902cd3f8851",
+    "REPORT.md": "6f5a9e85cec9652319dbc11c5b4aefb9d6ad0948d87f975ba5701acaa55970fa",
+    "results.json": "1145136884f2e9f01620280826139c88d90f7e0f8a1e9e931936cc703e582cf8",
+    "analyze.py": "fdf8f2f737ef98c4b2db00b7797440d319c7a0b546d4cc5fa51b51f6308cc2f8"
+  },
+  "csv_line_endings": "LF; normalized91CSVlines, exact parsed-cell equality verified"
+}

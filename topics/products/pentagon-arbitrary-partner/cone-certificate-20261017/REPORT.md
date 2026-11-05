@@ -1,0 +1,165 @@
+# A global quadratic constraint-product certificate is impossible
+
+17 October 2026. This is a new scoped algebraic obstruction to a proposed
+certificate class, not a counterexample to HKO maximality. The exact obstruction and sector fold use no optimizer; a separate bounded
+no-PSD sector LP returned numerical infeasibility without an exact certificate.
+No SDP, capacity producer, population scan, fitting or face enumeration was run. Existing source
+packets remain unchanged; this new packet is retained on the patterns branch. Root
+owns integration, review, commit and cleanup.
+
+## End state and method choice
+
+The desired end state is a signed-geometric mechanism supporting an HKO-sharp
+bound, with a decisive cheap test before any substantial expenditure. Existing
+selectors have material exact failures. The existing all-support enumeration is
+already a capacity algorithm. The parked general-matrix theorem reduction does
+have a concrete unproved inequality; a certificate obstruction changes which
+methods can plausibly settle it. Checking its equality cases cannot be skipped:
+they may forbid an entire certificate class before optimization starts.
+
+| Option | Possible gain | What the rubric could reward wrongly | Disposition |
+| --- | --- | --- | --- |
+| Add supports to a stopped selector | Better finite tail errors | Target tuning and rediscovering full capacity | Exclude |
+| Global nonnegative constraint products plus PSD remainder | A short sharp proof for the seven-variable family | Mistaking a failed solver for a false theorem | Test exact necessary equality constraints; impossible below |
+| Fold by conformal-angle sectors, then seek a certificate | Removes incompatible equality rays using an exact symmetry | Treating removal of one obstruction as evidence of positivity | Exact fold established; later exact sector separator excludes the PSD-plus-products class |
+| Full cone face/ray enumeration | Could settle the target | Counting cases without complete positivity coverage | No execution; no cost/success estimate |
+
+The rubric values a theorem-domain bridge or an exact obstruction, not bulk fit,
+tiny bound changes, or equality recovery alone. This result gives no working
+held-out predictor and does not select a broad research programme.
+
+## Definitions and exact obstruction
+
+Let [cone.json](../../../empirical-studies/discovery-design/night-20261005/orientation-wide/outer-matrix-preflight/cone.json) be the retained packet, interpreted by the
+[general-matrix reduction](../general-matrix-cone-reduction-20261005.md).
+Its variables are
+
+$$z=(h_0,h_1,h_2,b_{00},b_{01},b_{10},b_{11}).$$
+
+The 610 direction-preserving normalized linear rows define
+$C=\{z:\ell_i(z)\ge0,\ 1\le i\le610\}$: 605 distinct complete template-fit
+rows and five canonical edge rows. The first three variables are support
+offsets in the translation gauge $h_3=h_4=0$; $B=(b_{ij})$ is the general
+normal-map matrix in the retained computational basis. The target is
+
+$$q(z)=P(h)-\frac{\det B}{3+\sqrt5},$$
+
+where $P$ is the retained planar-area quadratic. The packet's
+`positive_det_quadratic_matrix` defines the symmetric matrix exactly. All
+coefficients are in the ordered field $\mathbb Q(\sqrt5)$.
+
+**Proposition.** There are no real $a_{ij}\ge0$ and no positive-semidefinite
+real symmetric matrix $S$ satisfying the polynomial identity
+
+$$q(z)=z^TSz+\sum_{1\le i\le j\le610}a_{ij}\ell_i(z)\ell_j(z).$$
+
+**Proof.** Start with the packet's exact `hko_control.point`, denoted $z_0$.
+Put $s=\sqrt5$, $h=(1+s)/4$, $l=(-5+3s)/4$ and
+
+$$R_c=\begin{pmatrix}h&-h\\l&h\end{pmatrix}.$$
+
+Keep the three support variables fixed and replace $B$ by $R_cB$, ten times.
+The resulting distinct rays $z_0,\ldots,z_9$ are feasible, have positive
+determinant, and satisfy $q(z_k)=0$. The checker verifies these claims exactly,
+including $R_c^{10}=I$ on the starting point, a positive-normalized permutation
+of all 610 rows, and invariance of the complete target matrix.
+
+Each ray activates 20 rows. Among all 610 rows, 460 vanish on none of these
+rays, 100 vanish on one, and 50 vanish on two. Therefore each product
+$\ell_i\ell_j$ is strictly positive on at least six rays. If the proposed
+identity held, every summand at a feasible equality ray would be nonnegative.
+Evaluating at a ray where that product is positive forces $a_{ij}=0$.
+This applies to every coefficient, so $q(z)=z^TSz$ would be PSD. But
+
+$$v=\frac{z_0-z_5}{2}
+=(0,0,0,1,-s/5,s-2,1)$$
+
+satisfies $q(v)=-2+4s/5<0$. Contradiction. The witness $v$ is not asserted
+feasible; it disproves the required global polynomial PSD identity. QED.
+
+This also excludes nonnegative products of nonnegative linear combinations
+of the retained rows, because expanding them gives the displayed class.
+More generally, the homogeneous Farkas alternative expresses every homogeneous
+linear form nonnegative on $C$ as such a combination: the dual of the finite
+halfspace intersection is the cone generated by its row normals. Thus choosing
+different globally cone-valid linear forms does not escape this obstruction.
+It does not exclude piecewise/sector certificates, higher-degree multipliers,
+other geometric inequalities, or the sharp bound itself.
+
+## New crux: exact sector fold, positivity still open
+
+Put $\tau^2=5-2s$ and
+
+$$t=b_{00}+b_{11},\qquad u=b_{10}-\tau^2b_{01}.$$
+
+The proposed sector appends two linear inequalities:
+
+$$u\ge0,\qquad \tau^2t-u\ge0.$$
+
+In physical coordinates $A=S_\tau^{-1}BS_\tau$ with
+$S_\tau=\operatorname{diag}(1,\tau)$, the complex conformal component is
+$w=\operatorname{tr}A+i(A_{21}-A_{12})=t+iu/\tau$.
+For $\det A>0$, it is nonzero, since
+
+$$|w|^2-[(A_{11}-A_{22})^2+(A_{21}+A_{12})^2]=4\det A>0.$$
+
+Left multiplication by $R_c$ rotates $w$ by $\pi/5$; this uses
+$\cos(\pi/5)=h$, $\sin(\pi/5)/\tau=h$, and
+$\tau\sin(\pi/5)=l$. Thus one of ten exact symmetry images lies in the
+closed sector $0\le\arg w\le\pi/5$. The same transformation permutes $C$
+and preserves $q$, as checked above. Positivity on this sector therefore
+suffices on the determinant-positive part of $C$.
+
+Exactly one of the ten HKO rays lies in this sector, strictly inside it;
+its two sector slacks are $-4+2s>0$ and $14-6s>0$. The global equality-ray
+obstruction is consequently absent there. **This is not a sector positivity
+certificate.** A separate [frozen sector probe](sector-probe/REPORT.md) tested only the class
+with no PSD remainder: 12,050 allowed row products in 28 coefficient equations.
+HiGHS returned numerical infeasibility in 2.26 seconds; no exact separator was
+obtained, so this does not prove impossibility. No second sector or numerical
+tuning was tried. The later [exact sector separator](sector-obstruction/REPORT.md) now excludes the class with a PSD remainder on this same fixed sector as well. Sector positivity itself remains open. An exact certificate in that larger class would prove the inherited
+general-matrix-family bound, not arbitrary-pentagon or unrestricted global
+maximality. No such certificate is established here; the subsequent exact obstruction rules out that particular class.
+
+## Evidence and limits
+
+[check.py](check.py) is a standalone standard-library exact checker with its own field
+arithmetic. It reads only the supplied cone packet and prints the content retained in [result.json](result.json);
+the shell redirects that output into a named scratch directory. The JSON binds
+the source SHA256, row counts, permutation, target invariance, equality-ray
+active sets, negative witness and sector controls. It performs 6,100 exact
+row evaluations, not a 610-squared product search. The final replay took
+under a second on the workstation; that observation does not price an LP/SDP.
+
+Reproduce from the patterns checkout, writing a fresh scratch output:
+
+```sh
+python3 -B topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/check.py \
+  topics/empirical-studies/discovery-design/night-20261005/orientation-wide/outer-matrix-preflight/cone.json \
+  > /tmp/msc-math/cone-certificate/replay.json
+```
+
+A separate checker, [independent_check.py](independent_check.py), constructs the
+physical rotations and gauged supports with its own field arithmetic, checks
+every unordered row pair and gives a different negative ambient control
+$q(e_{h_0})=(1-\sqrt5)/4<0$. Its [receipt](independent-receipt.json) agrees.
+The separate [sector checker](independent_sector.py) and
+[receipt](sector-receipt.json) verify the full row permutation, target invariance,
+rotation order, conformal action and determinant identity. Both read the cone
+path as their sole command-line argument and print JSON; the sector checker also
+reads the retained independent equality-ray receipt. The independent assessment
+accepted the obstruction, homogeneous Farkas extension and sector fold.
+
+Sources inspected: `patterns/OWNER-FOLLOWUP.md`,
+`patterns/upper-tail/{ROUTE-TRIAGE.md,geometric-selector/REPORT.md}`,
+`topics/products/README.md`, the affine-product and triangle/two-bounce proofs,
+the arbitrary-partner README and contact/symmetrization notes, and the retained
+general-matrix reduction plus its source `report.md`, `extraction.md` and
+`cone.json`. The earlier source report explicitly mentioned a possible
+constraint-product decomposition with PSD remainder, but did not run a search
+or identify this equality-ray obstruction/sector fold. No exhaustive literature
+or repository novelty search is claimed. The retained reduction's scientific
+interpretation is imported; this packet independently verifies only the stated
+algebraic obstruction and symmetry controls. No manuscript inclusion follows.
+
+[review: /root/shadow_order_proof]

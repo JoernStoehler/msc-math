@@ -1,0 +1,16 @@
+{
+  "owner": "pattern scientific packet; root owns cross-branch integration",
+  "scratch": "/tmp/msc-math/conditional-rounding/20261017T1600Z",
+  "status": "Frozen pilot stopped after exact capacity extraction and strict same-control relaxation obstruction",
+  "files": {
+    "PLAN.md": "89fd9d55c375d2bff11b3c05c8a6a972507c2f3dafd4e6ca7b7581b68d86d7c1",
+    "REPORT.md": "f797a66bd023968e51702c331671a01d97be693b69d61ded39a8b2ed83ce5bc5",
+    "analyze.py": "8961b4e34a72da30594d56d72b56f68179853e6533368768fbdf77a8747e2ae8",
+    "check_gap.py": "90ac019510778ac6857ccb698ec62c9d4a7f4853db32024947aa13a30fbed6a7",
+    "graph-obstruction.json": "08ca7401f527ffceee267022a87fc00811c60c29797693e7c6a1f76b2b0cb927",
+    "results.json": "a98a8b0744f6b8443585cd1f1f6a57409754b41b5531c227f9574642c04329ae",
+    "review.md": "ae73d44150377fd8e180837da294b2cdc46962def09f04f1be12e01704b31b3f",
+    "verification.json": "113dc7596ab8457d24d3ca170b54f0b66b74454b800ef8a1ac29e32aed8813de",
+    "verify.py": "6fdce3dcaa201b91c95caef675e19a7428bb22933714539da52a75fa2df85ea7"
+  }
+}

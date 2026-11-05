@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "rational_controls": [
+    {
+      "name": "random_5x5_s1_64",
+      "rank_one_by_shadow": [
+        true,
+        true
+      ],
+      "exact_capacity": true,
+      "capacity": 6.2032265060958105,
+      "gain": 0.0,
+      "candidate_count": 12
+    },
+    {
+      "name": "random_5x6_s1_198",
+      "rank_one_by_shadow": [
+        false,
+        false
+      ],
+      "exact_capacity": false,
+      "capacity": 4.484227519554728,
+      "gain": 0.0,
+      "candidate_count": 21
+    },
+    {
+      "name": "random_6x6_s3_124",
+      "rank_one_by_shadow": [
+        true,
+        true
+      ],
+      "exact_capacity": true,
+      "capacity": 4.474980102946307,
+      "gain": 0.028513292107776866,
+      "candidate_count": 12
+    }
+  ],
+  "HKO_exact_Q": "1/10",
+  "HKO_retained_couplings_rank_one": [
+    false,
+    false
+  ],
+  "HKO_circulant_conditionals_cover_all_5_closure_vertices": true,
+  "numerical_regular_controls": [
+    {
+      "theta": 0,
+      "capacity_over_known": 0.9999999999999999
+    },
+    {
+      "theta": 0.15707963267948966,
+      "capacity_over_known": 0.9999999999999999
+    },
+    {
+      "theta": 0.3141592653589793,
+      "capacity_over_known": 0.9999999999999998
+    }
+  ],
+  "input_sha256": {
+    "PLAN.md": "89fd9d55c375d2bff11b3c05c8a6a972507c2f3dafd4e6ca7b7581b68d86d7c1",
+    "analyze.py": "8961b4e34a72da30594d56d72b56f68179853e6533368768fbdf77a8747e2ae8",
+    "results.json": "a98a8b0744f6b8443585cd1f1f6a57409754b41b5531c227f9574642c04329ae",
+    "verify.py": "6fdce3dcaa201b91c95caef675e19a7428bb22933714539da52a75fa2df85ea7"
+  }
+}

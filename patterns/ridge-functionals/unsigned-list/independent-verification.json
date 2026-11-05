@@ -1,0 +1,148 @@
+{
+  "status": "PASS",
+  "difference_bodies_equal": true,
+  "factor_areas": [
+    "44",
+    "44",
+    "15/2"
+  ],
+  "common_volume": "330",
+  "ridge_count": 27,
+  "common_unsigned_ridge_areas": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "2",
+    "6",
+    "6",
+    "10",
+    "10",
+    "12",
+    "12",
+    "12",
+    "12",
+    "14",
+    "20",
+    "20",
+    "20",
+    "20",
+    "22",
+    "26"
+  ],
+  "plus": {
+    "capacity": "600/31",
+    "Qmax": "31/1200",
+    "word_evaluations": 960,
+    "closure_vertex_counts": [
+      8,
+      1
+    ],
+    "closure_support_sizes": [
+      [
+        [
+          3,
+          8
+        ]
+      ],
+      [
+        [
+          3,
+          1
+        ]
+      ]
+    ],
+    "maximizer": {
+      "left_support": [
+        0,
+        3,
+        4
+      ],
+      "right_support": [
+        0,
+        1,
+        2
+      ],
+      "word": [
+        0,
+        3,
+        2,
+        5,
+        1,
+        4
+      ],
+      "weights": [
+        "3/16",
+        "9/40",
+        "7/80",
+        "1/6",
+        "7/30",
+        "1/10"
+      ],
+      "Q": "31/1200"
+    }
+  },
+  "minus": {
+    "capacity": "675/37",
+    "Qmax": "37/1350",
+    "word_evaluations": 960,
+    "closure_vertex_counts": [
+      8,
+      1
+    ],
+    "closure_support_sizes": [
+      [
+        [
+          3,
+          8
+        ]
+      ],
+      [
+        [
+          3,
+          1
+        ]
+      ]
+    ],
+    "maximizer": {
+      "left_support": [
+        0,
+        3,
+        4
+      ],
+      "right_support": [
+        0,
+        1,
+        2
+      ],
+      "word": [
+        0,
+        3,
+        2,
+        5,
+        1,
+        4
+      ],
+      "weights": [
+        "7/36",
+        "7/45",
+        "3/20",
+        "1/6",
+        "7/30",
+        "1/10"
+      ],
+      "Q": "37/1350"
+    }
+  },
+  "sys_plus": "6000/10571",
+  "sys_minus": "30375/60236",
+  "sys_quotient": "87616/77841",
+  "scope": "Full exact 2/3-support enumeration with all cyclic permutations; completeness imports accepted planar product six-facet theorem, not physical reconstruction or formal proof-assistant verification."
+}

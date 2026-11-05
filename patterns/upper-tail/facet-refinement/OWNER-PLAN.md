@@ -1,0 +1,9 @@
+# Bounded facet-refinement analytic batch
+
+End state: settle whether the current absolute width/star proposal has a concrete structural proof lead or an explicit counterfamily; otherwise park it with the missing implication named. Keep submission preparation usable. This matters because local recovery already succeeds and more local cohorts would not explain broad upper tails.
+
+Necessary steps: (1) reconstruct the exact star geometry and prior facet-birth failure so a coverage failure is not mistaken for an absolute-bound counterexample; (2) derive consequences of geometric refinement and compare a genuinely different inequality route, to settle a branching question rather than polish a metric; (3) independently check any proof/counterexample and preserve exact reproducible evidence; (4) integrate dispositions and PM dependencies, verify the Kai packet remains bound to its frozen candidate, and commit branches separately.
+
+Options: A analytic facet-refinement counterfamily; B geometric inequality from width-hardness/volume; C repeat random/local cohorts; D stop now. Rubric: material change in understanding, bearing on a universal upper-tail route, falsifiability, bounded cost. Wrong rewards: counting tested examples rewards C without a mechanism; demanding a global theorem would discard a useful obstruction. Select A and B independently; reject C; use D if neither gives a concrete lead.
+
+Resources/scope: two independent local mathematical workers capped at 25 minutes initial work each, root integration/checks; one bounded read-only Kai/PM audit. No new cohort, capacity producer, cloud, installations, external action or large expenditure. Workers put drafts in distinct /tmp subdirectories and do not commit. Root owns retention, integration, exact-message review, both local commits and cleanup. Unattended batch under about2h, stop earlier on settled useful result or exhausted bounded reasoning.

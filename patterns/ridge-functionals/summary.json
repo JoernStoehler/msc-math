@@ -1,0 +1,114 @@
+{
+  "status": "PASS",
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "table_sha256": "466068ace1248c0d2ab3bb55bfa8269bf8597ad475ede6bbd3739d87500ddd45",
+  "covariance_join_sha256": "88cba83c48996309d6f4f050adb44413d449acb873d3222c515040087a7c8301",
+  "all_products": {
+    "rows": 10240,
+    "above_affine_value": 10218,
+    "quantiles": {
+      "min": 0.20898677563482107,
+      "q10": 0.9704311310910657,
+      "median": 2.754333982626777,
+      "q90": 7.006993922016414,
+      "max": 8.000000000000385
+    },
+    "law_prediction_over_target": {
+      "min": 0.03999999999999807,
+      "q10": 0.045668656738824843,
+      "median": 0.11618058755518235,
+      "q90": 0.32975035254784296,
+      "max": 1.5311973641775354
+    },
+    "upper_decile": {
+      "rows": 1024,
+      "quantiles": {
+        "min": 0.2206302167797356,
+        "q10": 0.5632524029373087,
+        "median": 1.2433196478677893,
+        "q90": 2.4144812492556436,
+        "max": 4.9908332806701035
+      }
+    },
+    "largest_violation": {
+      "name": "random_3x3_s2_235",
+      "k": 3,
+      "m": 3,
+      "sys": 0.0013618421796004604,
+      "normalized_maximum_ridge_area": 76.64460721151308,
+      "sys_times_rmax_squared": 8.000000000000385
+    },
+    "largest_sys": {
+      "name": "random_5x6_s3_168",
+      "k": 5,
+      "m": 6,
+      "sys": 0.86258589584944,
+      "normalized_maximum_ridge_area": 1.2213363226565737,
+      "sys_times_rmax_squared": 1.2866869588572893
+    }
+  },
+  "pentagon_products": {
+    "rows": 1024,
+    "above_affine_value": 1024,
+    "quantiles": {
+      "min": 0.354309882927422,
+      "q10": 0.8684590933307635,
+      "median": 1.8709672631729526,
+      "q90": 4.232979743585711,
+      "max": 7.4823347171113115
+    },
+    "law_prediction_over_target": {
+      "min": 0.04276739976202798,
+      "q10": 0.07559805758567788,
+      "median": 0.1710346055098935,
+      "q90": 0.368469406911284,
+      "max": 0.9031641944505112
+    },
+    "upper_decile": {
+      "rows": 103,
+      "quantiles": {
+        "min": 0.4187609444042387,
+        "q10": 0.6793901106459632,
+        "median": 1.1392755660453633,
+        "q90": 1.9505271846277825,
+        "max": 2.613325989269508
+      }
+    },
+    "largest_violation": {
+      "name": "random_5x5_s0_198",
+      "k": 5,
+      "m": 5,
+      "sys": 0.23962310733113457,
+      "normalized_maximum_ridge_area": 5.5879719610519825,
+      "sys_times_rmax_squared": 7.4823347171113115
+    },
+    "largest_sys": {
+      "name": "random_5x5_s2_104",
+      "k": 5,
+      "m": 5,
+      "sys": 0.8437955079134134,
+      "normalized_maximum_ridge_area": 1.0155766988475745,
+      "sys_times_rmax_squared": 0.8702873380418379
+    }
+  },
+  "max_reconstructed_ridge_relative_error": 1.1116663145571692e-12,
+  "max_reconstructed_volume_relative_error": 2.2239987629291136e-12,
+  "controls": {
+    "affine_cases": 256,
+    "negative_determinant_products": 127,
+    "maximum_law_relative_error": 2.220446049250313e-15,
+    "rotation_angles": 101,
+    "power_sum_relative_drifts": {
+      "2": 4.464540078430268e-16,
+      "4": 6.2337694237155e-16,
+      "6": 1.3056176183453622e-15,
+      "8": 1.7188417971441058e-15
+    },
+    "signed_nonzero_singular_value_relative_drift": 6.426919421098447e-16,
+    "max_sum_over_max_constant_error": 1.0658141036401503e-14,
+    "max_unsigned_operator_norm_relative_error": 4.440892098500626e-16,
+    "max_rotation_sum_law_absolute_error": 8.526512829121202e-14
+  },
+  "label_contract": "historical numerical capacities/sys and numerical volume; no new capacity evaluation; known regular/HKO controls separate from retained random data",
+  "elapsed_seconds": 5.0110151399967435
+}

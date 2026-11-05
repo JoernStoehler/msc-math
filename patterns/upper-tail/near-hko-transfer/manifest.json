@@ -1,0 +1,17 @@
+{
+  "packet": "near-hko-transfer",
+  "files": {
+    "PLAN.md": "937925eefdab98bfe5bc70cb6addc0800612248a4126e6eeb00c265ed9d7b227",
+    "REPORT.md": "c4fc5ca3d4eb33f2f882d1fc51f79698c3daaae8a4935660993dd88e75cfa82f",
+    "analyze.py": "67227c1aa0985640ea6ed89b33331d1d80d1e24365b5e2d59649ed3f497e05ff",
+    "freeze.py": "2e825da03895c4fb4694c4b4d49ff058bdf47db16257c42c87a0d538224e3fc6",
+    "frozen-manifest.json": "897ed4481e34e7a89687321cce2f0078799ac9ba313f6886220c576ed9e1a715",
+    "obstruction.json": "8f0b269da810988782e832d0e32f67a562180d27d1973cd548fd0891de72cae6",
+    "predictions.json": "466172b4064e7a23c8325e1fc8f54af6227103c45ed7692003458b0c69566702",
+    "results.json": "17db888aa1cfb7a6d90e53b896e16c5dda5d090fd694d7b3240e674e060d46e1",
+    "review.md": "ef5744b52aa1cfac059cc288b3691620afe11a704330f3d75129035825fb6093",
+    "sample.json": "83f89a57fd12bf6a072c8d551edfdbba83e26f30e101521d6708c075f3b2d3a0",
+    "verification.json": "adebb8b3a588acf2f2106a12ce58f447b16463a1d0aa3a3645317e8975b5d046",
+    "verify.py": "9e7ec5e05651c3ae8c0e8a6fced2f47349388b4b15491586720cbf5c278cfeeb"
+  }
+}

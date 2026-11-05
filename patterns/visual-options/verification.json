@@ -1,0 +1,121 @@
+{
+  "status": "PASS numerical checks; visual inspection recorded separately",
+  "producer_sha256": "c378e409ceacde267cbcaabdd1f18abb5896e9b070ce3bb4d98de969c906e3f6",
+  "source_sha256": {
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/product-shape/features.csv.gz": "dcffead16ab5ad0fcdf6ae55d78375bea5b6ee7274877a33846cf4c3c2a7d57f",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/features/analyze.py": "fdf8f2f737ef98c4b2db00b7797440d319c7a0b546d4cc5fa51b51f6308cc2f8",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/topics/products/pentagon-affine-products/research.tex": "791f18aab08a237b10542d568adfb5a633e9557382e6a3833561fde53c47e938",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs": "a87e2d5216a95257c6ef0b298d9050032722acbfb2a4f09798b84d2861e167ec",
+    "/home/joern/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96/files/random-product.jsonl": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+    "/home/joern/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96/files/shared-cache.jsonl": "abf6ce2189c785d156df10266ee896e8748f6d2fc5b0afcbf05290597fcde326",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/topics/empirical-studies/sys-datascience/methods/canonical-vertex-covariance/artifacts/current/per_polytope.jsonl": "88cba83c48996309d6f4f050adb44413d449acb873d3222c515040087a7c8301",
+    "/workspaces/msc-math-worktrees/patterns-2026-10-17/topics/empirical-studies/retrospective-revalidation/geometry-full/polytope-table.jsonl.gz": "466068ace1248c0d2ab3bb55bfa8269bf8597ad475ede6bbd3739d87500ddd45"
+  },
+  "A_recovered_orbits": [
+    {
+      "name": "random_5x5_s2_104",
+      "min_beta": 0.056393006755042885,
+      "normalization_residual": 6.661338147750939e-16,
+      "closure_residual": 3.5182860796935833e-15,
+      "max_halfspace_violation": 2.220446049250313e-15,
+      "max_active_facet_residual": 1.5543122344752192e-15,
+      "relative_action_error": 1.1102230246251565e-15,
+      "relative_geometric_action_error": 1.3322676295501878e-15,
+      "kkt_residual": 4.718447854656915e-16
+    },
+    {
+      "name": "random_5x5_s3_254",
+      "min_beta": 0.06701066729955704,
+      "normalization_residual": 1.1102230246251565e-16,
+      "closure_residual": 3.507320877933776e-15,
+      "max_halfspace_violation": 1.3322676295501878e-15,
+      "max_active_facet_residual": 1.887379141862766e-15,
+      "relative_action_error": 3.3306690738754696e-16,
+      "relative_geometric_action_error": 3.3306690738754696e-16,
+      "kkt_residual": 3.608224830031759e-16
+    },
+    {
+      "name": "random_6x6_s1_114",
+      "min_beta": 0.03611385273690588,
+      "normalization_residual": 8.881784197001252e-16,
+      "closure_residual": 3.4452708795169374e-15,
+      "max_halfspace_violation": 6.661338147750939e-16,
+      "max_active_facet_residual": 1.9984014443252818e-15,
+      "relative_action_error": 2.55351295663786e-15,
+      "relative_geometric_action_error": 2.1094237467877974e-15,
+      "kkt_residual": 8.881784197001252e-16
+    },
+    {
+      "name": "random_6x6_s2_102",
+      "min_beta": 0.062208492963391065,
+      "normalization_residual": 2.220446049250313e-16,
+      "closure_residual": 1.7527816313752602e-15,
+      "max_halfspace_violation": 4.440892098500626e-16,
+      "max_active_facet_residual": 4.440892098500626e-16,
+      "relative_action_error": 2.220446049250313e-16,
+      "relative_geometric_action_error": 3.3306690738754696e-16,
+      "kkt_residual": 3.3306690738754696e-16
+    }
+  ],
+  "B": {
+    "rows": 281,
+    "columns": 721,
+    "max_plotted_sys": 1.0472135954999582,
+    "rotation_profile_max_error": 1.3322676295501878e-15,
+    "family": "P5 \u00d7 Rtheta diag(t,1/t)P5; t in [1,2], theta in [0,2pi/5]",
+    "formula": "c=(1+cos(pi/5))^2/max_ij|n_i^T Rtheta diag(1/t,t)n_j|; sys=c^2/(2 area(P5)^2)"
+  },
+  "C": {
+    "heldout": {
+      "rows": 2877,
+      "sys_mae": 0.03581433155715574,
+      "median_signed_error": -0.000986292501390415,
+      "log_r2": 0.9774844485892044
+    },
+    "heldout_top_decile": {
+      "rows": 296,
+      "sys_mae": 0.06575065507499946,
+      "median_signed_error": -0.04420140236825676,
+      "log_r2": 0.3025990974399898
+    }
+  },
+  "output_sha256": {
+    "A-shapes-orbits.png": "4df90383dea82780a130d5712535717ddfd38044906e700956a9114370347131",
+    "A-shapes-orbits.json": "a6751cca3e815bf536c3df06b186a02cfae5c0238fc06854658246bdea112d6e",
+    "C-heldout-predictions.csv.gz": "55b92cc9e899b2aa69a53bf8b4b6cc57e7fbc2bfa7c6afbb853b5e7dae1e69f4",
+    "C-within-family-errors.png": "bb4a9d57448922327cb85547c9ed8156b9d3eb9ce4a465e2484dca0bc22e356e",
+    "B-stretch-angle.png": "b9acad38865a2bb544583a81e8a8601dcdfcadc35abff456b58c1dc14216b3fd",
+    "A-shapes-orbits.pdf": "36cb118567f90c3cf2adb13a26fa787d7f220627a928bb2bcd69a67f4cbc5f9e",
+    "C-within-family-errors.json": "9c36ed03efa71cc13eb74f964c0d5c26fe7ff929194206404c682347a5ff09e6",
+    "B-stretch-angle.pdf": "e4a44e4072f9b10418ce09f70570ca696daaf91b256535319edc02a9af95ac96",
+    "B-stretch-angle.npz": "7a58b5b9aab2b63080011710f968aee5bfdd368db395e88dbcef6a304f5baf91",
+    "C-within-family-errors.pdf": "a963964fa663f205bc305e100299cea17305c72db5c3198ff4e7e724e0ac44b9",
+    "README.md": "9ba28ab70c8e66dc1832768c4c3f0c4bf5798602b40a9b3ab31483bcb700c8a2",
+    "index.html": "b03ff6e5f8f4f8c0c17e8252a0323a24cc99d4c7cc15e93de5b8350ad084dfdf",
+    "figures.py": "c378e409ceacde267cbcaabdd1f18abb5896e9b070ce3bb4d98de969c906e3f6"
+  },
+  "visual_qa": "All three generated PNGs inspected with view_image; A clipped control fixed by explicitly labeled per-panel zooms, B ratio zoom refined, C error axes share limits.",
+  "link_check": {
+    "status": "PASS",
+    "checked_relative_links": 34,
+    "anchors": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "retention": "Intentionally retained new patterns/visual-options/ packet only; scratch probe not retained.",
+  "independent_retained_data_checks": {
+    "C": "PASS all 18 bucket CSV tail counts, target thresholds, hash assignments, MAE and median signed error agree with JSON",
+    "B_direct_matrix_checks": {
+      "sample_count": 6,
+      "max_capacity_difference": 8.881784197001252e-16
+    }
+  },
+  "browser_qa": {
+    "status": "PASS headless Chrome local-file gallery render inspected",
+    "screenshot": "/tmp/msc-math/thesis-owner/2026-10-17/visual-options-gallery.png",
+    "sha256": "1f4e953b1380889b4f3671d077abaff1fa2a5b70ee3de4c8781ec3be8e22ae81"
+  },
+  "integration_note": "Parent added exact-message review attribution to README/gallery; numerical outputs unchanged."
+}

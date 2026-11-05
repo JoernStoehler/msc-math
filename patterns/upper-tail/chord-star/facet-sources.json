@@ -1,0 +1,10 @@
+{
+  "patterns/upper-tail/facet-transfer/sample.json": "70c52bc59ed0fc86cf6843791aa129422e825b697f3b2216c6ae7f0ef68bd7ea",
+  "patterns/upper-tail/facet-transfer/results.json": "76a7fb9ca57dddebb795763314485e5ebfaa3f273f7bbbf41602a895618a36d6",
+  "patterns/upper-tail/facet-transfer/freeze.py": "1ebdefce07f4b70de4f9890d8ac26b1a842045fe9e3e39bd721a297cde93163a",
+  "patterns/upper-tail/facet-transfer/PLAN.md": "67149ebf585ec512f3237260651e8726d1f92b05c0d0451d5f01401f30bcec88",
+  "patterns/upper-tail/facet-transfer/verification.json": "ce34f7f1ab05af2b4dd9746c61acf4dc2545019f0f0d48cb7d744d4622fffeeb",
+  "patterns/upper-tail/chord-star/probe.py": "ef48c770551115ed923a986cd6fe35aca5069d5727387cf4b92d2a45f1fa44cf",
+  "patterns/upper-tail/chord-star/verify.py": "f5e839f2e015127e26285417004a8a4bf29ba86fd6a615586ad7f2ee1cbe0286",
+  "patterns/upper-tail/chord-star/REPORT.md": "18f99d2d2aa6679afe149c11770e64e4d81fb440a053013f2db42bf570957e91"
+}

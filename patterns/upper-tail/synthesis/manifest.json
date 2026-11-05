@@ -1,0 +1,33 @@
+{
+  "contract": "Selected owned packet bytes; excludes this manifest and disposable Python bytecode.",
+  "files": {
+    "audit.json": {
+      "bytes": 657,
+      "sha256": "08f554c75535eb8363712c5524236fee70dff65039fe64ff54608b4ae6da0199"
+    },
+    "plot.py": {
+      "bytes": 3184,
+      "sha256": "93fe4274c4f2e758853cb763a549213a13d7c60750c4cb95ab6b67bbc5328fec"
+    },
+    "question.json": {
+      "bytes": 912,
+      "sha256": "7026eb3244c6ffd5b200329779dece81720c5310b9b106847d01b7c0fbfa599b"
+    },
+    "reviews.json": {
+      "bytes": 2835,
+      "sha256": "baf58b3ea23622dc978ffa69965cfcec58f3b18a836587df56ae2b5282a22d55"
+    },
+    "upper-tail-comparison.pdf": {
+      "bytes": 30969,
+      "sha256": "802eb6430e4a3d1119cb2128abc4320822859962f8c468848ae756c2dbc2ef13"
+    },
+    "upper-tail-comparison.png": {
+      "bytes": 201788,
+      "sha256": "95419040e58b7a7430da7a9f894365bdcb0c9b76daeb91f9e4a6ed6c704c93d8"
+    },
+    "verification.json": {
+      "bytes": 2957,
+      "sha256": "b87135889843d057124d59fc3cd4173d52e37e059657ae3059508bfbaca99a54"
+    }
+  }
+}

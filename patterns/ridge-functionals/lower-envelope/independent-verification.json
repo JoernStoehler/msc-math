@@ -1,0 +1,27 @@
+{
+  "cylinder_capacity_upper_bound": "7",
+  "canonical_q1_range": [
+    "-1",
+    "1"
+  ],
+  "canonical_p1_range": [
+    "-2",
+    "3/2"
+  ],
+  "status": "PASS",
+  "hk_Q": "1/14",
+  "capacity_upper_bound": "7",
+  "maximum_ridge_area": "10",
+  "area_P": "25/2",
+  "area_Q": "9",
+  "c_upper_times_Amax_over_volume": "28/45",
+  "decimal": 0.6222222222222222,
+  "threshold": "4/5",
+  "strict_counterexample": true,
+  "sys_times_Rmax_squared_upper_bound": "392/2025",
+  "assumptions": [
+    "HK2017 capacity formula, nonnegative normalized closed weights give capacity upper bound",
+    "Mixed symplectic face areas of a Lagrangian product equal absolute primal edge dot products"
+  ],
+  "certificate_sha256": "8eb9d5d092297f8ecc7aac4a4f342e4f567d508ad6e809d1e3893581bf8efb31"
+}

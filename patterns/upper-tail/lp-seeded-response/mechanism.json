@@ -1,0 +1,414 @@
+{
+  "rows": [
+    {
+      "name": "lpseed_near_hko_s0_e100",
+      "above_one": true,
+      "ratio": "1395912858053823845113705414447050473597181720579849373667450591824711227144093205377409692191281666947775975724689520177889940782023337500000/1360932495807373985630519638644507110072650368846144495904919059366423049289890894411686037301156011389688878367803212122941735320499139040207",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 4,
+      "nonglobal_seed_count": 16,
+      "strict_nonglobal_seed_count": 16,
+      "strict_nonglobal_support_seed_count": 14,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s0_e20",
+      "above_one": false,
+      "ratio": "10444003503560661015962177814938702146379527543451715736780569343515467800344173783676178855359420449582220178043323260000000000/10991815864583335291410669926999537214157840172199605037290671739826983292766604189547588935378430468337984187601226333240933823",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 9,
+      "nonglobal_seed_count": 11,
+      "strict_nonglobal_seed_count": 11,
+      "strict_nonglobal_support_seed_count": 11,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s1_e100",
+      "above_one": true,
+      "ratio": "167762324442385821087211083647167826486190485817104660604810582309366376481047734538268845542707126769960592756257120017187832564318495514931/162203622902072361366056458670295832864257576234586443761364040348899470330110583596869418993075834342945429242215004807701624883726250000000",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 4,
+      "nonglobal_seed_count": 16,
+      "strict_nonglobal_seed_count": 16,
+      "strict_nonglobal_support_seed_count": 16,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s1_e20",
+      "above_one": false,
+      "ratio": "19095305067420167999219262584621352789678402247398038945599639003000171847934338047195318630963898124867902422007877816665031383292532613/19385571510773710951665169785970226663622009387061338451953320214472352084803274665114610559060343901957990122755912351807394518750000000",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 4,
+      "nonglobal_seed_count": 16,
+      "strict_nonglobal_seed_count": 16,
+      "strict_nonglobal_support_seed_count": 16,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s2_e100",
+      "above_one": true,
+      "ratio": "83081954722656923745531075291580927949996232476516607193484249874476981304909946693396257412458549849350786423597904585433307639946738060998462/80593539352093387458592489204006248810466777295961599933338750189217910738014926521245785608466276017760695515771355239236915331019640191796875",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 4,
+      "nonglobal_seed_count": 16,
+      "strict_nonglobal_seed_count": 16,
+      "strict_nonglobal_support_seed_count": 12,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s2_e20",
+      "above_one": false,
+      "ratio": "80496165088085812262859521981142177770847443267760655058744666237816744000218907469813389899798129499025074840765047298585614480780329937/82795255074157268430696035425255402987505382500689508452042437547073880177683549158102677214255362270763889888522500612282135059580078125",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 4,
+      "nonglobal_seed_count": 16,
+      "strict_nonglobal_seed_count": 16,
+      "strict_nonglobal_support_seed_count": 12,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s3_e100",
+      "above_one": true,
+      "ratio": "54734653220273546465702877296962212443088549178982800172234471438886674233153459961425967791076172686508189079991893260886494248450625000000/52853752909608090610795462148263891363256693853485732853547661951546389434302098804215092449552172566656087261060155588439100011075281183243",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 5,
+      "nonglobal_seed_count": 15,
+      "strict_nonglobal_seed_count": 15,
+      "strict_nonglobal_support_seed_count": 10,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s3_e20",
+      "above_one": false,
+      "ratio": "8689163825175061232550194643493443111315784191894052385899716565289391916556121647982140454124319290311825527367740970354926823290625000000/8767647488449975773449664249147605032256985989091551777170780783414758166920101896854081640519941048203730659211706276291448983059712688579",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 5,
+      "nonglobal_seed_count": 15,
+      "strict_nonglobal_seed_count": 15,
+      "strict_nonglobal_support_seed_count": 10,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s4_e100",
+      "above_one": true,
+      "ratio": "10928044918743365048420979166368470557428348813579500158832258202621529242215271072172817063934013949902469609961046758599172817533/10625663256220085678164865985612460929484168297624184131777291684073392796376277180956217456837999319845349377977625645885220353517",
+      "candidate_count": 20,
+      "one_response_exact": false,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 2,
+      "nonglobal_seed_count": 18,
+      "strict_nonglobal_seed_count": 18,
+      "strict_nonglobal_support_seed_count": 15,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": {
+        "chosen_seed": {
+          "shadow_sign": -1,
+          "kind": "row",
+          "index": 2
+        },
+        "winning_A_support": [
+          0,
+          2,
+          4
+        ],
+        "winning_B_support": [
+          0,
+          1,
+          3
+        ],
+        "conditional_coverage": {
+          "1": {
+            "winning_A_seen": true,
+            "winning_B_seen": false,
+            "pure_A_vertex_indices": [
+              1,
+              2,
+              4
+            ],
+            "pure_B_vertex_indices": [
+              1,
+              2,
+              4
+            ]
+          },
+          "-1": {
+            "winning_A_seen": false,
+            "winning_B_seen": false,
+            "pure_A_vertex_indices": [
+              1,
+              3,
+              4
+            ],
+            "pure_B_vertex_indices": [
+              1,
+              3,
+              4
+            ]
+          }
+        },
+        "mixture": {
+          "good_B_support": [
+            0,
+            1,
+            3
+          ],
+          "bad_B_support": [
+            1,
+            3,
+            4
+          ],
+          "good_weight": "53018191428090583512796800898142095338533551236/87202978080309803920123487658719964183292243361",
+          "bad_weight": "34184786652219220407326686760577868844758692125/87202978080309803920123487658719964183292243361",
+          "Q_bad": "966128114475923625865157/9656818814992780316000000",
+          "initial_Q": "1574670997775023320540013646077970720770016712112423968276754297/15669192600901778099974096761194267099312913929355737880427360000",
+          "completed_Q": "10239399318193787452755768671/101597574559325091552021680000",
+          "loss_identity": "1024820646553134329071148528989818273441618046043690036810858078033113809/3543844426923786778031382789302363061118983053463096875794513184843226592000"
+        },
+        "old_relative_capacity_error": "12778312301161275923580405598376786451890499327228055321831148105151045/4440618766501791334965828737203502674830434336232076590574759801229270617"
+      }
+    },
+    {
+      "name": "lpseed_near_hko_s4_e20",
+      "above_one": false,
+      "ratio": "46083935368300774662674983759615534709489899492091548913475932928831671439387315749394448826780135730876553402791949922388279952267/47818291841070443463355481372293767916303536729857552781052368746715089479561477724775383130512052479213536679973771633005493312123",
+      "candidate_count": 20,
+      "one_response_exact": false,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 2,
+      "nonglobal_seed_count": 18,
+      "strict_nonglobal_seed_count": 18,
+      "strict_nonglobal_support_seed_count": 15,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": {
+        "chosen_seed": {
+          "shadow_sign": -1,
+          "kind": "row",
+          "index": 2
+        },
+        "winning_A_support": [
+          0,
+          2,
+          4
+        ],
+        "winning_B_support": [
+          0,
+          1,
+          3
+        ],
+        "conditional_coverage": {
+          "1": {
+            "winning_A_seen": true,
+            "winning_B_seen": false,
+            "pure_A_vertex_indices": [
+              1,
+              2,
+              4
+            ],
+            "pure_B_vertex_indices": [
+              1,
+              2,
+              4
+            ]
+          },
+          "-1": {
+            "winning_A_seen": false,
+            "winning_B_seen": false,
+            "pure_A_vertex_indices": [
+              1,
+              3,
+              4
+            ],
+            "pure_B_vertex_indices": [
+              1,
+              3,
+              4
+            ]
+          }
+        },
+        "mixture": {
+          "good_B_support": [
+            0,
+            1,
+            3
+          ],
+          "bad_B_support": [
+            1,
+            3,
+            4
+          ],
+          "good_weight": "319135062607748122229319168656600858051319076/560935226855940178570660827227974466874097201",
+          "bad_weight": "241800164248192056341341658571373608822778125/560935226855940178570660827227974466874097201",
+          "Q_bad": "19483299631127652513929451/194566987459281161188000000",
+          "initial_Q": "419097298801198630796315746469405006612189732753196007219617/4104036343651374880180675908563641570193180643611474898630400",
+          "completed_Q": "447918674770354673869716951/4322716185641934149744867200",
+          "loss_identity": "399074609150910919217692724234420304176596541335291830301324891377/265800360013910962040328624822040895740976736523917299498955164005120"
+        },
+        "old_relative_capacity_error": "1109757086413407974565889918252857559777778371690656827289692522965/75480202811565859684430330967496892845980180113914491986049917759417"
+      }
+    },
+    {
+      "name": "lpseed_near_hko_s5_e100",
+      "above_one": true,
+      "ratio": "1301616232603626551735564890451638652191493366169502381294568545154677941477920389965957457984983585963125858909490000000/1266327244511399392732731065359185642199802525466911280333687092175899514210793063939994422439870867834354436368196016511",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 6,
+      "nonglobal_seed_count": 14,
+      "strict_nonglobal_seed_count": 14,
+      "strict_nonglobal_support_seed_count": 14,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    },
+    {
+      "name": "lpseed_near_hko_s5_e20",
+      "above_one": false,
+      "ratio": "16387521066234908511596714711747689555250203680418212883361092282190088554628393002559473669722667996624134509250000000/17100259438641453892071579294134923709625248219688694503501581579760310448803090092597717473617933124856261292334719647",
+      "candidate_count": 20,
+      "one_response_exact": true,
+      "completion_exact": true,
+      "converged_exact": true,
+      "winning_seed_count": 6,
+      "nonglobal_seed_count": 14,
+      "strict_nonglobal_seed_count": 14,
+      "strict_nonglobal_support_seed_count": 14,
+      "extra_strict_updates_needed_for_selected_global_value": false,
+      "repair": null
+    }
+  ],
+  "first_strict_nonglobal_terminal": {
+    "name": "lpseed_near_hko_s0_e100",
+    "sys": "1395912858053823845113705414447050473597181720579849373667450591824711227144093205377409692191281666947775975724689520177889940782023337500000/1360932495807373985630519638644507110072650368846144495904919059366423049289890894411686037301156011389688878367803212122941735320499139040207",
+    "seed": {
+      "shadow_sign": 1,
+      "kind": "row",
+      "index": 4
+    },
+    "A_support": [
+      1,
+      2,
+      4
+    ],
+    "B_support": [
+      0,
+      2,
+      3
+    ],
+    "alpha": [
+      "0",
+      "307547014961/1116839795000",
+      "247922083/893471836",
+      "0",
+      "499390176289/1116839795000"
+    ],
+    "gamma": [
+      "124630164707/277046257207",
+      "0",
+      "153853759375/554092514414",
+      "150978425625/554092514414",
+      "0"
+    ],
+    "Q": "24751765278273751790691272836009/247533028083666522052000000000000",
+    "Q_true": "12752842534368736095884078607357/126484868947827511455500000000000",
+    "global_Q_gap": "52051883513260889054637694127549764371878939070929/62618365234842934018704685557367746733372000000000000",
+    "strict_A_response_margin": "2752441048172208001848851614826139343/13756864565266083150330064987000000000000",
+    "strict_B_response_margin": "36750558630195220288770270071761254773/43750157074533521570011705423195520000000",
+    "shadow_pair_values": [
+      "24751765278273751790691272836009/247533028083666522052000000000000",
+      "24751765278273751790691272836009/247533028083666522052000000000000"
+    ],
+    "full_word_maximum_for_this_vertex_pair": "24751765278273751790691272836009/247533028083666522052000000000000",
+    "same_fixed_word_best_Q": "100278157491270831180990668725143/994612709865517349156000000000000",
+    "same_fixed_word_improvement": "120696467468009302528855495339708916419042389689/145852781897815621117464875364661763974000000000000",
+    "same_fixed_word_competitor": {
+      "shadow_sign": 1,
+      "A_vertex": 4,
+      "B_vertex": 2,
+      "alpha": [
+        0,
+        "498973110039/1111517495000",
+        0,
+        "247922083/889213996",
+        "27512889201/101047045000"
+      ],
+      "gamma": [
+        "316987746211/1118530201211",
+        0,
+        "499585603750/1118530201211",
+        0,
+        "301956851250/1118530201211"
+      ],
+      "word": [
+        0,
+        8,
+        1,
+        9,
+        2,
+        5,
+        3,
+        6,
+        4,
+        7
+      ],
+      "Q": "100278157491270831180990668725143/994612709865517349156000000000000"
+    },
+    "winning_seed": {
+      "shadow_sign": -1,
+      "kind": "row",
+      "index": 0
+    },
+    "winning_A_support": [
+      0,
+      2,
+      3
+    ],
+    "winning_B_support": [
+      1,
+      2,
+      4
+    ]
+  },
+  "summary": {
+    "all_fresh_exact": 12,
+    "one_response_misses": 2,
+    "completion_misses": 0,
+    "strict_nonglobal_seed_total": 185,
+    "strict_nonglobal_support_seed_total": 159,
+    "all_seed_total": 240
+  }
+}

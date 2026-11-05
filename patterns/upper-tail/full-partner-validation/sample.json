@@ -1,0 +1,251 @@
+{
+  "sample": [
+    {
+      "name": "random_5x5_s3_6",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 4
+    },
+    {
+      "name": "random_5x5_s2_239",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 5
+    },
+    {
+      "name": "random_5x5_s3_227",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 6
+    },
+    {
+      "name": "random_5x5_s2_152",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 7
+    },
+    {
+      "name": "random_5x5_s3_14",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 8
+    },
+    {
+      "name": "random_5x5_s0_68",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 9
+    },
+    {
+      "name": "random_5x5_s0_177",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 10
+    },
+    {
+      "name": "random_5x5_s3_234",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 11
+    },
+    {
+      "name": "random_5x5_s3_54",
+      "bucket": "5x5",
+      "role": "principal_top2",
+      "family_rank": 12
+    },
+    {
+      "name": "random_5x5_s0_113",
+      "bucket": "5x5",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 359
+    },
+    {
+      "name": "random_5x5_s2_0",
+      "bucket": "5x5",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 1024
+    },
+    {
+      "name": "random_5x5_s3_58",
+      "bucket": "5x5",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 230
+    },
+    {
+      "name": "random_5x6_s1_198",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 4
+    },
+    {
+      "name": "random_5x6_s1_68",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 5
+    },
+    {
+      "name": "random_5x6_s2_163",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 6
+    },
+    {
+      "name": "random_5x6_s2_17",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 7
+    },
+    {
+      "name": "random_5x6_s2_62",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 8
+    },
+    {
+      "name": "random_5x6_s3_233",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 10
+    },
+    {
+      "name": "random_5x6_s2_227",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 11
+    },
+    {
+      "name": "random_5x6_s3_255",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 12
+    },
+    {
+      "name": "random_5x6_s3_166",
+      "bucket": "5x6",
+      "role": "principal_top2",
+      "family_rank": 13
+    },
+    {
+      "name": "random_5x6_s3_32",
+      "bucket": "5x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 106
+    },
+    {
+      "name": "random_5x6_s1_141",
+      "bucket": "5x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 629
+    },
+    {
+      "name": "random_5x6_s0_94",
+      "bucket": "5x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 899
+    },
+    {
+      "name": "random_6x6_s2_63",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 4
+    },
+    {
+      "name": "random_6x6_s2_233",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 5
+    },
+    {
+      "name": "random_6x6_s1_218",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 6
+    },
+    {
+      "name": "random_6x6_s3_200",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 7
+    },
+    {
+      "name": "random_6x6_s3_88",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 8
+    },
+    {
+      "name": "random_6x6_s0_193",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 9
+    },
+    {
+      "name": "random_6x6_s2_158",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 10
+    },
+    {
+      "name": "random_6x6_s2_98",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 11
+    },
+    {
+      "name": "random_6x6_s2_150",
+      "bucket": "6x6",
+      "role": "principal_top2",
+      "family_rank": 13
+    },
+    {
+      "name": "random_6x6_s0_90",
+      "bucket": "6x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 598
+    },
+    {
+      "name": "random_6x6_s0_240",
+      "bucket": "6x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 765
+    },
+    {
+      "name": "random_6x6_s1_164",
+      "bucket": "6x6",
+      "role": "hash_bulk_outside_top10",
+      "family_rank": 285
+    }
+  ],
+  "excluded20": [
+    "random_5x5_s1_64",
+    "random_5x6_s2_150",
+    "random_6x6_s3_124",
+    "random_5x5_s3_114",
+    "random_5x6_s3_29",
+    "random_6x6_s2_3",
+    "random_5x5_s1_221",
+    "random_5x5_s0_8",
+    "random_5x6_s0_102",
+    "random_6x6_s0_194",
+    "random_5x6_s2_220",
+    "random_6x6_s1_194",
+    "random_5x5_s2_104",
+    "random_5x5_s0_92",
+    "random_5x6_s3_168",
+    "random_5x6_s0_25",
+    "random_5x6_s1_100",
+    "random_6x6_s1_114",
+    "random_6x6_s2_187",
+    "random_6x6_s0_219"
+  ],
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "sources": {
+    "patterns/product-shape/features.csv.gz": "dcffead16ab5ad0fcdf6ae55d78375bea5b6ee7274877a33846cf4c3c2a7d57f",
+    "patterns/upper-tail/full-partner-containment/analyze.py": "00f7c7e1af34acea3c4d3540766a7b76bd3a5f2155b3c1511efa6375c4a5a3bf",
+    "patterns/upper-tail/signed-prefix-response/analyze.py": "0faab684d4b582a628009e938798ed7496d0bb2eb1ae9e282ad24b5a40a93f29",
+    "patterns/upper-tail/geometric-selector/analyze.py": "f2ecd45ed3aab493e74981eaf821e418af306e3ea3369ec712148de443225be1",
+    "patterns/upper-tail/triangle_envelope.py": "03e0a9459cf40696b57d0f2119779d06274c9232eef02c04b28ce5a0e2323704",
+    "patterns/upper-tail/tail-rows.jsonl.gz": "6be644d8be43e64abef577b8e282b778b178601e42293f57b8ab186144eebe01"
+  }
+}

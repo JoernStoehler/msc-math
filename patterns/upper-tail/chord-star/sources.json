@@ -1,0 +1,20 @@
+{
+  "README.md": "d74a16ecbc38019f15ff65dd09715e36246dd86f3698b2e7d62bcc946127fd21",
+  "docs/research-guide.md": "46d4ef6d24f7f4804a4422709805de656aadc74b9c325f62f0c9802824033f75",
+  "topics/products/README.md": "2de0319d298461662c103f28a0134f81d61e2eb6ba7a20b08c91c2189187e6cc",
+  "topics/empirical-studies/README.md": "05088931bee54676828adddc3eabdbb5d579a08f36c2fbd333c050257bfd98b8",
+  "meta-topics/agent-workflow/collaboration-rationale.md": "4cb8adf50665f4fe9dc173d411ab979bbfe65b09163bd88c8ab0ad3492ebd304",
+  "patterns/UPPER-TAIL.md": "5420889756d4e38e3bb71af5ea2c6525958f3d3a70a4b550b1aefb3e26c5ff60",
+  "patterns/upper-tail/signed-prefix-response/analyze.py": "0faab684d4b582a628009e938798ed7496d0bb2eb1ae9e282ad24b5a40a93f29",
+  "patterns/upper-tail/geometric-selector/analyze.py": "f2ecd45ed3aab493e74981eaf821e418af306e3ea3369ec712148de443225be1",
+  "patterns/upper-tail/mixed-area-order/REPORT.md": "22e06d92e9d0aaefc6dc1a51284641bfbb32a5cfb83eb3d53619f0460100d39d",
+  "patterns/upper-tail/near-hko-transfer/sample.json": "83f89a57fd12bf6a072c8d551edfdbba83e26f30e101521d6708c075f3b2d3a0",
+  "patterns/upper-tail/near-hko-transfer/results.json": "17db888aa1cfb7a6d90e53b896e16c5dda5d090fd694d7b3240e674e060d46e1",
+  "patterns/upper-tail/conditional-coupling/results.json": "3270bf2b47c4cb164a5b92ffdbd3025df437f16006c054783fc31dfe4216e53e",
+  "patterns/upper-tail/conditional-coupling/quadratic.py": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7",
+  "patterns/upper-tail/conditional-rounding/results.json": "a98a8b0744f6b8443585cd1f1f6a57409754b41b5531c227f9574642c04329ae",
+  "patterns/upper-tail/contact-stability/global-counterexample-input.json": "bafbaa49d274c059f4addab36dab712e41e55c3c81170d74360d309fe5736288",
+  "patterns/upper-tail/contact-stability/global-counterexample.json": "6bdbb0702026c3902de78bd45a6ef9bf07e8fc5e8498b55a1fe7c41c6ebf5558",
+  "patterns/upper-tail/reflected-contact/MINKOWSKI-REPORT.md": "95303cdfef1764edba40a41c00a76291cf1966f4e348e857be3f60d28a5c9882",
+  "patterns/upper-tail/reflected-contact/POSITIVE-CLOSURE.md": "6571fc4b16c4ff1a49d9b111b2449f9076f2abd7f75a2cf9288943583e8100ce"
+}

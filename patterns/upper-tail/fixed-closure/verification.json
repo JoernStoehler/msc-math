@@ -1,0 +1,14 @@
+{
+  "restricted_orders": 720,
+  "max_Q_over_rho_t": "1",
+  "min_Q_over_rho_t": "-1",
+  "positive_maximizers": 6,
+  "exact_quadratic_field_identity": true,
+  "scope": "Quarter-turn restricted-triple objective and constant identity only; averaging proof requires separate mathematical review.",
+  "mathematical_review": {
+    "reviewer": "/root/closure_math_review",
+    "verdict": "APPROVE closure-report-v3",
+    "scope": "Normalization, bilinear averaging, complete quarter-turn bound and error conversion; no human acceptance or novelty claim."
+  },
+  "report_sha256": "e5ead7853e58cf7411e721f5d2169b727be7ba215d3daaf66b02c140174254e4"
+}

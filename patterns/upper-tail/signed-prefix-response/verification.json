@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "scope": "Retained bytes match approved report/index and executed plan/producer; all receipt result hashes agree; relative report/review links resolve; retained CLIs load",
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "results_sha256": "9743d5088f04f8444ffb32b617ed145bdbe1726f93e52a34442888e8aa217e2f",
+  "scientific_and_exact_text_review": "APPROVE REPORT-v2 and INDEX-v2 by /root/intake_triage",
+  "direct_4d_evaluations": 161,
+  "exact_mixed_area_stage_identities": 120,
+  "independent_LP_response_checks": 40,
+  "relative_links_checked": 14,
+  "original_body_capacity_producer_or_support_pair_search": false
+}

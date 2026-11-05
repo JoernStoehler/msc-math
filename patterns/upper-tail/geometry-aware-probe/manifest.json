@@ -1,0 +1,65 @@
+{
+  "files": {
+    "PLAN.md": {
+      "bytes": 6172,
+      "sha256": "64386a0e307e4216d96735531d5403c0091b92c5b8819bb9487ac12a3da1f279"
+    },
+    "REPORT.md": {
+      "bytes": 13107,
+      "sha256": "32872337c2cc3f546acceff72e4709da97d97296a422bfc3280f11a2daa93e5a"
+    },
+    "analyze.py": {
+      "bytes": 10475,
+      "sha256": "848413a4597caf05287e0de57b2b5ca4dca1e1ef658e084099faa861d65c0830"
+    },
+    "core-geometry.pdf": {
+      "bytes": 20384,
+      "sha256": "484911610cf1c80438920c1b5d023110e4f353e67e1a41cddecc64cabab07f96"
+    },
+    "core-geometry.png": {
+      "bytes": 235820,
+      "sha256": "d2ff4544063fd2588b912e02d7376db2cac586cd3bbede1a67b99aef30ab0366"
+    },
+    "core-prediction.pdf": {
+      "bytes": 72420,
+      "sha256": "b97e4996cc86bf2ebcac18a114af70bc9ff3763c0bac2c0aeb4a939578d20baf"
+    },
+    "core-prediction.png": {
+      "bytes": 304261,
+      "sha256": "99e7d9445a17f56dd086bb2e5bfb2198dd40d63606d55375d8c368407d0c4531"
+    },
+    "figure.py": {
+      "bytes": 2520,
+      "sha256": "89bc0070745b9c08ef926a50e29f3816865c685e86032edc9a96a3260a25fc75"
+    },
+    "integration-checks.json": {
+      "bytes": 2107,
+      "sha256": "9e7514f10313a2d5082d03338ace9a5b33f7b77da6e90107ed9cc78aeb2430da"
+    },
+    "review.md": {
+      "bytes": 3849,
+      "sha256": "666b37bca0f33d1a67904d7f7ac13dfa1b9fe86bd24487e2184c89bd40c5f722"
+    },
+    "rows.jsonl.gz": {
+      "bytes": 3713131,
+      "sha256": "d1739a730504eb0da18516a6d6ce03fd16352b8d1e587be865326250d195f2a4"
+    },
+    "scout.md": {
+      "bytes": 4873,
+      "sha256": "d8e91118395e3006b9fc53552233a8d34357277ff89401fc17d3dff362c11eae"
+    },
+    "summary.json": {
+      "bytes": 208804,
+      "sha256": "f1a37d1b768a11afd9e4239a92042f013850ce551e3be63fe897dc296ff63902"
+    },
+    "verification.json": {
+      "bytes": 709,
+      "sha256": "cf8a3839e3f46ab1e27a449812dfada3bf6358ac51bca823cc21607af78e9f9e"
+    },
+    "verify.py": {
+      "bytes": 6237,
+      "sha256": "cabc6ca2364ec2be84e7f1c2d9b20d8022b7520b655eefd446f694e6ad0ce7a7"
+    }
+  },
+  "contract": "Selected frozen geometry-aware-probe packet; manifest excludes itself"
+}

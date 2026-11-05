@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "report_candidate": "candidate-v1",
+  "report_sha256": "0fbe2ff70d9147703ae66b06a5e6bcc9fa635087479583984b327d959f72ef75",
+  "native_reviewer": "/root/spectral_review",
+  "native_verdict": "APPROVE candidate-v1",
+  "report_local_links_checked": 14,
+  "raw_predictions_sha256": "81e6836510348e1870c850a0aa00e04d61d27248e7595e4de8e3c9d813834d3e",
+  "raw_predictions_scratch": "/tmp/msc-math/upper-tail-next/20261017/duality/broad-predictions.json",
+  "prediction_producer_elapsed_seconds": 754.125698060001,
+  "broad_independent_audit_elapsed_seconds": 4.349614663995453,
+  "exact_limit_receipt": "limit.json",
+  "finite_independent_receipt": "verification.json",
+  "broad_independent_receipt": "broad-verification.json",
+  "material_exact_cut_receipt": "cut.json",
+  "resource_limits": "Local bounded lane; no cloud/network/reset, unknown account quota and billed expenditure; no commit/push/merge by worker."
+}

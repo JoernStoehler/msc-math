@@ -1,0 +1,37 @@
+{
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "width_sha256": "dcffead16ab5ad0fcdf6ae55d78375bea5b6ee7274877a33846cf4c3c2a7d57f",
+  "plan_sha256": "64386a0e307e4216d96735531d5403c0091b92c5b8819bb9487ac12a3da1f279",
+  "feature_script_sha256": "848413a4597caf05287e0de57b2b5ca4dca1e1ef658e084099faa861d65c0830",
+  "verifier_script_sha256": "cabc6ca2364ec2be84e7f1c2d9b20d8022b7520b655eefd446f694e6ad0ce7a7",
+  "numerical_verification": {
+    "status": "PASS",
+    "rows": 10240,
+    "factors": 20480,
+    "checked": "original halfplane containment, scalar25-pair capacity formula, shoelace areas, historical source labels and pinned width baseline, bracket arithmetic, frozen partition, all10 top21 memberships, all/calibration/diagnostic/per-family/tail scores, separate regular/HKO scalar control",
+    "max_halfplane_violation": 5.81756864903582e-13,
+    "max_relative_scalar_capacity_error": 3.3240077357277187e-13,
+    "max_coverage_error": 1.6089352072867769e-12,
+    "max_relative_volume_error": 7.838174553853605e-13,
+    "limits": "No new capacity solving or historical label certification; binary64 verification, not exact containment certification."
+  },
+  "figure_visual_inspection": [
+    "core-prediction.png: passed root view_image",
+    "core-geometry.png: passed root view_image"
+  ],
+  "scope": "One frozen retrospective candidate; no support/phase additions or fitting after evaluation; no original-body capacity run",
+  "review": "APPROVE REPORT-v2 by /root/core_review, exactcomplete text includingmarker",
+  "outputs_started": "/tmp/msc-math/upper-tail-next/20261017T1157/worker",
+  "report_sha256": "32872337c2cc3f546acceff72e4709da97d97296a422bfc3280f11a2daa93e5a",
+  "retained_at_utc": "2026-10-17T12:10:40.944974+00:00",
+  "retained_path_verifier": "PASS:10240rows/20480factors; standalone command from retained path, identical verification JSON",
+  "browser_checks": {
+    "report_http_status": 200,
+    "mathml_elements": 23,
+    "figures_http_status": [
+      200,
+      200
+    ],
+    "root_visual_inspection": "PASS both PNGs"
+  }
+}

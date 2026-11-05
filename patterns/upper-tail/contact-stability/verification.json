@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "input_sha256": {
+    "PLAN.md": "86c44233443372882fd107f5ff8985ef92c770350d041936457979969338159e",
+    "sample.json": "f70e7f9bb6444e2b132dbaedf73c8f4a1f8324e72c37f79dbb7c2908e27bc2c8",
+    "predictions.json": "31a2ae1377e6e87cf86c2ab63a06237b755568999bc526e58139f8582bddfcb3",
+    "truth.json": "65f21fcda3dd21bc697dac58ed976cbcec2a7bdc038b326eca21f138e28d2aac",
+    "metrics.json": "9dd472b5d99705ce9d5634b997783aac85131dd5f7e416153987e7439bbb9b89",
+    "verify.py": "9676ea4b01e3a4a92be94ddbe40da152b23aa60df8a50f851c846a3bbe8434dc"
+  },
+  "exact_base_geometry": {
+    "A": {
+      "min_pair_determinant": {
+        "rational": "-1/2",
+        "sqrt5": "1/2"
+      },
+      "min_triple_affine_determinant": {
+        "rational": "5/2",
+        "sqrt5": "-1/2"
+      }
+    },
+    "B": {
+      "min_pair_determinant": {
+        "rational": "-1/2",
+        "sqrt5": "1/2"
+      },
+      "min_triple_affine_determinant": {
+        "rational": "5/2",
+        "sqrt5": "-1/2"
+      }
+    }
+  },
+  "gradient_count": 20,
+  "gradient_rank": 11,
+  "uniform_positive_relation": true,
+  "symmetry_tangent_rank": 9,
+  "all_gradients_annihilate_symmetries": true,
+  "independent_coordinate_derivative_checks": 400,
+  "exact_geometry_inputs": 60,
+  "independent_direct_HK_objectives": 3000,
+  "all_genuine_bounded_five_by_five": true
+}

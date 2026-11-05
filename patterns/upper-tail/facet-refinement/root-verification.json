@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "delta": "0",
+      "facets": [
+        5,
+        5
+      ],
+      "star_points": [
+        1,
+        1
+      ],
+      "closure_vertices": [
+        25,
+        25
+      ],
+      "qstar": {
+        "rational": "0",
+        "sqrt5": "1/25"
+      },
+      "capacity_ceiling": {
+        "rational": "0",
+        "sqrt5": "5/2"
+      },
+      "star_ratio": {
+        "rational": "3/4",
+        "sqrt5": "1/4"
+      },
+      "star_ratio_float": 1.3090169943749475,
+      "width_ratio": {
+        "rational": "3/5",
+        "sqrt5": "1/5"
+      },
+      "width_ratio_float": 1.047213595499958,
+      "volume": {
+        "rational": "375/8",
+        "sqrt5": "-125/8"
+      },
+      "true_capacity_lower": {
+        "rational": "5",
+        "sqrt5": "0"
+      },
+      "true_ratio_lower": {
+        "rational": "3/5",
+        "sqrt5": "1/5"
+      },
+      "true_ratio_lower_float": 1.047213595499958,
+      "response_values": 100,
+      "direct_HK_checks": 4
+    },
+    {
+      "delta": "1/1000",
+      "facets": [
+        10,
+        10
+      ],
+      "star_points": [
+        21,
+        21
+      ],
+      "closure_vertices": [
+        25,
+        25
+      ],
+      "qstar": {
+        "rational": "74834166511512999900/603437350618186005996001",
+        "sqrt5": "602543671288888301504999/15085933765454650149900025"
+      },
+      "capacity_ceiling": {
+        "rational": "-4677135406969562493750/601650155429226390744001",
+        "sqrt5": "3012718356444441507524995/1203300310858452781488002"
+      },
+      "star_ratio": {
+        "rational": "271732494841285767194589862644451562656250000000/361982909528012274226672828451431827326317488001",
+        "sqrt5": "90427291650923861213955310411679531250000000000/361982909528012274226672828451431827326317488001"
+      },
+      "star_ratio_float": 1.3092719394181096,
+      "width_ratio": {
+        "rational": "1460938290610315017480007/2441386718804687437500025",
+        "sqrt5": "487499219378434994507997/2441386718804687437500025"
+      },
+      "width_ratio_float": 1.0449060218397386,
+      "volume": {
+        "rational": "468748750001/10000000000",
+        "sqrt5": "-624999/40000"
+      },
+      "true_capacity_lower": {
+        "rational": "998001/200000",
+        "sqrt5": "0"
+      },
+      "true_ratio_lower": {
+        "rational": "466876565618969754746001/781243750017499980000008",
+        "sqrt5": "19453210984207156218750/97655468752187497500001"
+      },
+      "true_ratio_lower_float": 1.0430370581926305,
+      "response_values": 2100,
+      "direct_HK_checks": 84
+    }
+  ],
+  "scope": "Independent exact limiting/one finite analytic-family reconstruction; no capacity oracle, new cohort or global combined-bound claim.",
+  "elapsed_seconds": 2.5002727119936026,
+  "checker_sha256": "eb7d1dee56ff01bce5f9d5d3d3279375b9c7222bef89052add7a8b00b4a0a1fe"
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "rational_chord_corners": 80,
+  "direct_4d_HK_values": 82,
+  "reference_coordinate_error_and_box_checks": true,
+  "known_reference_capacity_imported": 5,
+  "capacity_lower": 4.99990000149998,
+  "capacity_upper": 5.00010000150002,
+  "selector_capacity": 5.0166575887029525,
+  "true_ratio_lower": 1.0471717080033756,
+  "relative_capacity_miss_lower": 0.0027994401119776045,
+  "obstruction_sha256": "6cfdb5c897dde62ebbd88e15fb714eccb4e4069fda78804b64c105b5568c9d19",
+  "checker_sha256": "ec466855527744a86120f81ec59e6596e063c8a64d05d6068678997b3689a037",
+  "limits": "Certifies exact finite rounded-ray output and reference containment bracket; does not certify numerical eigenspace selection or an analytic discontinuity theorem."
+}

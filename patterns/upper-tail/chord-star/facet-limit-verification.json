@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "factor": "A",
+      "status": "PASS",
+      "all_six_projector_new_coordinates_nonzero": true,
+      "all_six_noncentral_limit_endpoints_strictly_positive_new_coordinate": true,
+      "old_closure_face_vertices": 5
+    },
+    {
+      "factor": "B",
+      "status": "PASS",
+      "all_six_projector_new_coordinates_nonzero": true,
+      "all_six_noncentral_limit_endpoints_strictly_positive_new_coordinate": true,
+      "old_closure_face_vertices": 5
+    }
+  ],
+  "capacity_inactive_cut": {
+    "status": "PASS",
+    "added_weights_both_zero": true,
+    "outer_witness_Q": "2114139596445867636391123612997/21014505964470240171000000000000",
+    "imported_exact_capacity": "10507252982235120085500000000000/2114139596445867636391123612997",
+    "deduction": "outer feasible witness gives c_outer<=c_cut; inclusion gives reverse, hence equality"
+  },
+  "scope": "Exact source-linked hypotheses for eta(delta)->0 and capacity-inactive finite cut; finite prediction checked by unchanged verify.py",
+  "source_sha256": "6af16934eedb49f7840448ca11a13216fc2659e1d550fff37bdf274124b1274a",
+  "sample_sha256": "70c52bc59ed0fc86cf6843791aa129422e825b697f3b2216c6ae7f0ef68bd7ea",
+  "imported_truth_sha256": "76a7fb9ca57dddebb795763314485e5ebfaa3f273f7bbbf41602a895618a36d6",
+  "script_sha256": "875322f286d72509899fa7e97f9ae6ae1eeae4bfa5ef60ecf9daa3499a8579f9"
+}

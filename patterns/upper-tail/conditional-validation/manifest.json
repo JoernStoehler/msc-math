@@ -1,0 +1,20 @@
+{
+  "sha256": {
+    "PLAN.md": "86f578bea89c4db521e87764642a88993e2a790cf060e86e4fd3bf34f9d28838",
+    "REPORT.md": "c6949deb7acfc962dd7eff4e4aa9016122f24de7b8d9d960e301c0bd70e3fbdb",
+    "analyze.py": "a70817e6aa7c5394f745e28266c1a137415d7621ff3fe4557b95a9f9bcdc84b4",
+    "owner-verification.json": "1eeb31d07165c29cc882920891857f9cf4343e4175f7647c84bf701e146ac04f",
+    "results.json": "382cd4ac9d165172c717c2a1b74015505e2a73bddd15ebe00fd4c1cf6b794e1a",
+    "review.md": "84f99105a5b4dd1f5b0a879919c3cfc3f55579e90efa56114e77f76fbd732f55",
+    "sample.json": "bc456cc2c24f8c4140d2fb4aac8de687edbd7a34a93ed98f87ee2ec8bbbee176",
+    "verification.json": "672d2f012e802bc195d29fed4668cc78f1613be707ea9dffa8e4e2dda4c0fb96",
+    "verify.py": "f99e23e23f2030cdfa2957332b0e2123d041ee3da089ca348950d813a5f7bd76"
+  },
+  "initial_scratch": "/tmp/msc-math/upper-tail-next/20261017T1637Z/",
+  "scope": "Frozen35body conditionalrounding retrospectivevalidation; no manuscriptselection",
+  "independent_owner_checker_sha256": "53e2adb8eab6cd5e46c7de72947c57f8f14c0667765bcb91c50ada7c91a2b27b",
+  "prior_comparator_verification": {
+    "path": "patterns/upper-tail/full-partner-validation/geometry-verification.json",
+    "sha256": "54129b8d34dd8f3a3cbdcec98aff0040c866bbbcea69677d0dba7e68ae4eacb9"
+  }
+}

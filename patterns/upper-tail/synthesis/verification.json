@@ -1,0 +1,86 @@
+{
+  "checked_at_utc": "2026-10-17T18:33:27.270504+00:00",
+  "status": "PASS for selected exact, metric, rendering and coordination checks",
+  "branch": "codex/patterns-2026-10-17",
+  "base_commit": "254574fc",
+  "scientific_outcome": "Local contact law and product invariant survive; broad random-tail prediction and the tested global bound extensions fail.",
+  "root_parallel_checks": [
+    {
+      "name": "spectral",
+      "exit_code": 0,
+      "wall_seconds": 0.565851364
+    },
+    {
+      "name": "mixed",
+      "exit_code": 0,
+      "wall_seconds": 0.837628723
+    },
+    {
+      "name": "polar-threshold",
+      "exit_code": 0,
+      "wall_seconds": 0.056640864
+    },
+    {
+      "name": "polar-above",
+      "exit_code": 0,
+      "wall_seconds": 0.059613477
+    },
+    {
+      "name": "action",
+      "exit_code": 0,
+      "wall_seconds": 2.719146862
+    },
+    {
+      "name": "symbolic",
+      "exit_code": 0,
+      "wall_seconds": 0.139002271
+    },
+    {
+      "name": "canonical-transfer",
+      "exit_code": 0,
+      "wall_seconds": 0.117828146
+    }
+  ],
+  "root_contact_checks": {
+    "fullword": {
+      "status": "PASS",
+      "sha256": "873c59aeedff49e8ac56fa2a27af1d4ab2e69173daee957f5bfad7a4153457da"
+    },
+    "symmetry": {
+      "status": "PASS",
+      "sha256": "f6328327e8f666b2a8c3f967568125fe20c1153d9f8ae3fef940c50ad97ec32f"
+    },
+    "verification": {
+      "status": "PASS",
+      "sha256": "fa67fa42ac264b4cf2050f32c86f5f624baf93b91d3b0669965a546743d5132c"
+    },
+    "canonical-verification": {
+      "status": "PASS",
+      "sha256": "5895c4febdbaa9b8c969add289a18954454f678fbe37e9bf27f721ea19e4d215"
+    },
+    "global-verification": {
+      "status": "PASS",
+      "sha256": "b3a4ea12c70abae2ceb768a99f202131055a59fb4ee06ee12889ad9cbdfabace"
+    }
+  },
+  "coordination_tests": {
+    "passed": 8,
+    "initial_failure": "New registry source paths lacked explicit serving entries; resolved by using the existing served GALLERY/README entry points. No server code change.",
+    "scientific_dashboard_baseline": "Unreconciled preexisting baseline retained; no source/PDF/PASS refresh claimed."
+  },
+  "artifact_audit": "audit.json",
+  "scientific_reviews": "reviews.json",
+  "figure": "upper-tail-comparison.png",
+  "limits": [
+    "Imported HK and product reductions remain assumptions of the exact capacity certificates.",
+    "New panels have exact rational inputs/areas and complete sparse oracles; historical retained-corpus labels remain numerical.",
+    "Fresh grouped perturbations are not independent statistical population draws.",
+    "No explicit certified neighborhood radius or global theorem.",
+    "No unrelated Rust or thesis build."
+  ],
+  "resources": {
+    "authorized_wall_time_hours": 10,
+    "execution": "Local bounded scans, exact proof checks and offline cached plotting; no cloud/reset/full original producer/network publication.",
+    "quota_and_billed_spending": "Unknown; not queried."
+  }
+}

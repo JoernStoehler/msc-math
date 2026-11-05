@@ -1,0 +1,27 @@
+{
+  "inputs": {
+    "random-product.jsonl": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736"
+  },
+  "helpers": {
+    "patterns/upper-tail/chord-star/probe.py": "ef48c770551115ed923a986cd6fe35aca5069d5727387cf4b92d2a45f1fa44cf",
+    "patterns/upper-tail/chord-star/verify.py": "f5e839f2e015127e26285417004a8a4bf29ba86fd6a615586ad7f2ee1cbe0286",
+    "patterns/upper-tail/signed-prefix-response/analyze.py": "0faab684d4b582a628009e938798ed7496d0bb2eb1ae9e282ad24b5a40a93f29",
+    "patterns/upper-tail/spectral-chord/cut.py": "d4468a5584593e622c09f6dc1e4b272c2f9164e366fd96b24a8b684d5d4e6e46",
+    "patterns/upper-tail/conditional-coupling/quadratic.py": "93a92452a058dca183255ab21bf4c3411c91bb63553735b7eb69b60ac659a9c7",
+    "patterns/product-shape/features.csv.gz": "dcffead16ab5ad0fcdf6ae55d78375bea5b6ee7274877a33846cf4c3c2a7d57f",
+    "patterns/upper-tail/contact-stability/sample.json": "f70e7f9bb6444e2b132dbaedf73c8f4a1f8324e72c37f79dbb7c2908e27bc2c8"
+  },
+  "retained": {
+    "extend.py": "cb6d28966e329f33bed9b72007cd7e4353a38eac5bd08e74ade3d895b5a73dd8",
+    "compact-witnesses.json.gz": "83729aec189562ac638357adad12ebff09c658941c130ebf1fd0acc79196799b",
+    "hko.json": "1e9743021a4cc6b010adb6321d995ef8e109fe06c81b94f718aee60678b6b658",
+    "probe.py": "9f15533e47b7c44ecbceeac292eae91e91bdbef5203134c83a7b7f7623a1befb",
+    "REPORT.md": "6e04a5d0d7556c308a865c9afea7e4461d17a4e40ddd8014c85fe98d37922667",
+    "verify.py": "6074f879de4c54fddfea18d0166470e763be020bbe74e8a1b94fef280881ef9f",
+    "verification.json": "e35b0975b8f9dab51f8c67890d4c311716e0a44a585e95e49f75df36fe852aed",
+    "summary.json": "b317fd83b96b5b0f42195e53ad099ee07e76559dccf2fce923a84ea51b239397",
+    "PLAN-amendment.md": "fe1bf771d7b71c50d8d85c86c089fc28614b29c53c21607795790f0190beadcd",
+    "PLAN.md": "6273dae8c35d32f0711489da671ca2dce940a6316fccf6de12cbece18cdc298e",
+    "review.md": "b67194f1e571fbf9ce920ae4f95bd3e88569b8b16fbf1c298c6fd06a753c7515"
+  }
+}

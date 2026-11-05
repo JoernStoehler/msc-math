@@ -1,0 +1,11 @@
+{
+  "seed": 20261017,
+  "feasible_pair_evaluations": 3,
+  "counts": {
+    "regular-perturbations": 3
+  },
+  "initial_floating_value": 0.7858133132689084,
+  "elapsed_seconds": 0.0026721220019680914,
+  "stop_reason": "first strict floating falsifier; optimization halted for rational certificate",
+  "family": "regular-perturbations"
+}

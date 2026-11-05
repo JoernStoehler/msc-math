@@ -1,0 +1,112 @@
+{
+  "contract": "Approved selected spectral-chord packet; root owns integration/commit. Raw126.44MB output remains scratch; one exact best feasible witness perbody plus allscalar/metricrows retained. Scientific/exact-text verdict recorded in review.md.",
+  "report_candidate": "candidate-v1",
+  "raw_predictions_sha256": "81e6836510348e1870c850a0aa00e04d61d27248e7595e4de8e3c9d813834d3e",
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "files": {
+    "PLAN.md": {
+      "bytes": 3885,
+      "sha256": "0691a2d6ac846135fe569776be733eb9b996a60d686f2842e5ef9293a2f63992"
+    },
+    "REPORT.md": {
+      "bytes": 20137,
+      "sha256": "0fbe2ff70d9147703ae66b06a5e6bcc9fa635087479583984b327d959f72ef75"
+    },
+    "broad-best-witnesses.jsonl.gz": {
+      "bytes": 9311719,
+      "sha256": "e21a7a92943ff1dcee481b3581cbfbe0d5ddbeeaf54a5a5009ef9a4b9c8f712e"
+    },
+    "broad-frozen-summary.json": {
+      "bytes": 711182,
+      "sha256": "780bda0f96976965ff3f07636764facb2c87abad88f5b1cc180e59f0fd64f214"
+    },
+    "broad-scores.json": {
+      "bytes": 406487,
+      "sha256": "63b36a89df5a64475fad24501e0466713ab5ac9e1691946857be02898257fe06"
+    },
+    "broad-verification.json": {
+      "bytes": 765,
+      "sha256": "b3e75c4a3994106161c4774ec4197f14ea6d1dd41d009730a9992572e3725fd2"
+    },
+    "compact.py": {
+      "bytes": 1997,
+      "sha256": "68c3d0a7be13c24c31db2147b8a9eb91c6896650bcc620b0f5564601deaca437"
+    },
+    "compare_incumbent.py": {
+      "bytes": 2588,
+      "sha256": "469beca8ab6f3211eefff6b954a17d558e0df5576cda0aa55b4e9aaf8a4a2585"
+    },
+    "controls-predictions.json": {
+      "bytes": 750062,
+      "sha256": "5b99baa4f7e65d2f4415084a5d23467d9e2be41672083c7ab5da30295c3ea180"
+    },
+    "cut.json": {
+      "bytes": 19277,
+      "sha256": "14d92f50fde6373bb0f3abf23d8f184c35188bc8b33a91451c8baac0f8667692"
+    },
+    "cut.py": {
+      "bytes": 2722,
+      "sha256": "d4468a5584593e622c09f6dc1e4b272c2f9164e366fd96b24a8b684d5d4e6e46"
+    },
+    "diagnostic-predictions.json": {
+      "bytes": 699442,
+      "sha256": "56583c901af33f89fd649f71ddf61ba0b7a393a3a8b23ba19c60d36f052ac3d6"
+    },
+    "diagnostic-scores-with-width.json": {
+      "bytes": 6979,
+      "sha256": "4e458d70a5047ccb29b5c8f59174321cda45f8ba8464053927a54bc3b6c7f806"
+    },
+    "execution-receipt.json": {
+      "bytes": 935,
+      "sha256": "b85d2e18e7306d46fba056c812b122f9cbf1b6e465f4af8d3c0013b92a50f737"
+    },
+    "incumbent-scores.json": {
+      "bytes": 664027,
+      "sha256": "696fa59d75aa819284b8bce79c263d202e598999db6482d585e57a581ad1748f"
+    },
+    "limit.json": {
+      "bytes": 35598,
+      "sha256": "8c7fa4c38708f6e0c2efe929f85c35e77b643f453f2452ed82a80f3c5ed737b0"
+    },
+    "limit.py": {
+      "bytes": 7501,
+      "sha256": "19caf4699c77c0d682f8656189de4e2d0cef15fc1255a9e6619b57dddbc8a18e"
+    },
+    "obstruction.json": {
+      "bytes": 69011,
+      "sha256": "6cfdb5c897dde62ebbd88e15fb714eccb4e4069fda78804b64c105b5568c9d19"
+    },
+    "obstruction.py": {
+      "bytes": 1224,
+      "sha256": "9c04b12f484d0cc3d66260b33fe418941c87294d5d482f5235a68ccea6fdb2f5"
+    },
+    "probe.py": {
+      "bytes": 6672,
+      "sha256": "3acfcc4b56e8889efb37e591778e6f613b844d3e73edbb470cbb5626ca32b291"
+    },
+    "replay.py": {
+      "bytes": 6807,
+      "sha256": "5118af870aa0d89c459407932662b2e3988c6904812af8cf494abe416253a1e0"
+    },
+    "review.md": {
+      "bytes": 1399,
+      "sha256": "732c864c5b5a7fc62f5e5d4dbe16a4ce5a8af24f45428c02a4051093482b2a64"
+    },
+    "score.py": {
+      "bytes": 5509,
+      "sha256": "3416a6f61e9d3b801e3aa44ff771e8630bc9c76b0ad0719c359915b115423547"
+    },
+    "verification.json": {
+      "bytes": 833,
+      "sha256": "b7525aad1447d535212bc3db4a4f7619fec9dab1250dbec8bc5da01b77031c37"
+    },
+    "verify.py": {
+      "bytes": 5734,
+      "sha256": "0137e147c7720725ee69f7ff3e791f1aa31df6c6503d6f75481708e4b4609b4d"
+    },
+    "verify_broad.py": {
+      "bytes": 3595,
+      "sha256": "b8b88a98276182cf9c5b1ae73c168867d93e0610b99942f9419877b8ad345e45"
+    }
+  }
+}

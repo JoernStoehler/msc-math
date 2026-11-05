@@ -1,0 +1,29 @@
+{
+  "source_path": "/home/joern/.cache/msc-math/artifacts/polytope-datasets/f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96/files/random-product.jsonl",
+  "source_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+  "scratch_directory": "/tmp/msc-math/full-partner-validation/20261017T1458",
+  "retained_directory": "patterns/upper-tail/full-partner-validation",
+  "protocol": "Frozen design-excluded retrospective36body validation; no new method fitting or capacity producer",
+  "prior_exposure": [
+    "all3072principal-family exact triangle results and historical labels",
+    "all10240product core/moment/width scans"
+  ],
+  "source_registration": "polytope-datasets f7bc6be841e9d30741d5bf7ec8d4f0c0c74ec22745d3325b792e64cec333ca96",
+  "ancillary_input": {
+    "path": "patterns/upper-tail/geometry-aware-probe/rows.jsonl.gz",
+    "sha256": "d1739a730504eb0da18516a6d6ce03fd16352b8d1e587be865326250d195f2a4",
+    "role": "Stored numerical core point prediction only; not exact feasible bound or part of primary selector; hash recorded after scoring"
+  },
+  "independent_checker": {
+    "owner": "/root",
+    "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/thesis/review/2026-10-17/full-partner-validation-integration/verify.py",
+    "receipt": "geometry-verification.json",
+    "scope": "Independent source geometry/areas/closure/tie/dual/direct4D/mixedarea/comparator/width reconstruction; exact checker bytes pinned by receipt"
+  },
+  "scientific_review": {
+    "reviewer": "/root/validation/packet_review",
+    "verdict": "APPROVE REPORT-v1",
+    "report_sha256": "c816eb8bdc9f29a9a8d1aafdaac7abca5cd1b852939a01255298b3c5de24ef84"
+  },
+  "write_effects": "New scratch packet then deliberate retention under new scientific evidence directory; no prior evidence or thesis sources modified; no network or producer actions"
+}

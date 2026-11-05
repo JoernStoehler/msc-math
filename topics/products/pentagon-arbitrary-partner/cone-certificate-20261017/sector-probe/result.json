@@ -1,0 +1,19 @@
+{
+  "source_sha256": "9f02548e305ed586b83b2709719818281847ce2d2e5b66981b35973acc07e9b6",
+  "scipy_version": "1.18.1",
+  "numpy_version": "2.5.2",
+  "package_paths": [
+    "/home/joern/.cache/uv/archive-v0/RcJQTM1A-Mr1_OFP",
+    "/home/joern/.cache/uv/archive-v0/BdkG5We34Xm1t-b1"
+  ],
+  "solver": "scipy.optimize.linprog(method=highs)",
+  "time_limit_seconds": 30,
+  "status": 2,
+  "message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)",
+  "row_count": 612,
+  "active_count": 20,
+  "product_columns": 12050,
+  "coefficient_equations": 28,
+  "exact_certificate": false,
+  "elapsed_seconds": 2.2557795220018306
+}

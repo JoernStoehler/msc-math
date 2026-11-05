@@ -1,0 +1,61 @@
+{
+  "contract": "Selected owned packet bytes; excludes this manifest and disposable Python bytecode.",
+  "files": {
+    "PLAN.md": {
+      "bytes": 3069,
+      "sha256": "6d8c9c292fcab4b0a36769e2ff8d2dc3467f8612fb386f7cfb32b6f68ea4c579"
+    },
+    "REPORT.md": {
+      "bytes": 12318,
+      "sha256": "d61c566c748222b81cceaf684762164f30b0e92af9342e4266c4115505be38bc"
+    },
+    "analyze.py": {
+      "bytes": 2149,
+      "sha256": "6f8c5e43b1f61b26ae79cc0cd46a198579af49793781d17706eb8c9f45cabc12"
+    },
+    "frozen-source/PLAN.md": {
+      "bytes": 3069,
+      "sha256": "6d8c9c292fcab4b0a36769e2ff8d2dc3467f8612fb386f7cfb32b6f68ea4c579"
+    },
+    "frozen-source/predict.py": {
+      "bytes": 2067,
+      "sha256": "65e8b4d23c7b5449dbbd89bc712d375a5c75e0d1e6e47d290a356653ee33a52b"
+    },
+    "frozen-source/probe.py": {
+      "bytes": 1584,
+      "sha256": "550519c1e87f48e6aec6730883caf95896c6ee6a95afdefad8df33edfb77d62d"
+    },
+    "moment-cusp.png": {
+      "bytes": 169079,
+      "sha256": "02b9c38776bee4e2b13a8b12d3c45b49aabbae98cc23c141d327b903488020d0"
+    },
+    "plot.py": {
+      "bytes": 2132,
+      "sha256": "87c50b93fc62b01c4b023dc535af9caf5dfabbe4546231ddb143627255c27e85"
+    },
+    "predictions.json": {
+      "bytes": 551734,
+      "sha256": "df835152aa3211ada0a1966bd6f85eb7c6171564bf0aa8ee03d8b8426868cb64"
+    },
+    "probe.py": {
+      "bytes": 1617,
+      "sha256": "268c32cd910ecda5dfc0fe99115f80cd22ccb5e115cefa77ecadac4cdebe734d"
+    },
+    "score.py": {
+      "bytes": 2536,
+      "sha256": "5063db5ad53d19b52f525b96c8209a7fc5dd816b6144005f6ff1ecad93855a9e"
+    },
+    "scores.json": {
+      "bytes": 165141,
+      "sha256": "6e27c95dbeb36c3ceea810053a15c9267b5abaefe5612ff202b4acd999210b4e"
+    },
+    "verification.json": {
+      "bytes": 5055,
+      "sha256": "754d944b635ba9822d310b6eecbe4d45e31c47ed055b656383236dbb72aa6af4"
+    },
+    "verify.py": {
+      "bytes": 6352,
+      "sha256": "41c7cb424f806de1ec58e85cdc989bed2995ae2f946cc08f06ee23d03f89b2ff"
+    }
+  }
+}

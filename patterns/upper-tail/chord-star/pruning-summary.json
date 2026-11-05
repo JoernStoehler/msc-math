@@ -1,0 +1,19 @@
+{
+  "name": "facet_transfer_s0_d1000",
+  "eta_out": 0.9842344335226313,
+  "R_A": 1.0010010233414672,
+  "R_B": 1.0010055537494382,
+  "C_out": 4.970289179807174,
+  "lower_capacity": 4.88212847391414,
+  "combined_lower": 4.88212847391414,
+  "combined_upper": 4.970289179807174,
+  "combined_interval_factor": 1.0180578422636946,
+  "combined_lower_over_true": 0.9823215581740102,
+  "upper_over_true": 1.0000601659237434,
+  "deleted_indices": [
+    5,
+    5
+  ],
+  "predictions_sha256": "2d06032f0eb19403f47af2b4e8e5b96351832bd1e700e819b6e17222b4a2da23",
+  "elapsed_seconds": 0.24688126100227237
+}

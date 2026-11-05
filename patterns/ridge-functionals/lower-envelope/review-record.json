@@ -1,0 +1,27 @@
+{
+  "reviewer": "/root/batch_review",
+  "candidate_version": "docs-and-pm-v1",
+  "verdict": "APPROVE docs-and-pm-v1, covering the five frozen documents and the PM question/options/result and queue fields; the final field remains excluded. The materials distinguish the exact counterexample from finite numerical evidence, preserve the affine identity, and keep manuscript inclusion as the concrete unresolved decision.",
+  "documents": [
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/ridge-functionals/lower-envelope/REPORT.md",
+      "sha256": "ac7dba35c8f85f35b5bb3cbaf4c65c550322c8bd14d29cad8d4d7bfe7c61304d"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/ridge-functionals/REPORT.md",
+      "sha256": "e68f0b6a43d523facf88d3fad86f6a4aa7a0e385e454f3248f15edff7c47f5f7"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/patterns-2026-10-17/patterns/OWNER-FOLLOWUP.md",
+      "sha256": "2582af939db5f8516cd33f6cd539421207e2297a87375327bf11efe9b2d682f5"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/meta-topics/project-management/handoff.md",
+      "sha256": "7378cc977fe1eeb214daf5c093b27ca9d8d3050b3d384075392a3227a0b0a9de"
+    },
+    {
+      "path": "/workspaces/msc-math-worktrees/thesis-2026-10-16/docs/dashboard/thesis.html",
+      "sha256": "03d4f11d1b19bf517577ef098713fb0e5a7c97c1093db5ee8152c203a1de0abc"
+    }
+  ]
+}
