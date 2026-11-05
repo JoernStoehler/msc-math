@@ -56,3 +56,21 @@ non-main worktree count is now zero.
 available space increasing from 257G to 261G (rounded display), approximately
 5 GB reclaimed. This is a filesystem-level estimate, not an attribution of
 every freed block to a single checkout.
+
+## Absorbed into main, 5 November 2026
+
+Jörn authorized absorbing the content of five local-only branches into main as
+separate commits; whether this is a good idea is unknown, so the content is
+unreviewed on main and provenance is in each commit message. Nothing was pushed
+and all five branches (and the continuation worktree) remain in place, unchanged.
+
+| Branch (tip) | Now in main under |
+| --- | --- |
+| `research/viterbo-continuation-20261029` (`7b6463fa`) | `topics/capacity-and-qp/research-continuation-20261029/`, `topics/variation-and-local-maxima/hko-cut-family/*-20261029/` |
+| `claude/hko-research-2026-10-16` (`e217467b`) | `topics/variation-and-local-maxima/hko-research-20261016/`, `.../hko-local-maximum/multicut-research-20261016/`, `topics/products/pentagon-arbitrary-partner/research-20261016/` |
+| `claude/thesis-evidence-refs-20261022` (`8c01e887`) | `docs/history/thesis-evidence-refs-20261022/`, `crates/symplectic/tests/symmetric_partner_theorem_anchor.rs` |
+| `codex/patterns-2026-10-17` (`4442275c`) | `patterns/`, `topics/products/pentagon-arbitrary-partner/cone-certificate-20261017/` |
+| `claude/opening-pass-2026-10-23` (`134d091a`) | `docs/history/opening-pass-2026-10-23-candidate/` (unaccepted candidate; thesis chapters untouched) |
+
+Branch thesis edits, dashboard/`current.json`/graph changes and other
+non-research hunks were not taken.
