@@ -1,0 +1,57 @@
+--- a/thesis/candidate/legacy/12-published-code-data.tex
++++ b/thesis/candidate/legacy/12-published-code-data.tex
+@@ -4,13 +4,14 @@
+ \begin{center}
+   \url{https://github.com/JoernStoehler/msc-math}.
+ \end{center}
+-This is a living Git repository rather than a frozen archival release, and its
+-contents may change after submission.  The claims below therefore describe
+-material tracked in the repository at submission time; the URL is not a
+-permanent snapshot or a DOI.
++The public repository was checked on 18 September 2026 at commit
++\texttt{1bec30637070effe7ab8b0a022ae62e83f6bbcab}. The two certificate
++packets described below are present there. This review candidate and subsequent
++research additions are held in the working repository; they are not all included
++in that public commit. The repository URL follows ongoing development.
+ 
+-The strongest computation-bearing results have proof-facing packets in the
+-tracked tree.  The HKO packet in
++The HKO local-maximality proof and the original rotation computation have
++proof-facing packets in the public tree.  The HKO packet in
+ \path{experiments/hko-local-maximum/theorem/} contains the finite witness, the
+ exact SageMath verifier, its recorded verification summary, and the Rust
+ programs used to select the witness.  Rust supplies finite choices; it is not
+@@ -47,9 +48,8 @@
+ evidence for local maximality.
+ 
+ The repository is not a self-contained copy of every dataset used during the
+-project.  Its artifact registry identifies twelve external snapshots through
+-twenty-one intended release paths, but those files are not present at those
+-paths in a plain checkout at the time of writing.  For example, the
++project.  Its artifact registry identifies external snapshots and their intended
++local paths; a plain checkout does not materialize those files.  For example, the
+ \(14336\)-row random/product provenance table is tracked, while the source
+ random/product datasets and the method-facing invariant table are not tracked
+ at those paths. The original source geometries have been recovered locally
+@@ -68,6 +68,5 @@
+ No frozen release, public Zenodo record, or DOI for this thesis is claimed
+ here.  Any archival deposit created later would be a separate, immutable
+ object whose own public record, inventory, and hashes would have to establish
+-its contents.  Until such an object exists, the GitHub URL above provides
+-access only to the living repository and to the finite material actually
+-tracked there.
++its contents.  The public commit identified above fixes which material was accessible
++at the time of this check; later local additions require a separate handoff.
+--- a/thesis/candidate/recovered/hko-cas-appendix/hko-cas-appendix.tex
++++ b/thesis/candidate/recovered/hko-cas-appendix/hko-cas-appendix.tex
+@@ -54,7 +54,9 @@
+ 
+ \lstinputlisting[language=Python,firstline=69,basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible]{recovered/hko-cas-appendix/hko_core.py}
+ 
+-Running the included program with \texttt{sage -python} returns
++The listed file is \path{thesis/candidate/recovered/hko-cas-appendix/hko_core.py}.
++Run it with \texttt{sage -python}, with Python optimization disabled so that
++its assertions are executed. The recorded run returned
+ \texttt{HKO appendix core passed: rows=26 rank=25 symmetry-rank=15}.
+ These checks establish the finite hypotheses used in the main proof. The
+ geometric chart and volume formula are supplied by

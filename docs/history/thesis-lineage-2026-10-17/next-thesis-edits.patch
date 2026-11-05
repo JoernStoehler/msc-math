@@ -1,0 +1,665 @@
+diff --git a/thesis/ai-use-disclosure.tex b/thesis/ai-use-disclosure.tex
+index f41486c0..9b3958f2 100644
+--- a/thesis/ai-use-disclosure.tex
++++ b/thesis/ai-use-disclosure.tex
+@@ -22,25 +22,24 @@ origin of every part of the thesis.  Because work often passed between me and
+ agents, I cannot reliably say who first originated every idea, passage,
+ program, or decision.
+ 
++For the HKO local-maximality proof, an agent developed the feasible-section
++argument, volume proof steps and SageMath verification code from my high-level
++suggestion to control the neighborhood by several upper bounds modulo
++symmetries.
++
+ The analytic endpoint-comparison proof of the rotated-pentagon profile
+-in Section~\ref{sec:rotated-regular-polygons} was supplied during an
+-AI-assisted review by ChatGPT Pro. I subsequently checked and accepted
+-that mathematical argument. The same review supplied the restricted-family
++in Section~\ref{sec:rotated-regular-polygons} was supplied by ChatGPT Pro.
++I checked and accepted that mathematical argument. ChatGPT Pro also supplied
++the restricted-family
+ ridge--capacity identity in equation~\ref{eq:ds-pentagon-ridge-capacity}.
+-These contributions are distinct from the earlier computational exploration
+-of the rotation family.
+ 
+ The independent-linear-deformation argument in
+-Section~\ref{sec:pentagon-affine} originated in a further ChatGPT Pro
+-return on 18 September 2026. Codex agents checked the argument and its
++Section~\ref{sec:pentagon-affine} was supplied by ChatGPT Pro. Codex agents checked the argument and its
+ capacity-formula conventions and prepared the repository and thesis versions.
+-This records agent review, not a completed personal verification of the new
++This records agent review, not a completed personal verification of that
+ argument.
+ 
+-As of 13 July 2026, I had proofread the then-current thesis and personally
+-worked to verify its mathematical and factual claims and the overall message it
+-presented.  The manuscript was revised substantially afterwards.  This
+-statement therefore does not assert that I have completed a final review of the
+-current candidate.
++My final personal review of the current manuscript's mathematical and factual
++claims and overall message remains incomplete.
+ 
+ \clearpage
+diff --git a/thesis/chapters/01-introduction.tex b/thesis/chapters/01-introduction.tex
+index 03fcc543..af43b04d 100644
+--- a/thesis/chapters/01-introduction.tex
++++ b/thesis/chapters/01-introduction.tex
+@@ -78,7 +78,7 @@ backward time by every trajectory outside its boundary. These results illustrate
+ flow can determine an embedding obstruction.
+ 
+ There is also a direct connection to a central problem in convex geometry.
+-For a centrally symmetric convex body $L\subset\mathbb R^n$ and its polar
++For a convex body $L\subset\mathbb R^n$ centrally symmetric about the origin and its polar
+ $L^\circ$, Artstein--Avidan, Karasev and Ostrover prove
+ $c_{\rm EHZ}(L\times L^\circ)=4$~\cite{AKO2014}. Viterbo's proposed
+ inequality on these particular products is consequently equivalent to the
+diff --git a/thesis/chapters/02-duality.tex b/thesis/chapters/02-duality.tex
+index a37af370..86bb49f4 100644
+--- a/thesis/chapters/02-duality.tex
++++ b/thesis/chapters/02-duality.tex
+@@ -152,7 +152,7 @@ This proves equality of the minima and, by the least-action
+ characterization, their equality with capacity.
+ 
+ \paragraph{Period convention and attainment.}
+-The cited fixed-period formulation uses $w:[0,1]\to\mathbb R^4$ with
++Haim--Kislev's fixed-period formulation uses $w:[0,1]\to\mathbb R^4$ with
+ $A(w)=1/2$. If $z$ is feasible in our convention, then
+ \[
+  w(s)=\frac{z(Ts)}{\sqrt{2T}},\qquad I_K(w)=\tfrac12 I_K(z).
+diff --git a/thesis/chapters/06-variation.tex b/thesis/chapters/06-variation.tex
+index 4f00358c..6a0fd4f0 100644
+--- a/thesis/chapters/06-variation.tex
++++ b/thesis/chapters/06-variation.tex
+@@ -332,17 +332,18 @@ infinitesimal theorem.  Its reliability depends on the window containing the
+ branches that become relevant, on the branches remaining feasible, and on the
+ linearization error at the proposed step.
+ 
+-One retained finite experiment illustrates this distinction.  On a fixed
++A finite experiment illustrates this distinction for a
++heuristic numerical objective. On a fixed
+ panel of twelve random ten-facet starts, the tested multi-direction
+-method accepted a positive move at each of eight configured trace iterations,
++method accepted a measured positive move at each of eight configured trace iterations,
+ but all runs stopped at their iteration cap and every endpoint scan still
+-found a further above-threshold move.  Thus the evidence supports finite-step
+-progress and a measured computation cost on that panel, not endpoint local
+-maximality.  A separate comparison on sixty-four matched starts found larger median
++found a further above-threshold move.  Thus the evidence supports measured finite-step
++progress of that evaluator field and a computation cost on that panel, not
++certified ascent of the mathematical ratio or endpoint local maximality.  A separate comparison on sixty-four matched starts found larger median
+ terminal best-so-far values for methods using several competing branches
+ than for either single-branch gradient implementation. All 448 terminal
+ values remained below one. Section~\ref{subsec:black-box-datascience-finite-budget-optimization}
+-gives the results and the limits of this comparison on a historical numerical
++gives the results and the limits of this comparison on that numerical
+ objective; its starts are separate from the twelve-start panel above.
+ 
+ A retained three-case diagnostic also explains a failure of the affine
+diff --git a/thesis/chapters/07-hko.tex b/thesis/chapters/07-hko.tex
+index 6fde4a15..39e01097 100644
+--- a/thesis/chapters/07-hko.tex
++++ b/thesis/chapters/07-hko.tex
+@@ -108,7 +108,12 @@ Haim--Kislev formula gives the upper bound
+ Thus the selected feasible sections are upper bounds for the actual ratio;
+ they are not lower bounds and need not remain optimizing away from the base.
+ On the product family, the Lagrangian splitting reduces the complete capacity
+-calculation to the vertices of two planar closure polytopes. Enumerating all
++calculation to the vertices of two planar closure polytopes. For a fixed
++ordering, write the two block masses as $r$ and $1-r$. The within-block
++pairings vanish, leaving $r(1-r)$ times a bilinear form on these closure
++polytopes. Its maximum is attained at a pair of vertices, and a positive
++maximum uses $r=1/2$. Each closure vertex has at most three positive weights,
++so the finite support and order cases are exhaustive. Enumerating all
+ 624 cyclic orders gives $Q_{\max}=1/2$, 12 tight cases, and a strict gap
+ of $1/14$ for every other case. Exact rational-function continuation of the
+ closure supports and the tight cases proves the capacity and equality claims
+diff --git a/thesis/chapters/09-rotated-regular-polygons.tex b/thesis/chapters/09-rotated-regular-polygons.tex
+index bc05ce0b..1e8342b4 100644
+--- a/thesis/chapters/09-rotated-regular-polygons.tex
++++ b/thesis/chapters/09-rotated-regular-polygons.tex
+@@ -266,6 +266,6 @@ $(3+\sqrt5)/5$. This completes the proof of
+ Theorem~\ref{thm:rotated-pentagon-product-formula}.
+ 
+ % Proof provenance: the endpoint interpolation argument is supplied in
+-% docs/review-evidence/pro-review-2026-09-15/thesis_review/
++% docs/history/review-evidence/pro-review-2026-09-15/thesis_review/
+ % 03_mathematical_audit.md, section 2. The explicit word and numerical
+ % rotation profile predate that review in thesis/09-rotated-regular-polygons*.
+diff --git a/thesis/chapters/10-affine-pentagons.tex b/thesis/chapters/10-affine-pentagons.tex
+index 6daaff75..75787169 100644
+--- a/thesis/chapters/10-affine-pentagons.tex
++++ b/thesis/chapters/10-affine-pentagons.tex
+@@ -275,8 +275,8 @@ For $G=I$ and $H=R_\theta$, the formula reduces to the rotation profile:
+ $m(R_\theta)=\cos d_5(\theta)$, where
+ $d_5(\theta)=\min_{k\in\mathbb Z}|\theta-k\pi/5|$.
+ The shorter endpoint proof remains useful because it establishes that profile
+-without the matrix classification. The original exhaustive SageMath argument
+-is retained as computational provenance in the repository's
++without the matrix classification. An exhaustive SageMath argument
++is available in the repository's
+ \texttt{topics/products/regular-products/} directory, under
+ \texttt{pentagon-rotation-formula-proof/}; it is not an input to either
+ analytic argument presented here.
+diff --git a/thesis/chapters/10-symmetric-partner.tex b/thesis/chapters/10-symmetric-partner.tex
+new file mode 100644
+index 00000000..ccf698e8
+--- /dev/null
++++ b/thesis/chapters/10-symmetric-partner.tex
+@@ -0,0 +1,145 @@
++% Proof owner: topics/products/pentagon-arbitrary-partner/symmetric-partner-lemma.md
++\section{A regular pentagon with a centrally symmetric partner}
++\label{sec:pentagon-symmetric-partner}
++
++\begin{unverified}
++\noindent\textbf{TODO (J\"orn): review the proof and exposition in this section.}
++Personal verification of this section remains pending.
++Proof source:
++\path{symmetric-partner-lemma.md} in
++\path{topics/products/pentagon-arbitrary-partner/}.
++\end{unverified}
++
++The preceding result allows the two pentagons to deform independently.
++We now keep one regular pentagon fixed and allow its partner to be any
++centrally symmetric planar convex body, including a smooth body. The
++capacity is then determined by a single convex-body inclusion. Its sharp
++systolic ratio is strictly below one.
++
++Use the preceding normal convention, writing
++\[
++ n_i=(\cos(2\pi i/5),\sin(2\pi i/5)),\qquad
++ Q=\{p:n_i\cdot p\le h,\ 0\le i<5\},\qquad h=\cos(\pi/5).
++\]
++Thus $Q$ has circumradius one. For a convex body $A$ containing the origin
++in its interior, write
++$A^\circ=\{x:x\cdot y\le1\text{ for every }y\in A\}$.
++Define
++\[
++ B=\tfrac12(Q-Q)^\circ
++   =\operatorname{conv}\left\{\frac{\pm n_i}{2(1+h)}:0\le i<5\right\},
++ \qquad
++ W(K)=\max\{r\ge0:r(Q-Q)^\circ\subseteq K-K\}.
++\]
++The body $B$ is a regular decagon with its orientation fixed by $Q$.
++The product below is Lagrangian, and $c$ denotes its
++Ekeland--Hofer--Zehnder capacity.
++
++\begin{theorem}\label{thm:pentagon-symmetric-partner}
++For every centrally symmetric planar convex body $K$ with nonempty interior,
++\[
++ c(K\times_L Q)=W(K),\qquad
++ \frac{c(K\times_L Q)^2}{2\operatorname{area}(K)\operatorname{area}(Q)}
++ \le \kappa_{\mathrm{sym}}:=\frac{10+6\sqrt5}{25}<1.
++\]
++Equality in the ratio holds exactly when $K$ is a translate of a positive
++dilate of $B$.
++\end{theorem}
++
++The proof uses a translation-cover characterization of capacity.
++For an oriented polygonal curve with edge vectors $v_j$, its $Q$-length is
++$\sum_j s_Q(v_j)$, where $s_Q(v)=\max_{p\in Q}v\cdot p$.
++This length can depend on orientation, since $Q$ is not symmetric.
++Balitskiy--Mitrofanov--Polyanskii show that $c(K\times_L Q)\ge1$ exactly
++when every closed curve of unit $Q$-length fits into a translate of $K$
++\cite[Theorem 2.5]{BMP2026v2}.
++For polygonal $Q$, it suffices to check the \emph{normal triangles}:
++unit-length oriented triangles whose edges follow outward normal directions
++of $Q$, including degenerate triangles when opposite normals exist
++\cite[Definition 3.2 and Theorem 3.3]{BMP2026v2}. Our pentagon has no opposite
++normals, so all its normal triangles are nondegenerate. There are ten translation
++classes. Their underlying triangles have angles $\pi/5,\pi/5,3\pi/5$
++and are rotations of one another through multiples of $\pi/5$
++\cite[Section 6.1]{BMP2026v2}. For odd multiples, the traversal orientation
++reverses so that the edges again follow outward normals.
++
++\begin{proof}
++We first compute $c(B\times_L Q)$. Put $\theta=\pi/5$ and
++$R=1/[2(1+h)]$, the circumradius of $B$.
++If a normal triangle has longest side $L$, its other sides both have length
++$L/(2\cos\theta)$. Its oriented edges follow outward normals, so their
++$Q$-lengths equal $h$ times their Euclidean lengths. Consequently
++\[
++ 1=hL(1+1/\cos\theta)=L(1+h),\qquad L=2R.
++\]
++Translate the longest side's midpoint to the origin. Its endpoints are
++antipodal vertices of $B$, and the third vertex has distance $R\tan\theta$
++from the origin. This is smaller than the incircle radius $R\cos(\theta/2)$,
++because
++\[
++ \tan^2(\pi/5)=5-2\sqrt5
++       <\frac{5+\sqrt5}{8}=\cos^2(\pi/10).
++\]
++Each of the ten triangles therefore lies in $B$, giving $c(B\times_L Q)\ge1$.
++
++\begin{figure}[htbp]
++\centering
++\begin{tikzpicture}[scale=2.05,>=stealth]
++ \fill[blue!7] (0:1) \foreach \a in {36,72,...,324} {-- (\a:1)} -- cycle;
++ \draw[blue!65!black,thick] (0:1) \foreach \a in {36,72,...,324} {-- (\a:1)} -- cycle;
++ \draw[gray,dashed] (0,0) circle ({cos(18)});
++ \filldraw[fill=orange!28,draw=orange!80!black,thick]
++   (-1,0) -- (1,0) -- (0,{tan(36)}) -- cycle;
++ \draw[->] (0,0) -- (1,0) node[midway,below] {$R$};
++ \draw[<->] (-.12,0) -- (-.12,{tan(36)}) node[midway,left] {$R\tan\theta$};
++ \draw[->,gray!80!black] (0,0) -- (252:{cos(18)})
++    node[pos=.75,left] {$R\cos(\theta/2)$};
++ \fill (0,0) circle (.017);
++ \node[blue!65!black] at (1.22,.68) {$B$};
++\end{tikzpicture}
++\caption{A translated normal triangle in $B$. Its longest side joins
++antipodal vertices; its third vertex lies inside the dashed incircle.
++The same placement works after each rotation by $\pi/5$.}
++\label{fig:pentagon-symmetric-reference}
++\end{figure}
++
++For any partner $K$, the curve-cover criterion gives the opposite bound
++$c(K\times_L Q)\le W(K)$. Indeed, a segment traversed out and back with
++displacement $v$ has length
++$s_Q(v)+s_Q(-v)=s_{Q-Q}(v)$.
++It fits into a translate of $K$ exactly when $v\in K-K$.
++If capacity is at least $r>0$, rescale the first factor by $1/r$ and apply
++the criterion to all unit-length segments. Convexity of $K-K$ then gives
++$r(Q-Q)^\circ\subseteq K-K$.
++Since $B-B=(Q-Q)^\circ$, this proves $c(B\times_L Q)=W(B)=1$.
++
++Now translate a symmetric $K$ so that $K=-K$. Then $K-K=2K$, and the
++definition of $W(K)$ gives $W(K)B\subseteq K$.
++Monotonicity and homogeneity in one factor yield
++$c(K\times_L Q)\ge W(K)c(B\times_L Q)=W(K)$,
++proving the capacity formula.
++
++The same containment gives
++$\operatorname{area}(K)\ge W(K)^2\operatorname{area}(B)$.
++Proper inclusion between full-dimensional convex bodies strictly increases
++area, so equality holds exactly for translates of $W(K)B$.
++Finally,
++\[
++ \operatorname{area}(B)=5R^2\sin(\pi/5),\qquad
++ \operatorname{area}(Q)=\tfrac52\sin(2\pi/5),\qquad
++ \frac1{2\operatorname{area}(B)\operatorname{area}(Q)}
++    =\frac{10+6\sqrt5}{25}.
++\]
++This gives the sharp ratio and its equality class.
++\end{proof}
++
++The formula also identifies the bound $W$ for an asymmetric partner.
++Its central symmetrization $S=(K-K)/2$ satisfies $S-S=K-K$, hence
++\[
++ W(K)=c(S\times_L Q),\qquad c(K\times_L Q)\le c(S\times_L Q).
++\]
++Thus the quotient $c(K\times_L Q)/W(K)$ records the fraction of the
++symmetrized capacity retained by $K$.
++In particular, a counterexample with this fixed pentagon factor must use
++an asymmetric partner. The argument explains this restriction by calibrating
++one reference cover and transferring its capacity through containment.
+diff --git a/thesis/chapters/12-visualization.tex b/thesis/chapters/12-visualization.tex
+index 8bd6d3aa..675d4949 100644
+--- a/thesis/chapters/12-visualization.tex
++++ b/thesis/chapters/12-visualization.tex
+@@ -26,9 +26,9 @@ studied in Section~\ref{sec:black-box-datascience}. In panel (b), the orange
+ curve places a piecewise-linear orbit in relation to the polytope's boundary
+ structure. Its six straight segments in four dimensions become curved arcs
+ in the view. Their displayed lengths do not measure dwell times or action.
+-The producer
+-exports only recovered orbits passing numerical closure and containment checks
+-within fixed tolerances.  The orbit shown is therefore a computed example, not
++Recovered closed orbits are exported only after passing numerical closure
++and containment checks within fixed tolerances; the selected figure uses one
++such orbit. The orbit shown is therefore a computed example, not
+ a proof of a capacity statement. The exporter, projection settings and
+ figure-generation instructions are recorded in
+ \path{experiments/visualization/README.md}.
+@@ -58,10 +58,8 @@ figure-generation instructions are recorded in
+   \label{fig:visualization-projections}
+ \end{figure}
+ 
+-The interactive views were also explored as a possible source of geometric
+-patterns for our exploratory search.  In practice, passing from four dimensions to a
+-three-dimensional projection discarded too much visible Reeb-geometric
+-information, and the impressions changed with the projection pole.  We found
+-no visual pattern that gave a reliable hypothesis or candidate-selection rule.
+-For this exploration, the useful outcome is therefore limited to the explanatory role illustrated
+-above.
++For geometric search, these views have substantial limitations. Passing from
++four dimensions to a three-dimensional projection discards Reeb-geometric
++information, and visual impressions depend on the projection pole. No reliable
++hypothesis or candidate-selection rule is established by these images; their
++supported role is explanatory.
+diff --git a/thesis/chapters/13-numerics.tex b/thesis/chapters/13-numerics.tex
+index 967008ef..d39492d9 100644
+--- a/thesis/chapters/13-numerics.tex
++++ b/thesis/chapters/13-numerics.tex
+@@ -218,9 +218,8 @@ between the printed central value and exact capacity was \(2.31\cdot10^{-14}\).
+ These finite comparisons test the implementation and exercise fallback, but
+ the soundness claim rests on the preceding error bounds and complete-candidate
+ arguments. The \(249\)-system and \(88/1271\)-word counts are recorded in
+-the general packet's \path{RESULTS.md}. That retained summary and its
+-producer are available; the original per-system audit output is not
+-included in the repository.
++the general packet's \path{RESULTS.md}. The available evidence consists of
++this summary and a producer for per-system audit output.
+ 
+ An audit of the product development implementation used \(88\) ordinary and
+ adversarial products. Across
+diff --git a/thesis/chapters/14-code-data.tex b/thesis/chapters/14-code-data.tex
+index a2906033..a7cdffa8 100644
+--- a/thesis/chapters/14-code-data.tex
++++ b/thesis/chapters/14-code-data.tex
+@@ -4,17 +4,19 @@ At the time of writing, the public development repository for this thesis is
+ \begin{center}
+   \url{https://github.com/JoernStoehler/msc-math}.
+ \end{center}
+-The public repository was checked on 18 September 2026 at commit
+-\href{https://github.com/JoernStoehler/msc-math/tree/1bec30637070effe7ab8b0a022ae62e83f6bbcab}{\texttt{1bec30637070}}. The HKO certificate and original
+-pentagon-rotation packet described below are present there. This manuscript and subsequent
+-research additions are held in the working repository; they are not all included
+-in that public commit. The repository URL follows ongoing development.
++The public source reference is commit
++\href{https://github.com/JoernStoehler/msc-math/tree/1bec30637070effe7ab8b0a022ae62e83f6bbcab}{\texttt{1bec30637070}}. The HKO certificate and
++pentagon-rotation packet described below are present there. The accompanying
++working repository also contains this manuscript and the additional source
++packets described below; the public commit does not contain all of them.
++The repository URL follows ongoing development.
+ 
+ \begin{sloppypar}
+-The HKO local-maximality proof and the original rotation computation have
+-proof-facing packets in the public tree.  The HKO packet, at
+-\path{experiments/hko-local-maximum/theorem/} in that public commit and now maintained at
+-\path{topics/variation-and-local-maxima/hko-local-maximum/theorem/}, contains the finite witness, the
++The HKO local-maximality proof and the rotation computation have
++proof-facing packets in the public tree. The HKO packet is at
++\path{experiments/hko-local-maximum/theorem/} in that public commit and at
++\path{topics/variation-and-local-maxima/hko-local-maximum/theorem/} in the
++accompanying repository. It contains the finite witness, the
+ exact SageMath verifier, its recorded verification summary, and the Rust
+ programs used to select the witness.  Rust supplies finite choices; it is not
+ trusted for theorem correctness.  SageMath reconstructs the algebraic objects
+@@ -27,8 +29,8 @@ The annotated program printed in the appendix is maintained separately as
+ words, feasible sections, and exact derivative covectors; the appendix maps
+ its shorter presentation to the public verifier
+ \path{experiments/hko-local-maximum/theorem/verify.sage.py}
+-(now at \path{topics/variation-and-local-maxima/hko-local-maximum/theorem/verify.sage.py}).
+-The appendix file was not part of the public commit cited above.
++(\path{topics/variation-and-local-maxima/hko-local-maximum/theorem/verify.sage.py}
++in the accompanying repository).
+ 
+ The second ten-facet local maximum is maintained in
+ \path{topics/variation-and-local-maxima/hko-local-maximum/non-hko/}. Its rational witness and
+@@ -47,7 +49,7 @@ The rotated-pentagon packet is stored under
+   \path{pentagon-rotation-formula-proof/}.
+ \end{center}
+ It contains the exact SageMath classifier and the recorded full-run transcript
+-for all \(3340\) finite words left after the mathematical reduction.  This is the original computational proof route; the analytic rotation and
++for all \(3340\) finite words left after the mathematical reduction.  This is a computational proof route; the analytic rotation and
+ independent-linear-deformation proofs presented here do not use it. In the
+ computational route, the enumeration theorem, the
+ translation from checked signs to action comparisons, and the continuity
+@@ -57,15 +59,25 @@ and root isolation inside the software trust boundary. The maintained
+ affine-pentagon argument and its source-convention check are in
+ \path{topics/products/pentagon-affine-products/}.
+ 
++The centrally symmetric partner result in
++Section~\ref{sec:pentagon-symmetric-partner} has its maintained analytic proof in
++\begin{center}
++  \small\path{topics/products/pentagon-arbitrary-partner/}\\[-0.2em]
++  \path{symmetric-partner-lemma.md}.
++\end{center}
++The proof uses the stated normal-triangle criterion and geometric containment,
++rather than the packet's floating-point fitting experiments.
++
+ The numerical audits in Section~\ref{sec:numerics} have distinct evidence owners.
+ The tracked report and producers for the \(249\) KKT systems and the complete
+ \(88\)- and \(1271\)-word comparisons are in
+ \path{topics/capacity-and-qp/development/tools/general_algorithm_ablation/}.
+ Its \path{RESULTS.md} records the counts and outcomes; its \path{run.sh}
+-produces new verification and numerical-audit transcripts. The original
+-per-system output is not included as a tracked or registered artifact, so
+-the retained report and a new execution are different evidence objects.
++produces verification and numerical-audit transcripts. The available evidence
++consists of the summary report and the executable producer; per-system results
++can be generated with that producer.
+ 
++\begin{sloppypar}
+ The \(88\)-product audit is retained row by row in
+ \path{topics/capacity-and-qp/development/tools/product_closure_route/sample5.jsonl},
+ with its interpretation in that directory's \path{RESULTS.md}.
+@@ -73,13 +85,14 @@ The external \texttt{polytope-datasets} artifact supplies
+ \path{random-product.jsonl} and \path{shared-cache.jsonl} for the separate
+ \(10\,240\)-product observation. These are registered files,
+ materialized under \path{topics/empirical-studies/polytope-datasets/}; they are not part
+-of a plain checkout. The product report identifies the historical
++of a plain checkout. The product report identifies the
+ geometry-to-cache join and its scope. These numerical packets concern finite
+ tests, with the production-to-development comparison recorded separately in
+ \path{topics/capacity-and-qp/evidence/numerics-correspondence-check/}.
++\end{sloppypar}
+ 
+ Other non-proof evidence is tracked as ordinary repository files. The
+-historical first-order experiment retains its
++first-order experiment supplies its
+ \(12\)-run finite-step panel.  The bounded generated-candidate experiment
+ retains \(1675\) rows selected before the systolic ratio was computed, the
+ corresponding \(1675\) evaluated rows, its frozen configuration, and compact
+@@ -87,20 +100,17 @@ reports.  These records support only the finite experiments described in the
+ corresponding chapters.  They neither prove a population statement nor supply
+ evidence for local maximality.
+ 
+-The repository is not a self-contained copy of every dataset used during the
+-project.  Its artifact registry identifies external snapshots and their intended
+-local paths; a plain checkout does not materialize those files.  For example, the
+-\(14336\)-row random/product provenance table is tracked, while the source
+-random/product datasets and the method-facing invariant table are not tracked
+-at those paths. The original source geometries have been recovered locally
+-from the registered snapshot and matched against all \(14336\) table rows.
+-They can be materialized through the \texttt{polytope-datasets} artifact;
+-this recovery does not supply missing historical execution receipts.
+-Separate current computations restored the feature schema for all bodies and
+-returned capacity intervals for 14,335 of the 14,336 original geometries;
+-one body remains outside the input-size policy. These new intervals do not
+-certify the historical numerical ratios, whose volumes are floating-point
+-values. Recovery and reevaluation receipts are in
++The artifact registry identifies external datasets and their intended local
++paths; a plain checkout does not materialize those files. For example, the
++\(14336\)-row random/product provenance table is tracked. The source
++random/product datasets are supplied by the \texttt{polytope-datasets}
++artifact, and the method-facing invariant table by the separate
++\texttt{polytope-invariant-table} artifact. The source geometries match all
++\(14336\) table rows. Geometry-derived features can be recomputed for all
++bodies; the interval evaluator supplies capacity intervals for 14,335 of the
++14,336 geometries, with one body outside the input-size policy. These intervals
++do not certify the stored numerical ratios, whose volumes are floating-point
++values. Input matching, feature comparison and capacity evaluation records are in
+ \path{topics/empirical-studies/retrospective-revalidation/}.
+ Consequently, cloning the repository alone does not provide every input needed
+ to repeat all empirical analyses, regenerate every figure, or reproduce every
+@@ -109,8 +119,7 @@ checks, but compatible software, dependencies, compute resources, and
+ untracked inputs may still be required; timing and other
+ environment-dependent fields need not reproduce byte for byte.
+ 
+-No frozen release, public Zenodo record, or DOI for this thesis is claimed
+-here.  Any archival deposit created later would be a separate, immutable
+-object whose own public record, inventory, and hashes would have to establish
+-its contents.  The public commit identified above fixes which material was accessible
+-at the time of this check; later local additions require a separate handoff.
++The public commit identified above fixes the available public source version.
++Reproduction of results supported by additional packets requires the accompanying
++working repository and the external inputs identified in its artifact registry.
++There is no frozen thesis release or thesis DOI.
+diff --git a/thesis/chapters/15-ai-reflection.tex b/thesis/chapters/15-ai-reflection.tex
+index 31c0bad2..fbd92e87 100644
+--- a/thesis/chapters/15-ai-reflection.tex
++++ b/thesis/chapters/15-ai-reflection.tex
+@@ -2,38 +2,35 @@
+ \section{AI in the research process}
+ \label{sec:use-of-ai}
+ 
+-As the agents became more capable, my work shifted from directing individual
+-steps toward specifying what the finished work had to accomplish. They could
+-develop a substantial mathematical argument from an incomplete suggestion,
+-yet sometimes needed repeated intervention to pursue a much more ordinary
+-objective. My main difficulty increasingly concerned what they treated as
+-success. This section gives my interpretation of that experience; the separate
+-disclosure records the extent and provenance of AI use in the thesis.
++My experience with AI-assisted mathematical research suggests a distinction
++between an agent's ability to solve a problem and the criterion it treats as
++success. Agents could develop substantial mathematical arguments from
++incomplete suggestions, yet sometimes needed repeated intervention to
++complete more ordinary tasks. The observations in this section are personal
++interpretations of this use of AI; they are not controlled comparisons or
++general claims about model capabilities. The separate disclosure records
++the extent and provenance of AI use in the thesis.
+ 
+ \subsection{A mathematical objective with room for discovery}
+ 
+-The local maximality proof illustrates how much could be delegated without
+-specifying a procedure. I asked a GPT-5-series model to develop a local
+-maximality argument for HKO in facet coordinates. I suggested looking for
+-several upper bounds and somehow showing that together they control a
+-neighborhood after quotienting out the symmetries. I had neither specified a
+-finite certificate nor worked out how to construct the upper bounds.
+-
+-The model developed essentially the entire argument from that starting
+-point. It identified a sufficient configuration of twenty-six upper bounds
+-in the twenty-five transverse dimensions. An initial derivative-based
+-approach had provided only twenty-five nonsingular branches, too few for the
+-certificate. The model then used the weights $\beta$ in the quadratic
+-objective to construct feasible sections: an invertible $5\times5$ closure
+-minor lets five weights depend smoothly on the facet parameters while the
+-remaining weights stay fixed. This also supplied upper bounds from singular
+-optimizer sets that the initial approach could not treat. The model completed
+-proof steps involving the volume and wrote the SageMath code for the exact
+-computations.
++The HKO local-maximality argument illustrates a mathematical objective that
++leaves room for method discovery. Its goal is to control a neighborhood in
++facet coordinates after quotienting out the symmetries. This goal does not
++prescribe the finite certificate: twenty-six feasible upper bounds in
++twenty-five transverse dimensions, constructed by continuing the weights
++$\beta$ through invertible $5\times5$ closure minors. The geometric proof
++and the exact finite computation have distinct roles.
++
++For AI-assisted work, specifying the required mathematical conclusion and
++its proof obligations can leave the agent free to choose a construction.
++In my use of the agents, this was more useful than prescribing every
++intermediate calculation. The HKO example illustrates the kind of
++contribution an agent can make; it does not establish which prompting
++strategy is generally best.
+ 
+ \subsection{A pursued criterion of success}
+ 
+-Other tasks produced a more puzzling contrast. An agent could reason
++An agent could reason
+ competently about a problem and still stop after a first step, answer a
+ related question, or keep preparing work that it had been asked to finish.
+ These failures sometimes looked oddly motivational: the next useful action
+@@ -76,8 +73,8 @@ reasoning.
+ 
+ \subsection{Keeping the whole task in view}
+ 
+-Long conversations made the distinction between a useful answer and a
+-completed task increasingly important. At checkpoints during such a task, I
++Long tasks require distinguishing a useful answer from a completed task.
++At checkpoints during such a task, I
+ want to ask whether the current reasoning, evidence, and actions are advancing
+ the intended goal as a whole within the available budget. This question should
+ expose a change of destination: delivering only a first step, solving an easier
+@@ -98,7 +95,7 @@ This does not call for inspecting every step. An autonomous agent should
+ choose and revise many of its own intermediate steps. The important human
+ intervention is often to restore the purpose that those steps serve. More
+ detailed instructions can help when a constraint was missing, but can also
+-obscure the goal beneath local requirements. I increasingly needed to explain
++obscure the goal beneath local requirements. I found it useful to explain
+ the result I wanted and the context that made it useful, then judge whether
+ the work still addressed that result.
+ 
+@@ -108,9 +105,8 @@ For the mathematics required by this MSc project, I often found the agents'
+ capabilities sufficient to make substantial progress with little detailed
+ direction. Producing passable mathematical exposition was much harder to
+ delegate. This was surprising to me given the amount of written material
+-used in language-model training. The later work on the thesis became a
+-prolonged struggle with writing and task-management quirks, even when the
+-models could partly recognize those quirks in discussion.
++used in language-model training. Recognizing a writing problem in discussion
++did not reliably lead the agents to correct it in the text.
+ 
+ One recurring problem was prose that presented itself as polished before it
+ communicated its content clearly. Inflated claims of significance, colorful
+@@ -132,7 +128,7 @@ through sustained reading, that preference signal may favor the appearance
+ of quality. This is my hypothesis about a possible source of the prose I
+ encountered, not a demonstrated causal account of those models' training.
+ 
+-The practical difficulty persisted even after it had been named. A model
++Naming a problem was not always sufficient to correct it. A model
+ could acknowledge that a passage needed a concrete argument and then return
+ another description of the argument's intended role. It could recognize
+ that the goal was a readable chapter while spending its effort on further
+diff --git a/thesis/chapters/16-conclusion.tex b/thesis/chapters/16-conclusion.tex
+index c5d0fcd7..22d3dbce 100644
+--- a/thesis/chapters/16-conclusion.tex
++++ b/thesis/chapters/16-conclusion.tex
+@@ -16,7 +16,7 @@ example is below HKO's ratio and is therefore not a new Viterbo counterexample;
+ it shows instead that the ten-facet local-maximality phenomenon is not confined
+ to the HKO orbit.
+ 
+-A global result gives the same sharp bound for products of independently
++A global result gives the same sharp bound for Lagrangian products of independently
+ linearly deformed regular pentagons. Its equality cases are positive dilates
+ of linear symplectic images of HKO. Together, the HKO local theorem and this
+ affine-pentagon theorem rule out
+diff --git a/thesis/main.tex b/thesis/main.tex
+index c16f15ec..e59f46a7 100644
+--- a/thesis/main.tex
++++ b/thesis/main.tex
+@@ -11,6 +11,7 @@
+ \usepackage{lmodern}
+ \usepackage{mathtools}
+ \usepackage{graphicx}
++\usepackage{tikz}
+ \usepackage{needspace}
+ \usepackage{placeins}
+ \usepackage{xcolor}
+@@ -39,7 +40,11 @@
+ \input{preamble}
+ 
+ \title{Probing Viterbo's Conjecture}
+-\author{J\"orn St\"ohler}
++\author{J\"orn St\"ohler\\[0.6em]
++\normalsize Masterarbeit im Studiengang Mathematik (M.Sc.)\\
++\normalsize Universit\"at Augsburg\\
++\normalsize Mathematisch-Naturwissenschaftlich-Technische Fakult\"at\\
++\normalsize Institut f\"ur Mathematik}
+ \date{2026}
+ \hypersetup{
+   pdftitle={Probing Viterbo's Conjecture},
+@@ -72,6 +77,7 @@
+ \input{chapters/08-data-science.tex}
+ \input{chapters/09-rotated-regular-polygons}
+ \input{chapters/10-affine-pentagons.tex}
++\input{chapters/10-symmetric-partner.tex}
+ \input{chapters/11-product-position.tex}
+ \input{chapters/12-visualization}
+ \input{chapters/13-numerics}
+@@ -81,6 +87,7 @@
+ 
+ \appendix
+ \input{appendices/data-science.tex}
++\input{appendices/data-science-contact.tex}
+ 
+ \clearpage
+ \section{HKO computation: an annotated exact program}
+diff --git a/thesis/references/additional.bib b/thesis/references/additional.bib
+index f139c529..7649b24c 100644
+--- a/thesis/references/additional.bib
++++ b/thesis/references/additional.bib
+@@ -95,3 +95,13 @@
+   url = {https://arxiv.org/abs/2511.16644v1},
+   urldate = {2026-09-18}
+ }
++
++@misc{BMP2026v2,
++  author = {Balitskiy, Alexey and Mitrofanov, Ivan and Polyanskii, Alexander},
++  title = {Triangle covering problems and the {Viterbo} inequality in the plane},
++  year = {2026},
++  eprint = {2603.12495v2},
++  archivePrefix = {arXiv},
++  note = {Version 2},
++  url = {https://arxiv.org/html/2603.12495v2}
++}

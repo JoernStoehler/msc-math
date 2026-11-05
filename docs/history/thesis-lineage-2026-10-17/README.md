@@ -2,7 +2,7 @@
 
 Source branches (since deleted; full history in
 `/workspaces/archived/consolidation-2026-11-05/msc-math.bundle`):
-`claude/next-2026-10-16` (tip `d97af4c`-era, 106 commits), `codex/patterns-2026-10-17`
+`claude/next-2026-10-16` (tip `ec0af105`, 106 commits), `codex/patterns-2026-10-17` (tip `4442275c`)
 (32 commits), both branched from main at `cf3cb699` (14 Oct) and never merged; main
 gained 62 commits since. Nothing here is built into `thesis/`.
 
@@ -26,3 +26,13 @@ Unaccepted introduction v5 and its chapter edits: `../opening-pass-2026-10-23-ca
 Whether to adopt the Chapter 8 contact-loss section into the thesis. See main `STATUS.md`
 ("Thesis scope"). To try it: diff `08-data-science.tex` here against `thesis/chapters/`,
 copy the §8.9 block, add the appendix and figure, and run `thesis/build.sh`.
+
+## Small prose edits
+
+`next-thesis-edits.patch` and `patterns-thesis-edits.patch` hold the branches' remaining edits to
+the thesis chapters/preamble/bibliography (mostly 2–13-line wording changes: removing project
+chronology, softening claims, a title page, an AI-contribution paragraph for the HKO proof, a
+`\input` for the symmetric-partner chapter and contact appendix). They are diffs against the
+14 Oct base (`cf3cb699`), so use `git apply --3way` and expect conflicts. The Ch. 8 rewrite
+is kept as a whole file instead (above); `other-docs-from-next/` has the submission-status docs
+(`DISTANCE-TO-SUBMISSION.md`, registration material) as of 17 Oct.

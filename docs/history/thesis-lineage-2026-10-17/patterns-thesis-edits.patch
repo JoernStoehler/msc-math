@@ -1,0 +1,369 @@
+diff --git a/thesis/chapters/01-introduction.tex b/thesis/chapters/01-introduction.tex
+index 03fcc543..af43b04d 100644
+--- a/thesis/chapters/01-introduction.tex
++++ b/thesis/chapters/01-introduction.tex
+@@ -78,7 +78,7 @@ backward time by every trajectory outside its boundary. These results illustrate
+ flow can determine an embedding obstruction.
+ 
+ There is also a direct connection to a central problem in convex geometry.
+-For a centrally symmetric convex body $L\subset\mathbb R^n$ and its polar
++For a convex body $L\subset\mathbb R^n$ centrally symmetric about the origin and its polar
+ $L^\circ$, Artstein--Avidan, Karasev and Ostrover prove
+ $c_{\rm EHZ}(L\times L^\circ)=4$~\cite{AKO2014}. Viterbo's proposed
+ inequality on these particular products is consequently equivalent to the
+diff --git a/thesis/chapters/02-duality.tex b/thesis/chapters/02-duality.tex
+index a37af370..86bb49f4 100644
+--- a/thesis/chapters/02-duality.tex
++++ b/thesis/chapters/02-duality.tex
+@@ -152,7 +152,7 @@ This proves equality of the minima and, by the least-action
+ characterization, their equality with capacity.
+ 
+ \paragraph{Period convention and attainment.}
+-The cited fixed-period formulation uses $w:[0,1]\to\mathbb R^4$ with
++Haim--Kislev's fixed-period formulation uses $w:[0,1]\to\mathbb R^4$ with
+ $A(w)=1/2$. If $z$ is feasible in our convention, then
+ \[
+  w(s)=\frac{z(Ts)}{\sqrt{2T}},\qquad I_K(w)=\tfrac12 I_K(z).
+diff --git a/thesis/chapters/06-variation.tex b/thesis/chapters/06-variation.tex
+index 4f00358c..a24d71e9 100644
+--- a/thesis/chapters/06-variation.tex
++++ b/thesis/chapters/06-variation.tex
+@@ -332,13 +332,14 @@ infinitesimal theorem.  Its reliability depends on the window containing the
+ branches that become relevant, on the branches remaining feasible, and on the
+ linearization error at the proposed step.
+ 
+-One retained finite experiment illustrates this distinction.  On a fixed
++One retained finite experiment illustrates this distinction for a historical
++heuristic numerical objective. On a fixed
+ panel of twelve random ten-facet starts, the tested multi-direction
+-method accepted a positive move at each of eight configured trace iterations,
++method accepted a measured positive move at each of eight configured trace iterations,
+ but all runs stopped at their iteration cap and every endpoint scan still
+-found a further above-threshold move.  Thus the evidence supports finite-step
+-progress and a measured computation cost on that panel, not endpoint local
+-maximality.  A separate comparison on sixty-four matched starts found larger median
++found a further above-threshold move.  Thus the evidence supports measured finite-step
++progress of that evaluator field and a computation cost on that panel, not
++certified ascent of the mathematical ratio or endpoint local maximality.  A separate comparison on sixty-four matched starts found larger median
+ terminal best-so-far values for methods using several competing branches
+ than for either single-branch gradient implementation. All 448 terminal
+ values remained below one. Section~\ref{subsec:black-box-datascience-finite-budget-optimization}
+diff --git a/thesis/chapters/07-hko.tex b/thesis/chapters/07-hko.tex
+index 6fde4a15..39e01097 100644
+--- a/thesis/chapters/07-hko.tex
++++ b/thesis/chapters/07-hko.tex
+@@ -108,7 +108,12 @@ Haim--Kislev formula gives the upper bound
+ Thus the selected feasible sections are upper bounds for the actual ratio;
+ they are not lower bounds and need not remain optimizing away from the base.
+ On the product family, the Lagrangian splitting reduces the complete capacity
+-calculation to the vertices of two planar closure polytopes. Enumerating all
++calculation to the vertices of two planar closure polytopes. For a fixed
++ordering, write the two block masses as $r$ and $1-r$. The within-block
++pairings vanish, leaving $r(1-r)$ times a bilinear form on these closure
++polytopes. Its maximum is attained at a pair of vertices, and a positive
++maximum uses $r=1/2$. Each closure vertex has at most three positive weights,
++so the finite support and order cases are exhaustive. Enumerating all
+ 624 cyclic orders gives $Q_{\max}=1/2$, 12 tight cases, and a strict gap
+ of $1/14$ for every other case. Exact rational-function continuation of the
+ closure supports and the tight cases proves the capacity and equality claims
+diff --git a/thesis/chapters/09-rotated-regular-polygons.tex b/thesis/chapters/09-rotated-regular-polygons.tex
+index bc05ce0b..1e8342b4 100644
+--- a/thesis/chapters/09-rotated-regular-polygons.tex
++++ b/thesis/chapters/09-rotated-regular-polygons.tex
+@@ -266,6 +266,6 @@ $(3+\sqrt5)/5$. This completes the proof of
+ Theorem~\ref{thm:rotated-pentagon-product-formula}.
+ 
+ % Proof provenance: the endpoint interpolation argument is supplied in
+-% docs/review-evidence/pro-review-2026-09-15/thesis_review/
++% docs/history/review-evidence/pro-review-2026-09-15/thesis_review/
+ % 03_mathematical_audit.md, section 2. The explicit word and numerical
+ % rotation profile predate that review in thesis/09-rotated-regular-polygons*.
+diff --git a/thesis/chapters/10-symmetric-partner.tex b/thesis/chapters/10-symmetric-partner.tex
+new file mode 100644
+index 00000000..f0c4d202
+--- /dev/null
++++ b/thesis/chapters/10-symmetric-partner.tex
+@@ -0,0 +1,148 @@
++% Integrated from the independently checked 3 October candidate; human acceptance pending.
++% Proof owner: topics/products/pentagon-arbitrary-partner/symmetric-partner-lemma.md
++\section{A regular pentagon with a centrally symmetric partner}
++\label{sec:pentagon-symmetric-partner}
++
++\begin{unverified}
++\noindent\textbf{TODO (J\"orn): review the proof and exposition in this section.}
++This section integrates the existing independently checked exposition candidate
++for the result selected for inclusion on 3 October 2026; human proof and prose
++acceptance remain pending.
++Proof source:
++\path{symmetric-partner-lemma.md} in
++\path{topics/products/pentagon-arbitrary-partner/}.
++\end{unverified}
++
++The preceding result allows the two pentagons to deform independently.
++We now keep one regular pentagon fixed and allow its partner to be any
++centrally symmetric planar convex body, including a smooth body. The
++capacity is then determined by a single convex-body inclusion. Its sharp
++systolic ratio is strictly below one.
++
++Use the preceding normal convention, writing
++\[
++ n_i=(\cos(2\pi i/5),\sin(2\pi i/5)),\qquad
++ Q=\{p:n_i\cdot p\le h,\ 0\le i<5\},\qquad h=\cos(\pi/5).
++\]
++Thus $Q$ has circumradius one. For a convex body $A$ containing the origin
++in its interior, write
++$A^\circ=\{x:x\cdot y\le1\text{ for every }y\in A\}$.
++Define
++\[
++ B=\tfrac12(Q-Q)^\circ
++   =\operatorname{conv}\left\{\frac{\pm n_i}{2(1+h)}:0\le i<5\right\},
++ \qquad
++ W(K)=\max\{r\ge0:r(Q-Q)^\circ\subseteq K-K\}.
++\]
++The body $B$ is a regular decagon with its orientation fixed by $Q$.
++The product below is Lagrangian, and $c$ denotes its
++Ekeland--Hofer--Zehnder capacity.
++
++\begin{theorem}\label{thm:pentagon-symmetric-partner}
++For every centrally symmetric planar convex body $K$ with nonempty interior,
++\[
++ c(K\times_L Q)=W(K),\qquad
++ \frac{c(K\times_L Q)^2}{2\operatorname{area}(K)\operatorname{area}(Q)}
++ \le \kappa_{\mathrm{sym}}:=\frac{10+6\sqrt5}{25}<1.
++\]
++Equality in the ratio holds exactly when $K$ is a translate of a positive
++dilate of $B$.
++\end{theorem}
++
++The proof uses a translation-cover characterization of capacity.
++For an oriented polygonal curve with edge vectors $v_j$, its $Q$-length is
++$\sum_j s_Q(v_j)$, where $s_Q(v)=\max_{p\in Q}v\cdot p$.
++This length can depend on orientation, since $Q$ is not symmetric.
++Balitskiy--Mitrofanov--Polyanskii show that $c(K\times_L Q)\ge1$ exactly
++when every closed curve of unit $Q$-length fits into a translate of $K$
++\cite[Theorem 2.5]{BMP2026v2}.
++For polygonal $Q$, it suffices to check the \emph{normal triangles}:
++unit-length oriented triangles whose edges follow outward normal directions
++of $Q$, including degenerate triangles when opposite normals exist
++\cite[Definition 3.2 and Theorem 3.3]{BMP2026v2}. Our pentagon has no opposite
++normals, so all its normal triangles are nondegenerate. There are ten translation
++classes. Their underlying triangles have angles $\pi/5,\pi/5,3\pi/5$
++and are rotations of one another through multiples of $\pi/5$
++\cite[Section 6.1]{BMP2026v2}. For odd multiples, the traversal orientation
++reverses so that the edges again follow outward normals.
++
++\begin{proof}
++We first compute $c(B\times_L Q)$. Put $\theta=\pi/5$ and
++$R=1/[2(1+h)]$, the circumradius of $B$.
++If a normal triangle has longest side $L$, its other sides both have length
++$L/(2\cos\theta)$. Its oriented edges follow outward normals, so their
++$Q$-lengths equal $h$ times their Euclidean lengths. Consequently
++\[
++ 1=hL(1+1/\cos\theta)=L(1+h),\qquad L=2R.
++\]
++Translate the longest side's midpoint to the origin. Its endpoints are
++antipodal vertices of $B$, and the third vertex has distance $R\tan\theta$
++from the origin. This is smaller than the incircle radius $R\cos(\theta/2)$,
++because
++\[
++ \tan^2(\pi/5)=5-2\sqrt5
++       <\frac{5+\sqrt5}{8}=\cos^2(\pi/10).
++\]
++Each of the ten triangles therefore lies in $B$, giving $c(B\times_L Q)\ge1$.
++
++\begin{figure}[htbp]
++\centering
++\begin{tikzpicture}[scale=2.05,>=stealth]
++ \fill[blue!7] (0:1) \foreach \a in {36,72,...,324} {-- (\a:1)} -- cycle;
++ \draw[blue!65!black,thick] (0:1) \foreach \a in {36,72,...,324} {-- (\a:1)} -- cycle;
++ \draw[gray,dashed] (0,0) circle ({cos(18)});
++ \filldraw[fill=orange!28,draw=orange!80!black,thick]
++   (-1,0) -- (1,0) -- (0,{tan(36)}) -- cycle;
++ \draw[->] (0,0) -- (1,0) node[midway,below] {$R$};
++ \draw[<->] (-.12,0) -- (-.12,{tan(36)}) node[midway,left] {$R\tan\theta$};
++ \draw[->,gray!80!black] (0,0) -- (252:{cos(18)})
++    node[pos=.75,left] {$R\cos(\theta/2)$};
++ \fill (0,0) circle (.017);
++ \node[blue!65!black] at (1.22,.68) {$B$};
++\end{tikzpicture}
++\caption{A translated normal triangle in $B$. Its longest side joins
++antipodal vertices; its third vertex lies inside the dashed incircle.
++The same placement works after each rotation by $\pi/5$.}
++\label{fig:pentagon-symmetric-reference}
++\end{figure}
++
++For any partner $K$, the curve-cover criterion gives the opposite bound
++$c(K\times_L Q)\le W(K)$. Indeed, a segment traversed out and back with
++displacement $v$ has length
++$s_Q(v)+s_Q(-v)=s_{Q-Q}(v)$.
++It fits into a translate of $K$ exactly when $v\in K-K$.
++If capacity is at least $r>0$, rescale the first factor by $1/r$ and apply
++the criterion to all unit-length segments. Convexity of $K-K$ then gives
++$r(Q-Q)^\circ\subseteq K-K$.
++Since $B-B=(Q-Q)^\circ$, this proves $c(B\times_L Q)=W(B)=1$.
++
++Now translate a symmetric $K$ so that $K=-K$. Then $K-K=2K$, and the
++definition of $W(K)$ gives $W(K)B\subseteq K$.
++Monotonicity and homogeneity in one factor yield
++$c(K\times_L Q)\ge W(K)c(B\times_L Q)=W(K)$,
++proving the capacity formula.
++
++The same containment gives
++$\operatorname{area}(K)\ge W(K)^2\operatorname{area}(B)$.
++Proper inclusion between full-dimensional convex bodies strictly increases
++area, so equality holds exactly for translates of $W(K)B$.
++Finally,
++\[
++ \operatorname{area}(B)=5R^2\sin(\pi/5),\qquad
++ \operatorname{area}(Q)=\tfrac52\sin(2\pi/5),\qquad
++ \frac1{2\operatorname{area}(B)\operatorname{area}(Q)}
++    =\frac{10+6\sqrt5}{25}.
++\]
++This gives the sharp ratio and its equality class.
++\end{proof}
++
++The formula also identifies the bound $W$ for an asymmetric partner.
++Its central symmetrization $S=(K-K)/2$ satisfies $S-S=K-K$, hence
++\[
++ W(K)=c(S\times_L Q),\qquad c(K\times_L Q)\le c(S\times_L Q).
++\]
++Thus the quotient $c(K\times_L Q)/W(K)$ records the fraction of the
++symmetrized capacity retained by $K$.
++In particular, a counterexample with this fixed pentagon factor must use
++an asymmetric partner. The argument explains this restriction by calibrating
++one reference cover and transferring its capacity through containment.
+diff --git a/thesis/chapters/12-visualization.tex b/thesis/chapters/12-visualization.tex
+index 8bd6d3aa..6d6532b9 100644
+--- a/thesis/chapters/12-visualization.tex
++++ b/thesis/chapters/12-visualization.tex
+@@ -26,9 +26,9 @@ studied in Section~\ref{sec:black-box-datascience}. In panel (b), the orange
+ curve places a piecewise-linear orbit in relation to the polytope's boundary
+ structure. Its six straight segments in four dimensions become curved arcs
+ in the view. Their displayed lengths do not measure dwell times or action.
+-The producer
+-exports only recovered orbits passing numerical closure and containment checks
+-within fixed tolerances.  The orbit shown is therefore a computed example, not
++Recovered closed orbits are exported only after passing numerical closure
++and containment checks within fixed tolerances; the selected figure uses one
++such orbit. The orbit shown is therefore a computed example, not
+ a proof of a capacity statement. The exporter, projection settings and
+ figure-generation instructions are recorded in
+ \path{experiments/visualization/README.md}.
+diff --git a/thesis/chapters/14-code-data.tex b/thesis/chapters/14-code-data.tex
+index a2906033..a5c8b7dc 100644
+--- a/thesis/chapters/14-code-data.tex
++++ b/thesis/chapters/14-code-data.tex
+@@ -57,6 +57,17 @@ and root isolation inside the software trust boundary. The maintained
+ affine-pentagon argument and its source-convention check are in
+ \path{topics/products/pentagon-affine-products/}.
+ 
++The centrally symmetric partner result in
++Section~\ref{sec:pentagon-symmetric-partner} has its maintained analytic proof in
++\begin{center}
++  \small\path{topics/products/pentagon-arbitrary-partner/}\\[-0.2em]
++  \path{symmetric-partner-lemma.md}.
++\end{center}
++The proof uses the stated normal-triangle criterion and geometric containment,
++rather than the packet's floating-point fitting experiments. Its inclusion
++and the pending human proof and prose review are recorded in
++\path{docs/history/thesis-integration-2026-10-16/}.
++
+ The numerical audits in Section~\ref{sec:numerics} have distinct evidence owners.
+ The tracked report and producers for the \(249\) KKT systems and the complete
+ \(88\)- and \(1271\)-word comparisons are in
+@@ -66,6 +77,7 @@ produces new verification and numerical-audit transcripts. The original
+ per-system output is not included as a tracked or registered artifact, so
+ the retained report and a new execution are different evidence objects.
+ 
++\begin{sloppypar}
+ The \(88\)-product audit is retained row by row in
+ \path{topics/capacity-and-qp/development/tools/product_closure_route/sample5.jsonl},
+ with its interpretation in that directory's \path{RESULTS.md}.
+@@ -77,6 +89,7 @@ of a plain checkout. The product report identifies the historical
+ geometry-to-cache join and its scope. These numerical packets concern finite
+ tests, with the production-to-development comparison recorded separately in
+ \path{topics/capacity-and-qp/evidence/numerics-correspondence-check/}.
++\end{sloppypar}
+ 
+ Other non-proof evidence is tracked as ordinary repository files. The
+ historical first-order experiment retains its
+diff --git a/thesis/chapters/15-ai-reflection.tex b/thesis/chapters/15-ai-reflection.tex
+index 31c0bad2..ed81eae3 100644
+--- a/thesis/chapters/15-ai-reflection.tex
++++ b/thesis/chapters/15-ai-reflection.tex
+@@ -21,9 +21,8 @@ finite certificate nor worked out how to construct the upper bounds.
+ 
+ The model developed essentially the entire argument from that starting
+ point. It identified a sufficient configuration of twenty-six upper bounds
+-in the twenty-five transverse dimensions. An initial derivative-based
+-approach had provided only twenty-five nonsingular branches, too few for the
+-certificate. The model then used the weights $\beta$ in the quadratic
++in the twenty-five transverse dimensions. The initial derivative-based
++approach had not supplied the first-order certificate. The model then used the weights $\beta$ in the quadratic
+ objective to construct feasible sections: an invertible $5\times5$ closure
+ minor lets five weights depend smoothly on the facet parameters while the
+ remaining weights stay fixed. This also supplied upper bounds from singular
+diff --git a/thesis/chapters/16-conclusion.tex b/thesis/chapters/16-conclusion.tex
+index c5d0fcd7..22d3dbce 100644
+--- a/thesis/chapters/16-conclusion.tex
++++ b/thesis/chapters/16-conclusion.tex
+@@ -16,7 +16,7 @@ example is below HKO's ratio and is therefore not a new Viterbo counterexample;
+ it shows instead that the ten-facet local-maximality phenomenon is not confined
+ to the HKO orbit.
+ 
+-A global result gives the same sharp bound for products of independently
++A global result gives the same sharp bound for Lagrangian products of independently
+ linearly deformed regular pentagons. Its equality cases are positive dilates
+ of linear symplectic images of HKO. Together, the HKO local theorem and this
+ affine-pentagon theorem rule out
+diff --git a/thesis/main.tex b/thesis/main.tex
+index c16f15ec..18b89874 100644
+--- a/thesis/main.tex
++++ b/thesis/main.tex
+@@ -11,6 +11,7 @@
+ \usepackage{lmodern}
+ \usepackage{mathtools}
+ \usepackage{graphicx}
++\usepackage{tikz}
+ \usepackage{needspace}
+ \usepackage{placeins}
+ \usepackage{xcolor}
+@@ -39,7 +40,11 @@
+ \input{preamble}
+ 
+ \title{Probing Viterbo's Conjecture}
+-\author{J\"orn St\"ohler}
++\author{J\"orn St\"ohler\\[0.6em]
++\normalsize Masterarbeit im Studiengang Mathematik (M.Sc.)\\
++\normalsize Universit\"at Augsburg\\
++\normalsize Mathematisch-Naturwissenschaftlich-Technische Fakult\"at\\
++\normalsize Institut f\"ur Mathematik}
+ \date{2026}
+ \hypersetup{
+   pdftitle={Probing Viterbo's Conjecture},
+@@ -72,6 +77,7 @@
+ \input{chapters/08-data-science.tex}
+ \input{chapters/09-rotated-regular-polygons}
+ \input{chapters/10-affine-pentagons.tex}
++\input{chapters/10-symmetric-partner.tex}
+ \input{chapters/11-product-position.tex}
+ \input{chapters/12-visualization}
+ \input{chapters/13-numerics}
+diff --git a/thesis/references/additional.bib b/thesis/references/additional.bib
+index f139c529..7649b24c 100644
+--- a/thesis/references/additional.bib
++++ b/thesis/references/additional.bib
+@@ -95,3 +95,13 @@
+   url = {https://arxiv.org/abs/2511.16644v1},
+   urldate = {2026-09-18}
+ }
++
++@misc{BMP2026v2,
++  author = {Balitskiy, Alexey and Mitrofanov, Ivan and Polyanskii, Alexander},
++  title = {Triangle covering problems and the {Viterbo} inequality in the plane},
++  year = {2026},
++  eprint = {2603.12495v2},
++  archivePrefix = {arXiv},
++  note = {Version 2},
++  url = {https://arxiv.org/html/2603.12495v2}
++}
