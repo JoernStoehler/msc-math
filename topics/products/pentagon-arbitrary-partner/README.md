@@ -23,6 +23,15 @@ regular decagon `B` up to translation and positive dilation. Explicit normal
 triangle placements prove `c(B ×_L Q)=1`; the segment upper bound and monotonicity
 then transfer this calibration to every symmetric partner.
 
+A finite production-code cross-check (22 October 2026) computes capacity by the
+crate's QP route, independent of the translation-cover argument, for `B`, `3B`,
+a rotated `B` and four regular/rotated polygons. Each agrees with the decagon
+scale to relative error below `2e-16`; the ratio equals the bound for `B` and
+`3B` and is strictly smaller otherwise. Binary64 inputs approximate the
+irrational bodies, so this is regression evidence, not proof:
+[test](../../../crates/symplectic/tests/symmetric_partner_theorem_anchor.rs),
+[log](../../../docs/history/thesis-evidence-refs-20261022/symmetric-partner-anchor.log).
+
 This is an independently agent-checked argument, not human proof acceptance or
 a novelty claim. Jörn selected this pentagon instance for inclusion on 3 October
 2026 ([project facts](../../../docs/project-facts.md), item 13.2). On 19 October it was

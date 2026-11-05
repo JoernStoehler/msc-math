@@ -1,0 +1,15 @@
+    Finished `release` profile [optimized + debuginfo] target(s) in 41.37s
+     Running tests/zz_symmetric_partner_crosscheck.rs (/tmp/msc-math/thesis-evidence-refs/run1/rust/target/release/deps/zz_symmetric_partner_crosscheck-c2da5477385a9732)
+
+running 1 test
+B (equality)                 c=[1.000000000000000, 1.000000000000000] lambda_B=1.000000000000000 rel_diff=0.00e0 sys=0.936656314599949 bound=0.936656314599950 route=product
+3B (equality, dilate)        c=[2.999999999999999, 2.999999999999999] lambda_B=2.999999999999999 rel_diff=1.48e-16 sys=0.936656314599949 bound=0.936656314599950 route=product
+B rotated 0.05               c=[0.985231889360802, 0.985231889360802] lambda_B=0.985231889360802 rel_diff=1.13e-16 sys=0.909195308448398 bound=0.936656314599950 route=product
+regular 4-gon                c=[2.590226352643711, 2.590226352643712] lambda_B=2.590226352643711 rel_diff=1.71e-16 sys=0.705454664678179 bound=0.936656314599950 route=product
+regular 6-gon                c=[3.150568489849769, 3.150568489849769] lambda_B=3.150568489849769 rel_diff=1.41e-16 sys=0.803432940996905 bound=0.936656314599950 route=product
+regular 8-gon                c=[3.352963617975381, 3.352963617975381] lambda_B=3.352963617975381 rel_diff=1.32e-16 sys=0.835865420031524 bound=0.936656314599950 route=product
+regular 8-gon rotated 0.2    c=[3.344749142932499, 3.344749142932500] lambda_B=3.344749142932499 rel_diff=1.33e-16 sys=0.831774838912007 bound=0.936656314599950 route=product
+test symmetric_partner_capacity_matches_decagon_scale ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.73s
+

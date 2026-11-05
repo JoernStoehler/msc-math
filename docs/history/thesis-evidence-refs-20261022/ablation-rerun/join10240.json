@@ -1,0 +1,28 @@
+{
+ "product_rows": 10240,
+ "buckets": {
+  "3x3": 1024,
+  "3x4": 1024,
+  "3x5": 1024,
+  "3x6": 1024,
+  "4x4": 1024,
+  "4x5": 1024,
+  "4x6": 1024,
+  "5x5": 1024,
+  "5x6": 1024,
+  "6x6": 1024
+ },
+ "cache_product_rows": 10340,
+ "product_rows_by_cache_match_count": {
+  "1": 10240
+ },
+ "winner_length_counts": {
+  "6": 10240
+ },
+ "winners_length_ge_7": 0,
+ "capacity_equals_winner_action": 10240,
+ "other_cache_product_rows": 100,
+ "other_cache_product_winner_lengths": {
+  "6": 100
+ }
+}
