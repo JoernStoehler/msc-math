@@ -1,0 +1,22 @@
+{
+  "all_checks_passed": true,
+  "arithmetic": "Exact Q[tau], tau^4-10 tau^2+5=0; ordered-root sign checks from accepted F11 helper",
+  "vertices": 25,
+  "edges": 50,
+  "vertex_exposure_checks": 25,
+  "edge_exposure_checks": 50,
+  "exact_redundancy_relations": 25,
+  "strict_gap_comparisons": 1750,
+  "minimum_support_gap_coefficients_ascending": [
+    "5/16",
+    "0",
+    "1/16",
+    "0"
+  ],
+  "minimum_support_gap_nominal": 0.3454915028125263,
+  "accepted_archive_sha256": "aea22ffd97fd4728eeedb4de4ab272626cf58501aca813c6de131a371fc39f6e",
+  "helper_sha256": "77b33633828e4fe0e9842a58f1c8bbf8403ced3e362b19a9aa4c2ee0ea648d18",
+  "script_sha256": "4798f2d819fd062734408a462ea832b903b7c0aabd819c38cea225b62812dd68",
+  "seconds": 0.6225905309984228,
+  "scope": "Exact finite geometry checks only; the continuum multicut theorem is proved separately."
+}

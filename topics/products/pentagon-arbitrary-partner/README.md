@@ -134,3 +134,15 @@ The [22 October block Hessian lemma](block-hessian-lemma-20261022.md) proves
 a necessary ten-independent-contact condition for a nondegenerate constrained
 minimum on a regular contact stratum. Degenerate minima remain possible;
 this is not a solution of the global cover problem.
+
+
+## 16 October: a sharp bound controlled by Minkowski asymmetry
+
+The [new asymmetry theorem](research-20261016/README.md) proves for arbitrary
+convex planar partners that `sys(K×Q)≤κ_sym(1+s(K))/2`. At or below the regular
+pentagon's asymmetry `s(K)≤sqrt(5)−1`, this gives the sharp HKO bound, with
+regular HKO-angle equality only. Beating HKO therefore requires larger
+Minkowski asymmetry; violating ratio one requires `s(K)>(15sqrt(5)−29)/4`.
+The proof and equality classification have independent agent review, and
+20 capacity/asymmetry controls are explicitly numerical. The unrestricted
+more-asymmetric partner problem remains open; no thesis source was changed.

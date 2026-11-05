@@ -1,0 +1,25 @@
+{
+  "arithmetic": "fractions.Fraction + integer sqrt enclosures",
+  "all_210_four_row_subsets_independent": true,
+  "genuine_facets": 10,
+  "vertices": 25,
+  "facet_vertex_counts": [
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "row_l1_error_upper_bound": "3086426889852759063098321006964221233584959/127542032038197533035401004134952714705650319360",
+  "chosen_error_bound": "1/10000",
+  "hko_ratio_lower_bound": "6181657979743014619897/5902958103587056517120",
+  "inclusion_ratio_lower_bound": "61791856874258701848767443096418739897/59053196410295899776603976119741317120",
+  "inclusion_ratio_lower_bound_display": 1.0463761596397738,
+  "non_affine_cartesian_product": true,
+  "meaning": "analytic lower ratio bound via inclusion, not a capacity solver output"
+}

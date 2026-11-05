@@ -167,3 +167,16 @@ retain conditional cuts-additivity and representation/uniformity clues from an
 unlaunched October proposal. That proposal is historical: the accepted F≤11
 packet closes the extension through its own proof and evidence, without
 asserting that each earlier suggested route was verified.
+
+## 16 October: multicut separation and generic counterexamples
+
+The [HKO research packet](hko-research-20261016/README.md) adds a count-independent
+multicut theorem for added normals confined to compact primal vertex/edge
+exposure charts. It derives a cubic bound for the whole removed union and uses
+one deepest cut's quadratic capacity drop, taking the accepted sharp F10 theorem
+and verified vertex insertion as inputs. Joint splitting near the polar
+one-skeleton remains outside this theorem. The packet also gives an explicit
+rational ten-facet counterexample in linear general position, excluding every
+nontrivial affine Cartesian product splitting, and links the new sharp
+Minkowski-asymmetry partner bound. These are independently agent-reviewed
+research notes, not new selected manuscript claims.

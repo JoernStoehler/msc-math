@@ -1,0 +1,252 @@
+{
+  "scope": "Floating-point evidence only. Each capacity value estimates a feasible-HK upper bound; residuals and Qhull volume do not provide rigorous numerical enclosures. No exhaustive capacity evaluation or numerical neighborhood radius is certified.",
+  "accepted_archive_sha256": "aea22ffd97fd4728eeedb4de4ab272626cf58501aca813c6de131a371fc39f6e",
+  "script_sha256": "4051c88b63689186b48553aca64bd8eb22481db6620cd26d03d07e28d5840505",
+  "python": "3.13.3",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "rows": [
+    {
+      "panel": "vertices-25",
+      "extra_inequalities": 25,
+      "numerical_genuine_facets": 35,
+      "numerical_genuine_added_facets": 25,
+      "depth": 0.02,
+      "vertices": 100,
+      "volume": 5.65315943907082,
+      "relative_volume_loss": 3.3022753813671812e-06,
+      "relative_capacity_upper_bound": 0.9996925205626873,
+      "relative_systolic_upper_bound": 0.9993884359248074,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 0,
+        "seed": 4,
+        "slot": 4,
+        "z": 0.015378700499807657,
+        "minimum_weight": 0.015378700499807657
+      }
+    },
+    {
+      "panel": "vertices-25",
+      "extra_inequalities": 25,
+      "numerical_genuine_facets": 35,
+      "numerical_genuine_added_facets": 25,
+      "depth": 0.01,
+      "vertices": 100,
+      "volume": 5.653176893750185,
+      "relative_volume_loss": 2.1468835809113074e-07,
+      "relative_capacity_upper_bound": 0.9999215824658393,
+      "relative_systolic_upper_bound": 0.999843385735723,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 0,
+        "seed": 4,
+        "slot": 4,
+        "z": 0.007842368395255173,
+        "minimum_weight": 0.007842368395255173
+      }
+    },
+    {
+      "panel": "vertices-25",
+      "extra_inequalities": 25,
+      "numerical_genuine_facets": 35,
+      "numerical_genuine_added_facets": 25,
+      "depth": 0.005,
+      "vertices": 100,
+      "volume": 5.6531780300464005,
+      "relative_volume_loss": 1.3687046274135639e-08,
+      "relative_capacity_upper_bound": 0.9999801989020289,
+      "relative_systolic_upper_bound": 0.999960411882646,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 0,
+        "seed": 46,
+        "slot": 5,
+        "z": 0.003960298012425253,
+        "minimum_weight": 0.003960298012425253
+      }
+    },
+    {
+      "panel": "vertices-25",
+      "extra_inequalities": 25,
+      "numerical_genuine_facets": 35,
+      "numerical_genuine_added_facets": 25,
+      "depth": 0.0025,
+      "vertices": 100,
+      "volume": 5.653178102537331,
+      "relative_volume_loss": 8.64006088896474e-10,
+      "relative_capacity_upper_bound": 0.9999950249313129,
+      "relative_systolic_upper_bound": 0.9999900507513745,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 0,
+        "seed": 46,
+        "slot": 5,
+        "z": 0.0019900373753893156,
+        "minimum_weight": 0.0019900373753893156
+      }
+    },
+    {
+      "panel": "edges-50",
+      "extra_inequalities": 50,
+      "numerical_genuine_facets": 60,
+      "numerical_genuine_added_facets": 50,
+      "depth": 0.02,
+      "vertices": 275,
+      "volume": 5.652103958289353,
+      "relative_volume_loss": 0.00019000801176738413,
+      "relative_capacity_upper_bound": 0.9996540989277065,
+      "relative_systolic_upper_bound": 0.9994982301744454,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 0,
+        "seed": 22,
+        "slot": 0,
+        "z": 0.01730103806228352,
+        "minimum_weight": 0.01730103806228352
+      }
+    },
+    {
+      "panel": "edges-50",
+      "extra_inequalities": 50,
+      "numerical_genuine_facets": 60,
+      "numerical_genuine_added_facets": 50,
+      "depth": 0.01,
+      "vertices": 275,
+      "volume": 5.653037515465138,
+      "relative_volume_loss": 2.486954309610656e-05,
+      "relative_capacity_upper_bound": 0.9999117811388073,
+      "relative_systolic_upper_bound": 0.9998484358339467,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 0,
+        "seed": 22,
+        "slot": 6,
+        "z": 0.008822664444662301,
+        "minimum_weight": 0.008822664444662301
+      }
+    },
+    {
+      "panel": "edges-50",
+      "extra_inequalities": 50,
+      "numerical_genuine_facets": 60,
+      "numerical_genuine_added_facets": 50,
+      "depth": 0.005,
+      "vertices": 275,
+      "volume": 5.653160122026104,
+      "relative_volume_loss": 3.181466294854829e-06,
+      "relative_capacity_upper_bound": 0.9999777238199192,
+      "relative_systolic_upper_bound": 0.9999586294707424,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 0,
+        "seed": 22,
+        "slot": 6,
+        "z": 0.004455335263978379,
+        "minimum_weight": 0.004455335263978379
+      }
+    },
+    {
+      "panel": "edges-50",
+      "extra_inequalities": 50,
+      "numerical_genuine_facets": 60,
+      "numerical_genuine_added_facets": 50,
+      "depth": 0.0025,
+      "vertices": 275,
+      "volume": 5.653175833009875,
+      "relative_volume_loss": 4.0232446107957287e-07,
+      "relative_capacity_upper_bound": 0.9999944030512075,
+      "relative_systolic_upper_bound": 0.9999892084538601,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 14,
+        "seed": 25,
+        "slot": 0,
+        "z": 0.0022387920473128397,
+        "minimum_weight": 0.0022387920473128397
+      }
+    },
+    {
+      "panel": "mixed-75",
+      "extra_inequalities": 75,
+      "numerical_genuine_facets": 60,
+      "numerical_genuine_added_facets": 50,
+      "depth": 0.02,
+      "vertices": 275,
+      "volume": 5.652103958289319,
+      "relative_volume_loss": 0.00019000801177337934,
+      "relative_capacity_upper_bound": 0.9996540989277065,
+      "relative_systolic_upper_bound": 0.9994982301744514,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 25,
+        "seed": 22,
+        "slot": 0,
+        "z": 0.01730103806228352,
+        "minimum_weight": 0.01730103806228352
+      }
+    },
+    {
+      "panel": "mixed-75",
+      "extra_inequalities": 75,
+      "numerical_genuine_facets": 60,
+      "numerical_genuine_added_facets": 50,
+      "depth": 0.01,
+      "vertices": 275,
+      "volume": 5.653037515465124,
+      "relative_volume_loss": 2.4869543098660074e-05,
+      "relative_capacity_upper_bound": 0.9999117811388073,
+      "relative_systolic_upper_bound": 0.9998484358339491,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 25,
+        "seed": 22,
+        "slot": 6,
+        "z": 0.008822664444662301,
+        "minimum_weight": 0.008822664444662301
+      }
+    },
+    {
+      "panel": "mixed-75",
+      "extra_inequalities": 75,
+      "numerical_genuine_facets": 60,
+      "numerical_genuine_added_facets": 50,
+      "depth": 0.005,
+      "vertices": 275,
+      "volume": 5.653160122026076,
+      "relative_volume_loss": 3.18146629973981e-06,
+      "relative_capacity_upper_bound": 0.9999777238199192,
+      "relative_systolic_upper_bound": 0.9999586294707473,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 25,
+        "seed": 22,
+        "slot": 6,
+        "z": 0.004455335263978379,
+        "minimum_weight": 0.004455335263978379
+      }
+    },
+    {
+      "panel": "mixed-75",
+      "extra_inequalities": 75,
+      "numerical_genuine_facets": 60,
+      "numerical_genuine_added_facets": 50,
+      "depth": 0.0025,
+      "vertices": 275,
+      "volume": 5.653175833009915,
+      "relative_volume_loss": 4.023244540851678e-07,
+      "relative_capacity_upper_bound": 0.9999944030512075,
+      "relative_systolic_upper_bound": 0.999989208453853,
+      "hk_constraint_max_residual": 2.220446049250313e-16,
+      "best_witness": {
+        "cut": 39,
+        "seed": 25,
+        "slot": 0,
+        "z": 0.0022387920473128397,
+        "minimum_weight": 0.0022387920473128397
+      }
+    }
+  ],
+  "all_relative_upper_bounds_below_one": true,
+  "seconds": 39.63120839900512
+}

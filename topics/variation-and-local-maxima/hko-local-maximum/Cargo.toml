@@ -39,6 +39,10 @@ path = "smooth-only-rank-defect/main.rs"
 name = "hko-feasible-section-generate"
 path = "theorem/generate.rs"
 
+[[bin]]
+name = "hko-generic-counterexample"
+path = "../hko-research-20261016/generic-counterexample/capacity.rs"
+
 [lints]
 workspace = true
 
