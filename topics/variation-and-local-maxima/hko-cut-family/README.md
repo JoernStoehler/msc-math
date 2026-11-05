@@ -13,6 +13,20 @@ A further certified improvement would strengthen the explicit counterexample;
 a change of minimizing word could explain the family's capacity behavior.
 Neither outcome is established by the retained probes.
 
+## Update: 29 October results now in-tree (5 November)
+
+The statements above about next steps predate the continuation absorbed from branch
+`research/viterbo-continuation-20261029` (tip `7b6463fa`). The following now exist
+in this directory and are unreviewed beyond the branch's own agent audits:
+an exact [t=7/20 certificate](certificate-continuation-20261029/README.md) (ratio
+1.0523456... above the t=3/10 result),
+[branch/panel continuation](continuation-20261029/README.md),
+[single-facet obstruction](single-facet-obstruction-20261029/),
+[three-hinge probes](three-hinge-continuation-20261029/),
+[two-parameter probes](two-parameter-continuation-20261029/) and a stopped
+[two-parameter partial certificate](certificate-two-parameter-20261029/).
+Overall record: [continuation README](../../capacity-and-qp/research-continuation-20261029/README.md).
+
 ## Exact object and label convention
 
 Use coordinates `x=(q1,q2,p1,p2)`, `J=[[0,I],[-I,0]]`, and

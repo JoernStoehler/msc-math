@@ -1,0 +1,330 @@
+{
+  "status": "Exploratory floating-point differential evolution and local refinement; no positive first-variation candidate found. Exact constant-profile boundary check is separate.",
+  "profile_coefficient_convention": "Each row is (alpha,beta,gamma) in (alpha xi + beta eta + gamma)_+. Reported rows were normalized together by total L1 norm. Values are IEEE floating-point optimizer outputs, not exact coefficients.",
+  "adjacent_q_facets_0_1_2": {
+    "differential_evolution_seed_17": {
+      "ratio_response_over_total_volume": 1.0002296352845454,
+      "profiles": [
+        [
+          0.0001295788130408571,
+          4.157175380048928e-05,
+          0.2759956607810382
+        ],
+        [
+          -4.5770719179412316e-05,
+          -9.666683570736464e-05,
+          0.44698994785128265
+        ],
+        [
+          6.248593168425996e-05,
+          0.00021495150292740045,
+          0.2764233658113394
+        ]
+      ],
+      "facet_volumes": [
+        0.027599127193421447,
+        0.04470001532406655,
+        0.027640067277737657
+      ],
+      "total_volume": 0.09993920979522565,
+      "max_chart_response": 0.09996215936410421,
+      "iterations": 50,
+      "success_flag": false
+    },
+    "nelder_mead_from_seed_17": {
+      "ratio_response_over_total_volume": 1.0001851345878725,
+      "profiles": [
+        [
+          8.220799288410418e-05,
+          3.839199936757418e-05,
+          0.2760412231211608
+        ],
+        [
+          -5.352409036757618e-05,
+          -0.00014692846373983012,
+          0.4469925941755367
+        ],
+        [
+          3.7263225306846624e-05,
+          0.00022842275303850684,
+          0.276379444178598
+        ]
+      ],
+      "facet_volumes": [
+        0.027603716996994442,
+        0.04470081058261758,
+        0.027635532894692016
+      ],
+      "total_volume": 0.09994006047430404,
+      "max_chart_response": 0.0999585628362119,
+      "success_flag": true
+    },
+    "powell_from_seed_17": {
+      "ratio_response_over_total_volume": 1.0002170763465046,
+      "profiles": [
+        [
+          9.68364110517727e-05,
+          -2.679190288370438e-05,
+          0.27601647527306733
+        ],
+        [
+          -5.229548921730347e-05,
+          -0.00010825731279034621,
+          0.4470228553373467
+        ],
+        [
+          5.98481933774391e-05,
+          0.00021379933354465945,
+          0.2764028407467206
+        ]
+      ],
+      "facet_volumes": [
+        0.02760193037695132,
+        0.04470342843659528,
+        0.027638026935051595
+      ],
+      "total_volume": 0.0999433857485982,
+      "max_chart_response": 0.09996508109363382,
+      "success_flag": true
+    },
+    "differential_evolution_seed_83": {
+      "ratio_response_over_total_volume": 1.0187092857632878,
+      "profiles": [
+        [
+          0.0007001209409097101,
+          0.012942610012992814,
+          0.26038772771445595
+        ],
+        [
+          -0.0018175471369360752,
+          0.0006928515492759196,
+          0.43273374351017285
+        ],
+        [
+          0.001221861519719646,
+          0.023439979148942566,
+          0.2660635584665946
+        ]
+      ],
+      "facet_volumes": [
+        0.02590213400195917,
+        0.04326605972258958,
+        0.026358893402493734
+      ],
+      "total_volume": 0.09552708712704247,
+      "max_chart_response": 0.0973143306982368,
+      "iterations": 50,
+      "success_flag": false
+    },
+    "differential_evolution_seed_17_longer_other_q_triple_0_1_3": {
+      "ratio_response_over_total_volume": 1.2275953276954001,
+      "profiles": [
+        [
+          -0.026542038520266927,
+          0.061034994470233854,
+          0.24341335784334492
+        ],
+        [
+          0.02729002671315889,
+          -0.01687880417373376,
+          0.26059579828695423
+        ],
+        [
+          -0.0023369445494721124,
+          0.2892490524856171,
+          -0.07265898295721819
+        ]
+      ],
+      "facet_volumes": [
+        0.023696972202981774,
+        0.026237774105613766,
+        0.0019174275188533047
+      ],
+      "total_volume": 0.05185217382744885,
+      "max_chart_response": 0.06365348632142592,
+      "iterations": 100,
+      "success_flag": false
+    }
+  },
+  "mixed_qp_facets_0_5_1": {
+    "differential_evolution_seed_23": {
+      "ratio_response_over_total_volume": 1.2217288649263853,
+      "profiles": [
+        [
+          -0.041493239646728824,
+          0.01276096082885103,
+          0.3229073399989296
+        ],
+        [
+          0.06606868512956134,
+          0.09572696959475671,
+          0.06424219806339017
+        ],
+        [
+          0.033554673950938314,
+          0.06545012044090988,
+          0.2977958123459341
+        ]
+      ],
+      "facet_volumes": [
+        0.032156012951868776,
+        0.006030345876957223,
+        0.029088605928159338
+      ],
+      "total_volume": 0.06727496475698533,
+      "max_chart_response": 0.08219176633051425,
+      "iterations": 50,
+      "success_flag": false
+    },
+    "differential_evolution_seed_47": {
+      "ratio_response_over_total_volume": 1.2166319966432535,
+      "profiles": [
+        [
+          -0.00336868967433251,
+          0.042781941341323765,
+          0.430771315577331
+        ],
+        [
+          0.033116550049437934,
+          0.001305319915013162,
+          0.1250755793051822
+        ],
+        [
+          0.08149835287083192,
+          0.015195496693085392,
+          0.26688675457346206
+        ]
+      ],
+      "facet_volumes": [
+        0.04262547058554506,
+        0.01249377730151105,
+        0.02652825233034215
+      ],
+      "total_volume": 0.08164750021739826,
+      "max_chart_response": 0.09933496121042372,
+      "iterations": 50,
+      "success_flag": false
+    }
+  },
+  "exact_constant_triple": {
+    "facet_labels": [
+      0,
+      1,
+      2
+    ],
+    "hinge_constants": [
+      "(5-sqrt(5))/10",
+      "sqrt(5)/5",
+      "(5-sqrt(5))/10"
+    ],
+    "total_volume": "1/10",
+    "maximum_chart_response": "1/10",
+    "response_volume_gap": "0",
+    "attaining_chart_index": 0,
+    "attaining_word": [
+      0,
+      6,
+      5,
+      2,
+      8,
+      4
+    ]
+  },
+  "partner_coupling_constrained_q_facets_0_1_2": {
+    "constraint": "sum(abs(beta_eta_i)) >= 0.10 after common coefficient L1 normalization; each facet volume >= 1e-8",
+    "seed_29": {
+      "ratio_response_over_total_volume": 1.0608366087980141,
+      "profiles": [
+        [
+          0.005948788481740714,
+          -0.023532542628494343,
+          0.2172011024605267
+        ],
+        [
+          -0.005217979776240212,
+          0.05952558182985219,
+          0.389665501767902
+        ],
+        [
+          0.0017582478985158673,
+          -0.032012347394690964,
+          0.2651379077620371
+        ]
+      ],
+      "facet_volumes": [
+        0.021968549908873106,
+        0.03833812188867601,
+        0.026851754119918116
+      ],
+      "total_volume": 0.08715842591746722,
+      "max_chart_response": 0.09246084897845888,
+      "iterations": 55,
+      "success_flag": false
+    },
+    "seed_71": {
+      "ratio_response_over_total_volume": 1.0713740096890816,
+      "profiles": [
+        [
+          0.0005472791825441618,
+          0.0083172506683567,
+          0.23405344115926216
+        ],
+        [
+          -0.0027735386413936004,
+          0.048100850102457925,
+          0.39688795583569514
+        ],
+        [
+          0.006396575943352313,
+          0.06055081550020606,
+          0.24237229296673207
+        ]
+      ],
+      "facet_volumes": [
+        0.023317536564304592,
+        0.03918098139750867,
+        0.023597977328712945
+      ],
+      "total_volume": 0.08609649529052621,
+      "max_chart_response": 0.0922415473795882,
+      "iterations": 55,
+      "success_flag": false
+    }
+  },
+  "equal_radial_threshold_scan_all_120_facet_triples": {
+    "threshold_0.5": {
+      "best_gap": -0.005263932175854509,
+      "best_triple": [
+        4,
+        7,
+        9
+      ],
+      "best_volume": 0.007236067824145492,
+      "best_response": 0.0125,
+      "worst_gap": -0.014116481332096623
+    },
+    "threshold_0.6": {
+      "best_gap": -0.004295133267646205,
+      "best_triple": [
+        7,
+        8,
+        9
+      ],
+      "best_volume": 0.0037048667323537963,
+      "best_response": 0.008000000000000002,
+      "worst_gap": -0.004295133267646205
+    },
+    "threshold_0.7": {
+      "best_gap": -0.0029370093727206946,
+      "best_triple": [
+        7,
+        8,
+        9
+      ],
+      "best_volume": 0.0015629906272793066,
+      "best_response": 0.004500000000000001,
+      "worst_gap": -0.0029370093727206946
+    },
+    "arithmetic": "floating chart/volume evaluation; every z-interval split at hinge zeros and concave interior stationary points evaluated"
+  }
+}

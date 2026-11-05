@@ -1,0 +1,47 @@
+{
+  "parameter": "7/20",
+  "curvature_exclusion_input_count_separately_verified": 99085,
+  "checked_leaf_words": 2839,
+  "counts": {
+    "inconsistent": 22,
+    "singular": 1151,
+    "negative": 1495,
+    "nonnegative": 171,
+    "singular_consistent": 1151,
+    "singular_inconsistent": 0,
+    "singular_coarse_excluded": 33,
+    "singular_vertex_excluded": 31,
+    "singular_feasible": 0,
+    "singular_below_target": 1087
+  },
+  "best_Q": "-4892944/41964992141*u^3 + 8456329321/41964992141*u",
+  "best_Q_numeric": 0.14636024096357042,
+  "word": [
+    0,
+    6,
+    5,
+    2,
+    19,
+    11,
+    8,
+    4
+  ],
+  "nonnegative_weights": [
+    "9057462441/335719937128*u^2 + 33575495389/335719937128",
+    "7380703917/335719937128*u^2 + 48010914177/335719937128",
+    "9057462441/335719937128*u^2 + 33575495389/335719937128",
+    "-7869587179/167859968564*u^2 + 38613144299/167859968564",
+    "-87374000/41964992141*u^2 + 1130908800/41964992141",
+    "-87374000/41964992141*u^2 + 1130908800/41964992141",
+    "-7869587179/167859968564*u^2 + 38613144299/167859968564",
+    "7380703917/335719937128*u^2 + 48010914177/335719937128"
+  ],
+  "coarse_Q_bound": "3249/12500*u",
+  "input_sha256": {
+    "leaves.txt": "281c5f985d0dc45445e56493825ae503505c3a577026ebf717a7ffbc9eb148fe",
+    "exclusions.txt": "6a08c03e93f534f98280706075ec4d4706d1f1c3d6bd934ddc8aeaf217dfbbb1",
+    "exact-attainer.json": "6a3f5104e3b8031e8d2459bf2a27a4caf6ce9e51384dcf78ead281024f948562",
+    "exact-geometry-summary.json": "da42181a1eda72b6ef76a6b9f8830b70a1f81a51a416594f3f97a7e0c0a3a25f"
+  },
+  "seconds": 127.40652307998971
+}

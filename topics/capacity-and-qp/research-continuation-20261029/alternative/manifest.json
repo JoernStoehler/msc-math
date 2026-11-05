@@ -1,0 +1,27 @@
+{
+  "recorded_utc": "2026-10-29T18:40:34.434141+00:00",
+  "scope": "continuation checkpoint; hashes identify evidence, not mathematical validity",
+  "files": {
+    "README.md": "8a16dce77bcbb543a1a5458792022863b709f8d70cf0fce58c21dae774ba65fa",
+    "envelope-lemma.md": "70d61b9068da6fef0f06964fb3ed5c16aa8a3560c1a3f3c59d67ee3e4ac44b52",
+    "parallel_envelope.py": "f644c47e8d613e9e4464a86dbce078006d2dcc74764c8c9251405c9dbdff6dfc",
+    "replay_envelope.py": "b6bb56ac7856341b860bac0128725a59a303dcd24c22970244e9f31620ac5d33",
+    "envelope-results.json": "a4bd40b5de251cc330d01273a979e7421feb9a276c7f6c1a44ba56945ccd3df9",
+    "steiner-gap.md": "c8e9138b2e49beb601bd3ccd9ed16a2f153e8c11af065377b73d7f16f3e868bc",
+    "steiner_bound.py": "651cd3ce6fb4ec0506dde296bbefc0a8a2d208f9f9f8b90605699ad9869f7471",
+    "replay_steiner.py": "20133ca27d202bc4603efb2a7326a9ec9c8b1f6a7e0552c462b1f7be763817f3",
+    "steiner-results.json": "d494921610b9fb47d46eb1e4f45e5e82ee901c43d4972eb33ea17f7fdfd02f14",
+    "center_restore.py": "16c3c1abebe83e589b0a968020ddf3b7f00ab53fb6ba0c004851356013f9a9cb",
+    "center-restoration.json": "5fb003fa26261974c3efe17aa4ac013bf0e818d980fe5056755b436da041bc8e",
+    "review.md": "746f05e18e25d9e57d057ff4e7b6b8d34c128f6cbad2ce867dcb1e1e9a62ba2b",
+    "outer-search/README.md": "aa589d0ede64cd3ddf3afd6ae136d63e0a76f5e32b25fdb7313ceaf26d3535da",
+    "outer-search/search.py": "5c56792800e9f1522f4738ae495a4e6f7e8189ea0f584111831cb068a74d8c12",
+    "outer-search/search_box.py": "0ce9214a1762cce70e0ffd8069ce4dd84187d37aa6be5499ed84bfb8b7448a96",
+    "outer-search/results.json": "17553d94147aacc52c77445eeca8ef64dc660ea34a2176efdd575d4d1e7fe948",
+    "outer-search/results_box.json": "173c9ce5baa578306a6f5c16ac99f01a2ff297aa1ebf117316a8ca8184047abf"
+  },
+  "upstream_fixture": {
+    "path": "topics/products/pentagon-arbitrary-partner/local-cover/pentagon_fixture.py",
+    "sha256": "3e4c9b5efd8ae424d50c0b3b27a433da6e49a80b868a8e6b97239db59eef9a88"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "verified_finite_predicates": true,
+  "parameter": "7/20",
+  "facets": 20,
+  "Qmax": "-4892944/41964992141*u^3 + 8456329321/41964992141*u",
+  "capacity": "-8407399881/16941707410*u^3 + 8409846353/1694170741*u",
+  "capacity_relative_to_HKO": "4892944/8470853705*u^2 + 8407399881/8470853705",
+  "volume": "-2199353203/5781662400*u^2 + 6644112217/1156332480",
+  "systolic_ratio": "-2864332336225749223970211702564210765/28497927590495441144225849761799771458*u^2 + 31501646730029716341705186712747629135/28497927590495441144225849761799771458",
+  "systolic_ratio_numeric": 1.052345598871062,
+  "improvement_over_HKO_numeric": 0.0051320033711041175,
+  "improvement_over_t03_numeric": 0.00043146004157479465,
+  "old_t03_ratio_numeric": 1.0519141388294875,
+  "accepted_curvature_exclusions": 99085,
+  "discarded_old_exclusions": 1303,
+  "leaf_words": 2839,
+  "mathematical_coverage": "COVERAGE-PROOF.md; published geometric simple-minimizer theorem and Lawrence formula are separate proof premises; audit and fresh-copy replay are separately recorded."
+}

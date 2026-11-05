@@ -1,0 +1,23 @@
+{
+  "status": "Stopped by explicit user wrap-up instruction before complete curvature certificate",
+  "stopped_at_utc": "2026-10-29T18:52:34.504678+00:00",
+  "producer_shell_pid_stopped": 1393640,
+  "producer_curvature_pid_stopped": 1393731,
+  "last_curvature_progress_line": "curvature 73000 / 99085 elapsed 423.93 rejected 0",
+  "complete_curvature_receipt_exists": false,
+  "completed_exact_stages": [
+    "geometry, volume, support inclusion, facet genuineness and graph",
+    "positive feasible attainer"
+  ],
+  "not_completed": [
+    "all proposed curvature checks",
+    "fresh cycle coverage",
+    "all leaf KKT checks",
+    "global capacity certificate",
+    "final independent acceptance"
+  ],
+  "independent_shell_pid_stopped": 1394010,
+  "independent_curvature_pid_stopped": 1394178,
+  "independent_last_curvature_progress_line": "curvature 61000 / 99085 elapsed 348.58 rejected 0",
+  "owned_executing_processes_after_stop": []
+}

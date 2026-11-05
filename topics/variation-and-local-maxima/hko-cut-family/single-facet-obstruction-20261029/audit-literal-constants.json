@@ -1,0 +1,16 @@
+{
+  "pass": true,
+  "literal_table_matches_replayed_families": true,
+  "literal_action_endpoints_and_midpoint": true,
+  "positive_endpoint_supports_have_rank_five": true,
+  "lower_integrated_ratio": "4",
+  "upper_integrated_ratio": "4",
+  "sum": "8",
+  "source_hashes": {
+    "/tmp/msc-math/viterbo-continuation-20261029/single-facet/lemma.md": "bbada73eeb6b8656b4e1f1680bc7a1e66434132217a6cc4b3ac752b0860f0c67",
+    "/workspaces/msc-math-viterbo-continuation/topics/capacity-and-qp/convex-systolic-optimization/sections/hko-two-hinge-appendix.tex": "87c831418a95b73f50fc55fb4192a7027b94ff08db8235e3deaf775ea30ac598",
+    "/workspaces/msc-math-viterbo-continuation/topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-two-hinge/certify_amplification.py": "82976ec9ac4d7026f91469e37bbcaff43fd53ce8fb0172b4bc410554d9435c78",
+    "/workspaces/msc-math-viterbo-continuation/topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/multicut-variation.tex": "7a772316f566a5851cc9b29d5a6ecdefe0d60d72987de43eb141ff688c3ab404",
+    "/workspaces/msc-math-viterbo-continuation/topics/capacity-and-qp/convex-systolic-optimization/certificates/hko-ascent/exact_core.py": "77b33633828e4fe0e9842a58f1c8bbf8403ced3e362b19a9aa4c2ee0ea648d18"
+  }
+}

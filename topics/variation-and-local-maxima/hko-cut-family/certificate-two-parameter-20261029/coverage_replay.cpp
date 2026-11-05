@@ -1,0 +1,15 @@
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <fstream>
+#include <iostream>
+#include <set>
+#include <string>
+#include <vector>
+using namespace std;
+set<vector<int>> exclusions,leaves;uint32_t adj[20]={};vector<int>w;
+uint64_t prefixes=0,pruned=0,cycles=0,unknown=0;int maxlen=0,min_exclusion_length=20;bool generate_mode=false;
+vector<int> canonical(const vector<int>& word){vector<int> best;for(int refl=0;refl<2;refl++)for(int sw=0;sw<2;sw++)for(int rot=0;rot<5;rot++){vector<int> v;for(int x:word){int block=x/10,fac=x%10,f=fac/5,i=fac%5;if(refl)i=4-i;i=(i+rot)%5;if(sw)f=1-f;v.push_back(block*10+f*5+i);}if(refl)reverse(v.begin(),v.end());rotate(v.begin(),min_element(v.begin(),v.end()),v.end());if(best.empty()||v<best)best=v;}return best;}
+void load(const char*name,set<vector<int>>&dst){ifstream f(name);if(!f){cerr<<"missing input "<<name;exit(2);}int n;while(f>>n){if(n<1||n>20){cerr<<"bad length";exit(2);}vector<int>v(n);for(int&i:v){if(!(f>>i)||i<0||i>=20){cerr<<"invalid word";exit(2);}}if(set<int>(v.begin(),v.end()).size()!=v.size()||canonical(v)!=v||!dst.insert(v).second){cerr<<"invalid duplicate/noncanonical word";exit(2);}}if(!f.eof()){cerr<<"malformed input";exit(2);}}
+void dfs(int first,int last,uint32_t used){prefixes++;if(prefixes%1000000==0)cerr<<"prefixes "<<prefixes<<" leaf representatives "<<leaves.size()<<"\n";auto key=canonical(w);if(exclusions.count(key)){pruned++;return;}for(int start=int(w.size())-min_exclusion_length;start>=1;start--){vector<int> suffix(w.begin()+start,w.end());if(exclusions.count(canonical(suffix))){pruned++;return;}}if(w.size()>=2&&(adj[last]&(1u<<first))){cycles++;maxlen=max(maxlen,int(w.size()));if(generate_mode)leaves.insert(key);else if(!leaves.count(key))unknown++;}uint32_t next=adj[last]&~used&(~((1u<<(first+1))-1));while(next){int j=__builtin_ctz(next);next&=next-1;w.push_back(j);dfs(first,j,used|(1u<<j));w.pop_back();}}
+int main(int argc,char**argv){if(argc==2&&string(argv[1])=="--generate")generate_mode=true;else if(argc!=1){cerr<<"usage: coverage_replay [--generate]";return 2;}load("exclusions.txt",exclusions);for(const auto&v:exclusions)min_exclusion_length=min(min_exclusion_length,int(v.size()));if(!generate_mode)load("leaves.txt",leaves);ifstream f("graph.txt");if(!f)return 2;for(int i=0;i<20;i++)for(int j=0;j<20;j++){int x;if(!(f>>x)||(x!=0&&x!=1)||(i==j&&x))return 2;if(x)adj[i]|=1u<<j;}string extra;if(f>>extra)return 2;for(int i=0;i<20;i++){w={i};dfs(i,i,1u<<i);}if(generate_mode){ofstream g("leaves.txt");for(const auto&v:leaves){g<<v.size();for(int x:v)g<<' '<<x;g<<'\n';}if(!g)return 2;}cout<<"{\"mode\":\""<<(generate_mode?"generation":"verification")<<"\",\"verified\":"<<(!generate_mode&&unknown==0?"true":"false")<<",\"prefixes\":"<<prefixes<<",\"curvature_prunes\":"<<pruned<<",\"cycles\":"<<cycles<<",\"maximum_word_length\":"<<maxlen<<",\"unknown_cycles\":"<<unknown<<",\"certified_exclusion_representatives\":"<<exclusions.size()<<",\"checked_leaf_representatives\":"<<leaves.size()<<"}\n";return unknown?1:0;}

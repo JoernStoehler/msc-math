@@ -31,6 +31,19 @@ contradiction; both are integrated below. This session owns main integration.
 The audit repairs known omissions; it does not establish exhaustive coverage or
 reliable later use of the account.
 
+<a id="absorbed-viterbo-continuation"></a>
+**Absorbed continuation results, 5 November:** the t=7/20 HKO certificate and the
+other 29 October continuation results from branch `research/viterbo-continuation-20261029`
+(tip `7b6463fa`) now exist in-tree as new directories: the
+[continuation record](topics/capacity-and-qp/research-continuation-20261029/README.md)
+and [handoff](topics/capacity-and-qp/research-continuation-20261029/DECISIONS-AND-HANDOFF.md),
+the [t=7/20 certificate](topics/variation-and-local-maxima/hko-cut-family/certificate-continuation-20261029/README.md),
+[two-parameter partial certificate](topics/variation-and-local-maxima/hko-cut-family/certificate-two-parameter-20261029/)
+and other `*-20261029` dirs under `hko-cut-family/`. They are unreviewed beyond the
+branch's own agent audits (no human or external refereeing). The branch's PLAN/STATUS,
+dashboard and graph edits were not taken; its "stopped" status text above is not main's
+selection. Whether to adopt these results remains undecided.
+
 <a id="solution-planning"></a>
 ## Solution planning — selected 31 October
 
