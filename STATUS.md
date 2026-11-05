@@ -19,7 +19,7 @@ triage, parallel option development and integrated decisions.
 Solution planning is active; underlying execution remains unassigned. Details are in PLAN.
 
 - **Thesis writing:** no whole-PDF human PASS is established. Next: compare the existing contextual Chapter 8 candidate with the selected source and choose its disposition. [Writing](PLAN.md#thesis).
-- **Thesis scope:** data-science adequacy and adoption of later research remain unresolved. Next: prepare the concrete claim/evidence and include/defer choices. [Scope](PLAN.md#scope).
+- **Thesis scope:** data-science adequacy and adoption of later research remain unresolved. The 17 Oct Chapter 8 rewrite with a contact-loss law (§8.9, cusp figure, appendix A.12) is preserved, unadopted, in [thesis-lineage-2026-10-17](docs/history/thesis-lineage-2026-10-17/README.md). Next: prepare the concrete claim/evidence and include/defer choices. [Scope](PLAN.md#scope).
 - **Algorithm discovery and development:** C++/Rust differences are hard to find. Jörn reports an undocumented C++ choice; bounded inspection found no rationale. Next: assess consolidation against a concrete extension. [Discovery](PLAN.md#msc-q06) · [consolidation](PLAN.md#msc-q07).
 - **Documentation/code placement:** relevant material should be encountered through agents' ordinary search habits. Next: observe representative searches and compare concrete documentation and code locations. [Documentation](PLAN.md#msc-m03) · [code](PLAN.md#msc-m04).
 - **Computational reliability:** production coverage, geometry, ascent and flow have distinct gaps. Next: prioritize the repair proposal and its coverage, then select a repair; the C++/Rust report needs a matched comparison. [Repository](PLAN.md#shared-computation).
