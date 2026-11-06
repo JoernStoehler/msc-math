@@ -14,7 +14,8 @@ newer institutional status has not been established here.
   archive are linked from the [convex systolic optimization account](topics/capacity-and-qp/convex-systolic-optimization/README.md);
   this is a research result, separate from the unfinished selected thesis.
   The campaign worktree was retired after consolidation. Future research
-  allocation remains open and unassigned. The [HKO cut-family handoff](topics/variation-and-local-maxima/hko-cut-family/README.md)
+  allocation remains open and unassigned. The [future-research proposal](topics/research-directions/2026-11-06/README.md)
+  compares seven scientific questions, approaches and exchanges between tracks. The [HKO cut-family handoff](topics/variation-and-local-maxima/hko-cut-family/README.md)
   retains exact conventions and labelled candidate inputs for a future bounded step.
   The [HKO postmortem](docs/history/hko-research-postmortem-20261029/report.html)
   explains the successful body’s causal path, costs and specific shortcuts.

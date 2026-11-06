@@ -1,0 +1,39 @@
+{
+  "math": 22,
+  "errors": 0,
+  "width": 980,
+  "viewport": 980,
+  "sections": [
+    {
+      "id": "section-1",
+      "title": "What the existing results tell us",
+      "y": 603
+    },
+    {
+      "id": "section-2",
+      "title": "Deformations: explain when geometry can improve the ratio",
+      "y": 1091
+    },
+    {
+      "id": "section-3",
+      "title": "Planar partners: turn a capacity question into a covering problem",
+      "y": 1833
+    },
+    {
+      "id": "section-4",
+      "title": "Dynamics and methods: understand what the capacity value leaves out",
+      "y": 2388
+    },
+    {
+      "id": "section-5",
+      "title": "Connections that could change the research choices",
+      "y": 2973
+    },
+    {
+      "id": "section-6",
+      "title": "Where I would begin—and what would change that choice",
+      "y": 3843
+    }
+  ],
+  "images": 0
+}

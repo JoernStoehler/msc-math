@@ -1,5 +1,9 @@
 # Probing Viterbo's conjecture: a research guide for agents
 
+The [future-research proposal](../topics/research-directions/2026-11-06/README.md)
+compares seven scientific questions, partial progress, alternative approaches and
+exchanges between tracks. It supports allocation decisions; no campaign is selected.
+
 The separate [28–29 October research report](../topics/capacity-and-qp/convex-systolic-optimization/README.md)
 proves HKO optimality over its full `GL(4)` orbit, including maps that mix the
 factor planes. Its specified seven-cut family gives nearby seventeen-facet

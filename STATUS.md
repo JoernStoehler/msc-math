@@ -1,6 +1,6 @@
 # Status — msc-math
 
-v1.47 · 4 November 2026
+v1.67 · 6 November 2026
 
 ## Goal
 Submit and pass Jörn's MSc thesis, “Probing Viterbo's conjecture”.
@@ -24,7 +24,7 @@ Solution planning is active; underlying execution remains unassigned. Details ar
 - **Documentation/code placement:** relevant material should be encountered through agents' ordinary search habits. Next: observe representative searches and compare concrete documentation and code locations. [Documentation](PLAN.md#msc-m03) · [code](PLAN.md#msc-m04).
 - **Computational reliability:** production coverage, geometry, ascent and flow have distinct gaps. Next: prioritize the repair proposal and its coverage, then select a repair; the C++/Rust report needs a matched comparison. [Repository](PLAN.md#shared-computation).
 - **Absorbed 29 October continuation results (unreviewed).** The t=7/20 HKO certificate, two-parameter partial certificate and structural results from `research/viterbo-continuation-20261029` are now in-tree under [`topics/`](PLAN.md#absorbed-viterbo-continuation); only the branch's own agent audits exist. No reviewer is assigned and Jörn will not review them; treat as unverified agent output, usable as leads only.
-- **Research allocation:** the HKO-improving report is delivered; the next programme is undecided. Next: compare cut-family, structural and other open routes against the final results. [Research](PLAN.md#msc-r00).
+- **Research allocation:** the seven-track future-research proposal is integrated; no campaign selected, owner: none. Next: compare its questions and cross-track exchanges to select a bounded inquiry. [Proposal](PLAN.md#future-research-report-20261106).
 - **Reproduction and delivery:** raw-production/archive portability and individual submission requirements remain incomplete. Next: map exact replay dependencies and recover missing administrative records. [Delivery](PLAN.md#delivery).
 - **Collaboration:** work discovery, knowledge uptake, review remedies and stopped cloud support remain unresolved. Next: reuse the inspected shared tooling and distinguish discovery/application/update failures on a real task. [Workflow](PLAN.md#management).
 - **Legacy cutoff utility:** root-scoped enforcement remains fail-closed after its shared helper was removed. Jörn chose to keep it fail-closed; no portable thread-scope interface or retirement is selected. Revisit only if a concrete use requires a supported replacement.

@@ -465,6 +465,26 @@ cannot establish that a result is absent.
 <a id="next-research-choice"></a>
 ## 3. Choose valuable new mathematics
 
+
+<a id="future-research-report-20261106"></a>
+### Future research proposal integrated — 6 November
+
+Jörn authorized low-effort integration of the report from
+[the source thread](<t3-thread://v2/b1aec314-9b5d-45d7-aeac-b6d887d149c6/190e1112-42e9-47d4-9914-5670a1f6cbe9>),
+judging it a worthwhile improvement over the status quo. The
+[seven-track proposal](topics/research-directions/2026-11-06/report.html)
+and its [Markdown source, technical notes and provenance](topics/research-directions/2026-11-06/README.md)
+are now retained here. The source worktree's files were uncommitted; integration
+copies the report packet rather than merging its outdated PLAN/STATUS snapshots.
+The packet preserves Pro's original return, attributed literature claims,
+bounded integration checks and the prior revision/review history.
+
+This accepts the report for integration, not every mathematical or novelty claim.
+No fresh proof audit, experiment, thesis adoption or research campaign is selected.
+**Next:** compare the seven questions and cross-track exchanges when choosing a
+bounded inquiry; research allocation remains **owner: none**. The report's
+recommendations and percentage allocations do not assign work or spending.
+
 <a id="msc-evidence"></a>
 ### Starting point: the delivered result changes the search
 

@@ -1,0 +1,79 @@
+{
+  "math": 170,
+  "errors": 0,
+  "width": 980,
+  "viewport": 980,
+  "sections": [
+    {
+      "id": "section-1",
+      "title": "The mathematical starting point",
+      "y": 624
+    },
+    {
+      "id": "section-2",
+      "title": "1. Why can several cuts succeed where one cut fails?",
+      "y": 1929
+    },
+    {
+      "id": "section-3",
+      "title": "2. How can we recognize a local maximum when shortest orbits change?",
+      "y": 4674
+    },
+    {
+      "id": "section-4",
+      "title": "3. Can we solve the optimization problem with one planar factor fixed?",
+      "y": 5916
+    },
+    {
+      "id": "section-5",
+      "title": "4. Which symmetries imply the original bound?",
+      "y": 7266
+    },
+    {
+      "id": "section-6",
+      "title": "5. What does a counterexample tell us about other capacities?",
+      "y": 8617
+    },
+    {
+      "id": "section-7",
+      "title": "6. Can higher-dimensional examples do more than repeat a four-dimensional one?",
+      "y": 9496
+    },
+    {
+      "id": "section-8",
+      "title": "7. Three further questions worth keeping in view",
+      "y": 10547
+    },
+    {
+      "id": "section-9",
+      "title": "8. Computation and data that would help answer these questions",
+      "y": 12224
+    },
+    {
+      "id": "section-10",
+      "title": "Choosing the next investigation",
+      "y": 13212
+    },
+    {
+      "id": "section-11",
+      "title": "Appendix A. The specified HKO cuts",
+      "y": 14219
+    },
+    {
+      "id": "section-12",
+      "title": "Appendix B. What the finite capacity calculation must prove",
+      "y": 14775
+    },
+    {
+      "id": "section-13",
+      "title": "Sources and scope of checking",
+      "y": 15693
+    }
+  ],
+  "images": 0,
+  "mobile": {
+    "width": 390,
+    "viewport": 390,
+    "overflow": []
+  }
+}

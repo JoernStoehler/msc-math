@@ -1,0 +1,5 @@
+APPROVE relay-v1
+
+The packet makes the relay concrete and easy to act on: one paste into ChatGPT.com with GPT-6 Pro selected, then return the answer here. It tells Pro to challenge the specification and research coverage before choosing organization, and supplies enough attributed evidence to make the question useful without claiming a checkout or demanding an attachment. The repository origin and inspected baseline are accurately distinguished from verified remote access. The technical and empirical summaries repeatedly state the limits of agent reviews, finite datasets, and unreviewed continuation; I found no consequential misstatement that would block this bounded planning exchange.
+
+The evidence list is extensive and could still anchor Pro toward the currently documented tracks despite the explicit invitation to find omissions. That is a manageable residual risk: the prompt says the list is not a required taxonomy and explicitly asks for independent coverage challenges. It does not prescribe an answer structure beyond useful deliverables.
